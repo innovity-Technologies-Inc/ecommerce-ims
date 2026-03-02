@@ -14,8 +14,13 @@ class EmailVerificationPromptController extends Controller
      */
     public function __invoke(Request $request): RedirectResponse|View
     {
+        $title = 'Verify Your Email Address';
+        $section = 'Email Verification';
+
         return $request->user()->hasVerifiedEmail()
-                    ? redirect()->intended(route('dashboard', absolute: false))
-                    : view('auth.verify-email');
+                    ? redirect()->route('home')->with([
+                        'message' => 'Your email address has been verified. Enjoy Shopping!',
+                'alert-type' => 'success',
+            ]) : view('client.auth.verify-email', compact('title', 'section'));
     }
 }

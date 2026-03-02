@@ -8,11 +8,11 @@
                         <div class="col-lg-6 py-lg-5">
                             <div class="d-flex flex-column h-100 justify-content-center">
                                 <div class="auth-logo mb-4">
-                                    <a href="{{route('login', 'admin')}}" class="logo-dark">
+                                    <a href="{{route('admin.login')}}" class="logo-dark">
                                         <img src="" height="24" alt="logo dark">
                                     </a>
 
-                                    <a href="{{route('login', 'admin')}}" class="logo-light">
+                                    <a href="{{route('admin.login')}}" class="logo-light">
                                         <img src="" height="24" alt="logo light">
                                     </a>
                                 </div>
@@ -22,7 +22,7 @@
                                 <p class="text-muted mt-1 mb-4">Enter your email address and password to access admin panel.</p>
 
                                 <div class="mb-5">
-                                    <form action="{{route('login', 'admin')}}" class="authentication-form" method="post">
+                                    <form action="{{route('admin.login')}}" class="authentication-form" method="post">
                                         @csrf
                                         <div class="mb-3">
                                             <label class="form-label" for="email">Email</label>
@@ -40,10 +40,10 @@
                                             <span class="small text-danger">{{$message}}</span>
                                             @enderror
                                         </div>
-
                                         <div class="mb-3">
                                             <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" id="checkbox-signin">
+                                                <input type="checkbox" class="form-check-input" id="checkbox-signin" name="remember"
+                                                    {{ old('remember') ? 'checked' : '' }}>
                                                 <label class="form-check-label" for="checkbox-signin">Remember me</label>
                                             </div>
                                         </div>

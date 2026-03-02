@@ -18,14 +18,9 @@ class AuthenticatedSessionController extends Controller
     {
         $title = 'Login';
         $section = 'login';
-        if ($request->route('type') == 'admin') {
-            return view('auth.login');
-        }elseif($request->route('type') == 'user'){
-            return view('client.auth.login', compact('title', 'section'));
-        }else{
-            abort(404, 'Page not found');
-        }
+        return view('client.auth.login', compact('title', 'section'));
     }
+
 
     /**
      * Handle an incoming authentication request.
@@ -35,14 +30,11 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+        return redirect()->route('home')->with([
+            'message' => 'You are now logged in',
+            'alert-type' => 'success'
+        ]);
 
-        if ($request->route('type') == 'admin') {
-            return redirect()->route('dashboard');
-        }elseif($request->route('type') == 'user'){
-            return redirect()->route('home');
-        }else{
-            return redirect()->route()->back();
-        }
     }
 
     /**
@@ -56,6 +48,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+            return redirect()->route('home');
     }
 }

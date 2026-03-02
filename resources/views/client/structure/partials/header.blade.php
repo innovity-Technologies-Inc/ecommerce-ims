@@ -8,7 +8,7 @@
                 <div class="col-lg-4 col-md-12">
                     <div class="text-lg-start text-center">
                         <p class="color-white">Welcome
-                            @if(Auth::check() && Auth::user()->type == 'user')
+                            @if(Auth::guard('web')->check())
                                 <strong>{{Auth::user()->name}}</strong>
                             @else
                                 you
@@ -33,17 +33,18 @@
                                 <button class="dropdown-toggle header-action-btn hover-style-default color-white"
                                         data-bs-toggle="dropdown"> Settings <i class="ion-ios-arrow-down"></i></button>
                                 <ul class="dropdown-menu">
-                                    @if(Auth::check() && Auth::user()->type == 'user')
-                                    <li><a class="dropdown-item" href="my-account.html">My account</a></li>
+                                    @if(Auth::guard('web')->check())
+                                    <li><a class="dropdown-item" href="{{route('user.account')}}">My account</a></li>
                                     @endif
-                                        @if(Auth::check() && Auth::user()->type == 'user')
-                                            <form action="{{route('logout', 'user')}}" method="post">
+                                        @if(Auth::guard('web')->check())
+                                            <form action="{{route('logout')}}" method="post">
                                                 @csrf
+                                                <input type="hidden" name="type" value="user">
                                                 <li><button class="dropdown-item" type="submit">Log Out</button></li>
                                             </form>
                                         @else
-                                            <li><a class="dropdown-item" href="{{route('register', 'user')}}">Register</a></li>
-                                            <li><a class="dropdown-item" href="{{route('login', 'user')}}">Login</a></li>
+                                            <li><a class="dropdown-item" href="{{route('register')}}">Register</a></li>
+                                            <li><a class="dropdown-item" href="{{route('login')}}">Login</a></li>
                                         @endif
                                 </ul>
                             </div>
@@ -138,7 +139,7 @@
                                     </li>
                                     <li class="banner-wrapper">
                                         <a href="single-product.html"><img
-                                                src="{{asset('')}}client/assets/images/banner-image/banner-menu.jpg"
+                                                src="{{asset('client/assets/images/banner-image/banner-menu.jpg')}}"
                                                 alt=""></a>
                                     </li>
                                 </ul>
@@ -151,7 +152,7 @@
                                     <li><a href="checkout.html">Checkout Page</a></li>
                                     <li><a href="compare.html">Compare Page</a></li>
                                     <li><a href="login.html">Login & Regiter Page</a></li>
-                                    <li><a href="my-account.html">Account Page</a></li>
+                                    <li><a href="{{route('user.account')}}">Account Page</a></li>
                                     <li><a href="wishlist.html">Wishlist Page</a></li>
                                 </ul>
                             </li>
@@ -325,7 +326,7 @@
                             <button class="dropdown-toggle border-0 header-action-btn hover-style-default"
                                     data-bs-toggle="dropdown"><i class="ion-person"></i></button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="my-account.html">My account</a></li>
+                                <li><a class="dropdown-item" href="{{route('user.account')}}">My account</a></li>
                                 <li><a class="dropdown-item" href="checkout.html">Checkout</a></li>
                                 <li><a class="dropdown-item" href="login.html">Sign in</a></li>
                             </ul>
@@ -504,7 +505,7 @@
     <button class="offcanvas-close"></button>
     <!-- contact Info -->
     <div class="contact-info d-flex align-items-center justify-content-center color-black py-3">
-        <img class="me-3" src="{{asset('')}}client/assets/images/icons/mobile-contact.png" alt="">
+        <img class="me-3" src="{{asset('client/assets/images/icons/mobile-contact.png')}}" alt="">
         <p>Call us:</p>
         <a class="color-black" href="tel:(+800)345678">(+800)345678</a>
     </div>
@@ -608,7 +609,7 @@
                         <li><a href="checkout.html">Checkout Page</a></li>
                         <li><a href="compare.html">Compare Page</a></li>
                         <li><a href="login.html">Login & Regiter Page</a></li>
-                        <li><a href="my-account.html">Account Page</a></li>
+                        <li><a href="{{route('user.account')}}">Account Page</a></li>
                         <li><a href="wishlist.html">Wishlist Page</a></li>
                     </ul>
                 </li>

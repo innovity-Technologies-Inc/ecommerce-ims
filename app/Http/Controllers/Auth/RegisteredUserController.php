@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
@@ -19,38 +21,46 @@ class RegisteredUserController extends Controller
      */
     public function create(Request $request): View
     {
-        if ($request->route('type') == 'user'){
-            return view('client.auth.register');
-        }elseif ($request->route('type') == 'admin'){
-            return view('auth.register');
-        }else{
-            abort(404, 'Page not found');
-        }
+        $title = 'Registration';
+        $section = 'User Registration';
+        return view('client.auth.register', compact('title', 'section'));
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
-    public function store(Request $request): RedirectResponse
+
+    public function store(Request $request)
     {
-        $request->validate([
+        // Base validation (for both)
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+            'mobile' => ['required', 'string', 'max:20'],
+            'address' => ['required', 'string', 'max:255'],
+            'city' => ['required', 'string', 'max:100'],
+            'state' => ['required', 'string', 'max:100'],
+            'country' => ['required', 'string', 'max:100'],
+            'zip' => ['required', 'string', 'max:20'],
+        ];
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+            $validated = $request->validate($rules);
 
-        event(new Registered($user));
+                $user = User::create([
+                    'name' => $validated['name'],
+                    'email' => $validated['email'],
+                    'password' => Hash::make($validated['password']),
+                    'mobile' => $validated['mobile'],
+                    'address' => $validated['address'],
+                    'city' => $validated['city'],
+                    'state' => $validated['state'],
+                    'country' => $validated['country'],
+                    'zip' => $validated['zip'],
+                ]);
 
-        Auth::login($user);
+            Auth::login($user);
+            // 🔥 Send email verification ONLY for user
+            event(new Registered($user));
 
-        return redirect(route('dashboard', absolute: false));
+            return redirect()->route('verification.notice');
+
     }
 }

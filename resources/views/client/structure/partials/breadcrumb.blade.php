@@ -4,10 +4,10 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="breadcrumb-content">
-                    <h1 class="breadcrumb-hrading">{{$section ?? ''}}</h1>
+                    <h1 class="breadcrumb-hrading">{{$title ?? ''}}</h1>
                     <ul class="breadcrumb-links">
                         <li><a href="{{route('home')}}">Home</a></li>
-                        <li>{{$title ?? ''}}</li>
+                        <li>{{$section ?? ''}}</li>
                     </ul>
                 </div>
             </div>
