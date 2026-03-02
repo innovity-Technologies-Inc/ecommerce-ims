@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -9,7 +10,6 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
-use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -43,7 +43,6 @@ Route::middleware('guest:web')->group(function () {
         ->name('password.store');
 });
 
-
 Route::middleware('auth:web')->group(function () {
 
     Route::get('verify-email', EmailVerificationPromptController::class)
@@ -69,7 +68,6 @@ Route::middleware('auth:web')->group(function () {
         ->name('logout');
 });
 
-
 /*
 |--------------------------------------------------------------------------
 | ADMIN (ADMIN GUARD)
@@ -85,11 +83,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     */
     Route::middleware('guest:admin')->group(function () {
 
-        Route::get('register', [AdminController::class, 'AdminCreate'])
-            ->name('register');
-
-        Route::post('register', [AdminController::class, 'store']);
-
         Route::get('login', [AdminController::class, 'showLoginForm'])
             ->name('login');
 
@@ -102,6 +95,21 @@ Route::prefix('admin')->name('admin.')->group(function () {
     |--------------------------------
     */
     Route::middleware('auth:admin')->group(function () {
+
+        Route::get('users', [AdminController::class, 'index'])
+            ->name('index');
+
+        Route::get('users/create', [AdminController::class, 'AdminCreate'])
+            ->name('create');
+
+        Route::get('users/edit/{id}', [AdminController::class, 'edit'])
+            ->name('edit');
+
+        Route::post('register', [AdminController::class, 'store'])->name('register');
+
+        Route::put('update/{id}', [AdminController::class, 'update'])->name('update');
+
+        Route::delete('delete/{id}', [AdminController::class, 'destroy'])->name('delete');
 
         Route::post('logout', [AdminController::class, 'logout'])
             ->name('logout');
