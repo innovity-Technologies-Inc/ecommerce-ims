@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class ProductRequest extends FormRequest
 {
@@ -29,13 +28,15 @@ class ProductRequest extends FormRequest
             'sub_category_id' => ['nullable', 'exists:categories,id'],
             'brand_id' => ['nullable', 'exists:brands,id'],
             'name' => ['required', 'string', 'max:255'],
+            'short_description' => ['nullable', 'string'],
             'description' => ['nullable', 'string'],
+            'regular_price' => ['nullable', 'numeric', 'min:0'],
+            'discount_percentage' => ['nullable', 'integer', 'min:0', 'max:100'],
             'is_new_arrival' => ['nullable', 'boolean'],
             'is_hot_deal' => ['nullable', 'boolean'],
             'is_featured' => ['nullable', 'boolean'],
-            'variants' => ['required', 'array', 'min:1'],
-            'variants.*.size' => ['nullable', 'string', 'max:50'],
-            'variants.*.color' => ['nullable', 'string', 'max:50'],
+            'variants' => ['nullable', 'array'],
+            'variants.*.variant_name' => ['required_with:variants', 'string', 'max:255'],
             'variants.*.sku' => [
                 'nullable',
                 'string',
@@ -55,31 +56,11 @@ class ProductRequest extends FormRequest
                     }
                 },
             ],
-            'variants.*.price' => ['required', 'numeric', 'min:0'],
+            'variants.*.regular_price' => ['nullable', 'numeric', 'min:0'],
+            'variants.*.discount_percentage' => ['nullable', 'integer', 'min:0', 'max:100'],
             'variants.*.stock' => ['nullable', 'integer', 'min:0'],
             'images' => ['nullable', 'array'],
             'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048'],
         ];
-    }
-
-    /**
-     * More complex validation logic can be added here if needed,
-     * but the unique Size+Color combination for a product is better handled
-     * in the controller or via a custom rule.
-     */
-    public function withValidator($validator)
-    {
-        $validator->after(function ($validator) {
-            $variants = $this->input('variants', []);
-            $combinations = [];
-
-            foreach ($variants as $index => $variant) {
-                $combination = ($variant['size'] ?? '').'|'.($variant['color'] ?? '');
-                if (in_array($combination, $combinations)) {
-                    $validator->errors()->add("variants.$index", 'The combination of Size and Color must be unique for this product.');
-                }
-                $combinations[] = $combination;
-            }
-        });
     }
 }

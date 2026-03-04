@@ -42,7 +42,7 @@
             @forelse($items as $item)
                 @php
                     $product = $type == 'wishlist' ? $item->product : $item->model;
-                    $price = $product->variants->min('price');
+                    $minPrice = $product->variants->min(fn($v) => $v->discount_price ?? $v->regular_price);
                 @endphp
                 <tr>
                     <td class="product-thumbnail">
@@ -50,13 +50,13 @@
                             @if($product->primaryImage)
                                 <img src="{{ asset('storage/'.$product->primaryImage->image_path) }}" alt="{{ $product->name }}" style="max-width: 100px;">
                             @else
-                                <img src="{{ asset('client/assets/images/product-image/mini-cart/1.jpg') }}" alt="No Image" style="max-width: 100px;">
+                                <img src="{{ asset('client/assets/images/product-image/mini-cart/1.1.jpg') }}" alt="No Image" style="max-width: 100px;">
                             @endif
                         </a>
                     </td>
                     <td class="product-name"><a href="#">{{ $product->name }}</a></td>
                     <td class="product-price-cart">
-                        <span class="amount">{{ $gs->currency ?? '$' }}{{ number_format($price, 2) }}</span>
+                        <span class="amount">{{ $gs->currency ?? '$' }}{{ number_format($minPrice, 2) }}</span>
                     </td>
                     @if($type == 'cart')
                         <td class="product-quantity">

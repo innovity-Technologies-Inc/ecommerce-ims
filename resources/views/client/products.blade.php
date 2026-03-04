@@ -77,7 +77,7 @@
                                         <div class="col-xl-3 col-md-6 col-lg-4 col-sm-6 col-xs-12">
                                             <article class="list-product">
                                                 <div class="img-block">
-                                                    <a href="#" class="thumbnail">
+                                                    <a href="{{ route('client.products.details', $product->slug) }}" class="thumbnail">
                                                         @if($product->primaryImage)
                                                             <img class="first-img" src="{{ asset('storage/' . $product->primaryImage->image_path) }}" alt="{{ $product->name }}">
                                                             @php
@@ -99,13 +99,18 @@
                                                     </div>
                                                 </div>
                                                 <ul class="product-flag">
-                                                    @if($product->is_new_arrival)
+                                                    @php
+                                                        $maxDiscount = $product->variants->max('discount_percentage');
+                                                    @endphp
+                                                    @if($maxDiscount && $maxDiscount > 0)
+                                                        <li class="new bg-danger" style="background-color: #ff4545 !important;">-{{ $maxDiscount }}%</li>
+                                                    @elseif($product->is_new_arrival)
                                                         <li class="new">New</li>
                                                     @endif
                                                 </ul>
                                                 <div class="product-decs">
                                                     <a class="inner-link" href="#"><span>{{ $product->brand->name ?? 'BRAND' }}</span></a>
-                                                    <h2><a href="#" class="product-link text-truncate d-block">{{ $product->name }}</a></h2>
+                                                    <h2><a href="{{ route('client.products.details', $product->slug) }}" class="product-link text-truncate d-block">{{ $product->name }}</a></h2>
                                                     <div class="rating-product">
                                                         <i class="ion-android-star"></i>
                                                         <i class="ion-android-star"></i>
@@ -116,17 +121,35 @@
                                                     <div class="pricing-meta">
                                                         <ul>
                                                             @php
-                                                                $minPrice = $product->variants->min('price');
-                                                                $maxPrice = $product->variants->max('price');
                                                                 $gs = \App\HelperClass::generalSettings();
+                                                                $prices = collect();
+                                                                
+                                                                if($product->variants->count() > 0) {
+                                                                    foreach($product->variants as $variant) {
+                                                                        $prices->push($variant->discount_price ?? $variant->regular_price ?? $product->discount_price ?? $product->regular_price);
+                                                                    }
+                                                                } else {
+                                                                    $prices->push($product->discount_price ?? $product->regular_price);
+                                                                }
+                                                                
+                                                                $prices = $prices->filter();
+                                                                $minPrice = $prices->min() ?? 0;
+                                                                $maxPrice = $prices->max() ?? 0;
+                                                                
+                                                                $hasDiscount = !empty($product->discount_price) || $product->variants->contains(fn($v) => !empty($v->discount_price));
+                                                                $minRegPrice = $product->variants->count() > 0 
+                                                                    ? ($product->variants->min('regular_price') ?? $product->regular_price)
+                                                                    : $product->regular_price;
                                                             @endphp
                                                             <li class="current-price">
-                                                                @if($minPrice == $maxPrice)
-                                                                    {{ $gs->currency ?? '$' }}{{ number_format($minPrice, 2) }}
-                                                                @else
-                                                                    {{ $gs->currency ?? '$' }}{{ number_format($minPrice, 2) }} - {{ $gs->currency ?? '$' }}{{ number_format($maxPrice, 2) }}
+                                                                {{ $gs->currency ?? '$' }}{{ number_format($minPrice, 2) }}
+                                                                @if($minPrice != $maxPrice)
+                                                                    - {{ $gs->currency ?? '$' }}{{ number_format($maxPrice, 2) }}
                                                                 @endif
                                                             </li>
+                                                            @if($hasDiscount && $minRegPrice > $minPrice)
+                                                                <li class="old-price">{{ $gs->currency ?? '$' }}{{ number_format($minRegPrice, 2) }}</li>
+                                                            @endif
                                                         </ul>
                                                     </div>
                                                 </div>
@@ -160,7 +183,7 @@
                                                     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                                                         <div class="left-img">
                                                             <div class="img-block">
-                                                                <a href="#" class="thumbnail">
+                                                                <a href="{{ route('client.products.details', $product->slug) }}" class="thumbnail">
                                                                     @if($product->primaryImage)
                                                                         <img class="first-img" src="{{ asset('storage/' . $product->primaryImage->image_path) }}" alt="{{ $product->name }}">
                                                                         @php
@@ -182,17 +205,22 @@
                                                                 </div>
                                                             </div>
                                                             <ul class="product-flag">
-                                                                @if($product->is_new_arrival)
+                                                                @php
+                                                                    $maxDiscount = $product->variants->max('discount_percentage');
+                                                                @endphp
+                                                                @if($maxDiscount && $maxDiscount > 0)
+                                                                    <li class="new bg-danger" style="background-color: #ff4545 !important;">-{{ $maxDiscount }}%</li>
+                                                                @elseif($product->is_new_arrival)
                                                                     <li class="new">New</li>
                                                                 @endif
                                                             </ul>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
-                                                        <div class="product-desc-wrap">
+                                                            </div>
+                                                            </div>
+                                                            <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+                                                            <div class="product-desc-wrap">
                                                             <div class="product-decs">
                                                                 <a class="inner-link" href="#"><span>{{ $product->brand->name ?? 'BRAND' }}</span></a>
-                                                                <h2><a href="#" class="product-link">{{ $product->name }}</a></h2>
+                                                                <h2><a href="{{ route('client.products.details', $product->slug) }}" class="product-link">{{ $product->name }}</a></h2>
                                                                 <div class="rating-product">
                                                                     <i class="ion-android-star"></i>
                                                                     <i class="ion-android-star"></i>
@@ -203,20 +231,37 @@
                                                                 <div class="pricing-meta">
                                                                     <ul>
                                                                         @php
-                                                                            $minPrice = $product->variants->min('price');
-                                                                            $maxPrice = $product->variants->max('price');
                                                                             $gs = \App\HelperClass::generalSettings();
+                                                                            $prices = collect();
+                                                                            
+                                                                            if($product->variants->count() > 0) {
+                                                                                foreach($product->variants as $variant) {
+                                                                                    $prices->push($variant->discount_price ?? $variant->regular_price ?? $product->discount_price ?? $product->regular_price);
+                                                                                }
+                                                                            } else {
+                                                                                $prices->push($product->discount_price ?? $product->regular_price);
+                                                                            }
+                                                                            
+                                                                            $prices = $prices->filter();
+                                                                            $minPrice = $prices->min() ?? 0;
+                                                                            $maxPrice = $prices->max() ?? 0;
+                                                                            
+                                                                            $hasDiscount = !empty($product->discount_price) || $product->variants->contains(fn($v) => !empty($v->discount_price));
+                                                                            $minRegPrice = $product->variants->count() > 0 
+                                                                                ? ($product->variants->min('regular_price') ?? $product->regular_price)
+                                                                                : $product->regular_price;
                                                                         @endphp
                                                                         <li class="current-price">
-                                                                            @if($minPrice == $maxPrice)
-                                                                                {{ $gs->currency ?? '$' }}{{ number_format($minPrice, 2) }}
-                                                                            @else
-                                                                                {{ $gs->currency ?? '$' }}{{ number_format($minPrice, 2) }} - {{ $gs->currency ?? '$' }}{{ number_format($maxPrice, 2) }}
+                                                                            {{ $gs->currency ?? '$' }}{{ number_format($minPrice, 2) }}
+                                                                            @if($minPrice != $maxPrice)
+                                                                                - {{ $gs->currency ?? '$' }}{{ number_format($maxPrice, 2) }}
                                                                             @endif
                                                                         </li>
+                                                                        @if($hasDiscount && $minRegPrice > $minPrice)
+                                                                            <li class="old-price">{{ $gs->currency ?? '$' }}{{ number_format($minRegPrice, 2) }}</li>
+                                                                        @endif
                                                                     </ul>
-                                                                </div>
-                                                                <div class="product-intro-info">
+                                                                </div>                                                                <div class="product-intro-info">
                                                                     {!! Str::limit(strip_tags($product->description), 200) !!}
                                                                 </div>
                                                                 <div class="in-stock">Availability: <span>{{ $product->variants->sum('stock') ?? 0 }} In Stock</span></div>
@@ -290,8 +335,12 @@
                             </div>
 
                             @php
+                                $variantMax = \App\Models\ProductVariant::max('regular_price') ?? 0;
+                                $productMax = \App\Models\Product::max('regular_price') ?? 0;
                                 $allMinPrice = 0;
-                                $allMaxPrice = ceil(\App\Models\ProductVariant::max('price') ?? 1000);
+                                $allMaxPrice = ceil(max($variantMax, $productMax));
+                                if($allMaxPrice <= 0) $allMaxPrice = 1000; // Fallback
+
                                 $currentMin = request('min_price', $allMinPrice);
                                 $currentMax = request('max_price', $allMaxPrice);
                             @endphp
@@ -301,50 +350,6 @@
 
                             <!-- Sidebar single item -->
                             <div class="sidebar-widget mt-30">
-                                <h4 class="pro-sidebar-title">Size</h4>
-                                <div class="sidebar-widget-list">
-                                    <ul>
-                                        @php
-                                            $sizes = \App\Models\ProductVariant::whereNotNull('size')->distinct()->pluck('size');
-                                        @endphp
-                                        @foreach($sizes as $size)
-                                        <li>
-                                            <div class="sidebar-widget-list-left">
-                                                <label class="d-flex align-items-center w-100" style="cursor: pointer;">
-                                                    <input type="checkbox" name="size[]" value="{{ $size }}" {{ is_array(request('size')) && in_array($size, request('size')) ? 'checked' : '' }} onchange="document.getElementById('filter-form').submit();">
-                                                    <span class="ms-4">{{ $size }}</span>
-                                                    <span class="checkmark"></span>
-                                                </label>
-                                            </div>
-                                        </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            </div>
-                            <!-- Sidebar single item -->
-                            <div class="sidebar-widget mt-20">
-                                <h4 class="pro-sidebar-title">Colour</h4>
-                                <div class="sidebar-widget-list">
-                                    <ul>
-                                        @php
-                                            $colors = \App\Models\ProductVariant::whereNotNull('color')->distinct()->pluck('color');
-                                        @endphp
-                                        @foreach($colors as $color)
-                                        <li>
-                                            <div class="sidebar-widget-list-left">
-                                                <label class="d-flex align-items-center w-100" style="cursor: pointer;">
-                                                    <input type="checkbox" name="color[]" value="{{ $color }}" {{ is_array(request('color')) && in_array($color, request('color')) ? 'checked' : '' }} onchange="document.getElementById('filter-form').submit();">
-                                                    <span class="ms-4">{{ $color }}</span>
-                                                    <span class="checkmark" style="border: 1px solid #ddd; background-color: {{ $color }};"></span>
-                                                </label>
-                                            </div>
-                                        </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            </div>
-                            <!-- Sidebar single item -->
-                            <div class="sidebar-widget mt-30">
                                 <h4 class="pro-sidebar-title">Brand</h4>
                                 <div class="sidebar-widget-list">
                                     <ul>
@@ -352,7 +357,7 @@
                                         <li>
                                             <div class="sidebar-widget-list-left">
                                                 <label class="d-flex align-items-center w-100" style="cursor: pointer;">
-                                                    <input type="checkbox" name="brand[]" value="{{ $brand->id }}" {{ is_array(request('brand')) && in_array($brand->id, request('brand')) ? 'checked' : '' }} onchange="document.getElementById('filter-form').submit();">
+                                                    <input type="checkbox" name="brand[]" value="{{ $brand->id }}" {{ is_array(request('brand')) && in_array($brand->id, request('brand')) ? 'checked' : '' }} onchange="document.getElementById('filter-form').submit();"> 
                                                     <span class="ms-4">{{ $brand->name }}</span>
                                                     <span class="checkmark"></span>
                                                 </label>
@@ -362,51 +367,50 @@
                                     </ul>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <!-- Sidebar Area End -->
-                </div>
+                            </div>
+                            </div>
+                            <!-- Sidebar Area End -->                </div>
             </form>
         </div>
     </div>
 
-<script>
-    $(document).ready(function() {
-        // Trigger form submit when NiceSelect value changes
-        $('#sort-select').on('change', function() {
-            $('#filter-form').submit();
-        });
+    <form id="wishlist-form" action="{{ route('user.wishlist.store') }}" method="POST" style="display: none;">
+        @csrf
+        <input type="hidden" name="product_id" id="wishlist-product-id">
+    </form>
 
-        // We use custom IDs to completely bypass the hardcoded Euro logic in template vendor scripts
-        if ($("#slider-range-custom").length) {
-            $("#slider-range-custom").slider({
-                range: true,
-                min: {{ $allMinPrice }},
-                max: {{ $allMaxPrice }},
-                values: [{{ $currentMin }}, {{ $currentMax }}],
-                slide: function(event, ui) {
-                    $("#amount-custom").val(ui.values[0] + " - " + ui.values[1]);
-                    $("#min_price").val(ui.values[0]);
-                    $("#max_price").val(ui.values[1]);
-                },
-                stop: function(event, ui) {
-                    $('#filter-form').submit();
-                }
+    <script>
+        window.addEventListener('load', function() {
+            // Trigger form submit when NiceSelect value changes
+            $('#sort-select').on('change', function() {
+                $('#filter-form').submit();
             });
 
-            // Set initial label value without currency
-            $("#amount-custom").val($("#slider-range-custom").slider("values", 0) + " - " + $("#slider-range-custom").slider("values", 1));
+            // We use custom IDs to completely bypass the hardcoded Euro logic in template vendor scripts
+            if ($("#slider-range-custom").length) {
+                $("#slider-range-custom").slider({
+                    range: true,
+                    min: {{ $allMinPrice }},
+                    max: {{ $allMaxPrice }},
+                    values: [{{ $currentMin }}, {{ $currentMax }}],
+                    slide: function(event, ui) {
+                        $("#amount-custom").val(ui.values[0] + " - " + ui.values[1]);
+                        $("#min_price").val(ui.values[0]);
+                        $("#max_price").val(ui.values[1]);
+                    },
+                    stop: function(event, ui) {
+                        $('#filter-form').submit();
+                    }
+                });
+
+                // Set initial label value without currency
+                $("#amount-custom").val($("#slider-range-custom").slider("values", 0) + " - " + $("#slider-range-custom").slider("values", 1));
+            }
+        });
+
+        function addToWishlist(productId) {
+            document.getElementById('wishlist-product-id').value = productId;
+            document.getElementById('wishlist-form').submit();
         }
-    });
-
-    function addToWishlist(productId) {
-        document.getElementById('wishlist-product-id').value = productId;
-        document.getElementById('wishlist-form').submit();
-    }
     </script>
-
-    <form id="wishlist-form" action="{{ route('user.wishlist.store') }}" method="POST" style="display: none;">
-    @csrf
-    <input type="hidden" name="product_id" id="wishlist-product-id">
-    </form>
     @endsection

@@ -31,6 +31,13 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - **`PROJECT_DOCUMENTATION.md`**: This is the source of truth for the project's architecture, flow, and standards.
 - **Mandatory Updates**: Every time you add a new module, modify existing logic, or change the architectural direction, you MUST update this file to reflect the current state of the project.
 
+## Controllers, Requests & Services (CRITICAL)
+
+- **Thin Controllers:** Controllers MUST only handle request routing and response returning.
+- **Form Requests:** Use dedicated Form Request classes (`php artisan make:request`) for ALL validation.
+- **Service Layer:** ALL business logic and database operations MUST reside in Service classes.
+- **Workflow:** Controller receives validated data from Form Request -> Passes data to Service -> Service processes and returns result -> Controller returns view/redirect.
+
 ## Helper Class Usage (CRITICAL)
 
 - **`App\HelperClass`:** You MUST use this class for the following operations:
@@ -171,11 +178,6 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ### APIs & Eloquent Resources
 
 - For APIs, default to using Eloquent API Resources and API versioning unless existing API routes do not, then you should follow existing application convention.
-
-## Controllers & Validation
-
-- Always create Form Request classes for validation rather than inline validation in controllers. Include both validation rules and custom error messages.
-- Check sibling Form Requests to see if the application uses array or string based validation rules.
 
 ## Authentication & Authorization
 

@@ -65,7 +65,10 @@ The project strictly avoids Tailwind/Alpine.js in favor of:
 
 ---
 
-## 5. Coding Standards
+### Coding Standards
+- **Thin Controllers:** Controllers only route requests and return responses.
+- **Form Requests:** Strict use of **Form Request Classes** for all validation logic.
+- **Service Layer Pattern:** ALL business logic and data persistence MUST reside in Services (`app/Services`).
 - **PHP 8+ Features:** Use constructor property promotion and explicit return type hints.
 - **Formatting:** Strict adherence to Laravel Pint (PSR-12/Laravel style).
 - **Control Structures:** Always use curly braces `{}`.
@@ -95,6 +98,15 @@ The project strictly avoids Tailwind/Alpine.js in favor of:
     - **Persistent Wishlist:** Authenticated users can save products to their wishlist.
     - **Reusable Components:** Uses a unified `cart_view.blade.php` partial for both Wishlist and Shopping Cart displays.
     - **Accurate Pricing:** Automatically displays the lowest variant price for wishlisted items.
+
+- **Flexible Pricing Model:** 
+    - Supports two pricing modes selected via radio buttons: **Base Pricing** (one price for all variants) and **Variant Pricing** (unique price per variant).
+    - **Optional Variants:** Products can now be created with only base details and no variants.
+    - **Calculated Prices:** Discounted prices are automatically calculated by the `ProductService` if a discount percentage is provided.
+    - **Logic for Cart/Orders:**
+        - Always check for **Variant Pricing** first: If a variant has a `regular_price`, use it (and its corresponding `discount_price`).
+        - Fallback to **Product Base Pricing**: If the variant's `regular_price` is null, use the parent product's `regular_price` and `discount_price`.
+        - **Net Price:** The final selling price must always be the `discount_price` if present, otherwise the `regular_price`.
 
 ## 7. Recently Fixed Issues
 - **Product Edit (Subcategory Selection):** Resolved an issue where subcategories were not pre-selected when editing a product. Fixed by improving the Select2 initialization and category change logic in the Blade view.

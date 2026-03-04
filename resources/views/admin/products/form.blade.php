@@ -11,6 +11,17 @@
                 @if(isset($product))
                     @method('put')
                 @endif
+
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">{{ isset($product) ? 'Edit Product: '.$product->name : 'Create New Product' }}</h4>
@@ -73,9 +84,51 @@
 
                             <div class="col-lg-12">
                                 <div class="mb-3">
-                                    <label for="editor1" class="form-label">Description</label>
+                                    <label for="short_description" class="form-label">Short Description</label>
+                                    <textarea name="short_description" id="short_description" class="form-control" rows="3" placeholder="Enter short description for product detail page...">{{ old('short_description', $product->short_description ?? '') }}</textarea>
+                                    @error('short_description')
+                                    <span class="small text-danger">{{$message}}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                    <label for="editor1" class="form-label">Main Description</label>
                                     <textarea name="description" id="editor1" class="form-control summernote">{{ old('description', $product->description ?? '') }}</textarea>
                                     @error('description')
+                                    <span class="small text-danger">{{$message}}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-lg-12 mb-3">
+                                <label class="form-label d-block">Pricing Type</label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input pricing-type-radio" type="radio" name="pricing_type" id="type_base" value="base" {{ !isset($product) || $product->regular_price ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="type_base">Base Pricing (Single Price for all Variants)</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input pricing-type-radio" type="radio" name="pricing_type" id="type_variant" value="variant" {{ isset($product) && !$product->regular_price ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="type_variant">Variant Pricing (Specific Price per Variant)</label>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 base-price-section" style="{{ isset($product) && !$product->regular_price ? 'display:none;' : '' }}">
+                                <div class="mb-3">
+                                    <label for="regular_price" class="form-label">Base Regular Price</label>
+                                    <input type="number" step="0.01" name="regular_price" id="regular_price" class="form-control" placeholder="0.00" value="{{ old('regular_price', $product->regular_price ?? '') }}">
+                                    @error('regular_price')
+                                    <span class="small text-danger">{{$message}}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 base-price-section" style="{{ isset($product) && !$product->regular_price ? 'display:none;' : '' }}">
+                                <div class="mb-3">
+                                    <label for="discount_percentage" class="form-label">Base Discount %</label>
+                                    <input type="number" name="discount_percentage" id="discount_percentage" class="form-control" placeholder="e.g. 10" value="{{ old('discount_percentage', $product->discount_percentage ?? '') }}">
+                                    @error('discount_percentage')
                                     <span class="small text-danger">{{$message}}</span>
                                     @enderror
                                 </div>
@@ -104,7 +157,7 @@
                                     <label for="images" class="form-label">{{ isset($product) ? 'Add More Images' : 'Product Images' }} (Multiple Selectable)</label>
                                     <input type="file" name="images[]" id="images" class="filepond" multiple>
                                     <p class="small text-muted mt-1">Select one or more images. {{ !isset($product) ? 'The first image will be set as primary.' : '' }}</p>
-                                    
+
                                     @if(isset($product) && $product->images->count() > 0)
                                         <div class="row mt-3">
                                             @foreach($product->images as $image)
@@ -133,28 +186,28 @@
                                     <table class="table table-bordered" id="variant-table">
                                         <thead class="bg-light">
                                             <tr>
-                                                <th>Size</th>
-                                                <th>Color</th>
+                                                <th>Variant Name</th>
                                                 <th>SKU (Optional)</th>
-                                                <th>Price</th>
+                                                <th>Regular Price</th>
+                                                <th>Discount %</th>
                                                 <th>Stock</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @php
-                                                $defaultVariants = [['size' => '', 'color' => '', 'sku' => '', 'price' => '', 'stock' => '']];
+                                                $defaultVariants = [];
                                                 $oldVariants = old('variants', isset($product) ? $product->variants->toArray() : $defaultVariants);
                                             @endphp
                                             @foreach($oldVariants as $index => $variant)
                                                 <tr class="variant-row">
-                                                    <td><input type="text" name="variants[{{ $index }}][size]" class="form-control" placeholder="e.g. XL" value="{{ $variant['size'] ?? '' }}"></td>
-                                                    <td><input type="text" name="variants[{{ $index }}][color]" class="form-control" placeholder="e.g. Red" value="{{ $variant['color'] ?? '' }}"></td>
-                                                    <td><input type="text" name="variants[{{ $index }}][sku]" class="form-control" placeholder="Auto-generated if empty" value="{{ $variant['sku'] ?? '' }}"></td>
-                                                    <td><input type="number" step="0.01" name="variants[{{ $index }}][price]" class="form-control" placeholder="0.00" value="{{ $variant['price'] ?? '' }}" required></td>
+                                                    <td><input type="text" name="variants[{{ $index }}][variant_name]" class="form-control" placeholder="e.g. Blue - L" value="{{ $variant['variant_name'] ?? '' }}" required></td>
+                                                    <td><input type="text" name="variants[{{ $index }}][sku]" class="form-control" placeholder="Auto-generated" value="{{ $variant['sku'] ?? '' }}"></td>
+                                                    <td><input type="number" step="0.01" name="variants[{{ $index }}][regular_price]" class="form-control variant-price-input" placeholder="0.00" value="{{ $variant['regular_price'] ?? '' }}"></td>
+                                                    <td><input type="number" name="variants[{{ $index }}][discount_percentage]" class="form-control variant-discount-input" placeholder="e.g. 10" value="{{ $variant['discount_percentage'] ?? '' }}"></td>
                                                     <td><input type="number" name="variants[{{ $index }}][stock]" class="form-control" placeholder="e.g. 100" value="{{ $variant['stock'] ?? '' }}"></td>
                                                     <td>
-                                                        <button type="button" class="btn btn-danger btn-sm remove-row" {{ count($oldVariants) <= 1 ? 'disabled' : '' }}><i class="bx bx-trash"></i></button>
+                                                        <button type="button" class="btn btn-danger btn-sm remove-row"><i class="bx bx-trash"></i></button>
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -191,7 +244,7 @@
 
         function updateSubcategories(subcategories, selectedSubId) {
             subCategorySelect.empty().append('<option value="">Select Sub Category</option>');
-            
+
             if (subcategories && subcategories.length > 0) {
                 subcategories.forEach(sub => {
                     const isSelected = (selectedSubId && selectedSubId == sub.id) ? 'selected' : '';
@@ -230,15 +283,30 @@
             }, 300);
         }
 
+        // Pricing Type Toggle
+        $('.pricing-type-radio').on('change', function() {
+            if ($(this).val() === 'base') {
+                $('.base-price-section').show();
+                $('.variant-price-input, .variant-discount-input').prop('disabled', true).val('');
+            } else {
+                $('.base-price-section').hide();
+                $('.variant-price-input, .variant-discount-input').prop('disabled', false);
+            }
+        });
+
+        // Trigger initial state
+        $('.pricing-type-radio:checked').trigger('change');
+
         // Dynamic Variant UI
         let variantIndex = {{ isset($oldVariants) ? count($oldVariants) : 1 }};
         $('#add-variant-row').on('click', function() {
+            const isBasePricing = $('#type_base').is(':checked');
             const newRow = `
                 <tr class="variant-row">
-                    <td><input type="text" name="variants[${variantIndex}][size]" class="form-control" placeholder="e.g. XL"></td>
-                    <td><input type="text" name="variants[${variantIndex}][color]" class="form-control" placeholder="e.g. Red"></td>
-                    <td><input type="text" name="variants[${variantIndex}][sku]" class="form-control" placeholder="Auto-generated if empty"></td>
-                    <td><input type="number" step="0.01" name="variants[${variantIndex}][price]" class="form-control" placeholder="0.00" required></td>
+                    <td><input type="text" name="variants[${variantIndex}][variant_name]" class="form-control" placeholder="e.g. Blue - L" required></td>
+                    <td><input type="text" name="variants[${variantIndex}][sku]" class="form-control" placeholder="Auto-generated"></td>
+                    <td><input type="number" step="0.01" name="variants[${variantIndex}][regular_price]" class="form-control variant-price-input" placeholder="0.00" ${isBasePricing ? 'disabled' : 'required'}></td>
+                    <td><input type="number" name="variants[${variantIndex}][discount_percentage]" class="form-control variant-discount-input" placeholder="e.g. 10" ${isBasePricing ? 'disabled' : ''}></td>
                     <td><input type="number" name="variants[${variantIndex}][stock]" class="form-control" placeholder="e.g. 100"></td>
                     <td>
                         <button type="button" class="btn btn-danger btn-sm remove-row"><i class="bx bx-trash"></i></button>

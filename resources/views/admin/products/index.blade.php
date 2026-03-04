@@ -38,10 +38,26 @@
                             <td>{{$data->name}}</td>
                             <td>{{ $data->category ? $data->category->name : '-' }}</td>
                             <td>
-                                @if($data->variants->count() > 0)
-                                    ${{ number_format($data->variants->min('price'), 2) }} - ${{ number_format($data->variants->max('price'), 2) }}
-                                @else
-                                    -
+                                @php
+                                    $gs = \App\HelperClass::generalSettings();
+                                    $prices = collect();
+                                    
+                                    if($data->variants->count() > 0) {
+                                        foreach($data->variants as $variant) {
+                                            $prices->push($variant->discount_price ?? $variant->regular_price ?? $data->discount_price ?? $data->regular_price);
+                                        }
+                                    } else {
+                                        $prices->push($data->discount_price ?? $data->regular_price);
+                                    }
+                                    
+                                    $prices = $prices->filter();
+                                    $minPrice = $prices->min() ?? 0;
+                                    $maxPrice = $prices->max() ?? 0;
+                                @endphp
+                                
+                                {{ $gs->currency ?? '$' }}{{ number_format($minPrice, 2) }} 
+                                @if($minPrice != $maxPrice)
+                                    - {{ $gs->currency ?? '$' }}{{ number_format($maxPrice, 2) }}
                                 @endif
                             </td>
                             <td>

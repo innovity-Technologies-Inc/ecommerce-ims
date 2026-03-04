@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\HelperClass;
 use App\Http\Requests\BrandRequest;
 use App\Models\Brand;
-use Illuminate\Support\Str;
+use App\Services\BrandService;
 use Illuminate\View\View;
 
 class BrandController extends Controller
 {
+    public function __construct(protected BrandService $brandService) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -33,14 +34,7 @@ class BrandController extends Controller
      */
     public function store(BrandRequest $request)
     {
-        $data = $request->validated();
-        $data['slug'] = Str::slug($data['name']);
-
-        if ($request->hasFile('icon')) {
-            $data['icon'] = HelperClass::file_upload($request->file('icon'), 'brands');
-        }
-
-        Brand::create($data);
+        $this->brandService->storeBrand($request->validated());
 
         return redirect()->route('admin.brands.index')->with([
             'message' => 'Brand created successfully',
@@ -61,17 +55,7 @@ class BrandController extends Controller
      */
     public function update(BrandRequest $request, Brand $brand)
     {
-        $data = $request->validated();
-        $data['slug'] = Str::slug($data['name']);
-
-        if ($request->hasFile('icon')) {
-            if ($brand->icon) {
-                HelperClass::file_delete($brand->icon);
-            }
-            $data['icon'] = HelperClass::file_upload($request->file('icon'), 'brands');
-        }
-
-        $brand->update($data);
+        $this->brandService->updateBrand($brand, $request->validated());
 
         return redirect()->route('admin.brands.index')->with([
             'message' => 'Brand updated successfully',
@@ -84,10 +68,7 @@ class BrandController extends Controller
      */
     public function destroy(Brand $brand)
     {
-        if ($brand->icon) {
-            HelperClass::file_delete($brand->icon);
-        }
-        $brand->delete();
+        $this->brandService->deleteBrand($brand);
 
         return redirect()->route('admin.brands.index')->with([
             'message' => 'Brand deleted successfully',

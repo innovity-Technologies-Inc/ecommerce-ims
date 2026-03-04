@@ -55,23 +55,54 @@ class FrontendController extends Controller
             $filters['brand_id'] = $request->input('brand');
         }
 
-        if ($request->filled('size')) {
-            $filters['variants.size'] = $request->input('size');
-        }
-
-        if ($request->filled('color')) {
-            $filters['variants.color'] = $request->input('color');
-        }
-
-        // Price Filtering
+        // Price Filtering (Check against Base Product Price OR Variant Price)
         if ($request->filled('min_price')) {
-            $query->whereHas('variants', function ($q) use ($request) {
-                $q->where('price', '>=', $request->min_price);
+            $query->where(function ($q) use ($request) {
+                // Check Base Product Price
+                $q->where(function ($base) use ($request) {
+                    $base->where(function ($sub) use ($request) {
+                        $sub->where('products.discount_price', '>=', $request->min_price)
+                            ->orWhere(function ($reg) use ($request) {
+                                $reg->whereNull('products.discount_price')
+                                    ->where('products.regular_price', '>=', $request->min_price);
+                            });
+                    });
+                })
+                // OR Check Variant Prices
+                    ->orWhereHas('variants', function ($v) {
+                        $v->where(function ($sub) {
+                            $sub->where('product_variants.discount_price', '>=', request('min_price'))
+                                ->orWhere(function ($reg) {
+                                    $reg->whereNull('product_variants.discount_price')
+                                        ->where('product_variants.regular_price', '>=', request('min_price'));
+                                });
+                        });
+                    });
             });
         }
+
         if ($request->filled('max_price')) {
-            $query->whereHas('variants', function ($q) use ($request) {
-                $q->where('price', '<=', $request->max_price);
+            $query->where(function ($q) use ($request) {
+                // Check Base Product Price
+                $q->where(function ($base) use ($request) {
+                    $base->where(function ($sub) use ($request) {
+                        $sub->where('products.discount_price', '<=', $request->max_price)
+                            ->orWhere(function ($reg) use ($request) {
+                                $reg->whereNull('products.discount_price')
+                                    ->where('products.regular_price', '<=', $request->max_price);
+                            });
+                    });
+                })
+                // OR Check Variant Prices
+                    ->orWhereHas('variants', function ($v) {
+                        $v->where(function ($sub) {
+                            $sub->where('product_variants.discount_price', '<=', request('max_price'))
+                                ->orWhere(function ($reg) {
+                                    $reg->whereNull('product_variants.discount_price')
+                                        ->where('product_variants.regular_price', '<=', request('max_price'));
+                                });
+                        });
+                    });
             });
         }
 
@@ -88,16 +119,22 @@ class FrontendController extends Controller
                     $query->latest();
                     break;
                 case 'price-low':
-                    $query->join('product_variants', 'products.id', '=', 'product_variants.product_id')
+                    $query->leftJoin('product_variants', 'products.id', '=', 'product_variants.product_id')
                         ->select('products.*')
                         ->groupBy('products.id')
-                        ->orderByRaw('MIN(product_variants.price) ASC');
+                        ->orderByRaw('MIN(LEAST(
+                            COALESCE(products.discount_price, products.regular_price, 999999),
+                            COALESCE(product_variants.discount_price, product_variants.regular_price, 999999)
+                        )) ASC');
                     break;
                 case 'price-high':
-                    $query->join('product_variants', 'products.id', '=', 'product_variants.product_id')
+                    $query->leftJoin('product_variants', 'products.id', '=', 'product_variants.product_id')
                         ->select('products.*')
                         ->groupBy('products.id')
-                        ->orderByRaw('MAX(product_variants.price) DESC');
+                        ->orderByRaw('MAX(GREATEST(
+                            COALESCE(products.discount_price, products.regular_price, 0),
+                            COALESCE(product_variants.discount_price, product_variants.regular_price, 0)
+                        )) DESC');
                     break;
                 case 'a-z':
                     $query->orderBy('name', 'asc');
@@ -106,17 +143,49 @@ class FrontendController extends Controller
                     $query->orderBy('name', 'desc');
                     break;
                 case 'in-stock':
-                    $query->whereHas('variants', function ($q) {
-                        $q->where('stock', '>', 0);
+                    $query->where(function ($q) {
+                        $q->whereHas('variants', function ($v) {
+                            $v->where('stock', '>', 0);
+                        })->orWhere('sales_count', '>=', 0);
                     });
                     break;
             }
         } else {
             $query->latest();
         }
-
         $products = $query->paginate(12)->withQueryString();
 
-        return view('client.products', compact('products'));
+        return view('client.products', [
+            'products' => $products,
+            'title' => 'Shop Products',
+            'section' => 'Products',
+        ]);
+    }
+
+    public function productDetails(string $slug)
+    {
+        $product = Product::where('slug', $slug)
+            ->with(['primaryImage', 'images', 'category', 'brand', 'variants'])
+            ->firstOrFail();
+
+        // Related Products: Matches same category OR same subcategory
+        $relatedProducts = Product::where('id', '!=', $product->id)
+            ->where(function ($q) use ($product) {
+                $q->where('category_id', $product->category_id);
+                if ($product->sub_category_id) {
+                    $q->orWhere('sub_category_id', $product->sub_category_id);
+                }
+            })
+            ->with(['primaryImage', 'variants', 'brand'])
+            ->inRandomOrder()
+            ->limit(10)
+            ->get();
+
+        return view('client.product_details', [
+            'product' => $product,
+            'relatedProducts' => $relatedProducts,
+            'title' => $product->name,
+            'section' => 'Product Details',
+        ]);
     }
 }

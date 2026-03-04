@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\HelperClass;
 use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
-use Illuminate\Support\Str;
+use App\Services\CategoryService;
 use Illuminate\View\View;
 
 class CategoryController extends Controller
 {
+    public function __construct(protected CategoryService $categoryService) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -35,14 +36,7 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequest $request)
     {
-        $data = $request->validated();
-        $data['slug'] = Str::slug($data['name']);
-
-        if ($request->hasFile('icon')) {
-            $data['icon'] = HelperClass::file_upload($request->file('icon'), 'categories');
-        }
-
-        Category::create($data);
+        $this->categoryService->storeCategory($request->validated());
 
         return redirect()->route('admin.categories.index')->with([
             'message' => 'Category created successfully',
@@ -65,17 +59,7 @@ class CategoryController extends Controller
      */
     public function update(CategoryRequest $request, Category $category)
     {
-        $data = $request->validated();
-        $data['slug'] = Str::slug($data['name']);
-
-        if ($request->hasFile('icon')) {
-            if ($category->icon) {
-                HelperClass::file_delete($category->icon);
-            }
-            $data['icon'] = HelperClass::file_upload($request->file('icon'), 'categories');
-        }
-
-        $category->update($data);
+        $this->categoryService->updateCategory($category, $request->validated());
 
         return redirect()->route('admin.categories.index')->with([
             'message' => 'Category updated successfully',
@@ -88,10 +72,7 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        if ($category->icon) {
-            HelperClass::file_delete($category->icon);
-        }
-        $category->delete();
+        $this->categoryService->deleteCategory($category);
 
         return redirect()->route('admin.categories.index')->with([
             'message' => 'Category deleted successfully',

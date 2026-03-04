@@ -97,15 +97,31 @@
                             <li class="menu-dropdown">
                                 <a href="{{route('home')}}">Home</a>
                             </li>
-                            <li class="menu-dropdown">
-                                <a href="#">Shop <i class="ion-ios-arrow-down"></i></a>
+                            <li>
+                                <a href="{{ route('client.products.index') }}">Products</a>
+                            </li>
+                            <li class="menu-dropdown">                                <a href="#">Shop <i class="ion-ios-arrow-down"></i></a>
                                 <ul class="mega-menu-wrap">
                                     @foreach($nav_categories as $category)
                                     <li>
                                         <ul>
-                                            <li class="mega-menu-title"><a href="{{ route('client.products.index', ['category' => $category->id]) }}">{{ $category->name }}</a></li>
+                                            <li class="mega-menu-title">
+                                                <a href="{{ route('client.products.index', ['category' => $category->id]) }}">
+                                                    @if($category->icon)
+                                                        <img src="{{ asset('storage/'.$category->icon) }}" alt="" style="width: 20px; height: 20px; object-fit: contain; margin-right: 5px;">
+                                                    @endif
+                                                    {{ $category->name }}
+                                                </a>
+                                            </li>
                                             @foreach($category->subcategories as $subcategory)
-                                               <li><a href="{{ route('client.products.index', ['category' => $subcategory->id]) }}">{{ $subcategory->name }}</a></li>
+                                               <li>
+                                                   <a href="{{ route('client.products.index', ['category' => $subcategory->id]) }}">
+                                                       @if($subcategory->icon)
+                                                           <img src="{{ asset('storage/'.$subcategory->icon) }}" alt="" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px;">
+                                                       @endif
+                                                       {{ $subcategory->name }}
+                                                   </a>
+                                               </li>
                                             @endforeach
                                         </ul>
                                     </li>
@@ -393,15 +409,28 @@
         <div class="offcanvas-menu mb-4">
             <ul>
                 <li><a href="{{ route('home') }}"><span class="menu-text">Home</span></a></li>
+                <li><a href="{{ route('client.products.index') }}"><span class="menu-text">Products</span></a></li>
                 <li><a href="{{ route('client.products.index') }}"><span class="menu-text">Shop</span></a>
                     <ul class="sub-menu">
                         @foreach($nav_categories as $category)
                         <li>
-                            <a href="{{ route('client.products.index', ['category' => $category->id]) }}"><span class="menu-text">{{ $category->name }}</span></a>
+                            <a href="{{ route('client.products.index', ['category' => $category->id]) }}">
+                                @if($category->icon)
+                                    <img src="{{ asset('storage/'.$category->icon) }}" alt="" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px;">
+                                @endif
+                                <span class="menu-text">{{ $category->name }}</span>
+                            </a>
                             @if($category->subcategories->count() > 0)
                             <ul class="sub-menu">
                                 @foreach($category->subcategories as $subcategory)
-                                <li><a href="{{ route('client.products.index', ['category' => $subcategory->id]) }}">{{ $subcategory->name }}</a></li>
+                                <li>
+                                    <a href="{{ route('client.products.index', ['category' => $subcategory->id]) }}">
+                                        @if($subcategory->icon)
+                                            <img src="{{ asset('storage/'.$subcategory->icon) }}" alt="" style="width: 14px; height: 14px; object-fit: contain; margin-right: 5px;">
+                                        @endif
+                                        {{ $subcategory->name }}
+                                    </a>
+                                </li>
                                 @endforeach
                             </ul>
                             @endif

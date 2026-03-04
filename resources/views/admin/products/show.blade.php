@@ -66,6 +66,19 @@
                         <div class="col-sm-9 text-muted">{{ $product->slug }}</div>
                     </div>
                     <div class="row mb-3">
+                        <div class="col-sm-3 fw-bold">Base Price:</div>
+                        <div class="col-sm-9 text-muted">
+                            @php($gs = \App\HelperClass::generalSettings())
+                            @if($product->discount_price)
+                                <span class="text-decoration-line-through text-muted small">{{ $gs->currency ?? '$' }}{{ number_format($product->regular_price, 2) }}</span>
+                                <span class="text-danger fw-bold ms-1">{{ $gs->currency ?? '$' }}{{ number_format($product->discount_price, 2) }}</span>
+                                <span class="badge bg-soft-danger text-danger ms-1">-{{ $product->discount_percentage }}%</span>
+                            @else
+                                {{ $gs->currency ?? '$' }}{{ number_format($product->regular_price ?? 0, 2) }}
+                            @endif
+                        </div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-sm-3 fw-bold">Description:</div>
                         <div class="col-sm-9 text-muted">{!! $product->description !!}</div>
                     </div>
@@ -75,23 +88,33 @@
                         <table class="table table-bordered">
                             <thead class="bg-light">
                                 <tr>
-                                    <th>Size</th>
-                                    <th>Color</th>
+                                    <th>Variant Name</th>
                                     <th>SKU</th>
                                     <th>Price</th>
                                     <th>Stock</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($product->variants as $variant)
+                                @forelse($product->variants as $variant)
                                 <tr>
-                                    <td>{{ $variant->size ?? '-' }}</td>
-                                    <td>{{ $variant->color ?? '-' }}</td>
+                                    <td>{{ $variant->variant_name ?? '-' }}</td>
                                     <td>{{ $variant->sku }}</td>
-                                    <td>${{ number_format($variant->price, 2) }}</td>
+                                    <td>
+                                        @if($variant->discount_price)
+                                            <span class="text-decoration-line-through text-muted small">{{ $gs->currency ?? '$' }}{{ number_format($variant->regular_price, 2) }}</span>
+                                            <span class="text-danger fw-bold ms-1">{{ $gs->currency ?? '$' }}{{ number_format($variant->discount_price, 2) }}</span>
+                                            <span class="badge bg-soft-danger text-danger ms-1">-{{ $variant->discount_percentage }}%</span>
+                                        @else
+                                            {{ $gs->currency ?? '$' }}{{ number_format($variant->regular_price ?? $product->regular_price, 2) }}
+                                        @endif
+                                    </td>
                                     <td>{{ $variant->stock ?? '-' }}</td>
                                 </tr>
-                                @endforeach
+                                @empty
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">No specific variants created. Uses base pricing.</td>
+                                </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>

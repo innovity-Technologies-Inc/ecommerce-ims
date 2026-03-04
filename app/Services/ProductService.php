@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\HelperClass;
-use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductVariant;
@@ -13,21 +12,34 @@ use Illuminate\Support\Str;
 class ProductService
 {
     /**
-     * Store a new product with its variants and images.
+     * Store a newly created product with variants and images.
      */
     public function storeProduct(array $data): Product
     {
         return DB::transaction(function () use ($data) {
+            $regularPrice = $data['regular_price'] ?? null;
+            $discountPercentage = isset($data['discount_percentage']) ? (int) $data['discount_percentage'] : null;
+            $discountPrice = null;
+
+            if ($regularPrice && $discountPercentage && $discountPercentage > 0) {
+                $discountPrice = $regularPrice - ($regularPrice * ($discountPercentage / 100));
+            }
+
             $product = Product::create([
                 'category_id' => $data['category_id'],
                 'sub_category_id' => $data['sub_category_id'] ?? null,
                 'brand_id' => $data['brand_id'] ?? null,
                 'name' => $data['name'],
                 'slug' => Str::slug($data['name']),
+                'short_description' => $data['short_description'] ?? null,
+                'regular_price' => $regularPrice,
+                'discount_price' => $discountPrice,
+                'discount_percentage' => $discountPercentage,
                 'description' => $data['description'] ?? null,
                 'is_new_arrival' => isset($data['is_new_arrival']),
                 'is_hot_deal' => isset($data['is_hot_deal']),
                 'is_featured' => isset($data['is_featured']),
+                'sales_count' => 0,
             ]);
 
             if (isset($data['variants']) && is_array($data['variants'])) {
@@ -38,12 +50,7 @@ class ProductService
 
             if (isset($data['images']) && is_array($data['images'])) {
                 foreach ($data['images'] as $index => $image) {
-                    $path = HelperClass::file_upload($image, 'products');
-                    ProductImage::create([
-                        'product_id' => $product->id,
-                        'image_path' => $path,
-                        'is_primary' => ($index === 0),
-                    ]);
+                    $this->createProductImage($product->id, $image, $index === 0);
                 }
             }
 
@@ -52,17 +59,29 @@ class ProductService
     }
 
     /**
-     * Update an existing product with its variants and images.
+     * Update the specified product.
      */
     public function updateProduct(Product $product, array $data): Product
     {
         return DB::transaction(function () use ($product, $data) {
+            $regularPrice = $data['regular_price'] ?? null;
+            $discountPercentage = isset($data['discount_percentage']) ? (int) $data['discount_percentage'] : null;
+            $discountPrice = null;
+
+            if ($regularPrice && $discountPercentage && $discountPercentage > 0) {
+                $discountPrice = $regularPrice - ($regularPrice * ($discountPercentage / 100));
+            }
+
             $product->update([
                 'category_id' => $data['category_id'],
                 'sub_category_id' => $data['sub_category_id'] ?? null,
                 'brand_id' => $data['brand_id'] ?? null,
                 'name' => $data['name'],
                 'slug' => Str::slug($data['name']),
+                'short_description' => $data['short_description'] ?? null,
+                'regular_price' => $regularPrice,
+                'discount_price' => $discountPrice,
+                'discount_percentage' => $discountPercentage,
                 'description' => $data['description'] ?? null,
                 'is_new_arrival' => isset($data['is_new_arrival']),
                 'is_hot_deal' => isset($data['is_hot_deal']),
@@ -77,19 +96,9 @@ class ProductService
                 }
             }
 
-            // For images: Add new ones if provided (optional: add logic to delete existing specific images)
             if (isset($data['images']) && is_array($data['images'])) {
-                // If there are no existing images, the first new one is primary
-                $hasPrimary = $product->images()->where('is_primary', true)->exists();
-
-                foreach ($data['images'] as $index => $image) {
-                    $path = HelperClass::file_upload($image, 'products');
-                    ProductImage::create([
-                        'product_id' => $product->id,
-                        'image_path' => $path,
-                        'is_primary' => (! $hasPrimary && $index === 0),
-                    ]);
-                    $hasPrimary = true;
+                foreach ($data['images'] as $image) {
+                    $this->createProductImage($product->id, $image, false);
                 }
             }
 
@@ -98,41 +107,55 @@ class ProductService
     }
 
     /**
-     * Delete a product and its related records.
+     * Delete a product and its associated files.
      */
-    public function deleteProduct(Product $product): bool
+    public function deleteProduct(Product $product): void
     {
-        return DB::transaction(function () use ($product) {
-            // Delete images from storage
+        DB::transaction(function () use ($product) {
             foreach ($product->images as $image) {
                 HelperClass::file_delete($image->image_path);
             }
-
-            // Delete database records (assuming cascade isn't set, we do it manually)
-            $product->images()->delete();
-            $product->variants()->delete();
-
-            return $product->delete();
+            $product->delete();
         });
     }
 
     /**
-     * Create a single variant for a product.
+     * Create a product variant.
      */
     protected function createVariant(int $productId, array $variantData): ProductVariant
     {
-        // Explicitly check if product exists (as requested: "Because we are avoiding foreign keys, your Service Class becomes the Guard")
-        if (! Product::where('id', $productId)->exists()) {
-            throw new \Exception("Product with ID {$productId} does not exist.");
+        $regularPrice = isset($variantData['regular_price']) ? (float) $variantData['regular_price'] : null;
+        $discountPercentage = isset($variantData['discount_percentage']) ? (int) $variantData['discount_percentage'] : null;
+        $discountPrice = null;
+
+        if ($regularPrice && $discountPercentage && $discountPercentage > 0) {
+            $discountPrice = $regularPrice - ($regularPrice * ($discountPercentage / 100));
         }
 
         return ProductVariant::create([
             'product_id' => $productId,
+            'variant_name' => $variantData['variant_name'],
             'size' => $variantData['size'] ?? null,
             'color' => $variantData['color'] ?? null,
             'sku' => $variantData['sku'] ?? $this->generateSku($productId, $variantData),
-            'price' => $variantData['price'],
+            'regular_price' => $regularPrice,
+            'discount_price' => $discountPrice,
+            'discount_percentage' => $discountPercentage,
             'stock' => $variantData['stock'] ?? null,
+        ]);
+    }
+
+    /**
+     * Create a product image.
+     */
+    protected function createProductImage(int $productId, $file, bool $isPrimary): ProductImage
+    {
+        $path = HelperClass::file_upload($file, 'products');
+
+        return ProductImage::create([
+            'product_id' => $productId,
+            'image_path' => $path,
+            'is_primary' => $isPrimary,
         ]);
     }
 
@@ -141,16 +164,7 @@ class ProductService
      */
     protected function generateSku(int $productId, array $variantData): string
     {
-        $sku = 'PROD-'.$productId;
-        if (! empty($variantData['size'])) {
-            $sku .= '-'.strtoupper($variantData['size']);
-        }
-        if (! empty($variantData['color'])) {
-            $sku .= '-'.strtoupper($variantData['color']);
-        }
-        $sku .= '-'.Str::random(4);
-
-        return strtoupper($sku);
+        return 'PROD-'.$productId.'-'.strtoupper(Str::random(5));
     }
 
     /**
@@ -158,8 +172,16 @@ class ProductService
      */
     public function getCategoriesForDropdown()
     {
-        return Category::whereNull('parent_id')
+        return \App\Models\Category::whereNull('parent_id')
             ->with('subcategories')
             ->get();
+    }
+
+    /**
+     * Fetch all brands.
+     */
+    public function getBrandsForDropdown()
+    {
+        return \App\Models\Brand::all();
     }
 }

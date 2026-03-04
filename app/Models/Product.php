@@ -12,18 +12,27 @@ class Product extends Model
         'brand_id',
         'name',
         'slug',
+        'short_description',
+        'regular_price',
+        'discount_price',
+        'discount_percentage',
         'description',
         'is_new_arrival',
         'is_hot_deal',
         'is_featured',
+        'sales_count',
     ];
 
     protected function casts(): array
     {
         return [
+            'regular_price' => 'decimal:2',
+            'discount_price' => 'decimal:2',
+            'discount_percentage' => 'integer',
             'is_new_arrival' => 'boolean',
             'is_hot_deal' => 'boolean',
             'is_featured' => 'boolean',
+            'sales_count' => 'integer',
         ];
     }
 

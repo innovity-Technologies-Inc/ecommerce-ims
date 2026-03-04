@@ -48,6 +48,7 @@ Route::middleware('auth')->group(function () {
 Route::controller(FrontendController::class)->group(function () {
     Route::get('/', 'home')->name('home');
     Route::get('/products', 'products')->name('client.products.index');
+    Route::get('/product/{slug}', 'productDetails')->name('client.products.details');
 });
 
 Route::middleware(['auth:web'])->prefix('user')->controller(CustomerController::class)->group(function () {
