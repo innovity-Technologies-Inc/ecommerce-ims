@@ -1,15 +1,16 @@
 <!-- ========== App Menu Start ========== -->
+@php($gs = \App\HelperClass::generalSettings())
 <div class="main-nav">
     <!-- Sidebar Logo -->
     <div class="logo-box">
-        <a href="index.html" class="logo-dark">
-            <img src="assets/images/logo-sm.png" class="logo-sm" alt="logo sm">
-            <img src="assets/images/logo-dark.png" class="logo-lg" alt="logo dark">
+        <a href="{{ route('admin.dashboard') }}" class="logo-dark">
+            <img src="{{ $gs->favicon ? asset('storage/'.$gs->favicon) : asset('admin/assets/images/favicon.ico') }}" class="logo-sm" alt="logo sm" style="height: 30px;">
+            <img src="{{ $gs->dark_logo ? asset('storage/'.$gs->dark_logo) : asset('admin/assets/images/logo-dark.png') }}" class="logo-lg" alt="logo dark" style="height: 50px;">
         </a>
 
-        <a href="index.html" class="logo-light">
-            <img src="assets/images/logo-sm.png" class="logo-sm" alt="logo sm">
-            <img src="assets/images/logo-light.png" class="logo-lg" alt="logo light">
+        <a href="{{ route('admin.dashboard') }}" class="logo-light">
+            <img src="{{ $gs->favicon ? asset('storage/'.$gs->favicon) : asset('admin/assets/images/favicon.ico') }}" class="logo-sm" alt="logo sm" style="height: 30px;">
+            <img src="{{ $gs->dark_logo ? asset('storage/'.$gs->dark_logo) : asset('admin/assets/images/logo-light.png') }}" class="logo-lg" alt="logo light" style="height: 50px;">
         </a>
     </div>
 
@@ -197,12 +198,22 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="settings.html">
+                <a class="nav-link menu-arrow" href="#sidebarSettings" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarSettings">
                                    <span class="nav-icon">
                                         <iconify-icon icon="solar:settings-bold-duotone"></iconify-icon>
                                    </span>
                     <span class="nav-text"> Settings </span>
                 </a>
+                <div class="collapse" id="sidebarSettings">
+                    <ul class="nav sub-navbar-nav">
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="{{ route('admin.settings.general') }}">General Settings</a>
+                        </li>
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="{{ route('admin.settings.mail') }}">Mail Settings</a>
+                        </li>
+                    </ul>
+                </div>
             </li>
 
             <li class="menu-title mt-2">Users</li>

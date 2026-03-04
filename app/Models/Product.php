@@ -13,7 +13,19 @@ class Product extends Model
         'name',
         'slug',
         'description',
+        'is_new_arrival',
+        'is_hot_deal',
+        'is_featured',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'is_new_arrival' => 'boolean',
+            'is_hot_deal' => 'boolean',
+            'is_featured' => 'boolean',
+        ];
+    }
 
     public function brand()
     {

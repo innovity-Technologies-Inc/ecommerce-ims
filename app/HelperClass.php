@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Models\Brand;
+use App\Models\Category;
 use App\Models\GeneralSetting;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -11,6 +13,24 @@ class HelperClass
     public static function generalSettings()
     {
         return GeneralSetting::first();
+    }
+
+    public static function getCategories()
+    {
+        return Category::whereNull('parent_id')->with('subcategories')->get();
+    }
+
+    public static function getBrands()
+    {
+        return Brand::all();
+    }
+
+    public static function wishlistCount()
+    {
+        if (\Illuminate\Support\Facades\Auth::guard('web')->check()) {
+            return \App\Models\Wishlist::where('user_id', \Illuminate\Support\Facades\Auth::guard('web')->id())->count();
+        }
+        return 0;
     }
 
     public static function indexNumberSerialization($data)

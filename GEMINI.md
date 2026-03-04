@@ -17,14 +17,27 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - laravel/pint (PINT) - v1
 - laravel/sail (SAIL) - v1
 - phpunit/phpunit (PHPUNIT) - v11
-- alpinejs (ALPINEJS) - v3
-- tailwindcss (TAILWINDCSS) - v3
 
-## Skills Activation
+## Frontend & Templating (CRITICAL)
 
-This project has domain-specific skills available. You MUST activate the relevant skill whenever you work in that domain—don't wait until you're stuck.
+- **Tech Stack:** Use only **Bootstrap, jQuery, and standard JavaScript** for all frontend and admin panel tasks.
+- **Tailwind/Alpine.js:** Do NOT use Tailwind CSS or Alpine.js for any new components or styling, even if they are present in `package.json`.
+- **Admin Template:** Use `resources/views/admin/structure/master.blade.php` as the base for all admin pages.
+- **Client Template:** Use `resources/views/client/structure/master.blade.php` as the base for all customer-facing pages.
+- **Existing Assets:** Leverage existing assets in `public/admin/assets/` and `public/client/assets/`.
 
-- `tailwindcss-development` — Styles applications using Tailwind CSS v3 utilities. Activates when adding styles, restyling components, working with gradients, spacing, layout, flex, grid, responsive design, dark mode, colors, typography, or borders; or when the user mentions CSS, styling, classes, Tailwind, restyle, hero section, cards, buttons, or any visual/UI changes.
+## Documentation (CRITICAL)
+
+- **`PROJECT_DOCUMENTATION.md`**: This is the source of truth for the project's architecture, flow, and standards.
+- **Mandatory Updates**: Every time you add a new module, modify existing logic, or change the architectural direction, you MUST update this file to reflect the current state of the project.
+
+## Helper Class Usage (CRITICAL)
+
+- **`App\HelperClass`:** You MUST use this class for the following operations:
+    - **Index Serialization:** Use `HelperClass::indexNumberSerialization($paginatedData)` in views to handle table row numbering.
+    - **File Uploads:** Use `HelperClass::file_upload($file, $folder)` for all file storage.
+    - **File Deletions:** Use `HelperClass::file_delete($path)` for removing files.
+- **Proactivity:** You are encouraged to add new, useful static methods to `App\HelperClass` if they can benefit the project or be reused across others.
 
 ## Conventions
 
@@ -239,12 +252,4 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - To run all tests: `php artisan test --compact`.
 - To run all tests in a file: `php artisan test --compact tests/Feature/ExampleTest.php`.
 - To filter on a particular test name: `php artisan test --compact --filter=testName` (recommended after making a change to a related file).
-
-=== tailwindcss/core rules ===
-
-# Tailwind CSS
-
-- Always use existing Tailwind conventions; check project patterns before adding new ones.
-- IMPORTANT: Always use `search-docs` tool for version-specific Tailwind CSS documentation and updated code examples. Never rely on training data.
-- IMPORTANT: Activate `tailwindcss-development` every time you're working with a Tailwind CSS or styling-related task.
 </laravel-boost-guidelines>

@@ -1,4 +1,9 @@
 <!-- Header Start -->
+@php
+    $gs = \App\HelperClass::generalSettings();
+    $nav_categories = \App\HelperClass::getCategories();
+    $nav_brands = \App\HelperClass::getBrands();
+@endphp
 <header class="main-header">
     <!-- Header Top Start -->
     <div class="header-top-nav">
@@ -12,7 +17,7 @@
                                 <strong>{{Auth::user()->name}}</strong>
                             @else
                                 you
-                            @endif to Smart Ecom!</p>
+                            @endif to {{ $gs->business_name ?? 'Smart Ecom' }}!</p>
                     </div>
                 </div>
                 <!--Left End-->
@@ -20,11 +25,8 @@
                 <div class="col-8 d-lg-block d-none">
                     <div class="header-right-nav hover-style-default">
                         <ul>
-                            {{--<li>
-                                <a href="compare.html"><i class="ion-ios-shuffle-strong"></i>Compare (0)</a>
-                            </li>--}}
                             <li class="border-color-white">
-                                <a href="wishlist.html"><i class="ion-android-favorite-outline"></i>Wishlist (0)</a>
+                                <a href="{{ route('user.wishlist.index') }}"><i class="ion-android-favorite-outline"></i>Wishlist ({{ \App\HelperClass::wishlistCount() }})</a>
                             </li>
                         </ul>
                         <!-- Header Top Language Currency -->
@@ -83,7 +85,7 @@
                 <!-- Logo Start -->
                 <div class="col-md-2 col-sm-2">
                     <div class="logo">
-                        <a href="index.html"><img src="{{asset('client/assets/images/logo/logo.jpg')}}" alt=""></a>
+                        <a href="{{ route('home') }}"><img src="{{ $gs->light_logo ? asset('storage/'.$gs->light_logo) : asset('client/assets/images/logo/logo.jpg') }}" alt="{{ $gs->business_name ?? '' }}" style="max-height: 50px; width: auto;"></a>
                     </div>
                 </div>
                 <!-- Logo End -->
@@ -98,53 +100,22 @@
                             <li class="menu-dropdown">
                                 <a href="#">Shop <i class="ion-ios-arrow-down"></i></a>
                                 <ul class="mega-menu-wrap">
+                                    @foreach($nav_categories as $category)
                                     <li>
                                         <ul>
-                                            <li class="mega-menu-title"><a href="#">Shop Grid</a></li>
-                                            <li><a href="shop-3-column.html">Shop Grid 3 Column</a></li>
-                                            <li><a href="shop-4-column.html">Shop Grid 4 Column</a></li>
-                                            <li><a href="shop-left-sidebar.html">Shop Grid Left Sidebar</a></li>
-                                            <li><a href="shop-right-sidebar.html">Shop Grid Right Sidebar</a></li>
+                                            <li class="mega-menu-title"><a href="{{ route('client.products.index', ['category' => $category->id]) }}">{{ $category->name }}</a></li>
+                                            @foreach($category->subcategories as $subcategory)
+                                               <li><a href="{{ route('client.products.index', ['category' => $subcategory->id]) }}">{{ $subcategory->name }}</a></li>
+                                            @endforeach
                                         </ul>
                                     </li>
-                                    <li>
-                                        <ul>
-                                            <li class="mega-menu-title"><a href="#">Shop List</a></li>
-                                            <li><a href="shop-list.html">Shop List</a></li>
-                                            <li><a href="shop-list-left-sidebar.html">Shop List Left Sidebar</a></li>
-                                            <li><a href="shop-list-right-sidebar.html">Shop List Right Sidebar</a></li>
-                                            <li><a href="shop-filter.html">Shop Filter Page</a></li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <ul>
-                                            <li class="mega-menu-title"><a href="#">Shop Single</a></li>
-                                            <li><a href="single-product.html">Shop Single</a></li>
-                                            <li><a href="single-product-variable.html">Shop Variable</a></li>
-                                            <li><a href="single-product-affiliate.html">Shop Affiliate</a></li>
-                                            <li><a href="single-product-group.html">Shop Group</a></li>
-                                            <li><a href="single-product-tabstyle-2.html">Shop Tab 2</a></li>
-                                            <li><a href="single-product-tabstyle-3.html">Shop Tab 3</a></li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <ul>
-                                            <li class="mega-menu-title"><a href="#">Shop Single</a></li>
-                                            <li><a href="single-product-slider.html">Shop Slider</a></li>
-                                            <li><a href="single-product-gallery-left.html">Shop Gallery Left</a></li>
-                                            <li><a href="single-product-gallery-right.html">Shop Gallery Right</a></li>
-                                            <li><a href="single-product-sticky-left.html">Shop Sticky Left</a></li>
-                                            <li><a href="single-product-sticky-right.html">Shop Sticky Right</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="banner-wrapper">
-                                        <a href="single-product.html"><img
+                                    @endforeach
+                                    <li class="banner-wrapper">                                        <a href="#"><img
                                                 src="{{asset('client/assets/images/banner-image/banner-menu.jpg')}}"
                                                 alt=""></a>
                                     </li>
                                 </ul>
-                            </li>
-                            <li class="menu-dropdown">
+                            </li>                            <li class="menu-dropdown">
                                 <a href="#">Pages <i class="ion-ios-arrow-down"></i></a>
                                 <ul class="sub-menu">
                                     <li><a href="about.html">About Page</a></li>
@@ -194,86 +165,17 @@
                         <div class="header_account_list search_list">
                             <a href="javascript:void(0)"><i class="ion-ios-search-strong"></i></a>
                             <div class="dropdown_search">
-                                <form action="#">
-                                    <input placeholder="Search entire store here ..." type="text">
+                                <form action="{{ route('client.products.index') }}" method="GET">
+                                    <input name="search" value="{{ request('search') }}" placeholder="Search entire store here ..." type="text">
                                     <div class="search-category">
-                                        <select class="bootstrap-select" name="poscats">
-                                            <option value="0">All categories</option>
-                                            <option value="104">
-                                                Fresh Food
-                                            </option>
-                                            <option value="183">
-                                                - - Fresh Fruit
-                                            </option>
-                                            <option value="187">
-                                                - - - - Bananas
-                                            </option>
-                                            <option value="188">
-                                                - - - - Apples &amp; Pears
-                                            </option>
-                                            <option value="189">
-                                                - - - - Berries &amp; Cherries
-                                            </option>
-                                            <option value="190">
-                                                - - - - Oranges &amp; Citrus Fruit
-                                            </option>
-                                            <option value="191">
-                                                - - - - Grapes
-                                            </option>
-                                            <option value="184">
-                                                - - Fresh Vegetables
-                                            </option>
-                                            <option value="192">
-                                                - - - - Potatoes &amp; Sweet Potatoes
-                                            </option>
-                                            <option value="193">
-                                                - - - - Onions &amp; Leeks
-                                            </option>
-                                            <option value="194">
-                                                - - - - Carrots &amp; Root Vegetables
-                                            </option>
-                                            <option value="195">
-                                                - - - - Broccoli &amp; Cauliflower
-                                            </option>
-                                            <option value="196">
-                                                - - - - Cabbages &amp; Greens
-                                            </option>
-                                            <option value="185">
-                                                - - Fresh Salad &amp; Dips
-                                            </option>
-                                            <option value="197">
-                                                - - - - Lettuce &amp; Salad bags
-                                            </option>
-                                            <option value="198">
-                                                - - - - Tomatoes
-                                            </option>
-                                            <option value="199">
-                                                - - - - Cucumber
-                                            </option>
-                                            <option value="200">
-                                                - - - - Celery
-                                            </option>
-                                            <option value="201">
-                                                - - - - Peppers
-                                            </option>
-                                            <option value="186">
-                                                - - Milk, Butter &amp; Eggs
-                                            </option>
-                                            <option value="202">
-                                                - - - - Milk
-                                            </option>
-                                            <option value="203">
-                                                - - - - Spreads &amp; Margarine
-                                            </option>
-                                            <option value="204">
-                                                - - - - Fresh Cream &amp; Custard
-                                            </option>
-                                            <option value="205">
-                                                - - - - Eggs
-                                            </option>
-                                            <option value="206">
-                                                - - - - Baking &amp; Cooking
-                                            </option>
+                                        <select class="bootstrap-select" name="category">
+                                            <option value="">All categories</option>
+                                            @foreach(\App\HelperClass::getCategories() as $category)
+                                                <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                                @foreach($category->subcategories as $subcategory)
+                                                    <option value="{{ $subcategory->id }}" {{ request('category') == $subcategory->id ? 'selected' : '' }}>-- {{ $subcategory->name }}</option>
+                                                @endforeach
+                                            @endforeach
                                         </select>
                                     </div>
                                     <button type="submit"><i class="ion-ios-search-strong"></i></button>
@@ -316,7 +218,7 @@
                 </div>
                 <div class="col-md-6 col-sm-4 d-flex justify-content-center">
                     <div class="logo m-0">
-                        <a href="index.html"><img src="{{asset('client/assets/images/logo/logo.jpg')}}" alt=""></a>
+                        <a href="{{ route('home') }}"><img src="{{ $gs->light_logo ? asset('storage/'.$gs->light_logo) : asset('client/assets/images/logo/logo.jpg') }}" alt="{{ $gs->business_name ?? '' }}" style="max-height: 50px; width: auto;"></a>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-5">
@@ -326,9 +228,18 @@
                             <button class="dropdown-toggle border-0 header-action-btn hover-style-default"
                                     data-bs-toggle="dropdown"><i class="ion-person"></i></button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{{route('user.account')}}">My account</a></li>
-                                <li><a class="dropdown-item" href="checkout.html">Checkout</a></li>
-                                <li><a class="dropdown-item" href="login.html">Sign in</a></li>
+                                @if(Auth::guard('web')->check())
+                                    <li><a class="dropdown-item" href="{{route('user.account')}}">My account</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('user.wishlist.index') }}">Wishlist</a></li>
+                                    <form action="{{route('logout')}}" method="post">
+                                        @csrf
+                                        <input type="hidden" name="type" value="user">
+                                        <li><button class="dropdown-item" type="submit">Log Out</button></li>
+                                    </form>
+                                @else
+                                    <li><a class="dropdown-item" href="{{ route('login') }}">Sign in</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('register') }}">Register</a></li>
+                                @endif
                             </ul>
                         </div>
                         <div class="mini-cart-warp">
@@ -350,86 +261,17 @@
     <div class="container-fluid">
         <div class="header-account-list">
             <div class="dropdown-search">
-                <form action="#">
-                    <input placeholder="Search entire store here ..." type="text">
+                <form action="{{ route('client.products.index') }}" method="GET">
+                    <input name="search" value="{{ request('search') }}" placeholder="Search entire store here ..." type="text">
                     <div class="search-category">
-                        <select class="bootstrap-select" name="poscats">
-                            <option value="0">All categories</option>
-                            <option value="104">
-                                Fresh Food
-                            </option>
-                            <option value="183">
-                                - - Fresh Fruit
-                            </option>
-                            <option value="187">
-                                - - - - Bananas
-                            </option>
-                            <option value="188">
-                                - - - - Apples &amp; Pears
-                            </option>
-                            <option value="189">
-                                - - - - Berries &amp; Cherries
-                            </option>
-                            <option value="190">
-                                - - - - Oranges &amp; Citrus Fruit
-                            </option>
-                            <option value="191">
-                                - - - - Grapes
-                            </option>
-                            <option value="184">
-                                - - Fresh Vegetables
-                            </option>
-                            <option value="192">
-                                - - - - Potatoes &amp; Sweet Potatoes
-                            </option>
-                            <option value="193">
-                                - - - - Onions &amp; Leeks
-                            </option>
-                            <option value="194">
-                                - - - - Carrots &amp; Root Vegetables
-                            </option>
-                            <option value="195">
-                                - - - - Broccoli &amp; Cauliflower
-                            </option>
-                            <option value="196">
-                                - - - - Cabbages &amp; Greens
-                            </option>
-                            <option value="185">
-                                - - Fresh Salad &amp; Dips
-                            </option>
-                            <option value="197">
-                                - - - - Lettuce &amp; Salad bags
-                            </option>
-                            <option value="198">
-                                - - - - Tomatoes
-                            </option>
-                            <option value="199">
-                                - - - - Cucumber
-                            </option>
-                            <option value="200">
-                                - - - - Celery
-                            </option>
-                            <option value="201">
-                                - - - - Peppers
-                            </option>
-                            <option value="186">
-                                - - Milk, Butter &amp; Eggs
-                            </option>
-                            <option value="202">
-                                - - - - Milk
-                            </option>
-                            <option value="203">
-                                - - - - Spreads &amp; Margarine
-                            </option>
-                            <option value="204">
-                                - - - - Fresh Cream &amp; Custard
-                            </option>
-                            <option value="205">
-                                - - - - Eggs
-                            </option>
-                            <option value="206">
-                                - - - - Baking &amp; Cooking
-                            </option>
+                        <select class="bootstrap-select" name="category">
+                            <option value="">All categories</option>
+                            @foreach(\App\HelperClass::getCategories() as $category)
+                                <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                @foreach($category->subcategories as $subcategory)
+                                    <option value="{{ $subcategory->id }}" {{ request('category') == $subcategory->id ? 'selected' : '' }}>-- {{ $subcategory->name }}</option>
+                                @endforeach
+                            @endforeach
                         </select>
                     </div>
                     <button type="submit"><i class="ion-ios-search-strong"></i></button>
@@ -509,14 +351,11 @@
         <p>Call us:</p>
         <a class="color-black" href="tel:(+800)345678">(+800)345678</a>
     </div>
-    <!-- offcanvas compare & wishlist -->
+    <!-- offcanvas wishlist -->
     <div class="user-panel">
-        <ul class="d-flex justify-content-between">
-            <li class="m-0">
-                <a href="compare.html"><i class="ion-ios-shuffle-strong"></i>Compare (0)</a>
-            </li>
+        <ul class="d-flex justify-content-center">
             <li>
-                <a href="wishlist.html"><i class="ion-android-favorite-outline"></i>Wishlist (0)</a>
+                <a href="{{ route('user.wishlist.index') }}"><i class="ion-android-favorite-outline"></i>Wishlist ({{ \App\HelperClass::wishlistCount() }})</a>
             </li>
         </ul>
     </div>
@@ -553,52 +392,21 @@
     <div class="inner customScroll">
         <div class="offcanvas-menu mb-4">
             <ul>
-                <li><a href="#"><span class="menu-text">Home</span></a>
+                <li><a href="{{ route('home') }}"><span class="menu-text">Home</span></a></li>
+                <li><a href="{{ route('client.products.index') }}"><span class="menu-text">Shop</span></a>
                     <ul class="sub-menu">
-                        <li><a href="#"><span class="menu-text">Home Organic</span></a>
+                        @foreach($nav_categories as $category)
+                        <li>
+                            <a href="{{ route('client.products.index', ['category' => $category->id]) }}"><span class="menu-text">{{ $category->name }}</span></a>
+                            @if($category->subcategories->count() > 0)
                             <ul class="sub-menu">
-                                <li><a href="index.html">Organic 1</a></li>
-                                <li><a href="index-2.html">Organic 2</a></li>
-                                <li><a href="index-3.html">Organic 3</a></li>
-                                <li><a href="index-4.html">Organic 4</a></li>
+                                @foreach($category->subcategories as $subcategory)
+                                <li><a href="{{ route('client.products.index', ['category' => $subcategory->id]) }}">{{ $subcategory->name }}</a></li>
+                                @endforeach
                             </ul>
+                            @endif
                         </li>
-                        <li><a href="#"><span class="menu-text">Home Cosmetic</span></a>
-                            <ul class="sub-menu">
-                                <li><a href="index-5.html">Cosmetic 1</a></li>
-                                <li><a href="index-6.html">Cosmetic 2</a></li>
-                                <li><a href="index-7.html">Cosmetic 3</a></li>
-                                <li><a href="index-8.html">Cosmetic 4</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#"><span class="menu-text">Home Digital</span></a>
-                            <ul class="sub-menu">
-                                <li><a href="index-9.html">Digital 1</a></li>
-                                <li><a href="index-10.html">Digital 2</a></li>
-                                <li><a href="index-11.html">Digital 3</a></li>
-                                <li><a href="index-12.html">Digital 4</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#"><span class="menu-text">Home Furniture</span></a>
-                            <ul class="sub-menu">
-                                <li><a href="index-13.html">Furniture 1</a></li>
-                                <li><a href="index-14.html">Furniture 2</a></li>
-                                <li><a href="index-15.html">Furniture 3</a></li>
-                                <li><a href="index-16.html">Furniture 4</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="#"><span class="menu-text">Home Medical</span></a>
-                            <ul class="sub-menu">
-                                <li><a href="index-17.html">Medical 1</a></li>
-                                <li><a href="index-18.html">Medical 2</a></li>
-                                <li><a href="index-19.html">Medical 3</a></li>
-                                <li><a href="index-20.html">Medical 4</a></li>
-                            </ul>
-                        </li>
-                        <li class="menu-dropdown position-relative">
-                            <a href="index-21.html">Single Product</a>
-                            <span class="stekar">new</span>
-                        </li>
+                        @endforeach
                     </ul>
                 </li>
                 <li class="menu-dropdown">
@@ -607,64 +415,13 @@
                         <li><a href="about.html">About Page</a></li>
                         <li><a href="cart.html">Cart Page</a></li>
                         <li><a href="checkout.html">Checkout Page</a></li>
-                        <li><a href="compare.html">Compare Page</a></li>
-                        <li><a href="login.html">Login & Regiter Page</a></li>
-                        <li><a href="{{route('user.account')}}">Account Page</a></li>
-                        <li><a href="wishlist.html">Wishlist Page</a></li>
-                    </ul>
-                </li>
-                <li><a href="#"><span class="menu-text">Shop</span></a>
-                    <ul class="sub-menu">
-                        <li>
-                            <a href="#"><span class="menu-text">Shop Page</span></a>
-                            <ul class="sub-menu">
-                                <li><a href="shop-3-column.html">Shop Grid 3 Column</a></li>
-                                <li><a href="shop-4-column.html">Shop Grid 4 Column</a></li>
-                                <li><a href="shop-left-sidebar.html">Shop Grid Left Sidebar</a>
-                                </li>
-                                <li><a href="shop-right-sidebar.html">Shop Grid Right
-                                        Sidebar</a></li>
-                                <li><a href="shop-list.html">Shop List</a></li>
-                                <li><a href="shop-list-left-sidebar.html">Shop List Left
-                                        Sidebar</a></li>
-                                <li><a href="shop-list-right-sidebar.html">Shop List Right
-                                        Sidebar</a></li>
-                                <li><a href="shop-filter.html">Shop Filter Page</a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="#"><span class="menu-text">product Details Page</span></a>
-                            <ul class="sub-menu">
-                                <li><a href="single-product.html">Shop Single</a></li>
-                                <li><a href="single-product-variable.html">Shop Variable</a>
-                                </li>
-                                <li><a href="single-product-affiliate.html">Shop Affiliate</a>
-                                </li>
-                                <li><a href="single-product-group.html">Shop Group</a></li>
-                                <li><a href="single-product-tabstyle-2.html">Shop Tab 2</a></li>
-                                <li><a href="single-product-tabstyle-3.html">Shop Tab 3</a></li>
-                                <li><a href="single-product-slider.html">Shop Slider</a></li>
-                                <li><a href="single-product-gallery-left.html">Shop Gallery
-                                        Left</a></li>
-                                <li><a href="single-product-gallery-right.html">Shop Gallery
-                                        Right</a></li>
-                                <li><a href="single-product-sticky-left.html">Shop Sticky
-                                        Left</a></li>
-                                <li><a href="single-product-sticky-right.html">Shop Sticky
-                                        Right</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                <li><a href="#"><span class="menu-text">Blog</span></a>
-                    <ul class="sub-menu">
-                        <li><a href="blog-grid-left-sidebar.html">Grid Left Sidebar</a></li>
-                        <li><a href="blog-grid-right-sidebar.html">Grid Right Sidebar</a></li>
-                        <li><a href="blog-list-left-sidebar.html">List Left Sidebar</a></li>
-                        <li><a href="blog-list-right-sidebar.html">List Right Sidebar</a></li>
-                        <li><a href="blog-single-left-sidebar.html">Single Left Sidebar</a></li>
-                        <li><a href="blog-single-right-sidebar.html">Single Right Sidbar</a>
-                        </li>
+                        @if(Auth::guard('web')->check())
+                            <li><a href="{{ route('user.wishlist.index') }}">Wishlist Page</a></li>
+                            <li><a href="{{route('user.account')}}">Account Page</a></li>
+                        @else
+                            <li><a href="{{ route('login') }}">Login Page</a></li>
+                            <li><a href="{{ route('register') }}">Register Page</a></li>
+                        @endif
                     </ul>
                 </li>
                 <li><a href="contact.html">Contact Us</a></li>

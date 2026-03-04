@@ -16,8 +16,10 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @php($sl=\App\HelperClass::indexNumberSerialization($users))
-                        @foreach($users as $data)
+                        @php
+                            $sl = \App\HelperClass::indexNumberSerialization($users);
+                        @endphp
+                        @foreach ($users as $data)
                         <tr>
                             <td>{{$sl++}}</td>
                            <td>{{$data->name}}</td>

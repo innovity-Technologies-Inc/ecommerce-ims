@@ -25,6 +25,9 @@ class ProductService
                 'name' => $data['name'],
                 'slug' => Str::slug($data['name']),
                 'description' => $data['description'] ?? null,
+                'is_new_arrival' => isset($data['is_new_arrival']),
+                'is_hot_deal' => isset($data['is_hot_deal']),
+                'is_featured' => isset($data['is_featured']),
             ]);
 
             if (isset($data['variants']) && is_array($data['variants'])) {
@@ -61,6 +64,9 @@ class ProductService
                 'name' => $data['name'],
                 'slug' => Str::slug($data['name']),
                 'description' => $data['description'] ?? null,
+                'is_new_arrival' => isset($data['is_new_arrival']),
+                'is_hot_deal' => isset($data['is_hot_deal']),
+                'is_featured' => isset($data['is_featured']),
             ]);
 
             // Simple strategy for variants: Replace them
@@ -81,7 +87,7 @@ class ProductService
                     ProductImage::create([
                         'product_id' => $product->id,
                         'image_path' => $path,
-                        'is_primary' => (!$hasPrimary && $index === 0),
+                        'is_primary' => (! $hasPrimary && $index === 0),
                     ]);
                     $hasPrimary = true;
                 }
@@ -126,6 +132,7 @@ class ProductService
             'color' => $variantData['color'] ?? null,
             'sku' => $variantData['sku'] ?? $this->generateSku($productId, $variantData),
             'price' => $variantData['price'],
+            'stock' => $variantData['stock'] ?? null,
         ]);
     }
 

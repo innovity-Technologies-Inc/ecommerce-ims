@@ -1,4 +1,5 @@
 <!-- Footer Area start -->
+@php($gs = \App\HelperClass::generalSettings())
 <footer class="footer-area">
     <div class="footer-top">
         <div class="container">
@@ -7,11 +8,11 @@
                 <div class="col-md-6 col-lg-4">
                     <!-- footer logo -->
                     <div class="footer-logo">
-                        <a href="index.html"><img src="{{asset('client/assets/images/logo/footer-logo.png')}}" alt=""></a>
+                        <a href="{{ route('home') }}"><img src="{{ $gs->light_logo ? asset('storage/'.$gs->light_logo) : asset('client/assets/images/logo/footer-logo.png') }}" alt="{{ $gs->business_name ?? '' }}" style="max-height: 40px; width: auto;"></a>
                     </div>
                     <!-- footer logo -->
                     <div class="about-footer">
-                        <p class="text-info">We are a team of designers and developers that create high quality HTML template</p>
+                        <p class="text-info">{{ $gs->meta_description ?? 'We are a team of designers and developers that create high quality HTML template' }}</p>
                         <div class="need-help">
                             <p class="phone-info">
                                 NEED HELP?
@@ -109,8 +110,10 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6 col-lg-5 text-center text-md-start order-2 order-md-1 mt-4 mt-md-0">
-                    <p class="copy-text">Copyright © <a href="https://gen-itech.com/"> Gen-Itech</a>. All Rights
-                        Reserved</p>
+                    <p class="copy-text">
+                        Copyright © <a href="{{ route('home') }}"> {{ $gs->business_name ?? 'Smart Ecom' }}</a>. All Rights Reserved
+                        | Developed by <a href="https://gen-itech.com/" target="_blank">Gen-Itech</a>
+                    </p>
                 </div>
                 <div class="col-md-6 col-lg-7 text-center text-md-end order-1 order-md-2">
                     <img class="payment-img" src="{{asset('client/assets/images/icons/payment.png')}}" alt="">

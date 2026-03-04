@@ -4,7 +4,10 @@
 <div class="container-xxl">
     <div class="d-flex align-items-center justify-content-between mb-3">
         <h4 class="mb-0">Product Details</h4>
-        <a href="{{ route('admin.products.index') }}" class="btn btn-secondary btn-sm">Back to List</a>
+        <div class="d-flex gap-2">
+            <a href="{{ route('admin.products.edit', $product->id) }}" class="btn btn-primary btn-sm">Edit Product</a>
+            <a href="{{ route('admin.products.index') }}" class="btn btn-secondary btn-sm">Back to List</a>
+        </div>
     </div>
 
     <div class="row">
@@ -35,8 +38,19 @@
 
         <div class="col-lg-8">
             <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">{{ $product->name }}</h4>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="card-title mb-0">{{ $product->name }}</h4>
+                    <div class="d-flex gap-1">
+                        @if($product->is_new_arrival)
+                            <span class="badge bg-success">Newly Arrival</span>
+                        @endif
+                        @if($product->is_hot_deal)
+                            <span class="badge bg-danger">Hot Deal</span>
+                        @endif
+                        @if($product->is_featured)
+                            <span class="badge bg-primary">Featured</span>
+                        @endif
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="row mb-3">
@@ -65,6 +79,7 @@
                                     <th>Color</th>
                                     <th>SKU</th>
                                     <th>Price</th>
+                                    <th>Stock</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -74,6 +89,7 @@
                                     <td>{{ $variant->color ?? '-' }}</td>
                                     <td>{{ $variant->sku }}</td>
                                     <td>${{ number_format($variant->price, 2) }}</td>
+                                    <td>{{ $variant->stock ?? '-' }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>

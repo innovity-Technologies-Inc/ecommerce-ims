@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    @php
+        $gs = \App\HelperClass::generalSettings();
+    @endphp
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Smart E-commerce</title>
+    <title>{{ $gs->business_name ?? 'Smart E-commerce' }}</title>
+    <meta name="title" content="{{ $gs->meta_title ?? '' }}">
+    <meta name="description" content="{{ $gs->meta_description ?? '' }}">
+    <meta name="author" content="{{ $gs->business_name ?? '' }}">
     <!-- Favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="{{asset('client/assets/images/favicon/favicon.png')}}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ $gs->favicon ? asset('storage/'.$gs->favicon) : asset('client/assets/images/favicon/favicon.png') }}">
 
     <!-- Google Fonts -->
     <link href="../../css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
@@ -32,9 +38,6 @@
 
 
     {{--    Select 2 Css --}}
-
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    {{--    <link href="{{ asset('assets/libs/select2/select2.min.css') }}" rel="stylesheet" type="text/css">--}}
 
 
     {{--    Summernote Css --}}
@@ -257,27 +260,7 @@
 
 
 {{-- Select 2 Js --}}
- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-
-<script>
-    $(document).ready(function() {
-        // basic select2
-        $('.select2_list').select2({
-            width: '100%',
-            theme: 'bootstrap-5',
-        });
-
-        // can add tags, select the typed word and press enter to add it to the list
-        $('.list').select2({
-            width: '100%',
-            tags: true, // Allow new entries as tags
-            tokenSeparators: [','],
-            placeholder: "Choose One",
-            theme: 'bootstrap-5',
-        });
-    });
-</script>
 
 {{-- Filepond Js --}}
  <script src="https://unpkg.com/filepond/dist/filepond.min.js"></script>

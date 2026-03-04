@@ -12,7 +12,16 @@ class ProductVariant extends Model
         'color',
         'sku',
         'price',
+        'stock',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'price' => 'decimal:2',
+            'stock' => 'integer',
+        ];
+    }
 
     public function product()
     {

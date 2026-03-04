@@ -2,16 +2,20 @@
 <html lang="en">
 
 <head>
+    @php
+        $gs = \App\HelperClass::generalSettings();
+    @endphp
     <!-- Title Meta -->
     <meta charset="utf-8" />
-    <title>Smart Ecom</title>
+    <title>{{ $gs->business_name ?? 'Smart Ecom' }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Admin Panel" />
-    <meta name="author" content="Daiyan" />
+    <meta name="description" content="{{ $gs->meta_description ?? 'Admin Panel' }}" />
+    <meta name="author" content="{{ $gs->business_name ?? 'Daiyan' }}" />
+    <meta name="title" content="{{ $gs->meta_title ?? '' }}" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{asset('admin/assets/images/favicon.ico')}}">
+    <link rel="shortcut icon" href="{{ $gs->favicon ? asset('storage/'.$gs->favicon) : asset('admin/assets/images/favicon.ico') }}">
 
     <!-- Vendor css (Require in all Page) -->
     <link href="{{asset('admin/assets/css/vendor.min.css')}}" rel="stylesheet" type="text/css" />

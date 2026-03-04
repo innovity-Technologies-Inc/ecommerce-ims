@@ -22,8 +22,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @php($sl = \App\HelperClass::indexNumberSerialization($products))
-                        @foreach($products as $data)
+                    @php
+                        $sl = \App\HelperClass::indexNumberSerialization($products);
+                    @endphp
+                    @foreach ($products as $data)
                         <tr>
                             <td>{{$sl++}}</td>
                             <td>

@@ -81,6 +81,23 @@
                                 </div>
                             </div>
 
+                            <!-- Product Flags -->
+                            <div class="col-lg-12 mb-3">
+                                <label class="form-label d-block">Product Flags</label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" name="is_new_arrival" id="is_new_arrival" value="1" {{ old('is_new_arrival', $product->is_new_arrival ?? false) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="is_new_arrival">Newly Arrival</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" name="is_hot_deal" id="is_hot_deal" value="1" {{ old('is_hot_deal', $product->is_hot_deal ?? false) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="is_hot_deal">Hot Deals</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" name="is_featured" id="is_featured" value="1" {{ old('is_featured', $product->is_featured ?? false) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="is_featured">Featured</label>
+                                </div>
+                            </div>
+
                             <!-- Image Upload Section -->
                             <div class="col-lg-12">
                                 <div class="mb-3">
@@ -120,12 +137,13 @@
                                                 <th>Color</th>
                                                 <th>SKU (Optional)</th>
                                                 <th>Price</th>
+                                                <th>Stock</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @php
-                                                $defaultVariants = [['size' => '', 'color' => '', 'sku' => '', 'price' => '']];
+                                                $defaultVariants = [['size' => '', 'color' => '', 'sku' => '', 'price' => '', 'stock' => '']];
                                                 $oldVariants = old('variants', isset($product) ? $product->variants->toArray() : $defaultVariants);
                                             @endphp
                                             @foreach($oldVariants as $index => $variant)
@@ -134,6 +152,7 @@
                                                     <td><input type="text" name="variants[{{ $index }}][color]" class="form-control" placeholder="e.g. Red" value="{{ $variant['color'] ?? '' }}"></td>
                                                     <td><input type="text" name="variants[{{ $index }}][sku]" class="form-control" placeholder="Auto-generated if empty" value="{{ $variant['sku'] ?? '' }}"></td>
                                                     <td><input type="number" step="0.01" name="variants[{{ $index }}][price]" class="form-control" placeholder="0.00" value="{{ $variant['price'] ?? '' }}" required></td>
+                                                    <td><input type="number" name="variants[{{ $index }}][stock]" class="form-control" placeholder="e.g. 100" value="{{ $variant['stock'] ?? '' }}"></td>
                                                     <td>
                                                         <button type="button" class="btn btn-danger btn-sm remove-row" {{ count($oldVariants) <= 1 ? 'disabled' : '' }}><i class="bx bx-trash"></i></button>
                                                     </td>
@@ -161,8 +180,9 @@
     </div>
 </div>
 
-<!-- Page Specific JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+@endsection
+
+@section('scripts')
 <script>
     $(document).ready(function() {
         const categorySelect = $('#category_id');
@@ -181,13 +201,13 @@
 
             // Refresh Select2 display
             if (subCategorySelect.hasClass('select2-hidden-accessible')) {
-                subCategorySelect.select2('destroy');
+                subCategorySelect.trigger('change.select2');
+            } else {
+                subCategorySelect.select2({
+                    width: '100%',
+                    theme: 'bootstrap-5'
+                });
             }
-            subCategorySelect.select2({
-                width: '100%',
-                theme: 'bootstrap-5'
-            });
-            subCategorySelect.trigger('change');
         }
 
         // Handle category change
@@ -200,16 +220,18 @@
         // Initial load for existing values
         const initialCategoryId = categorySelect.val();
         if (initialCategoryId) {
-            const initialSubcategories = categorySelect.find(':selected').data('subcategories');
-            if (initialSubcategories) {
-                setTimeout(() => {
+            // Give a small delay for Select2 to be ready if it's initialized globally
+            setTimeout(() => {
+                const selectedOption = categorySelect.find(':selected');
+                const initialSubcategories = selectedOption.data('subcategories');
+                if (initialSubcategories) {
                     updateSubcategories(initialSubcategories, oldSubCategoryId);
-                }, 100);
-            }
+                }
+            }, 300);
         }
 
         // Dynamic Variant UI
-        let variantIndex = {{ count($oldVariants) }};
+        let variantIndex = {{ isset($oldVariants) ? count($oldVariants) : 1 }};
         $('#add-variant-row').on('click', function() {
             const newRow = `
                 <tr class="variant-row">
@@ -217,6 +239,7 @@
                     <td><input type="text" name="variants[${variantIndex}][color]" class="form-control" placeholder="e.g. Red"></td>
                     <td><input type="text" name="variants[${variantIndex}][sku]" class="form-control" placeholder="Auto-generated if empty"></td>
                     <td><input type="number" step="0.01" name="variants[${variantIndex}][price]" class="form-control" placeholder="0.00" required></td>
+                    <td><input type="number" name="variants[${variantIndex}][stock]" class="form-control" placeholder="e.g. 100"></td>
                     <td>
                         <button type="button" class="btn btn-danger btn-sm remove-row"><i class="bx bx-trash"></i></button>
                     </td>
@@ -235,5 +258,4 @@
         });
     });
 </script>
-
 @endsection

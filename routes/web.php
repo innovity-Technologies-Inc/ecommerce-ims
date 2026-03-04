@@ -7,6 +7,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/test', function () {
@@ -28,6 +30,13 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
 
     Route::resource('categories', CategoryController::class)->names('admin.categories');
     Route::resource('brands', BrandController::class)->names('admin.brands');
+
+    Route::controller(SettingsController::class)->prefix('settings')->group(function () {
+        Route::get('/general', 'generalSettings')->name('admin.settings.general');
+        Route::post('/general/update', 'updateGeneralSettings')->name('admin.settings.general.update');
+        Route::get('/mail', 'mailSettings')->name('admin.settings.mail');
+        Route::post('/mail/update', 'updateMailSettings')->name('admin.settings.mail.update');
+    });
 });
 
 Route::middleware('auth')->group(function () {
@@ -38,7 +47,7 @@ Route::middleware('auth')->group(function () {
 
 Route::controller(FrontendController::class)->group(function () {
     Route::get('/', 'home')->name('home');
-
+    Route::get('/products', 'products')->name('client.products.index');
 });
 
 Route::middleware(['auth:web'])->prefix('user')->controller(CustomerController::class)->group(function () {
@@ -47,6 +56,11 @@ Route::middleware(['auth:web'])->prefix('user')->controller(CustomerController::
     Route::put('password-update', 'changePassword')->name('user.password.update');
     Route::put('address-update', 'addressUpdate')->name('user.address.update');
 
+    Route::controller(WishlistController::class)->prefix('wishlist')->group(function () {
+        Route::get('/', 'index')->name('user.wishlist.index');
+        Route::post('/store', 'store')->name('user.wishlist.store');
+        Route::delete('/{id}/destroy', 'destroy')->name('user.wishlist.destroy');
+    });
 });
 
 require __DIR__.'/auth.php';
