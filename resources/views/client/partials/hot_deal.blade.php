@@ -1,3 +1,4 @@
+@if($hotDealProducts->isNotEmpty())
 <section class="hot-deal-area">
     <div class="container">
         <div class="row">
@@ -12,11 +13,11 @@
         </div>
         <!-- Hot Deal Slider 2 Start -->
         <div class="hot-deal-2 owl-carousel owl-nav-style">
-            @include('client.partials.product_card')
-            @include('client.partials.product_card')
-            @include('client.partials.product_card')
-            @include('client.partials.product_card')
+            @foreach($hotDealProducts as $product)
+                @include('client.partials.product_card', ['product' => $product])
+            @endforeach
         </div>
         <!-- Hot Deal Slider 2 Start -->
     </div>
 </section>
+@endif

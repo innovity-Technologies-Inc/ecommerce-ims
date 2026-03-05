@@ -4,7 +4,7 @@
     <div class="container-xxl">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h4 class="mb-0">Brands</h4>
-            <a href="{{ route('admin.brands.create') }}" class="btn btn-primary btn-sm">Add Brand</a>
+            <a href="{{ route('admin.brands.create') }}" class="btn btn-primary btn-sm">Add</a>
         </div>
 
         <div class="card overflow-hidden">
@@ -57,7 +57,14 @@
                 </div>
             </div>
             <div class="card-footer border-top">
-                {{ $brands->links() }}
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="text-muted">
+                        Showing <span class="fw-semibold">{{ $brands->firstItem() ?? 0 }}</span> to <span class="fw-semibold">{{ $brands->lastItem() ?? 0 }}</span> of <span class="fw-semibold">{{ $brands->total() }}</span> Results
+                    </div>
+                    <div>
+                        {{ $brands->links() }}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

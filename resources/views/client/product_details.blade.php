@@ -54,25 +54,16 @@
                             <ul>
                                 @php
                                     $gs = \App\HelperClass::generalSettings();
-                                    $prices = collect();
-                                    if($product->variants->count() > 0) {
-                                        foreach($product->variants as $v) $prices->push($v->discount_price ?? $v->regular_price ?? $product->discount_price ?? $product->regular_price);
-                                    } else {
-                                        $prices->push($product->discount_price ?? $product->regular_price);
-                                    }
-                                    $prices = $prices->filter();
-                                    $minPrice = $prices->min() ?? 0;
-                                    $maxPrice = $prices->max() ?? 0;
-                                    $minRegPrice = $product->variants->count() > 0 ? ($product->variants->min('regular_price') ?? $product->regular_price) : $product->regular_price;
+                                    $priceData = \App\HelperClass::getProductPriceRange($product);
                                 @endphp
                                 <li class="old-price not-cut" id="current-selling-price">
-                                    {{ $gs->currency ?? '$' }}{{ number_format($minPrice, 2) }}
-                                    @if($minPrice != $maxPrice)
-                                        - {{ $gs->currency ?? '$' }}{{ number_format($maxPrice, 2) }}
+                                    {{ $gs->currency ?? '$' }}{{ number_format($priceData['min'], 2) }}
+                                    @if($priceData['has_range'])
+                                        - {{ $gs->currency ?? '$' }}{{ number_format($priceData['max'], 2) }}
                                     @endif
                                 </li>
-                                <li class="old-price text-decoration-line-through" id="old-regular-price" style="margin-left: 10px; color: #999; {{ ($minRegPrice > $minPrice) ? '' : 'display:none;' }}">
-                                    {{ $gs->currency ?? '$' }}{{ number_format($minRegPrice ?? 0, 2) }}
+                                <li class="old-price text-decoration-line-through" id="old-regular-price" style="margin-left: 10px; color: #999; {{ ($priceData['min_regular_price'] > $priceData['min']) ? '' : 'display:none;' }}">
+                                    {{ $gs->currency ?? '$' }}{{ number_format($priceData['min_regular_price'] ?? 0, 2) }}
                                 </li>
                             </ul>
                         </div>

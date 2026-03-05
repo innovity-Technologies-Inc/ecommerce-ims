@@ -42,11 +42,11 @@
             @forelse($items as $item)
                 @php
                     $product = $type == 'wishlist' ? $item->product : $item->model;
-                    $minPrice = $product->variants->min(fn($v) => $v->discount_price ?? $v->regular_price);
+                    $priceData = \App\HelperClass::getProductPriceRange($product);
                 @endphp
                 <tr>
                     <td class="product-thumbnail">
-                        <a href="#">
+                        <a href="{{ route('client.products.details', $product->slug) }}">
                             @if($product->primaryImage)
                                 <img src="{{ asset('storage/'.$product->primaryImage->image_path) }}" alt="{{ $product->name }}" style="max-width: 100px;">
                             @else
@@ -54,9 +54,14 @@
                             @endif
                         </a>
                     </td>
-                    <td class="product-name"><a href="#">{{ $product->name }}</a></td>
+                    <td class="product-name"><a href="{{ route('client.products.details', $product->slug) }}">{{ $product->name }}</a></td>
                     <td class="product-price-cart">
-                        <span class="amount">{{ $gs->currency ?? '$' }}{{ number_format($minPrice, 2) }}</span>
+                        <span class="amount">
+                            {{ $gs->currency ?? '$' }}{{ number_format($priceData['min'], 2) }}
+                            @if($priceData['has_range'])
+                                - {{ $gs->currency ?? '$' }}{{ number_format($priceData['max'], 2) }}
+                            @endif
+                        </span>
                     </td>
                     @if($type == 'cart')
                         <td class="product-quantity">

@@ -37,6 +37,13 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::get('/mail', 'mailSettings')->name('admin.settings.mail');
         Route::post('/mail/update', 'updateMailSettings')->name('admin.settings.mail.update');
     });
+
+    Route::resource('sliders', \App\Http\Controllers\SliderController::class)->names('admin.sliders');
+
+    Route::prefix('sections')->group(function () {
+        Route::get('/bestsellers', [\App\Http\Controllers\Admin\HomepageSectionController::class, 'bestsellers'])->name('admin.sections.bestsellers');
+        Route::post('/bestsellers/update', [\App\Http\Controllers\Admin\HomepageSectionController::class, 'updateBestsellers'])->name('admin.sections.bestsellers.update');
+    });
 });
 
 Route::middleware('auth')->group(function () {

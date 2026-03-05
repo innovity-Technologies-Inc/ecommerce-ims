@@ -55,17 +55,23 @@ class AdminController extends Controller
     public function update($id, Request $request)
     {
         $validated = $request->validate([
-            'name' => ['string', 'max:255'],
-            'email' => ['string', 'email', 'max:255', 'unique:admins,email'],
-            'password' => ['confirmed'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:admins,email,'.$id],
+            'password' => ['nullable', 'confirmed', 'min:8'],
         ]);
 
-        $admin = Admin::find($id);
-        $admin->update([
+        $admin = Admin::findOrFail($id);
+        
+        $updateData = [
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-        ]);
+        ];
+
+        if (!empty($validated['password'])) {
+            $updateData['password'] = Hash::make($validated['password']);
+        }
+
+        $admin->update($updateData);
 
         return redirect()->route('admin.index')->with([
             'message' => 'User updated successfully',

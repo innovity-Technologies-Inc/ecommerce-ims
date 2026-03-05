@@ -92,7 +92,7 @@
                             </div>
                     </div>
                     <div class="card-footer border-top">
-                        <button type="submit" class="btn btn-primary">Create</button>
+                        <button type="submit" class="btn btn-primary">{{ isset($user) ? 'Update' : 'Create' }}</button>
                     </div>
                 </div>
                 </form>

@@ -198,25 +198,34 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link menu-arrow" href="#sidebarSettings" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarSettings">
+                <a class="nav-link menu-arrow" href="#sidebarHomepage" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarHomepage">
                                    <span class="nav-icon">
-                                        <iconify-icon icon="solar:settings-bold-duotone"></iconify-icon>
+                                        <iconify-icon icon="solar:home-2-bold-duotone"></iconify-icon>
                                    </span>
-                    <span class="nav-text"> Settings </span>
+                    <span class="nav-text"> Homepage </span>
                 </a>
-                <div class="collapse" id="sidebarSettings">
+                <div class="collapse" id="sidebarHomepage">
                     <ul class="nav sub-navbar-nav">
                         <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.settings.general') }}">General Settings</a>
+                            <a class="sub-nav-link" href="{{ route('admin.sliders.index') }}">Sliders</a>
                         </li>
                         <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.settings.mail') }}">Mail Settings</a>
+                            <a class="sub-nav-link" href="{{ route('admin.sections.bestsellers') }}">Bestsellers</a>
                         </li>
                     </ul>
                 </div>
             </li>
 
             <li class="menu-title mt-2">Users</li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.index') }}">
+                                   <span class="nav-icon">
+                                        <iconify-icon icon="solar:user-speak-bold-duotone"></iconify-icon>
+                                   </span>
+                    <span class="nav-text"> Admins </span>
+                </a>
+            </li>
 
             <li class="nav-item">
                 <a class="nav-link" href="pages-profile.html">

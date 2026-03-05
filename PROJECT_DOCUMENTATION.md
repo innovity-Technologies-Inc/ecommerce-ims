@@ -108,6 +108,11 @@ The project strictly avoids Tailwind/Alpine.js in favor of:
         - Fallback to **Product Base Pricing**: If the variant's `regular_price` is null, use the parent product's `regular_price` and `discount_price`.
         - **Net Price:** The final selling price must always be the `discount_price` if present, otherwise the `regular_price`.
 
+- **Homepage Dynamic Modules:**
+    - **Slider Management:** Full CRUD for homepage sliders with support for Title, Subtitle, Subtext, Image, and Action Buttons.
+    - **Section Settings (Bestsellers):** Centralized control for homepage sections. Bestsellers can operate in **Organic Mode** (auto-calculated by sales count) or **Custom Mode** (manually selected and ordered products).
+    - **Section Visibility:** Toggle sections on/off from the admin panel.
+
 ## 7. Recently Fixed Issues
 - **Product Edit (Subcategory Selection):** Resolved an issue where subcategories were not pre-selected when editing a product. Fixed by improving the Select2 initialization and category change logic in the Blade view.
 - **Product Update (SKU Validation):** Fixed a bug where updating a product would fail due to SKU uniqueness constraints (even if the SKUs belonged to the product being updated). The `ProductRequest` now ignores existing SKUs for the current product during the update process.

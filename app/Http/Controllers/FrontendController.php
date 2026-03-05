@@ -3,14 +3,53 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\SectionSetting;
+use App\Services\HomepageService;
 use DaiyanMozumder\LaravelFlexSearch\FlexSearch;
 use Illuminate\Http\Request;
 
 class FrontendController extends Controller
 {
+    public function __construct(protected HomepageService $homepageService) {}
+
     public function home()
     {
-        return view('client.homepage');
+        $sliders = $this->homepageService->getActiveSliders();
+        $bestsellerSection = SectionSetting::where('section_name', 'bestsellers')->first();
+        $bestsellingProducts = $this->homepageService->getSectionProducts('bestsellers');
+
+        $hotDealProducts = Product::where('is_hot_deal', true)
+            ->with(['primaryImage', 'variants'])
+            ->latest()
+            ->limit(10)
+            ->get();
+
+        $newArrivalProducts = Product::where('is_new_arrival', true)
+            ->with(['primaryImage', 'variants'])
+            ->latest()
+            ->limit(10)
+            ->get();
+
+        $featuredProducts = Product::where('is_featured', true)
+            ->with(['primaryImage', 'variants'])
+            ->latest()
+            ->limit(10)
+            ->get();
+
+        $recentlyAddedProducts = Product::with(['primaryImage', 'variants'])
+            ->latest()
+            ->limit(17) // Matches the static count in feature_1 (2 * 8 + 1)
+            ->get();
+
+        return view('client.homepage', compact(
+            'sliders', 
+            'bestsellerSection', 
+            'bestsellingProducts', 
+            'hotDealProducts', 
+            'newArrivalProducts', 
+            'featuredProducts',
+            'recentlyAddedProducts'
+        ));
     }
 
     public function products(Request $request, FlexSearch $flexSearch)

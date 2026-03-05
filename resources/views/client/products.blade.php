@@ -75,95 +75,7 @@
                                     <div class="row">
                                         @forelse($products as $product)
                                         <div class="col-xl-3 col-md-6 col-lg-4 col-sm-6 col-xs-12">
-                                            <article class="list-product">
-                                                <div class="img-block">
-                                                    <a href="{{ route('client.products.details', $product->slug) }}" class="thumbnail">
-                                                        @if($product->primaryImage)
-                                                            <img class="first-img" src="{{ asset('storage/' . $product->primaryImage->image_path) }}" alt="{{ $product->name }}">
-                                                            @php
-                                                                $secondImage = $product->images->where('is_primary', false)->first();
-                                                            @endphp
-                                                            @if($secondImage)
-                                                                <img class="second-img" src="{{ asset('storage/' . $secondImage->image_path) }}" alt="{{ $product->name }}">
-                                                            @else
-                                                                <img class="second-img" src="{{ asset('storage/' . $product->primaryImage->image_path) }}" alt="{{ $product->name }}">
-                                                            @endif
-                                                        @else
-                                                            <img class="first-img" src="{{ asset('client/assets/images/product-image/organic/product-1.jpg') }}" alt="">
-                                                        @endif
-                                                    </a>
-                                                    <div class="quick-view">
-                                                        <a class="quick_view" href="#" data-link-action="quickview" title="Quick view" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                            <i class="ion-ios-search-strong"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                                <ul class="product-flag">
-                                                    @php
-                                                        $maxDiscount = $product->variants->max('discount_percentage');
-                                                    @endphp
-                                                    @if($maxDiscount && $maxDiscount > 0)
-                                                        <li class="new bg-danger" style="background-color: #ff4545 !important;">-{{ $maxDiscount }}%</li>
-                                                    @elseif($product->is_new_arrival)
-                                                        <li class="new">New</li>
-                                                    @endif
-                                                </ul>
-                                                <div class="product-decs">
-                                                    <a class="inner-link" href="#"><span>{{ $product->brand->name ?? 'BRAND' }}</span></a>
-                                                    <h2><a href="{{ route('client.products.details', $product->slug) }}" class="product-link text-truncate d-block">{{ $product->name }}</a></h2>
-                                                    <div class="rating-product">
-                                                        <i class="ion-android-star"></i>
-                                                        <i class="ion-android-star"></i>
-                                                        <i class="ion-android-star"></i>
-                                                        <i class="ion-android-star"></i>
-                                                        <i class="ion-android-star"></i>
-                                                    </div>
-                                                    <div class="pricing-meta">
-                                                        <ul>
-                                                            @php
-                                                                $gs = \App\HelperClass::generalSettings();
-                                                                $prices = collect();
-                                                                
-                                                                if($product->variants->count() > 0) {
-                                                                    foreach($product->variants as $variant) {
-                                                                        $prices->push($variant->discount_price ?? $variant->regular_price ?? $product->discount_price ?? $product->regular_price);
-                                                                    }
-                                                                } else {
-                                                                    $prices->push($product->discount_price ?? $product->regular_price);
-                                                                }
-                                                                
-                                                                $prices = $prices->filter();
-                                                                $minPrice = $prices->min() ?? 0;
-                                                                $maxPrice = $prices->max() ?? 0;
-                                                                
-                                                                $hasDiscount = !empty($product->discount_price) || $product->variants->contains(fn($v) => !empty($v->discount_price));
-                                                                $minRegPrice = $product->variants->count() > 0 
-                                                                    ? ($product->variants->min('regular_price') ?? $product->regular_price)
-                                                                    : $product->regular_price;
-                                                            @endphp
-                                                            <li class="current-price">
-                                                                {{ $gs->currency ?? '$' }}{{ number_format($minPrice, 2) }}
-                                                                @if($minPrice != $maxPrice)
-                                                                    - {{ $gs->currency ?? '$' }}{{ number_format($maxPrice, 2) }}
-                                                                @endif
-                                                            </li>
-                                                            @if($hasDiscount && $minRegPrice > $minPrice)
-                                                                <li class="old-price">{{ $gs->currency ?? '$' }}{{ number_format($minRegPrice, 2) }}</li>
-                                                            @endif
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <div class="add-to-link">
-                                                    <ul>
-                                                        <li class="cart"><a class="cart-btn" href="#">ADD TO CART </a></li>
-                                                        @if(Auth::guard('web')->check())
-                                                        <li>
-                                                            <a href="javascript:void(0)" onclick="addToWishlist({{ $product->id }})"><i class="ion-android-favorite-outline"></i></a>
-                                                        </li>
-                                                        @endif
-                                                    </ul>
-                                                </div>
-                                            </article>
+                                            @include('client.partials.product_card', ['product' => $product])
                                         </div>
                                         @empty
                                             <div class="col-12 text-center py-5">
@@ -232,33 +144,16 @@
                                                                     <ul>
                                                                         @php
                                                                             $gs = \App\HelperClass::generalSettings();
-                                                                            $prices = collect();
-                                                                            
-                                                                            if($product->variants->count() > 0) {
-                                                                                foreach($product->variants as $variant) {
-                                                                                    $prices->push($variant->discount_price ?? $variant->regular_price ?? $product->discount_price ?? $product->regular_price);
-                                                                                }
-                                                                            } else {
-                                                                                $prices->push($product->discount_price ?? $product->regular_price);
-                                                                            }
-                                                                            
-                                                                            $prices = $prices->filter();
-                                                                            $minPrice = $prices->min() ?? 0;
-                                                                            $maxPrice = $prices->max() ?? 0;
-                                                                            
-                                                                            $hasDiscount = !empty($product->discount_price) || $product->variants->contains(fn($v) => !empty($v->discount_price));
-                                                                            $minRegPrice = $product->variants->count() > 0 
-                                                                                ? ($product->variants->min('regular_price') ?? $product->regular_price)
-                                                                                : $product->regular_price;
+                                                                            $priceData = \App\HelperClass::getProductPriceRange($product);
                                                                         @endphp
                                                                         <li class="current-price">
-                                                                            {{ $gs->currency ?? '$' }}{{ number_format($minPrice, 2) }}
-                                                                            @if($minPrice != $maxPrice)
-                                                                                - {{ $gs->currency ?? '$' }}{{ number_format($maxPrice, 2) }}
+                                                                            {{ $gs->currency ?? '$' }}{{ number_format($priceData['min'], 2) }}
+                                                                            @if($priceData['has_range'])
+                                                                                - {{ $gs->currency ?? '$' }}{{ number_format($priceData['max'], 2) }}
                                                                             @endif
                                                                         </li>
-                                                                        @if($hasDiscount && $minRegPrice > $minPrice)
-                                                                            <li class="old-price">{{ $gs->currency ?? '$' }}{{ number_format($minRegPrice, 2) }}</li>
+                                                                        @if($priceData['has_discount'] && $priceData['min_regular_price'] > $priceData['min'])
+                                                                            <li class="old-price">{{ $gs->currency ?? '$' }}{{ number_format($priceData['min_regular_price'], 2) }}</li>
                                                                         @endif
                                                                     </ul>
                                                                 </div>                                                                <div class="product-intro-info">

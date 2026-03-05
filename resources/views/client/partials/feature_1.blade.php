@@ -1,3 +1,4 @@
+@if($recentlyAddedProducts->isNotEmpty())
 <section class="feature-area">
     <div class="container">
         <div class="row">
@@ -12,60 +13,16 @@
         </div>
         <!-- Feature Slider Start -->
         <div class="feature-slider owl-carousel owl-nav-style">
+            @foreach($recentlyAddedProducts->chunk(2) as $chunk)
             <!-- Single Item -->
             <div class="feature-slider-item">
-                @include('client.partials.product_card')
-                @include('client.partials.product_card')
-
+                @foreach($chunk as $product)
+                    @include('client.partials.product_card', ['product' => $product])
+                @endforeach
             </div>
-            <!-- Single Item -->
-            <div class="feature-slider-item">
-                @include('client.partials.product_card')
-                @include('client.partials.product_card')
-
-            </div>
-            <!-- Single Item -->
-            <div class="feature-slider-item">
-                @include('client.partials.product_card')
-                @include('client.partials.product_card')
-
-            </div>
-            <!-- Single Item -->
-            <div class="feature-slider-item">
-                @include('client.partials.product_card')
-                @include('client.partials.product_card')
-
-            </div>
-            <!-- Single Item -->
-            <div class="feature-slider-item">
-                @include('client.partials.product_card')
-                @include('client.partials.product_card')
-
-            </div>
-            <!-- Single Item -->
-            <div class="feature-slider-item">
-                @include('client.partials.product_card')
-                @include('client.partials.product_card')
-
-            </div>
-            <!-- Single Item -->
-            <div class="feature-slider-item">
-                @include('client.partials.product_card')
-                @include('client.partials.product_card')
-
-            </div>
-            <!-- Single Item -->
-            <div class="feature-slider-item">
-                @include('client.partials.product_card')
-                @include('client.partials.product_card')
-
-            </div>
-            <!-- Single Item -->
-            <div class="feature-slider-item">
-                @include('client.partials.product_card')
-            </div>
-            <!-- Single Item -->
+            @endforeach
         </div>
         <!-- Feature Slider End -->
     </div>
 </section>
+@endif

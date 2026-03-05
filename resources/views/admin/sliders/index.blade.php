@@ -3,8 +3,8 @@
 
     <div class="container-xxl">
         <div class="d-flex align-items-center justify-content-between mb-3">
-            <h4 class="mb-0">Categories</h4>
-            <a href="{{ route('admin.categories.create') }}" class="btn btn-primary btn-sm">Add</a>
+            <h4 class="mb-0">Sliders</h4>
+            <a href="{{ route('admin.sliders.create') }}" class="btn btn-primary btn-sm">Add</a>
         </div>
 
         <div class="card overflow-hidden">
@@ -14,36 +14,43 @@
                         <thead class="bg-light-subtle">
                         <tr>
                             <th>#</th>
-                            <th>Icon</th>
-                            <th>Name</th>
-                            <th>Parent</th>
-                            <th>Slug</th>
+                            <th>Image</th>
+                            <th>Title</th>
+                            <th>Subtitle</th>
+                            <th>Position</th>
+                            <th>Status</th>
                             <th>Action</th>
                         </tr>
                         </thead>
                         <tbody>
                         @php
-                            $sl = \App\HelperClass::indexNumberSerialization($categories);
+                            $sl = \App\HelperClass::indexNumberSerialization($sliders);
                         @endphp
-                        @foreach ($categories as $data)
+                        @foreach ($sliders as $data)
                         <tr>
                             <td>{{$sl++}}</td>
                             <td>
-                                @if($data->icon)
-                                    <img src="{{ asset('storage/'.$data->icon) }}" alt="{{ $data->name }}" class="avatar-sm rounded">
+                                <img src="{{ asset('storage/'.$data->image) }}" alt="{{ $data->title }}" class="avatar-lg rounded">
+                            </td>
+                            <td>
+                                <p class="mb-0 fw-bold">{{ $data->title }}</p>
+                                <small class="text-muted">{{ $data->subtext }}</small>
+                            </td>
+                            <td>{{ $data->subtitle }}</td>
+                            <td>{{ $data->position }}</td>
+                            <td>
+                                @if($data->is_active)
+                                    <span class="badge bg-success-subtle text-success">Active</span>
                                 @else
-                                    <span class="text-muted">No Icon</span>
+                                    <span class="badge bg-danger-subtle text-danger">Inactive</span>
                                 @endif
                             </td>
-                            <td>{{$data->name}}</td>
-                            <td>{{ $data->parent ? $data->parent->name : '-' }}</td>
-                            <td>{{$data->slug}}</td>
                             <td>
                                 <div class="d-flex gap-2">
-                                    <a href="{{ route('admin.categories.edit', $data->id) }}" class="btn btn-soft-primary btn-sm">
+                                    <a href="{{ route('admin.sliders.edit', $data->id) }}" class="btn btn-soft-primary btn-sm">
                                         <iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon>
                                     </a>
-                                    <form method="post" action="{{ route('admin.categories.destroy', $data->id) }}">
+                                    <form method="post" action="{{ route('admin.sliders.destroy', $data->id) }}">
                                         @csrf
                                         @method('delete')
                                         <button type="submit" class="btn btn-soft-danger btn-sm confirmDelete">
@@ -61,10 +68,10 @@
             <div class="card-footer border-top">
                 <div class="d-flex align-items-center justify-content-between">
                     <div class="text-muted">
-                        Showing <span class="fw-semibold">{{ $categories->firstItem() ?? 0 }}</span> to <span class="fw-semibold">{{ $categories->lastItem() ?? 0 }}</span> of <span class="fw-semibold">{{ $categories->total() }}</span> Results
+                        Showing <span class="fw-semibold">{{ $sliders->firstItem() ?? 0 }}</span> to <span class="fw-semibold">{{ $sliders->lastItem() ?? 0 }}</span> of <span class="fw-semibold">{{ $sliders->total() }}</span> Results
                     </div>
                     <div>
-                        {{ $categories->links() }}
+                        {{ $sliders->links() }}
                     </div>
                 </div>
             </div>

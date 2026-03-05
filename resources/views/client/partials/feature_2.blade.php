@@ -1,3 +1,4 @@
+@if($featuredProducts->isNotEmpty())
 <section class="feature-area-2">
     <div class="container">
         <div class="row">
@@ -17,62 +18,18 @@
                 <!-- Section Title -->
                 <!-- Feature slide 2 start -->
                 <div class="feature-slider-2 owl-carousel owl-nav-style">
-                    <!-- slngle item -->
+                    @foreach($featuredProducts->chunk(2) as $chunk)
+                    <!-- single item -->
                     <div class="feature-slider-item">
-                        @include('client.partials.product_card')
-                        @include('client.partials.product_card')
-
+                        @foreach($chunk as $product)
+                            @include('client.partials.product_card', ['product' => $product])
+                        @endforeach
                     </div>
-                    <!-- slngle item -->
-                    <div class="feature-slider-item">
-                        @include('client.partials.product_card')
-                        @include('client.partials.product_card')
-
-                    </div>
-                    <!-- slngle item -->
-                    <div class="feature-slider-item">
-                        @include('client.partials.product_card')
-                        @include('client.partials.product_card')
-
-                    </div>
-                    <!-- slngle item -->
-                    <div class="feature-slider-item">
-                        @include('client.partials.product_card')
-                        @include('client.partials.product_card')
-
-                    </div>
-                    <!-- slngle item -->
-                    <div class="feature-slider-item">
-                        @include('client.partials.product_card')
-                        @include('client.partials.product_card')
-
-                    </div>
-                    <!-- slngle item -->
-                    <div class="feature-slider-item">
-                        @include('client.partials.product_card')
-                        @include('client.partials.product_card')
-
-                    </div>
-                    <!-- slngle item -->
-                    <div class="feature-slider-item">
-                        @include('client.partials.product_card')
-                        @include('client.partials.product_card')
-
-                    </div>
-                    <!-- slngle item -->
-                    <div class="feature-slider-item">
-                        @include('client.partials.product_card')
-                        @include('client.partials.product_card')
-
-                    </div>
-                    <!-- slngle item -->
-                    <div class="feature-slider-item">
-                        @include('client.partials.product_card')
-                    </div>
-                    <!-- slngle item -->
+                    @endforeach
                 </div>
                 <!-- Feature slide 2 End -->
             </div>
         </div>
     </div>
 </section>
+@endif

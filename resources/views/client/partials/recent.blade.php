@@ -1,3 +1,4 @@
+@if($newArrivalProducts->isNotEmpty())
 <section class="recent-add-area">
     <div class="container">
         <div class="row">
@@ -12,16 +13,11 @@
         </div>
         <!-- Recent Product slider Start -->
         <div class="recent-product-slider owl-carousel owl-nav-style">
-            @include('client.partials.product_card')
-            @include('client.partials.product_card')
-            @include('client.partials.product_card')
-            @include('client.partials.product_card')
-            @include('client.partials.product_card')
-            @include('client.partials.product_card')
-            @include('client.partials.product_card')
-            @include('client.partials.product_card')
-
+            @foreach($newArrivalProducts as $product)
+                @include('client.partials.product_card', ['product' => $product])
+            @endforeach
         </div>
         <!-- Recent product slider end -->
     </div>
 </section>
+@endif

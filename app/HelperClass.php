@@ -52,4 +52,42 @@ class HelperClass
     {
         Storage::disk('public')->delete($file_path);
     }
+
+    public static function getProductPriceRange($product)
+    {
+        $prices = collect();
+        
+        if($product->variants->count() > 0) {
+            foreach($product->variants as $variant) {
+                // If variant doesn't have its own price, it should fallback to product's base price.
+                $price = $variant->discount_price ?? $variant->regular_price ?? $product->discount_price ?? $product->regular_price;
+                if ($price) {
+                    $prices->push((float) $price);
+                }
+            }
+        }
+        
+        // Always include product's base prices as well, if variants don't fully override them.
+        $basePrice = $product->discount_price ?? $product->regular_price;
+        if ($basePrice) {
+            $prices->push((float) $basePrice);
+        }
+
+        $prices = $prices->unique();
+
+        $maxDiscount = $product->variants->count() > 0 
+            ? $product->variants->max('discount_percentage') 
+            : $product->discount_percentage;
+
+        return [
+            'min' => $prices->min() ?? 0,
+            'max' => $prices->max() ?? 0,
+            'has_range' => $prices->min() != $prices->max(),
+            'has_discount' => $maxDiscount > 0,
+            'max_discount_percentage' => $maxDiscount ?? 0,
+            'min_regular_price' => $product->variants->count() > 0 
+                ? ($product->variants->min('regular_price') ?? $product->regular_price)
+                : $product->regular_price,
+        ];
+    }
 }
