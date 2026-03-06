@@ -11,6 +11,7 @@ class SectionSetting extends Model
         'section_name',
         'section_title',
         'section_subtitle',
+        'background_image',
         'mode',
         'limit',
         'is_visible',

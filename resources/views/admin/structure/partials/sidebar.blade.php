@@ -212,6 +212,15 @@
                         <li class="sub-nav-item">
                             <a class="sub-nav-link" href="{{ route('admin.sections.bestsellers') }}">Bestsellers</a>
                         </li>
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="{{ route('admin.sections.edit', 'hot_deals') }}">Hot Deals</a>
+                        </li>
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="{{ route('admin.sections.edit', 'featured') }}">Featured</a>
+                        </li>
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="{{ route('admin.sections.edit', 'recently_added') }}">Recently Added</a>
+                        </li>
                     </ul>
                 </div>
             </li>

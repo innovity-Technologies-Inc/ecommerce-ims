@@ -1,12 +1,12 @@
-@if($hotDealProducts->isNotEmpty())
+@if($hotDealsSection && $hotDealsSection->is_visible && $hotDealProducts->isNotEmpty())
 <section class="hot-deal-area">
     <div class="container">
         <div class="row">
             <div class="col-md-12">
                 <!-- Section Title -->
                 <div class="section-title">
-                    <h2>Hot Deals</h2>
-                    <p>Add hot products to weekly line up</p>
+                    <h2>{{ $hotDealsSection->section_title }}</h2>
+                    <p>{{ $hotDealsSection->section_subtitle }}</p>
                 </div>
                 <!-- Section Title -->
             </div>

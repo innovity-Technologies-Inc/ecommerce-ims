@@ -42,7 +42,8 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
 
     Route::prefix('sections')->group(function () {
         Route::get('/bestsellers', [\App\Http\Controllers\Admin\HomepageSectionController::class, 'bestsellers'])->name('admin.sections.bestsellers');
-        Route::post('/bestsellers/update', [\App\Http\Controllers\Admin\HomepageSectionController::class, 'updateBestsellers'])->name('admin.sections.bestsellers.update');
+        Route::get('/{sectionName}', [\App\Http\Controllers\Admin\HomepageSectionController::class, 'editSection'])->name('admin.sections.edit');
+        Route::post('/{sectionName}/update', [\App\Http\Controllers\Admin\HomepageSectionController::class, 'updateSection'])->name('admin.sections.update');
     });
 });
 

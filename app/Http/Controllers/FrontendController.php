@@ -15,39 +15,28 @@ class FrontendController extends Controller
     public function home()
     {
         $sliders = $this->homepageService->getActiveSliders();
+        
         $bestsellerSection = SectionSetting::where('section_name', 'bestsellers')->first();
         $bestsellingProducts = $this->homepageService->getSectionProducts('bestsellers');
 
-        $hotDealProducts = Product::where('is_hot_deal', true)
-            ->with(['primaryImage', 'variants'])
-            ->latest()
-            ->limit(10)
-            ->get();
+        $hotDealsSection = SectionSetting::where('section_name', 'hot_deals')->first();
+        $hotDealProducts = $this->homepageService->getSectionProducts('hot_deals');
 
-        $newArrivalProducts = Product::where('is_new_arrival', true)
-            ->with(['primaryImage', 'variants'])
-            ->latest()
-            ->limit(10)
-            ->get();
+        $featuredSection = SectionSetting::where('section_name', 'featured')->first();
+        $featuredProducts = $this->homepageService->getSectionProducts('featured');
 
-        $featuredProducts = Product::where('is_featured', true)
-            ->with(['primaryImage', 'variants'])
-            ->latest()
-            ->limit(10)
-            ->get();
-
-        $recentlyAddedProducts = Product::with(['primaryImage', 'variants'])
-            ->latest()
-            ->limit(17) // Matches the static count in feature_1 (2 * 8 + 1)
-            ->get();
+        $recentlyAddedSection = SectionSetting::where('section_name', 'recently_added')->first();
+        $recentlyAddedProducts = $this->homepageService->getSectionProducts('recently_added');
 
         return view('client.homepage', compact(
             'sliders', 
             'bestsellerSection', 
             'bestsellingProducts', 
+            'hotDealsSection',
             'hotDealProducts', 
-            'newArrivalProducts', 
+            'featuredSection',
             'featuredProducts',
+            'recentlyAddedSection',
             'recentlyAddedProducts'
         ));
     }

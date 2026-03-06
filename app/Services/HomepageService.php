@@ -55,13 +55,22 @@ class HomepageService
         return DB::transaction(function () use ($sectionName, $data) {
             $section = SectionSetting::firstOrCreate(['section_name' => $sectionName]);
 
-            $section->update([
+            $updateData = [
                 'section_title' => $data['section_title'] ?? $section->section_title,
                 'section_subtitle' => $data['section_subtitle'] ?? $section->section_subtitle,
                 'mode' => $data['mode'] ?? $section->mode,
                 'limit' => $data['limit'] ?? $section->limit,
                 'is_visible' => isset($data['is_visible']),
-            ]);
+            ];
+
+            if (isset($data['background_image'])) {
+                if ($section->background_image) {
+                    HelperClass::file_delete($section->background_image);
+                }
+                $updateData['background_image'] = HelperClass::file_upload($data['background_image'], 'sections');
+            }
+
+            $section->update($updateData);
 
             if ($section->mode === 'custom' && isset($data['product_ids'])) {
                 $syncData = [];
@@ -94,15 +103,29 @@ class HomepageService
             return collect();
         }
 
+        // Custom mode: Logic is the same for all sections
         if ($section->mode === 'custom') {
-            return $section->products;
+            $products = $section->products()->with(['primaryImage', 'variants'])->get();
+            if ($products->isNotEmpty()) {
+                return $products;
+            }
         }
 
         // Organic mode: Logic depends on the section
-        if ($sectionName === 'bestsellers') {
-            return \App\Models\Product::orderBy('sales_count', 'desc')
-                ->limit($section->limit)
-                ->get();
+        $query = \App\Models\Product::with(['primaryImage', 'variants'])->latest();
+        
+        switch ($sectionName) {
+            case 'bestsellers':
+                return $query->orderBy('sales_count', 'desc')->limit($section->limit)->get();
+            
+            case 'hot_deals':
+                return $query->where('is_hot_deal', true)->limit(2)->get();
+            
+            case 'featured':
+                return $query->where('is_featured', true)->limit(4)->get();
+            
+            case 'recently_added':
+                return $query->limit($section->limit)->get();
         }
 
         return collect();
