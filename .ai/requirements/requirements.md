@@ -22,7 +22,7 @@ This document lists the high-level requirements for the modules implemented in t
 ## 4. Customer Shop Frontend
 - [x] **REQ-12:** Dynamic Product Listing (Grid & List views).
 - [x] **REQ-13:** Advanced Sidebar Filtering (Category, Brand, Price Slider).
-- [x] **REQ-14:** Global Navbar Search with Category Targeting (FlexSearch).
+- [x] **REQ-14:** Global Navbar Search (FlexSearch integration).
 - [x] **REQ-15:** Detailed Product View with Dynamic Variant Selection.
 
 ## 5. Wishlist & Personalization
@@ -38,3 +38,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-21:** Hybrid Cart Management (Database for Users / Session for Guests).
 - [x] **REQ-22:** Cart UI Integration (Cart Page, Topbar Mini-cart, Mobile Navbar).
 - [x] **REQ-23:** Cart Page UI Alignment (Banner height matched to Cart Total card).
+
+## 8. Mobile UI Refinements
+- [x] **REQ-24:** Mobile Navbar Alignment (Logo and Icons spacing fix).
+- [x] **REQ-25:** Search Category Vertical Alignment (Fix for "All categories" text position).

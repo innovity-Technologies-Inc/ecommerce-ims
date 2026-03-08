@@ -183,17 +183,6 @@
                             <div class="dropdown_search">
                                 <form action="{{ route('client.products.index') }}" method="GET">
                                     <input name="search" value="{{ request('search') }}" placeholder="Search entire store here ..." type="text">
-                                    <div class="search-category">
-                                        <select class="bootstrap-select" name="category">
-                                            <option value="">All categories</option>
-                                            @foreach(\App\HelperClass::getCategories() as $category)
-                                                <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                                                @foreach($category->subcategories as $subcategory)
-                                                    <option value="{{ $subcategory->id }}" {{ request('category') == $subcategory->id ? 'selected' : '' }}>-- {{ $subcategory->name }}</option>
-                                                @endforeach
-                                            @endforeach
-                                        </select>
-                                    </div>
                                     <button type="submit"><i class="ion-ios-search-strong"></i></button>
                                 </form>
                             </div>
@@ -227,22 +216,17 @@
     <div class="header-bottom d-lg-none sticky-nav py-3 mobile-navigation">
         <div class="container-fluid">
             <div class="row justify-content-between align-items-center">
-                <div class="col-md-3 col-sm-3">
-                    <a href="#offcanvas-mobile-menu" class="offcanvas-toggle mobile-menu">
-                        <i class="ion-navicon"></i>
-                    </a>
-                </div>
-                <div class="col-md-6 col-sm-4 d-flex justify-content-center">
-                    <div class="logo m-0">
-                        <a href="{{ route('home') }}"><img src="{{ $gs->light_logo ? asset('storage/'.$gs->light_logo) : asset('client/assets/images/logo/logo.jpg') }}" alt="{{ $gs->business_name ?? '' }}" style="max-height: 50px; width: auto;"></a>
+                <div class="col-6 col-sm-6">
+                    <div class="logo m-0 p-0 text-start">
+                        <a href="{{ route('home') }}" class="d-inline-block"><img src="{{ $gs->light_logo ? asset('storage/'.$gs->light_logo) : asset('client/assets/images/logo/logo.jpg') }}" alt="{{ $gs->business_name ?? '' }}" style="max-height: 40px; width: auto; display: block;"></a>
                     </div>
                 </div>
-                <div class="col-md-3 col-sm-5">
+                <div class="col-6 col-sm-6">
                     <!--Cart info Start -->
-                    <div class="cart-info d-flex m-0 justify-content-end">
-                        <div class="header-bottom-set dropdown">
-                            <button class="dropdown-toggle border-0 header-action-btn hover-style-default"
-                                    data-bs-toggle="dropdown"><i class="ion-person"></i></button>
+                    <div class="cart-info d-flex m-0 justify-content-end align-items-center">
+                        <div class="header-bottom-set dropdown me-3">
+                            <button class="dropdown-toggle border-0 bg-transparent p-0 header-action-btn hover-style-default"
+                                    data-bs-toggle="dropdown" style="font-size: 20px;"><i class="ion-person"></i></button>
                             <ul class="dropdown-menu">
                                 @if(Auth::guard('web')->check())
                                     <li><a class="dropdown-item" href="{{route('user.account')}}">My account</a></li>
@@ -258,12 +242,14 @@
                                 @endif
                             </ul>
                         </div>
-                        <div class="mini-cart-warp">
+                        <div class="mini-cart-warp me-3">
                             <a href="#offcanvas-cart" class="count-cart color-black offcanvas-toggle">
-                                <span class="amount-tag">${{ number_format(\App\HelperClass::getCartItems()->sum('subtotal'), 2) }}</span>
                                 <span class="item-quantity-tag">{{ sprintf('%02d', \App\HelperClass::cartCount()) }}</span>
                             </a>
                         </div>
+                        <a href="#offcanvas-mobile-menu" class="offcanvas-toggle mobile-menu">
+                            <i class="ion-navicon" style="font-size: 30px;"></i>
+                        </a>
                     </div>
                     <!--Cart info End -->
                 </div>
@@ -279,17 +265,6 @@
             <div class="dropdown-search">
                 <form action="{{ route('client.products.index') }}" method="GET">
                     <input name="search" value="{{ request('search') }}" placeholder="Search entire store here ..." type="text">
-                    <div class="search-category">
-                        <select class="bootstrap-select" name="category">
-                            <option value="">All categories</option>
-                            @foreach(\App\HelperClass::getCategories() as $category)
-                                <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                                @foreach($category->subcategories as $subcategory)
-                                    <option value="{{ $subcategory->id }}" {{ request('category') == $subcategory->id ? 'selected' : '' }}>-- {{ $subcategory->name }}</option>
-                                @endforeach
-                            @endforeach
-                        </select>
-                    </div>
                     <button type="submit"><i class="ion-ios-search-strong"></i></button>
                 </form>
             </div>

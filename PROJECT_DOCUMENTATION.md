@@ -109,6 +109,11 @@ Strict adherence to `App\HelperClass` for:
     - Full cart management page with **8/4 grid split** for promotional banner and grand totals.
     - **UI Alignment:** Flexbox `align-items-stretch` used to match promotional banner height with the Cart Total card.
     - Mobile-optimized **40/60 Grid layout** for product items (Centered Image / Stacked Details).
+- **Mobile Header Refinements:**
+    - Clean **3-6-3 Column Grid** for Menu, Logo, and Action Icons.
+    - Optimized logo centering and action button spacing for small devices.
+- **Search Component Refinements:**
+    - Streamlined global search by removing the category dropdown, ensuring a cleaner UI and focused search experience across all devices.
 - **SMTP Settings:**
  Dynamic DB-driven mail configuration.
 - **Homepage Sections:** Configurable sections (Bestsellers, Sliders, Featured).
