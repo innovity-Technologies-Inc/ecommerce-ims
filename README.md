@@ -60,7 +60,13 @@ Run the database migrations to create the necessary tables:
 php artisan migrate
 ```
 
-### 7. Default Credentials
+### 7. Database Seeding (Optional)
+If you want to populate the database with sample data (products, categories, settings, etc.):
+```bash
+php artisan db:seed
+```
+
+### 8. Default Credentials
 Use the following credentials to access the admin panel:
 - **Email:** admin@example.com
 - **Password:** 12345678
