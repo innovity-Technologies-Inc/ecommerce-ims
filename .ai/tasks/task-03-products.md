@@ -16,7 +16,7 @@
 
 3. **Variant Management (REQ-10):**
    - [x] Created `App\Models\ProductVariant`.
-   - [x] Added support for Size, Color, SKU, Stock, and unique Pricing per variant.
+   - [x] Added support for Variant Name, SKU, Stock, and unique Pricing per variant.
    - [x] Implemented stock tracking at the variant level.
 
 4. **Multi-Image Gallery (REQ-11):**

@@ -10,7 +10,7 @@
 
 2. **Advanced Filtering (REQ-13):**
    - [x] Implemented sidebar filtering using jQuery AJAX.
-   - [x] Added Category, Brand, Size, and Color filters.
+   - [x] Added Category, Brand.
    - [x] Created a custom dynamic price range slider (0 to Max Price).
 
 3. **Global Search (REQ-14):**

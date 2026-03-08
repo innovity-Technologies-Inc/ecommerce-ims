@@ -16,12 +16,12 @@ This document lists the high-level requirements for the modules implemented in t
 ## 3. Product & Inventory System
 - [x] **REQ-08:** Product CRUD with Marketing Flags (New Arrival, Hot Deal, Featured).
 - [x] **REQ-09:** Flexible Pricing Engine (Base Pricing vs. Variant Pricing).
-- [x] **REQ-10:** Product Variant Management (Size, Color, SKU, Stock).
+- [x] **REQ-10:** Product Variant Management (Variant Name, SKU, Stock).
 - [x] **REQ-11:** Multi-Image Gallery with Primary Image selection.
 
 ## 4. Customer Shop Frontend
 - [x] **REQ-12:** Dynamic Product Listing (Grid & List views).
-- [x] **REQ-13:** Advanced Sidebar Filtering (Category, Brand, Size, Color, Price Slider).
+- [x] **REQ-13:** Advanced Sidebar Filtering (Category, Brand, Price Slider).
 - [x] **REQ-14:** Global Navbar Search with Category Targeting (FlexSearch).
 - [x] **REQ-15:** Detailed Product View with Dynamic Variant Selection.
 
