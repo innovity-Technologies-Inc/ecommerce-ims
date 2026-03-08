@@ -33,3 +33,8 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-18:** General Settings (Logo, SEO, Currency, visual assets).
 - [x] **REQ-19:** Dynamic SMTP Mail Configuration (DB-driven).
 - [x] **REQ-20:** Homepage Section Management (Visibility & Content Source for Bestsellers/Featured).
+
+## 7. Shopping Cart System
+- [x] **REQ-21:** Hybrid Cart Management (Database for Users / Session for Guests).
+- [x] **REQ-22:** Cart UI Integration (Cart Page, Topbar Mini-cart, Mobile Navbar).
+- [x] **REQ-23:** Cart Page UI Alignment (Banner height matched to Cart Total card).

@@ -1,8 +1,27 @@
 # Coding Style & Architecture
 
-The smart-ecom project follows strict architectural standards to ensure code quality, testability, and long-term maintainability.
+The smart-ecom project follows strict architectural standards and a **mandatory development workflow** to ensure code quality, testability, and long-term maintainability.
 
-## 1. Architectural Patterns
+## 1. Mandatory Development Workflow (NO EXCEPTIONS)
+
+You MUST strictly follow this sequence for **EVERY** request:
+
+1. **Requirement Logging (STRICT):**
+    - Append the new requirement to `.ai/requirements/requirements.md` with a unique ID (e.g., REQ-XX).
+2. **Task Creation (STRICT):**
+    - Create a new task file in `.ai/tasks/task-xx-name.md`.
+    - Detail the implementation steps and verification criteria based on the requirement.
+3. **Surgical Implementation:**
+    - Execute the task following the architectural patterns defined below.
+    - Use PHP 8.3 features and Laravel 12 standards.
+4. **Verification & Styling:**
+    - Run `./vendor/bin/pint --dirty` to maintain project styling.
+    - Verify with PHPUnit tests before finalization.
+5. **Documentation Update (STRICT):**
+    - Update `PROJECT_DOCUMENTATION.md` to reflect the new module, connections, and system flow.
+    - A task is ONLY complete when the documentation is updated.
+
+## 2. Architectural Patterns
 ### **Service Layer Pattern (STRICT)**
 - **All** business logic, data calculations, and database operations MUST reside in Service classes (`app/Services`).
 - Services are injected into controllers using constructor property promotion.

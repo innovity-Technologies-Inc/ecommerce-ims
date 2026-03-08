@@ -102,7 +102,15 @@ Strict adherence to `App\HelperClass` for:
 - **Dynamic Shop Sidebar:** Filters for Categories, Brands, Sizes, Colors, and Price Range.
 - **Global Search:** FlexSearch integration across multiple tables.
 - **Wishlist:** Authenticated persistent wishlist with dynamic pricing logic.
-- **SMTP Settings:** Dynamic DB-driven mail configuration.
+- **Hybrid Cart System:**
+    - Uses **Database** for authenticated users and **Sessions** for guest users.
+    - Synchronizes guest cart items to the database automatically upon login or registration.
+    - Dynamic AJAX updates for cart count, totals, and mini-cart in the header.
+    - Full cart management page with **8/4 grid split** for promotional banner and grand totals.
+    - **UI Alignment:** Flexbox `align-items-stretch` used to match promotional banner height with the Cart Total card.
+    - Mobile-optimized **40/60 Grid layout** for product items (Centered Image / Stacked Details).
+- **SMTP Settings:**
+ Dynamic DB-driven mail configuration.
 - **Homepage Sections:** Configurable sections (Bestsellers, Sliders, Featured).
 
 ---

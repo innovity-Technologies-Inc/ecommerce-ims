@@ -30,7 +30,18 @@ class HelperClass
         if (\Illuminate\Support\Facades\Auth::guard('web')->check()) {
             return \App\Models\Wishlist::where('user_id', \Illuminate\Support\Facades\Auth::guard('web')->id())->count();
         }
+
         return 0;
+    }
+
+    public static function cartCount()
+    {
+        return app(\App\Services\CartService::class)->getCartCount();
+    }
+
+    public static function getCartItems()
+    {
+        return app(\App\Services\CartService::class)->getCartItems();
     }
 
     public static function indexNumberSerialization($data)
@@ -56,9 +67,9 @@ class HelperClass
     public static function getProductPriceRange($product)
     {
         $prices = collect();
-        
-        if($product->variants->count() > 0) {
-            foreach($product->variants as $variant) {
+
+        if ($product->variants->count() > 0) {
+            foreach ($product->variants as $variant) {
                 // If variant doesn't have its own price, it should fallback to product's base price.
                 $price = $variant->discount_price ?? $variant->regular_price ?? $product->discount_price ?? $product->regular_price;
                 if ($price) {
@@ -66,7 +77,7 @@ class HelperClass
                 }
             }
         }
-        
+
         // Always include product's base prices as well, if variants don't fully override them.
         $basePrice = $product->discount_price ?? $product->regular_price;
         if ($basePrice) {
@@ -75,8 +86,8 @@ class HelperClass
 
         $prices = $prices->unique();
 
-        $maxDiscount = $product->variants->count() > 0 
-            ? $product->variants->max('discount_percentage') 
+        $maxDiscount = $product->variants->count() > 0
+            ? $product->variants->max('discount_percentage')
             : $product->discount_percentage;
 
         return [
@@ -85,7 +96,7 @@ class HelperClass
             'has_range' => $prices->min() != $prices->max(),
             'has_discount' => $maxDiscount > 0,
             'max_discount_percentage' => $maxDiscount ?? 0,
-            'min_regular_price' => $product->variants->count() > 0 
+            'min_regular_price' => $product->variants->count() > 0
                 ? ($product->variants->min('regular_price') ?? $product->regular_price)
                 : $product->regular_price,
         ];

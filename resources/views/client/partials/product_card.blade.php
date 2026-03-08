@@ -61,7 +61,11 @@
     </div>
     <div class="add-to-link">
         <ul>
-            <li class="cart"><a class="cart-btn" href="#">ADD TO CART </a></li>
+            @if($product->variants->count() > 0)
+                <li class="cart"><a class="cart-btn" href="{{ route('client.products.details', $product->slug) }}">SELECT OPTIONS</a></li>
+            @else
+                <li class="cart"><a class="cart-btn add-to-cart-btn" href="javascript:void(0)" data-product-id="{{ $product->id }}" data-quantity="1">ADD TO CART</a></li>
+            @endif
             @if(Auth::guard('web')->check())
             <li>
                 <a href="javascript:void(0)" onclick="addToWishlist({{ $product->id }})"><i class="ion-android-favorite-outline"></i></a>

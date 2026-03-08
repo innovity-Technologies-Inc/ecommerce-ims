@@ -3,13 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
@@ -23,9 +20,9 @@ class RegisteredUserController extends Controller
     {
         $title = 'Registration';
         $section = 'User Registration';
+
         return view('client.auth.register', compact('title', 'section'));
     }
-
 
     public function store(Request $request)
     {
@@ -42,25 +39,29 @@ class RegisteredUserController extends Controller
             'zip' => ['required', 'string', 'max:20'],
         ];
 
-            $validated = $request->validate($rules);
+        $validated = $request->validate($rules);
 
-                $user = User::create([
-                    'name' => $validated['name'],
-                    'email' => $validated['email'],
-                    'password' => Hash::make($validated['password']),
-                    'mobile' => $validated['mobile'],
-                    'address' => $validated['address'],
-                    'city' => $validated['city'],
-                    'state' => $validated['state'],
-                    'country' => $validated['country'],
-                    'zip' => $validated['zip'],
-                ]);
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'mobile' => $validated['mobile'],
+            'address' => $validated['address'],
+            'city' => $validated['city'],
+            'state' => $validated['state'],
+            'country' => $validated['country'],
+            'zip' => $validated['zip'],
+        ]);
 
-            Auth::login($user);
-            // 🔥 Send email verification ONLY for user
-            event(new Registered($user));
+        $oldSessionId = $request->session()->getId();
+        Auth::login($user);
 
-            return redirect()->route('verification.notice');
+        app(\App\Services\CartService::class)->syncCartOnLogin($oldSessionId);
+
+        // 🔥 Send email verification ONLY for user
+        event(new Registered($user));
+
+        return redirect()->route('verification.notice');
 
     }
 }

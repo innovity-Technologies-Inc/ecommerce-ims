@@ -14,22 +14,25 @@ precision, strictly following the project's established architectural patterns a
 - **Tech Stack:** Use ONLY Bootstrap 5, jQuery, and standard JavaScript. Prohibited: Tailwind CSS, Alpine.js, React,
   Vue.
 
-## 2. Standard Development Workflow
+## 2. Mandatory Development Workflow (NO EXCEPTIONS)
 
-Whenever a new feature or change is requested, you MUST follow this sequence:
+Whenever ANY feature, modification, or change is requested, you MUST strictly follow this exact sequence:
 
-1. **Requirement Logging:**
-    - Append the new requirement to `.ai/requirements/requirements.md` with a unique ID (e.g., REQ-XX).
-2. **Task Creation:**
+1. **Requirement Logging (STRICT):**
+    - **BEFORE** writing any code, append the new requirement to `.ai/requirements/requirements.md` with a unique ID (e.g., REQ-XX).
+2. **Task Creation (STRICT):**
     - Create a new task file in `.ai/tasks/task-xx-name.md`.
     - Detail the implementation steps and verification criteria based on the requirement.
-3. **Implementation:**
+3. **Surgical Implementation:**
     - Execute the task following the "Service Layer" pattern.
     - Use `App\HelperClass` for file operations and table numbering.
     - Ensure PHP 8.3 features (Constructor Promotion, Explicit Return Types) are used.
-4. **Documentation Update:**
-    - Once the task is implemented and verified, update `PROJECT_DOCUMENTATION.md` to reflect the new module,
-      connections, and system flow.
+4. **Verification & Styling:**
+    - Run `./vendor/bin/pint --dirty` to ensure project styling.
+    - Verify with PHPUnit tests before finalization.
+5. **Documentation Update (STRICT):**
+    - Once the task is implemented and verified, update `PROJECT_DOCUMENTATION.md` to reflect the new module, connections, and system flow.
+    - **NEVER** consider a task complete until `PROJECT_DOCUMENTATION.md` is updated.
 
 ## 3. Technical Standards Summary
 

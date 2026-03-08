@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
@@ -57,6 +58,14 @@ Route::controller(FrontendController::class)->group(function () {
     Route::get('/', 'home')->name('home');
     Route::get('/products', 'products')->name('client.products.index');
     Route::get('/product/{slug}', 'productDetails')->name('client.products.details');
+});
+
+// Cart Routes
+Route::prefix('cart')->name('cart.')->group(function () {
+    Route::get('/', [CartController::class, 'index'])->name('index');
+    Route::post('/add', [CartController::class, 'addToCart'])->name('add');
+    Route::post('/update', [CartController::class, 'updateQuantity'])->name('update');
+    Route::post('/remove', [CartController::class, 'removeItem'])->name('remove');
 });
 
 Route::middleware(['auth:web'])->prefix('user')->controller(CustomerController::class)->group(function () {

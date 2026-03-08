@@ -18,21 +18,25 @@ class AuthenticatedSessionController extends Controller
     {
         $title = 'Login';
         $section = 'login';
+
         return view('client.auth.login', compact('title', 'section'));
     }
-
 
     /**
      * Handle an incoming authentication request.
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        $oldSessionId = $request->session()->getId();
         $request->authenticate();
 
+        app(\App\Services\CartService::class)->syncCartOnLogin($oldSessionId);
+
         $request->session()->regenerate();
+
         return redirect()->route('home')->with([
             'message' => 'You are now logged in',
-            'alert-type' => 'success'
+            'alert-type' => 'success',
         ]);
 
     }
@@ -48,6 +52,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-            return redirect()->route('home');
+        return redirect()->route('home');
     }
 }

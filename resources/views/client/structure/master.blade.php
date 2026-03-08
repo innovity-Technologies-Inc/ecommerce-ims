@@ -7,6 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $gs->business_name ?? 'Smart E-commerce' }}</title>
     <meta name="title" content="{{ $gs->meta_title ?? '' }}">
     <meta name="description" content="{{ $gs->meta_description ?? '' }}">
@@ -193,6 +194,9 @@
 
 <!-- Main Activation JS -->
 <script src="{{asset('client/assets/js/main.js')}}"></script>
+
+@stack('scripts')
+@include('client.structure.partials.cart-scripts')
 
 
 {{-- Toastr --}}

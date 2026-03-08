@@ -110,10 +110,10 @@
 
                         <div class="pro-details-quality">
                             <div class="cart-plus-minus">
-                                <input class="cart-plus-minus-box" type="text" name="qtybutton" value="1">
+                                <input class="cart-plus-minus-box" type="text" name="qtybutton" value="1" id="product-quantity">
                             </div>
                             <div class="pro-details-cart btn-hover">
-                                <a href="#"> + Add To Cart</a>
+                                <a href="javascript:void(0)" class="add-to-cart-btn" data-product-id="{{ $product->id }}"> + Add To Cart</a>
                             </div>
                         </div>
                         <div class="pro-details-wish-com">
