@@ -18,10 +18,10 @@ class GeneralSettingSeeder extends Seeder
             'meta_description' => 'A modern e-commerce platform built with Laravel 12.',
             'currency' => 'USD',
             // Icons/Logos can be added as placeholders
-            'dark_logo' => 'admin/assets/images/logo-dark.png',
-            'light_logo' => 'admin/assets/images/logo-light.png',
-            'favicon' => 'admin/assets/images/favicon.ico',
-            'breadcrumb_image' => 'admin/assets/images/breadcrumb.jpg',
+            'dark_logo' => 'admin_assets/assets/images/logo-dark.png',
+            'light_logo' => 'admin_assets/assets/images/logo-light.png',
+            'favicon' => 'admin_assets/assets/images/favicon.ico',
+            'breadcrumb_image' => 'admin_assets/assets/images/breadcrumb.jpg',
         ]);
     }
 }

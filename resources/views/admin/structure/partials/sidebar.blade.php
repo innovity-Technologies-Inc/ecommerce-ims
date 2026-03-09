@@ -4,13 +4,13 @@
     <!-- Sidebar Logo -->
     <div class="logo-box">
         <a href="{{ route('admin.dashboard') }}" class="logo-dark">
-            <img src="{{ $gs->favicon ? asset('storage/'.$gs->favicon) : asset('admin/assets/images/favicon.ico') }}" class="logo-sm" alt="logo sm" style="height: 30px;">
-            <img src="{{ $gs->dark_logo ? asset('storage/'.$gs->dark_logo) : asset('admin/assets/images/logo-dark.png') }}" class="logo-lg" alt="logo dark" style="height: 50px;">
+            <img src="{{ $gs->favicon ? asset('storage/'.$gs->favicon) : asset('admin_assets/assets/images/favicon.ico') }}" class="logo-sm" alt="logo sm" style="height: 30px;">
+            <img src="{{ $gs->dark_logo ? asset('storage/'.$gs->dark_logo) : asset('admin_assets/assets/images/logo-dark.png') }}" class="logo-lg" alt="logo dark" style="height: 50px;">
         </a>
 
         <a href="{{ route('admin.dashboard') }}" class="logo-light">
-            <img src="{{ $gs->favicon ? asset('storage/'.$gs->favicon) : asset('admin/assets/images/favicon.ico') }}" class="logo-sm" alt="logo sm" style="height: 30px;">
-            <img src="{{ $gs->dark_logo ? asset('storage/'.$gs->dark_logo) : asset('admin/assets/images/logo-light.png') }}" class="logo-lg" alt="logo light" style="height: 50px;">
+            <img src="{{ $gs->favicon ? asset('storage/'.$gs->favicon) : asset('admin_assets/assets/images/favicon.ico') }}" class="logo-sm" alt="logo sm" style="height: 30px;">
+            <img src="{{ $gs->dark_logo ? asset('storage/'.$gs->dark_logo) : asset('admin_assets/assets/images/logo-light.png') }}" class="logo-lg" alt="logo light" style="height: 50px;">
         </a>
     </div>
 

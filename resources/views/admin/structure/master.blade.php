@@ -15,16 +15,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ $gs->favicon ? asset('storage/'.$gs->favicon) : asset('admin/assets/images/favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ $gs->favicon ? asset('storage/'.$gs->favicon) : asset('admin_assets/assets/images/favicon.ico') }}">
 
     <!-- Vendor css (Require in all Page) -->
-    <link href="{{asset('admin/assets/css/vendor.min.css')}}" rel="stylesheet" type="text/css" />
+    <link href="{{asset('admin_assets/assets/css/vendor.min.css')}}" rel="stylesheet" type="text/css" />
 
     <!-- Icons css (Require in all Page) -->
-    <link href="{{asset('admin/assets/css/icons.min.css')}}" rel="stylesheet" type="text/css" />
+    <link href="{{asset('admin_assets/assets/css/icons.min.css')}}" rel="stylesheet" type="text/css" />
 
     <!-- App css (Require in all Page) -->
-    <link href="{{asset('admin/assets/css/app.css')}}" rel="stylesheet" type="text/css" />
+    <link href="{{asset('admin_assets/assets/css/app.css')}}" rel="stylesheet" type="text/css" />
 
     {{--    Toastr --}}
 
@@ -185,7 +185,7 @@
     </style>
 
     <!-- Theme Config js (Require in all Page) -->
-    <script src="{{asset('admin/assets/js/config.js')}}"></script>
+    <script src="{{asset('admin_assets/assets/js/config.js')}}"></script>
 </head>
 
 <body>
@@ -195,18 +195,18 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 <!-- Vendor Javascript (Require in all Page) -->
-<script src="{{asset('admin/assets/js/vendor.js')}}"></script>
+<script src="{{asset('admin_assets/assets/js/vendor.js')}}"></script>
 
 <!-- App Javascript (Require in all Page) -->
-<script src="{{asset('admin/assets/js/app.js')}}"></script>
+<script src="{{asset('admin_assets/assets/js/app.js')}}"></script>
 
 <!-- Vector Map Js -->
-<script src="{{asset('admin/assets/vendor/jsvectormap/js/jsvectormap.min.js')}}"></script>
-<script src="{{asset('admin/assets/vendor/jsvectormap/maps/world-merc.js')}}"></script>
-<script src="{{asset('admin/assets/vendor/jsvectormap/maps/world.js')}}"></script>
+<script src="{{asset('admin_assets/assets/vendor/jsvectormap/js/jsvectormap.min.js')}}"></script>
+<script src="{{asset('admin_assets/assets/vendor/jsvectormap/maps/world-merc.js')}}"></script>
+<script src="{{asset('admin_assets/assets/vendor/jsvectormap/maps/world.js')}}"></script>
 
 <!-- Dashboard Js -->
-<script src="{{asset('admin/assets/js/pages/dashboard.js')}}"></script>
+<script src="{{asset('admin_assets/assets/js/pages/dashboard.js')}}"></script>
 
 
 

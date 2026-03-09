@@ -17,7 +17,7 @@
                     <img class="second-img" src="{{ asset('storage/' . $product->primaryImage->image_path) }}" alt="{{ $product->name }}">
                 @endif
             @else
-                <img class="first-img" src="{{ asset('admin/assets/images/no-image.png') }}" alt="{{ $product->name }}">
+                <img class="first-img" src="{{ asset('admin_assets/assets/images/no-image.png') }}" alt="{{ $product->name }}">
             @endif
         </a>
         <div class="quick-view">
