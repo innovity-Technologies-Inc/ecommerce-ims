@@ -3,6 +3,9 @@
 
 
 <!-- Start Container Fluid -->
+
+
+{{--
 <div class="container-fluid">
 
 
@@ -515,5 +518,9 @@
     </div> <!-- end row -->
 
 </div>
+--}}
+
+
+
 <!-- End Container Fluid -->
 @endsection
