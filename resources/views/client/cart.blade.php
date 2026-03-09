@@ -215,13 +215,38 @@
                                 </div>
                                 <h5>Subtotal <span class="cart-total-display">${{ number_format($cartItems->sum('subtotal'), 2) }}</span></h5>
                                 <div class="total-shipping">
-                                    <h5>Total shipping</h5>
-                                    <ul>
-                                        <li><input type="checkbox" /> Standard <span>$0.00</span></li>
-                                        <li><input type="checkbox" /> Express <span>$0.00</span></li>
+                                    <h5>Shipping Method</h5>
+                                    <ul id="shipping-methods-list" class="list-unstyled">
+                                        @foreach($shippingMethods as $method)
+                                            <li class="mb-3 border-bottom pb-3">
+                                                <div class="d-flex align-items-start">
+                                                    <div class="shipping-radio-wrapper me-3 mt-1">
+                                                        <input type="radio" name="shipping_method" class="shipping-method-radio" 
+                                                               id="method-{{ $method->id }}"
+                                                               value="{{ $method->id }}" 
+                                                               {{ (session('shipping_method_id') == $method->id) ? 'checked' : '' }} 
+                                                               style="width: 18px; height: 18px; cursor: pointer; vertical-align: middle;" />
+                                                    </div>
+                                                    <label class="flex-grow-1 mb-0" for="method-{{ $method->id }}" style="cursor: pointer;">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span class="fw-bold text-dark fs-15">{{ $method->name }}</span>
+                                                            <span class="fw-bold text-dark fs-15">${{ number_format($method->price, 2) }}</span>
+                                                        </div>
+                                                        @if($method->short_description)
+                                                            <div class="mt-1">
+                                                                <small class="text-muted d-block" style="font-size: 13px; line-height: 1.4;">
+                                                                    {{ $method->short_description }}
+                                                                </small>
+                                                            </div>
+                                                        @endif
+                                                    </label>
+                                                </div>
+                                            </li>
+                                        @endforeach
                                     </ul>
                                 </div>
-                                <h4 class="grand-totall-title">Grand Total <span class="cart-total-display">${{ number_format($cartItems->sum('subtotal'), 2) }}</span></h4>
+                                <h4 class="grand-totall-title">Shipping <span id="shipping-total-display">${{ number_format($selectedShippingMethod ? $selectedShippingMethod->price : 0, 2) }}</span></h4>
+                                <h4 class="grand-totall-title">Grand Total <span class="grand-total-display">${{ number_format($cartItems->sum('subtotal') + ($selectedShippingMethod ? $selectedShippingMethod->price : 0), 2) }}</span></h4>
                                 <a href="{{ route('checkout.index') }}">Proceed to Checkout</a>
                             </div>
                         </div>
@@ -236,6 +261,27 @@
 
 @push('scripts')
     <script>
-        // AJAX logic will be added to a global JS file or here
+        $(document).on('change', '.shipping-method-radio', function() {
+            let methodId = $(this).val();
+            
+            $.ajax({
+                url: "{{ route('cart.update_shipping') }}",
+                method: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    shipping_method_id: methodId
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        $('#shipping-total-display').text('$' + response.shipping_price);
+                        $('.grand-total-display').text('$' + response.grand_total);
+                        toastr.success('Shipping method updated!');
+                    }
+                },
+                error: function(xhr) {
+                    toastr.error('Failed to update shipping method.');
+                }
+            });
+        });
     </script>
 @endpush

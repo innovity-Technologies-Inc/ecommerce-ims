@@ -88,7 +88,6 @@ class CartService
                 'quantity' => $data['quantity'],
             ]);
         }
-
         return true;
     }
 

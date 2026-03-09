@@ -6,7 +6,9 @@ use App\Mail\OrderConfirmationMail;
 use App\Mail\OrderStatusUpdateMail;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\ShippingMethod;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -32,6 +34,7 @@ class OrderService
         return true;
     }
 
+
     /**
      * Delete an order.
      */
@@ -49,9 +52,17 @@ class OrderService
                 throw new \Exception('Your cart is empty.');
             }
 
+            $shippingMethodId = session('shipping_method_id');
+            if (! $shippingMethodId) {
+                throw new \Exception('Please select a shipping method.');
+            }
+
+            $shippingMethod = ShippingMethod::findOrFail($shippingMethodId);
+
             $orderId = $this->generateOrderId();
             $subtotal = $this->cartService->getCartTotal();
-            $totalAmount = $subtotal; // Shipping charge and discount can be added here if needed in future
+            $shippingCharge = $shippingMethod->price;
+            $totalAmount = $subtotal + $shippingCharge;
 
             $order = Order::create([
                 'order_id' => $orderId,
@@ -64,12 +75,14 @@ class OrderService
                 'state' => $data['state'] ?? null,
                 'country' => $data['country'] ?? null,
                 'zip' => $data['zip'] ?? null,
+                'shipping_method_id' => $shippingMethod->id,
+                'shipping_method_name' => $shippingMethod->name,
                 'subtotal' => $subtotal,
-                'shipping_charge' => 0,
+                'shipping_charge' => $shippingCharge,
                 'discount' => 0,
                 'total_amount' => $totalAmount,
                 'payment_method' => $data['payment_method'],
-                'payment_status' => $data['payment_method'] === 'COD' ? 'Pending' : 'Pending', // Logic for online can be added later
+                'payment_status' => 'Pending',
                 'order_status' => 'Pending',
                 'notes' => $data['notes'] ?? null,
             ]);
@@ -88,6 +101,7 @@ class OrderService
             }
 
             $this->cartService->clearCart();
+            session()->forget('shipping_method_id');
 
             // Send order confirmation email
             try {

@@ -7,6 +7,7 @@ precision, strictly following the project's established architectural patterns a
 
 - **Strict Guideline Adherence:** You MUST follow all standards defined in `.ai/guidelines/coding-style.md` and
   `.ai/guidelines/design-guidelines.md`.
+- **Global Config Integrity:** NEVER implement manual configuration "refreshes" or overrides. ALWAYS rely on global boot-level configurations defined in Service Providers.
 - **Architectural Pattern:**
     - **Service Layer:** ALL business logic and DB operations reside in `app/Services`.
     - **Thin Controllers:** Controllers ONLY handle routing and response returning.

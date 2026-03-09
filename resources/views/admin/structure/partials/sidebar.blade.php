@@ -95,6 +95,15 @@
             </li>
 
             <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.shipping_methods.index') }}">
+                                   <span class="nav-icon">
+                                        <iconify-icon icon="solar:delivery-bold-duotone"></iconify-icon>
+                                   </span>
+                    <span class="nav-text"> Shipping Methods </span>
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link menu-arrow" href="#sidebarHomepage" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarHomepage">
                                    <span class="nav-icon">
                                         <iconify-icon icon="solar:home-2-bold-duotone"></iconify-icon>

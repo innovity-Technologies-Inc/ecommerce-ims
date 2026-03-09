@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CheckoutRequest;
+use App\Models\ShippingMethod;
 use App\Services\CartService;
 use App\Services\OrderService;
 use Illuminate\Http\RedirectResponse;
@@ -12,9 +13,11 @@ use Illuminate\View\View;
 class CheckoutController extends Controller
 {
     public function __construct(
-        protected CartService $cartService,
+        protected CartService  $cartService,
         protected OrderService $orderService
-    ) {}
+    )
+    {
+    }
 
     /**
      * Display the checkout page.
@@ -24,13 +27,23 @@ class CheckoutController extends Controller
         $cartItems = $this->cartService->getCartItems();
 
         if ($cartItems->isEmpty()) {
-            return redirect()->route('cart')->with('error', 'Your cart is empty. Please add items before checkout.');
+            return redirect()->route('cart.index')->with('error', 'Your cart is empty. Please add items before checkout.');
+        }
+
+        if (!session('shipping_method_id')) {
+            return redirect()->route('cart.index')->with('error', 'Please select a shipping method before checkout.');
+        }
+
+        $selectedShippingMethod = ShippingMethod::find(session('shipping_method_id'));
+        if (!$selectedShippingMethod) {
+            return redirect()->route('cart.index')->with('error', 'Selected shipping method is no longer available.');
         }
 
         $user = Auth::guard('web')->user();
         $subtotal = $this->cartService->getCartTotal();
+        $grandTotal = $subtotal + $selectedShippingMethod->price;
 
-        return view('client.checkout.index', compact('user', 'cartItems', 'subtotal'));
+        return view('client.checkout.index', compact('user', 'cartItems', 'subtotal', 'selectedShippingMethod', 'grandTotal'));
     }
 
     /**

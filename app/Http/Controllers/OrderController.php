@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateOrderStatusRequest;
 use App\Models\Order;
 use App\Services\OrderService;
+use App\Services\SettingsService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-class AdminOrderController extends Controller
+class OrderController extends Controller
 {
     public function __construct(protected OrderService $orderService) {}
 
@@ -36,13 +37,8 @@ class AdminOrderController extends Controller
     /**
      * Update order status.
      */
-    public function updateStatus(Request $request, Order $order): RedirectResponse
+    public function updateStatus(UpdateOrderStatusRequest $request, Order $order): RedirectResponse
     {
-        $request->validate([
-            'order_status' => 'required|string',
-            'email_notify' => 'nullable|boolean',
-        ]);
-
         $this->orderService->updateOrderStatus(
             $order,
             $request->order_status,

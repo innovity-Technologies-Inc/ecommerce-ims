@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CartRequest;
 use App\Http\Requests\RemoveCartItemRequest;
+use App\Http\Requests\UpdateShippingRequest;
 use App\Http\Requests\UpdateCartRequest;
+use App\Models\ShippingMethod;
 use App\Services\CartService;
+use App\Services\ShippingMethodService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 
@@ -14,7 +17,10 @@ class CartController extends Controller
     /**
      * Create a new controller instance.
      */
-    public function __construct(protected CartService $cartService) {}
+    public function __construct(
+        protected CartService $cartService,
+        protected ShippingMethodService $shippingMethodService
+    ) {}
 
     /**
      * Display the cart page.
@@ -22,8 +28,30 @@ class CartController extends Controller
     public function index(): View
     {
         $cartItems = $this->cartService->getCartItems();
+        $shippingMethods = $this->shippingMethodService->getActiveMethods();
+        $selectedShippingMethod = session('shipping_method_id')
+            ? ShippingMethod::find(session('shipping_method_id'))
+            : null;
 
-        return view('client.cart', compact('cartItems'));
+        return view('client.cart', compact('cartItems', 'shippingMethods', 'selectedShippingMethod'));
+    }
+
+    /**
+     * Update shipping method in session.
+     */
+    public function updateShippingMethod(UpdateShippingRequest $request): JsonResponse
+    {
+        $shippingMethod = ShippingMethod::find($request->shipping_method_id);
+        session(['shipping_method_id' => $shippingMethod->id]);
+
+        $cartTotal = $this->cartService->getCartTotal();
+        $grandTotal = $cartTotal + $shippingMethod->price;
+
+        return response()->json([
+            'status' => 'success',
+            'shipping_price' => number_format($shippingMethod->price, 2),
+            'grand_total' => number_format($grandTotal, 2),
+        ]);
     }
 
     /**

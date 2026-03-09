@@ -104,14 +104,14 @@
                                 </div>
                                 <div class="your-order-bottom">
                                     <ul>
-                                        <li class="your-order-shipping">Shipping</li>
-                                        <li>Free shipping</li>
+                                        <li class="your-order-shipping">Shipping ({{ $selectedShippingMethod->name }})</li>
+                                        <li>${{ number_format($selectedShippingMethod->price, 2) }}</li>
                                     </ul>
                                 </div>
                                 <div class="your-order-total">
                                     <ul>
                                         <li class="order-total">Total</li>
-                                        <li>${{ number_format($subtotal, 2) }}</li>
+                                        <li>${{ number_format($grandTotal, 2) }}</li>
                                     </ul>
                                 </div>
                             </div>

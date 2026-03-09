@@ -116,10 +116,13 @@ Strict adherence to `App\HelperClass` for:
     - Streamlined global search by removing the category dropdown, ensuring a cleaner UI and focused search experience across all devices.
 - **Checkout & Order System:**
     - **Dual-User Support:** Form pre-fills for authenticated users; guest users can fill data manually (matches registration schema).
+    - **Shipping Methods:** Integrated selection on Cart page with dynamic price updates via AJAX.
     - **Payment Logic:** Support for Cash on Delivery (COD) and placeholders for online payment.
     - **Order Tracking:** Unique `order_id` generation (e.g., ORD-XXXXXXXXXX).
     - **Automated Notifications:** Email confirmation sent upon order placement.
-    - **Admin Controls:** Comprehensive management including status updates (Pending, Processing, Delivered, etc.), order rejection, and deletion.
+    - **Admin Controls:** 
+        - Comprehensive management including status updates (Pending, Processing, Delivered, etc.), order rejection, and deletion.
+        - **Shipping Method CRUD:** Admin can manage shipping names, prices, and descriptions.
     - **Conditional Alerts:** "Email Notify" checkbox in Admin allows sending status update emails to customers only when needed.
 - **SMTP Settings:**
  Dynamic DB-driven mail configuration.

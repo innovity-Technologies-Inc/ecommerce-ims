@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\AdminOrderController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
@@ -11,6 +11,7 @@ use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\ShippingMethodController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,6 +37,7 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
 
     Route::resource('categories', CategoryController::class)->names('admin.categories');
     Route::resource('brands', BrandController::class)->names('admin.brands');
+    Route::resource('shipping-methods', ShippingMethodController::class)->names('admin.shipping_methods');
 
     Route::controller(SettingsController::class)->prefix('settings')->group(function () {
         Route::get('/general', 'generalSettings')->name('admin.settings.general');
@@ -47,10 +49,10 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     Route::resource('sliders', \App\Http\Controllers\SliderController::class)->names('admin.sliders');
 
     Route::prefix('orders')->name('admin.orders.')->group(function () {
-        Route::get('/', [AdminOrderController::class, 'index'])->name('index');
-        Route::get('/{order}', [AdminOrderController::class, 'show'])->name('show');
-        Route::put('/{order}/update-status', [AdminOrderController::class, 'updateStatus'])->name('update-status');
-        Route::delete('/{order}/destroy', [AdminOrderController::class, 'destroy'])->name('destroy');
+        Route::get('/', [OrderController::class, 'index'])->name('index');
+        Route::get('/{order}', [OrderController::class, 'show'])->name('show');
+        Route::put('/{order}/update-status', [OrderController::class, 'updateStatus'])->name('update-status');
+        Route::delete('/{order}/destroy', [OrderController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('sections')->group(function () {
@@ -78,6 +80,7 @@ Route::prefix('cart')->name('cart.')->group(function () {
     Route::post('/add', [CartController::class, 'addToCart'])->name('add');
     Route::post('/update', [CartController::class, 'updateQuantity'])->name('update');
     Route::post('/remove', [CartController::class, 'removeItem'])->name('remove');
+    Route::post('/update-shipping', [CartController::class, 'updateShippingMethod'])->name('update_shipping');
 });
 
 // Checkout Routes

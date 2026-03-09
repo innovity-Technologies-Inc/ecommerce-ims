@@ -108,6 +108,24 @@
                         <h5 class="card-title mb-0">Order Status</h5>
                     </div>
                     <div class="card-body">
+                        <div class="mb-4">
+                            <label class="form-label d-block text-muted small text-uppercase fw-bold">Current Status</label>
+                            @php
+                                $statusClass = match($order->order_status) {
+                                    'Pending' => 'bg-warning',
+                                    'Processing' => 'bg-info',
+                                    'Out for Delivery' => 'bg-primary',
+                                    'Delivered' => 'bg-success',
+                                    'Cancelled' => 'bg-danger',
+                                    'Rejected' => 'bg-secondary',
+                                    default => 'bg-dark'
+                                };
+                            @endphp
+                            <span class="badge {{ $statusClass }} text-white fs-14 px-3 py-2">{{ $order->order_status }}</span>
+                        </div>
+
+                        <hr>
+
                         <form action="{{ route('admin.orders.update-status', $order->id) }}" method="POST">
                             @csrf
                             @method('PUT')
@@ -119,15 +137,14 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="mb-3">
-                                <div class="form-check">
+                            <div class="mb-4">
+                                <div class="form-check form-switch">
                                     <input class="form-check-input" type="checkbox" name="email_notify" id="email_notify" value="1">
-                                    <label class="form-check-input" for="email_notify">
-                                        Email Notify Customer
-                                    </label>
+                                    <label class="form-check-label fw-medium" for="email_notify">Email Notify Customer</label>
                                 </div>
+                                <small class="text-muted">If checked, the customer will receive an email about this status update.</small>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100">Update Status</button>
+                            <button type="submit" class="btn btn-primary w-100 py-2">Update Status</button>
                         </form>
                     </div>
                 </div>
