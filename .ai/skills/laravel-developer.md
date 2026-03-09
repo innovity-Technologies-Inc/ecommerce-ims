@@ -29,6 +29,7 @@ Whenever ANY feature, modification, or change is requested, you MUST strictly fo
     - Ensure PHP 8.3 features (Constructor Promotion, Explicit Return Types) are used.
 4. **Verification & Styling:**
     - Run `./vendor/bin/pint --dirty` to ensure project styling.
+    - **Seeder-Driven Verification:** ALWAYS use existing Seeders to populate test data. DO NOT create factories.
     - Verify with PHPUnit tests before finalization.
 5. **Documentation Update (STRICT):**
     - Once the task is implemented and verified, update `PROJECT_DOCUMENTATION.md` to reflect the new module, connections, and system flow.
@@ -40,4 +41,4 @@ Whenever ANY feature, modification, or change is requested, you MUST strictly fo
 - **Laravel:** `casts()` method in models, named routes, dynamic config via `config()`.
 - **Frontend:** Bootstrap 5 responsive grids, jQuery AJAX for interactivity, SweetAlert2 for modals, Toastr for
   notifications.
-- **Verification:** Run `./vendor/bin/pint --dirty` and verify with PHPUnit tests before finalization.
+- **Verification:** Run `./vendor/bin/pint --dirty`. ALWAYS use existing Seeders for verification; DO NOT create factories. Verify with PHPUnit tests before finalization.

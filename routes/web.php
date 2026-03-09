@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FrontendController;
@@ -44,6 +46,13 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
 
     Route::resource('sliders', \App\Http\Controllers\SliderController::class)->names('admin.sliders');
 
+    Route::prefix('orders')->name('admin.orders.')->group(function () {
+        Route::get('/', [AdminOrderController::class, 'index'])->name('index');
+        Route::get('/{order}', [AdminOrderController::class, 'show'])->name('show');
+        Route::put('/{order}/update-status', [AdminOrderController::class, 'updateStatus'])->name('update-status');
+        Route::delete('/{order}/destroy', [AdminOrderController::class, 'destroy'])->name('destroy');
+    });
+
     Route::prefix('sections')->group(function () {
         Route::get('/bestsellers', [\App\Http\Controllers\Admin\HomepageSectionController::class, 'bestsellers'])->name('admin.sections.bestsellers');
         Route::get('/{sectionName}', [\App\Http\Controllers\Admin\HomepageSectionController::class, 'editSection'])->name('admin.sections.edit');
@@ -69,6 +78,13 @@ Route::prefix('cart')->name('cart.')->group(function () {
     Route::post('/add', [CartController::class, 'addToCart'])->name('add');
     Route::post('/update', [CartController::class, 'updateQuantity'])->name('update');
     Route::post('/remove', [CartController::class, 'removeItem'])->name('remove');
+});
+
+// Checkout Routes
+Route::prefix('checkout')->name('checkout.')->group(function () {
+    Route::get('/', [CheckoutController::class, 'index'])->name('index');
+    Route::post('/store', [CheckoutController::class, 'store'])->name('store');
+    Route::get('/success/{order_id}', [CheckoutController::class, 'success'])->name('success');
 });
 
 Route::middleware(['auth:web'])->prefix('user')->controller(CustomerController::class)->group(function () {

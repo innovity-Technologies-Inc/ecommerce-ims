@@ -16,6 +16,7 @@ You MUST strictly follow this sequence for **EVERY** request:
     - Use PHP 8.3 features and Laravel 12 standards.
 4. **Verification & Styling:**
     - Run `./vendor/bin/pint --dirty` to maintain project styling.
+    - **Seeder-Driven Verification (STRICT):** Verify logic using existing Seeders (`php artisan db:seed`) to populate dummy data. DO NOT create new Model Factories.
     - Verify with PHPUnit tests before finalization.
 5. **Documentation Update (STRICT):**
     - Update `PROJECT_DOCUMENTATION.md` to reflect the new module, connections, and system flow.
@@ -63,5 +64,7 @@ You MUST strictly follow this sequence for **EVERY** request:
 2. **Form Request:** Define validation rules.
 3. **Service:** Implement business logic and DB operations.
 4. **Controller:** Route the request to the Service.
-5. **Testing:** Write PHPUnit tests in `tests/Feature`.
+5. **Testing & Verification:**
+    - **Seeder-Driven Verification:** ALWAYS use existing Seeders to populate test data. DO NOT create factories.
+    - Write PHPUnit tests in `tests/Feature` or verify manually using seeded data.
 6. **Formatting:** Run `./vendor/bin/pint --dirty` before finalizing.

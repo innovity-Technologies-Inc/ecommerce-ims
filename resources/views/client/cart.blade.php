@@ -194,7 +194,7 @@
                                     </div>
                                     <div class="cart-clear">
                                         <button type="button" id="clear-cart">Clear Shopping Cart</button>
-                                        <a href="checkout.html">Proceed to Checkout</a>
+                                        <a href="{{ route('checkout.index') }}">Proceed to Checkout</a>
                                     </div>
                                 </div>
                             </div>
@@ -222,7 +222,7 @@
                                     </ul>
                                 </div>
                                 <h4 class="grand-totall-title">Grand Total <span class="cart-total-display">${{ number_format($cartItems->sum('subtotal'), 2) }}</span></h4>
-                                <a href="checkout.html">Proceed to Checkout</a>
+                                <a href="{{ route('checkout.index') }}">Proceed to Checkout</a>
                             </div>
                         </div>
                     </div>
