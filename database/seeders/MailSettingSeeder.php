@@ -13,7 +13,7 @@ class MailSettingSeeder extends Seeder
     public function run(): void
     {
         MailSetting::create([
-            'mail_transport' => 'smtp',
+            'mail_mailer' => 'smtp',
             'mail_host' => 'smtp.mailtrap.io',
             'mail_port' => '2525',
             'mail_username' => 'test_user',

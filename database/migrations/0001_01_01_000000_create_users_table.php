@@ -19,12 +19,12 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
 
-            $table->string('mobile');
-            $table->string('address');
-            $table->string('city');
-            $table->string('state');
-            $table->string('country');
-            $table->string('zip');
+            $table->string('mobile')->nullable();
+            $table->string('address')->nullable();
+            $table->string('city')->nullable();
+            $table->string('state')->nullable();
+            $table->string('country')->nullable();
+            $table->string('zip')->nullable();
 
             $table->timestamps();
         });

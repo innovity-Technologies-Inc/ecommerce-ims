@@ -179,4 +179,22 @@ class CartService
 
         return Cart::where('session_id', $sessionId)->sum('quantity');
     }
+
+    /**
+     * Get the total price of all items in the cart.
+     */
+    public function getCartTotal(): float
+    {
+        return (float) $this->getCartItems()->sum('subtotal');
+    }
+
+    /**
+     * Get subtotal for a specific cart item.
+     */
+    public function getItemSubtotal(int $cartId): float
+    {
+        $item = $this->getCartItems()->firstWhere('id', $cartId);
+
+        return $item ? (float) $item->subtotal : 0.0;
+    }
 }

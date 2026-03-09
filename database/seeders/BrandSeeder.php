@@ -27,7 +27,7 @@ class BrandSeeder extends Seeder
             Brand::create([
                 'name' => $name,
                 'slug' => Str::slug($name),
-                'status' => 1,
+                'icon' => 'client/assets/images/brands/'.Str::slug($name).'.png',
             ]);
         }
     }

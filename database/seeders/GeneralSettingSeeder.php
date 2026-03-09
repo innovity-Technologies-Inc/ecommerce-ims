@@ -13,13 +13,15 @@ class GeneralSettingSeeder extends Seeder
     public function run(): void
     {
         GeneralSetting::create([
-            'site_name' => 'smart-ecom',
-            'contact_email' => 'contact@smart-ecom.com',
-            'contact_phone' => '+1 234 567 890',
-            'address' => '123 E-commerce St, Digital City',
-            'currency_name' => 'USD',
-            'currency_symbol' => '$',
-            'time_zone' => 'UTC',
+            'business_name' => 'smart-ecom',
+            'meta_title' => 'smart-ecom | Your Best E-commerce Platform',
+            'meta_description' => 'A modern e-commerce platform built with Laravel 12.',
+            'currency' => 'USD',
+            // Icons/Logos can be added as placeholders
+            'dark_logo' => 'admin/assets/images/logo-dark.png',
+            'light_logo' => 'admin/assets/images/logo-light.png',
+            'favicon' => 'admin/assets/images/favicon.ico',
+            'breadcrumb_image' => 'admin/assets/images/breadcrumb.jpg',
         ]);
     }
 }

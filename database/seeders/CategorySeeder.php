@@ -23,6 +23,7 @@ class CategorySeeder extends Seeder
             $parent = Category::create([
                 'name' => $parentName,
                 'slug' => Str::slug($parentName),
+                'icon' => 'client/assets/images/categories/'.Str::slug($parentName).'.png',
             ]);
 
             foreach ($subCategories as $subName) {
@@ -30,6 +31,7 @@ class CategorySeeder extends Seeder
                     'name' => $subName,
                     'slug' => Str::slug($subName),
                     'parent_id' => $parent->id,
+                    'icon' => 'client/assets/images/categories/'.Str::slug($subName).'.png',
                 ]);
             }
         }

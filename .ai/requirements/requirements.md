@@ -42,3 +42,5 @@ This document lists the high-level requirements for the modules implemented in t
 ## 8. Mobile UI Refinements
 - [x] **REQ-24:** Mobile Navbar Alignment (Logo and Icons spacing fix).
 - [x] **REQ-25:** Search Category Vertical Alignment (Fix for "All categories" text position).
+- [x] **REQ-26:** Database Seeder Alignment (Fix seeders to match current model schemas and fields).
+- [x] **REQ-27:** Cart Module Architectural Refactoring (Ensure full adherence to Service Layer and Form Request patterns).

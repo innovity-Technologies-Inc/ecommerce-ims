@@ -117,6 +117,7 @@ Strict adherence to `App\HelperClass` for:
 - **SMTP Settings:**
  Dynamic DB-driven mail configuration.
 - **Homepage Sections:** Configurable sections (Bestsellers, Sliders, Featured).
+- **Complete Seeder Support:** All database seeders are fully aligned with model schemas and provide comprehensive sample data for rapid development.
 
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*

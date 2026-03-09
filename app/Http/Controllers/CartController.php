@@ -3,15 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CartRequest;
+use App\Http\Requests\RemoveCartItemRequest;
+use App\Http\Requests\UpdateCartRequest;
 use App\Services\CartService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class CartController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     */
     public function __construct(protected CartService $cartService) {}
 
+    /**
+     * Display the cart page.
+     */
     public function index(): View
     {
         $cartItems = $this->cartService->getCartItems();
@@ -19,6 +26,9 @@ class CartController extends Controller
         return view('client.cart', compact('cartItems'));
     }
 
+    /**
+     * Add a product to the cart.
+     */
     public function addToCart(CartRequest $request): JsonResponse
     {
         $result = $this->cartService->addToCart($request->validated());
@@ -38,25 +48,20 @@ class CartController extends Controller
         ], 422);
     }
 
-    public function updateQuantity(Request $request): JsonResponse
+    /**
+     * Update the quantity of a cart item.
+     */
+    public function updateQuantity(UpdateCartRequest $request): JsonResponse
     {
-        $request->validate([
-            'cart_id' => 'required|exists:carts,id',
-            'quantity' => 'required|integer|min:1',
-        ]);
-
         $result = $this->cartService->updateQuantity($request->cart_id, $request->quantity);
 
         if ($result === true) {
-            $cartItems = $this->cartService->getCartItems();
-            $total = $cartItems->sum('subtotal');
-
             return response()->json([
                 'status' => 'success',
                 'message' => 'Cart updated successfully!',
                 'cart_count' => $this->cartService->getCartCount(),
-                'item_subtotal' => number_format($cartItems->firstWhere('id', $request->cart_id)->subtotal, 2),
-                'total' => number_format($total, 2),
+                'item_subtotal' => number_format($this->cartService->getItemSubtotal($request->cart_id), 2),
+                'total' => number_format($this->cartService->getCartTotal(), 2),
                 'mini_cart_html' => view('client.structure.mini-cart')->render(),
             ]);
         }
@@ -67,20 +72,18 @@ class CartController extends Controller
         ], 422);
     }
 
-    public function removeItem(Request $request): JsonResponse
+    /**
+     * Remove an item from the cart.
+     */
+    public function removeItem(RemoveCartItemRequest $request): JsonResponse
     {
-        $request->validate(['cart_id' => 'required|exists:carts,id']);
-
         $this->cartService->removeItem($request->cart_id);
-
-        $cartItems = $this->cartService->getCartItems();
-        $total = $cartItems->sum('subtotal');
 
         return response()->json([
             'status' => 'success',
             'message' => 'Item removed from cart!',
             'cart_count' => $this->cartService->getCartCount(),
-            'total' => number_format($total, 2),
+            'total' => number_format($this->cartService->getCartTotal(), 2),
             'mini_cart_html' => view('client.structure.mini-cart')->render(),
         ]);
     }
