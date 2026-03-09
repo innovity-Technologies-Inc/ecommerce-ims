@@ -21,20 +21,23 @@ You MUST strictly follow this sequence for **EVERY** request:
     - Update `PROJECT_DOCUMENTATION.md` to reflect the new module, connections, and system flow.
     - A task is ONLY complete when the documentation is updated.
 
-## 2. Architectural Patterns
-### **Service Layer Pattern (STRICT)**
-- **All** business logic, data calculations, and database operations MUST reside in Service classes (`app/Services`).
-- Services are injected into controllers using constructor property promotion.
-- Methods in Services should be focused, reusable, and have clear return types.
+## 2. Architectural Patterns (MANDATORY & ENFORCED)
 
-### **Thin Controllers**
-- Controllers are responsible for **routing only**.
-- They receive validated data from **Form Requests**, pass it to a Service, and return a view or a redirect.
-- Avoid all DB queries (`Model::find()`, etc.) and logic within controllers.
+### **Service Layer & Form Request Pattern (STRICT)**
+- It is **MANDATORY** for every Controller to use a dedicated **Form Request** class for validation and a **Service** class for logic.
+- **ALL** business logic, data calculations, and database operations (queries, updates, deletions) **MUST** reside in Service classes (`app/Services`).
+- **NO** logic is allowed in Controllers. They are strictly for receiving validated data and returning responses.
 
-### **Validation (Form Requests)**
-- Use `php artisan make:request` for all input validation.
-- All validation rules MUST be defined in these dedicated classes.
+### **Thin Controllers (Routing Only)**
+- Controllers **MUST** be thin. Their sole responsibility is to:
+    1. Receive a **Form Request** (automatically validated).
+    2. Pass the validated data to a **Service**.
+    3. Return a view, redirect, or JSON response based on the Service's result.
+- **NEVER** use `Model::query()`, `DB::table()`, or any direct data manipulation inside a Controller.
+
+### **Validation (Mandatory Form Requests)**
+- Every store, update, or action-based request **MUST** have a dedicated class created via `php artisan make:request`.
+- Inline `$request->validate([...])` is strictly prohibited.
 
 ## 2. PHP 8.3 Standards
 - **Constructor Property Promotion:** Use `public function __construct(protected Service $service) {}`.

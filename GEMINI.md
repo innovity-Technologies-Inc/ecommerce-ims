@@ -31,11 +31,12 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - **`PROJECT_DOCUMENTATION.md`**: This is the source of truth for the project's architecture, flow, and standards.
 - **Mandatory Updates**: Every time you add a new module, modify existing logic, or change the architectural direction, you MUST update this file to reflect the current state of the project.
 
-## Controllers, Requests & Services (CRITICAL)
+## Controllers, Requests & Services (CRITICAL & MANDATORY)
 
-- **Thin Controllers:** Controllers MUST only handle request routing and response returning.
-- **Form Requests:** Use dedicated Form Request classes (`php artisan make:request`) for ALL validation.
-- **Service Layer:** ALL business logic and database operations MUST reside in Service classes.
+- **Mandatory Pattern:** Every controller method **MUST** always utilize a dedicated **Form Request** for validation and a **Service** class for logic.
+- **Thin Controllers:** Controllers **MUST ONLY** handle request routing and response returning. No business logic or DB queries are allowed.
+- **Form Requests:** Use dedicated Form Request classes (`php artisan make:request`) for **ALL** validation. Inline validation is prohibited.
+- **Service Layer:** **ALL** business logic, complex calculations, and database operations **MUST** reside in Service classes.
 - **Workflow:** Controller receives validated data from Form Request -> Passes data to Service -> Service processes and returns result -> Controller returns view/redirect.
 
 ## Helper Class Usage (CRITICAL)
