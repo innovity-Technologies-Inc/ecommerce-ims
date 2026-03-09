@@ -2,49 +2,58 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Admin;
+use App\Http\Requests\StoreAdminRequest;
+use App\Http\Requests\UpdateAdminRequest;
+use App\Services\AdminService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
 class AdminController extends Controller
 {
-    public function index()
+    /**
+     * Create a new controller instance.
+     */
+    public function __construct(protected AdminService $adminService) {}
+
+    /**
+     * Display a listing of the admins.
+     */
+    public function index(): View
     {
-        $users = Admin::latest()->paginate(10);
+        $users = $this->adminService->getAllAdmins();
 
         return view('admin.users.index', compact('users'));
     }
 
-    public function AdminCreate(Request $request): View
+    /**
+     * Show the form for creating a new admin.
+     */
+    public function AdminCreate(): View
     {
         $title = 'User Registration';
 
         return view('admin.users.forms', compact('title'));
     }
 
-    public function edit(Request $request, $id)
+    /**
+     * Show the form for editing the specified admin.
+     */
+    public function edit(int $id): View
     {
         $title = 'User Edit';
-        $user = Admin::find($id);
+        $user = $this->adminService->findAdmin($id);
 
         return view('admin.users.forms', compact('title', 'user'));
     }
 
-    public function store(Request $request)
+    /**
+     * Store a newly created admin in storage.
+     */
+    public function store(StoreAdminRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:admins,email'],
-            'password' => ['required', 'confirmed'],
-        ]);
-
-        Admin::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-        ]);
+        $this->adminService->storeAdmin($request->validated());
 
         return redirect()->route('admin.index')->with([
             'message' => 'User created successfully',
@@ -52,26 +61,12 @@ class AdminController extends Controller
         ]);
     }
 
-    public function update($id, Request $request)
+    /**
+     * Update the specified admin in storage.
+     */
+    public function update(int $id, UpdateAdminRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:admins,email,'.$id],
-            'password' => ['nullable', 'confirmed', 'min:8'],
-        ]);
-
-        $admin = Admin::findOrFail($id);
-        
-        $updateData = [
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-        ];
-
-        if (!empty($validated['password'])) {
-            $updateData['password'] = Hash::make($validated['password']);
-        }
-
-        $admin->update($updateData);
+        $this->adminService->updateAdmin($id, $request->validated());
 
         return redirect()->route('admin.index')->with([
             'message' => 'User updated successfully',
@@ -79,12 +74,18 @@ class AdminController extends Controller
         ]);
     }
 
-    public function showLoginForm()
+    /**
+     * Show the admin login form.
+     */
+    public function showLoginForm(): View
     {
         return view('auth.login');
     }
 
-    public function login(Request $request)
+    /**
+     * Handle an admin login request.
+     */
+    public function login(Request $request): RedirectResponse
     {
         $credentials = $request->only('email', 'password');
 
@@ -99,7 +100,10 @@ class AdminController extends Controller
         ]);
     }
 
-    public function logout(Request $request)
+    /**
+     * Handle an admin logout request.
+     */
+    public function logout(Request $request): RedirectResponse
     {
         Auth::guard('admin')->logout();
         $request->session()->invalidate();
@@ -108,10 +112,12 @@ class AdminController extends Controller
         return redirect()->route('admin.login');
     }
 
-    public function destroy($id)
+    /**
+     * Remove the specified admin from storage.
+     */
+    public function destroy(int $id): RedirectResponse
     {
-        $user = Admin::find($id);
-        $user->delete();
+        $this->adminService->deleteAdmin($id);
 
         return redirect()->route('admin.index')->with([
             'message' => 'User deleted successfully',
