@@ -352,7 +352,7 @@
                 @endif
                 @if($cs && $cs->x_status && $cs->x_url)
                     <li>
-                        <a href="{{ $cs->x_url }}" target="_blank"><i class="ion-social-twitter"></i></a>
+                        <a href="{{ $cs->x_url }}" target="_blank"><iconify-icon icon="ri:twitter-x-fill"></iconify-icon></a>
                     </li>
                 @endif
                 @if($cs && $cs->instagram_status && $cs->instagram_url)
@@ -365,9 +365,24 @@
                         <a href="{{ $cs->youtube_url }}" target="_blank"><i class="ion-social-youtube"></i></a>
                     </li>
                 @endif
+                @if($cs && $cs->whatsapp_status && $cs->whatsapp_url)
+                    <li>
+                        <a href="{{ $cs->whatsapp_url }}" target="_blank"><i class="ion-social-whatsapp"></i></a>
+                    </li>
+                @endif
+                @if($cs && $cs->tiktok_status && $cs->tiktok_url)
+                    <li>
+                        <a href="{{ $cs->tiktok_url }}" target="_blank"><iconify-icon icon="ri:tiktok-fill"></iconify-icon></a>
+                    </li>
+                @endif
                 @if($cs && $cs->linkedin_status && $cs->linkedin_url)
                     <li>
                         <a href="{{ $cs->linkedin_url }}" target="_blank"><i class="ion-social-linkedin"></i></a>
+                    </li>
+                @endif
+                @if($cs && $cs->thread_status && $cs->thread_url)
+                    <li>
+                        <a href="{{ $cs->thread_url }}" target="_blank"><iconify-icon icon="ri:threads-fill"></iconify-icon></a>
                     </li>
                 @endif
             </ul>
