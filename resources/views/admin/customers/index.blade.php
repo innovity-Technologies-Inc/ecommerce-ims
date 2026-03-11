@@ -53,10 +53,10 @@
                                                 <a href="{{ route('admin.customers.show', $customer->id) }}" class="btn btn-soft-primary btn-sm" title="View Profile">
                                                     <i class="bx bx-show fs-16"></i>
                                                 </a>
-                                                <form action="{{ route('admin.customers.destroy', $customer->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this customer? This action cannot be undone.')">
+                                                <form action="{{ route('admin.customers.destroy', $customer->id) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-soft-danger btn-sm" title="Delete Customer">
+                                                    <button type="submit" class="btn btn-soft-danger btn-sm confirmDelete" title="Delete Customer">
                                                         <i class="bx bx-trash fs-16"></i>
                                                     </button>
                                                 </form>
