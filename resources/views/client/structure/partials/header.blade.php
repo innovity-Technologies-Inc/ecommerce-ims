@@ -136,43 +136,17 @@
                                     </li>
                                 </ul>
                             </li>                            <li class="menu-dropdown">
-                                <a href="#">Pages <i class="ion-ios-arrow-down"></i></a>
+                                <a href="#">Account <i class="ion-ios-arrow-down"></i></a>
                                 <ul class="sub-menu">
-                                    <li><a href="about.html">About Page</a></li>
-                                    <li><a href="cart.html">Cart Page</a></li>
-                                    <li><a href="checkout.html">Checkout Page</a></li>
-                                    <li><a href="compare.html">Compare Page</a></li>
-                                    <li><a href="login.html">Login & Regiter Page</a></li>
-                                    <li><a href="{{route('user.account')}}">Account Page</a></li>
-                                    <li><a href="wishlist.html">Wishlist Page</a></li>
-                                </ul>
-                            </li>
-                            <li class="menu-dropdown">
-                                <a href="#">Blog <i class="ion-ios-arrow-down"></i></a>
-                                <ul class="sub-menu">
-                                    <li class="menu-dropdown position-static">
-                                        <a href="#">Blog Grid <i class="ion-ios-arrow-down"></i></a>
-                                        <ul class="sub-menu sub-menu-2">
-                                            <li><a href="blog-grid-left-sidebar.html">Blog Grid Left Sidebar</a></li>
-                                            <li><a href="blog-grid-right-sidebar.html">Blog Grid Right Sidebar</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="menu-dropdown position-static">
-                                        <a href="#">Blog List <i class="ion-ios-arrow-down"></i></a>
-                                        <ul class="sub-menu sub-menu-2">
-                                            <li><a href="blog-list-left-sidebar.html">Blog List Left Sidebar</a></li>
-                                            <li><a href="blog-list-right-sidebar.html">Blog List Right Sidebar</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="menu-dropdown position-static">
-                                        <a href="#">Blog Single <i class="ion-ios-arrow-down"></i></a>
-                                        <ul class="sub-menu sub-menu-2">
-                                            <li><a href="blog-single-left-sidebar.html">Blog Single Left Sidebar</a>
-                                            </li>
-                                            <li><a href="blog-single-right-sidebar.html">Blog Single Right Sidebar</a>
-                                            </li>
-                                        </ul>
-                                    </li>
+                                    @if(Auth::guard('web')->check())
+                                        <li><a href="{{ route('user.account') }}">My Account</a></li>
+                                        <li><a href="{{ route('user.orders') }}">My Orders</a></li>
+                                        <li><a href="{{ route('user.wishlist.index') }}">Wishlist</a></li>
+                                    @else
+                                        <li><a href="{{ route('login') }}">Login</a></li>
+                                        <li><a href="{{ route('register') }}">Register</a></li>
+                                        <li><a href="{{ route('client.track_order') }}">Track Order</a></li>
+                                    @endif
                                 </ul>
                             </li>
                             <li><a href="contact.html">Contact Us</a></li>
@@ -305,32 +279,6 @@
             </li>
         </ul>
     </div>
-    <!-- offcanvas currency -->
-    <div class="offcanvas-userpanel">
-        <ul>
-            <li class="offcanvas-userpanel__role">
-                <a href="#">USD $ <i class="ion-ios-arrow-down"></i></a>
-                <ul class="user-sub-menu">
-                    <li><a class="current" href="#">USD $</a></li>
-                    <li><a href="#">EUR €</a></li>
-                </ul>
-            </li>
-        </ul>
-    </div>
-    <!-- offcanvas language -->
-    <div class="offcanvas-userpanel">
-        <ul>
-            <li class="offcanvas-userpanel__role">
-                <a href="#"><img src="{{asset('client/assets/images/icons/1.jpg')}}" alt="">English <i
-                        class="ion-ios-arrow-down"></i></a>
-                <ul class="user-sub-menu">
-                    <li><a class="current" href="#"><img src="{{asset('client/assets/images/icons/1.jpg')}}" alt="">English</a>
-                    </li>
-                    <li><a href="#"><img src="{{asset('client/assets/images/icons/2.jpg')}}" alt=""> Français</a></li>
-                </ul>
-            </li>
-        </ul>
-    </div>
     <div class="menu-close">
         menu
     </div>
@@ -370,18 +318,16 @@
                     </ul>
                 </li>
                 <li class="menu-dropdown">
-                    <a href="#">Pages</a>
+                    <a href="#">Account</a>
                     <ul class="sub-menu">
-                        <li><a href="about.html">About Page</a></li>
-                        <li><a href="cart.html">Cart Page</a></li>
-                        <li><a href="checkout.html">Checkout Page</a></li>
                         @if(Auth::guard('web')->check())
+                            <li><a href="{{ route('user.account') }}">My Account</a></li>
                             <li><a href="{{ route('user.orders') }}">My Orders</a></li>
-                            <li><a href="{{ route('user.wishlist.index') }}">Wishlist Page</a></li>
-                            <li><a href="{{route('user.account')}}">Account Page</a></li>
+                            <li><a href="{{ route('user.wishlist.index') }}">Wishlist</a></li>
                         @else
-                            <li><a href="{{ route('login') }}">Login Page</a></li>
-                            <li><a href="{{ route('register') }}">Register Page</a></li>
+                            <li><a href="{{ route('login') }}">Login</a></li>
+                            <li><a href="{{ route('register') }}">Register</a></li>
+                            <li><a href="{{ route('client.track_order') }}">Track Order</a></li>
                         @endif
                     </ul>
                 </li>
