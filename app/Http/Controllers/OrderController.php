@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UpdateOrderStatusRequest;
 use App\Models\Order;
 use App\Services\OrderService;
-use App\Services\SettingsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -46,6 +45,40 @@ class OrderController extends Controller
         );
 
         return redirect()->back()->with('success', 'Order status updated successfully!');
+    }
+
+    /**
+     * Generate an invoice for the order.
+     */
+    public function generateInvoice(Order $order): RedirectResponse
+    {
+        $this->orderService->generateInvoice($order);
+
+        return redirect()->back()->with('success', 'Invoice generated successfully!');
+    }
+
+    /**
+     * Regenerate the invoice date.
+     */
+    public function regenerateInvoice(Order $order): RedirectResponse
+    {
+        $this->orderService->regenerateInvoice($order);
+
+        return redirect()->back()->with('success', 'Invoice regenerated successfully!');
+    }
+
+    /**
+     * View/Print the invoice.
+     */
+    public function viewInvoice(Order $order): View
+    {
+        if (! $order->invoice_no) {
+            $this->orderService->generateInvoice($order);
+        }
+
+        $order->load(['orderItems']);
+
+        return view('admin.orders.invoice', compact('order'));
     }
 
     /**

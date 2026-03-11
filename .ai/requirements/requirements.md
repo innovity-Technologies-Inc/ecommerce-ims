@@ -51,5 +51,6 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-33:** Shipping Method Module & UI Integration (Admin CRUD, Cart selection with dynamic price update, and Checkout display).
 - [x] **REQ-34:** Dynamic App Configuration (App Name and Mail From Name loaded from General Settings).
 - [x] **REQ-35:** Order History & Tracking (Authenticated user history and guest order tracking by ID).
-- [ ] **REQ-36:** Invoice Management Module (Admin invoice generation, regeneration, and client-side download).
+- [x] **REQ-36:** Invoice Management Module (Admin invoice generation, regeneration, and client-side download via JS Print).
+- [ ] **REQ-37:** Contact Settings Module (Admin settings for company name, email, address, phone number, integrated into invoices).
 

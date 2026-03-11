@@ -196,9 +196,9 @@
                                                 </a>
                                             </div>
                                             <div>
-                                                <button type="button" onclick="window.print()" class="btn btn-dark px-5 py-2 text-white" style="background-color: #333; border-color: #333; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; height: 45px; border-radius: 0;">
-                                                    <i class="fa fa-print me-2"></i> Print Invoice
-                                                </button>
+                                                <a href="{{ route('user.view_invoice', $order->order_id) }}" target="_blank" class="btn btn-dark px-5 py-2 text-white" style="background-color: #333; border-color: #333; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; height: 45px; border-radius: 0; line-height: 28px; display: inline-block;">
+                                                    <i class="fa fa-download me-2"></i> Download Invoice
+                                                </a>
                                             </div>
                                         </div>
                                     </div>

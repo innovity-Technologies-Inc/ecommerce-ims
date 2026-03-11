@@ -32,9 +32,10 @@ Whenever ANY feature, modification, or change is requested, you MUST strictly fo
     - Run `./vendor/bin/pint --dirty` to ensure project styling.
     - **Seeder-Driven Verification:** ALWAYS use existing Seeders to populate test data. DO NOT create factories.
     - Verify with PHPUnit tests before finalization.
-5. **Documentation Update (STRICT):**
-    - Once the task is implemented and verified, update `PROJECT_DOCUMENTATION.md` to reflect the new module, connections, and system flow.
-    - **NEVER** consider a task complete until `PROJECT_DOCUMENTATION.md` is updated.
+5. **Documentation Update (STRICT & DETAILED):**
+    - Once the task is implemented and verified, update `PROJECT_DOCUMENTATION.md` to reflect the new module.
+    - **Detail Requirement:** You MUST provide a "What" (high-level description) and a "How it Works / Implementation Details" (technical flow, services, and logic) section for every module.
+    - **NEVER** consider a task complete until `PROJECT_DOCUMENTATION.md` is updated with these technical specifics.
 
 ## 3. Technical Standards Summary
 

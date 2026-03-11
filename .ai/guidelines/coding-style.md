@@ -18,9 +18,10 @@ You MUST strictly follow this sequence for **EVERY** request:
     - Run `./vendor/bin/pint --dirty` to maintain project styling.
     - **Seeder-Driven Verification (STRICT):** Verify logic using existing Seeders (`php artisan db:seed`) to populate dummy data. DO NOT create new Model Factories.
     - Verify with PHPUnit tests before finalization.
-5. **Documentation Update (STRICT):**
+5. **Documentation Update (STRICT & DETAILED):**
     - Update `PROJECT_DOCUMENTATION.md` to reflect the new module, connections, and system flow.
-    - A task is ONLY complete when the documentation is updated.
+    - **Detail Requirement:** Every update must include a "What" (Business purpose) and "How it Works / Implementation Details" (Technical flow, Service logic, DB interactions).
+    - A task is ONLY complete when the documentation is updated with these technical specifics.
 
 ## 2. Architectural Patterns (MANDATORY & ENFORCED)
 

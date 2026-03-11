@@ -1,138 +1,141 @@
 # smart-ecom Project Documentation
 
 ## 1. Project Overview
-**smart-ecom** is a high-performance, modern e-commerce platform built with **Laravel 12**. It uses a dual-interface architecture: a comprehensive **Admin Panel** for business operations and a sleek, responsive **Customer Frontend** for shoppers.
+**smart-ecom** is a high-performance, modern e-commerce platform built with **Laravel 12**. It uses a dual-interface architecture: a comprehensive **Admin Panel** for business operations and a sleek, responsive **Customer Frontend** for shoppers. The core philosophy of this project is maintainability, achieved through strict adherence to the Service Layer pattern and modular architecture.
 
 ### Core Tech Stack
 - **Backend:** PHP 8.3.8, Laravel 12 (Streamlined Structure)
-- **Frontend:** Bootstrap 5, jQuery 3.6, standard JavaScript
+- **Frontend:** Bootstrap 5, jQuery 3.6, standard JavaScript (No Tailwind CSS or Alpine.js)
 - **Database:** MySQL / PostgreSQL (Eloquent ORM)
 - **Authentication:** Laravel Breeze (Multi-auth: Admin & User guards)
 - **Search:** FlexSearch (powered by `daiyanmozumder/laravel-flexsearch`)
-- **AI Tools:** Custom guidelines and tasks in `.ai/` and Laravel Boost/Junie.
+- **PDF/Printing:** High-performance JS Print Engine (`window.print()`)
 
 ---
 
-## 2. Project & Folder Structure
-
-### Key Directories
-- `app/Http/Controllers/`: Thin controllers separated into `Admin/`, `Auth/`, and `Frontend`.
-- `app/Http/Requests/`: Strict **Form Request** classes for all input validation.
-- `app/Services/`: **MANDATORY** Service Layer for all business logic and DB operations.
-- `app/Models/`: Eloquent models with defined relationships and `casts()`.
-- `app/HelperClass.php`: Centralized static methods for file uploads, deletions, and indexing.
-- `.ai/`: AI-specific configurations, guidelines, tasks, and requirements.
-- `resources/views/admin/`: Admin panel views (Master layout: `admin.structure.master`).
-- `resources/views/client/`: Customer frontend views (Master layout: `client.structure.master`).
-
-### AI Folder Structure (`.ai/`)
-- `.ai/guidelines/`: Project-specific standards for design and coding.
-- `.ai/requirements/`: Feature specifications and requirements docs.
-- `.ai/skills/`: AI specialized knowledge (e.g., `laravel-developer.md`).
-- `.ai/tasks/`: Specific development tasks and workflows.
-
----
-
-## 3. Module Connections & System Flow
+## 2. Architectural Standards & System Flow
 
 ### Request Lifecycle (The "Laravel Boost" Flow)
 1. **Route:** User makes a request to a named route.
-2. **Form Request:** Inputs are automatically validated (e.g., `ProductRequest`).
-3. **Controller:** Receives validated data, injects a **Service**, and calls a method.
-4. **Service:** Executes business logic, handles file uploads via `HelperClass`, and interacts with **Models**.
-5. **Model:** Performs DB operations and returns Eloquent collections.
-6. **Response:** Controller returns a view or a JSON response.
+2. **Form Request:** Inputs are strictly validated via dedicated Form Request classes (e.g., `ProductRequest`). Inline validation in controllers is prohibited.
+3. **Controller:** Thin controllers receive validated data, inject a **Service**, and call a method.
+4. **Service:** Executes business logic, handles complex calculations, manages file uploads via `HelperClass`, and interacts with Eloquent Models.
+5. **Model:** Performs DB operations, defines relationships, and casts attributes.
+6. **Response:** Controller returns a Blade view or a structured JSON response.
 
-### Core Module Connections
-- **Catalog System:** 
-    - `Brand` -> `Category` (Parent/Child) -> `Product`.
-    - `Product` has many `ProductVariant` (Pricing/Stock) and `ProductImage` (Gallery).
-- **Frontend Shop:** 
-    - Uses `FlexSearch` for keywords and relationships (Name, Brand, Category).
-    - Sidebar filters interact with `Product` attributes (Brand, Category, Size, Color, Price).
-- **Settings System:**
-    - `GeneralSetting`: Site-wide SEO, Logos, Currency, and Dynamic Application Name (`app.name`).
-    - `MailSetting`: Dynamic SMTP configuration and default Sender Name (`mail.from.name`) loaded via `AppServiceProvider`.
-    - `SectionSetting`: Homepage visibility and "Bestseller" logic (Organic vs. Custom).
-- **Homepage Management:**
-    - `Slider`: Carousel management.
-    - `SectionSetting`: Controls visibility and content source for homepage sections.
+### Centralized Helper (`App\HelperClass`)
+A globally accessible class used for repetitive tasks:
+- **File Management:** `HelperClass::file_upload()` securely stores files and returns paths; `HelperClass::file_delete()` removes old assets to prevent server bloat.
+- **Indexing:** `HelperClass::indexNumberSerialization($paginatedData)` ensures accurate row numbering across paginated tables.
+
+### Documentation Protocol
+Every module or architectural change must be documented in this file before a task is considered complete. Documentation must include:
+- **The "What":** A high-level description of the new feature.
+- **The "How":** Technical implementation details including logic patterns, service-layer integration, and specific technologies.
 
 ---
 
-## 4. Architectural Standards
+## 3. Comprehensive Module Breakdowns
 
-### Service Layer Pattern
-To ensure maintainability, controllers MUST NOT contain logic. 
-- **Incorrect:** `Product::create($request->all());` in Controller.
-- **Correct:** `$this->productService->createProduct($request->validated());` in Controller.
+### 3.1 Authentication & Security
+- **What:** Separate login systems for Administrators and Customers.
+- **How it Works:** Implemented using Laravel Breeze with multiple authentication guards (`web` for customers, `admin` for administrators). 
+- **Implementation Details:** 
+  - Admins authenticate against the `admins` table and are redirected to the admin dashboard.
+  - Customers authenticate against the `users` table and are redirected to the homepage or their account dashboard.
+  - Middleware (`auth:admin`, `auth:web`) strictly protects routes, ensuring complete isolation of privileges.
 
-### HelperClass Usage
-Strict adherence to `App\HelperClass` for:
-- **File Management:** `HelperClass::file_upload()` and `HelperClass::file_delete()`.
-- **Indexing:** `HelperClass::indexNumberSerialization($paginatedData)`.
+### 3.2 Catalog Management (Brands & Categories)
+- **What:** Management of the foundational hierarchical data (Brands and Categories) that products belong to.
+- **How it Works:** 
+  - **Brands:** Managed via standard CRUD. They include a logo and a unique URL slug.
+  - **Categories:** Implements a Parent/Child hierarchy allowing for sub-categories. 
+- **Implementation Details:** 
+  - Slugs are automatically generated via Eloquent mutators or Service logic on creation.
+  - Deleting a category safely handles child relationships (e.g., setting parent_id to null or cascading deletes, depending on schema constraints).
 
-### Frontend Requirements
-- **Bootstrap 5 & jQuery ONLY.**
-- **NO Tailwind CSS or Alpine.js.**
-- Use **SweetAlert2** for confirmations and **Toastr** for notifications.
-- Use **Select2** for all searchable dropdowns.
+### 3.3 Product & Inventory System
+- **What:** The core catalog engine supporting complex pricing, variants, and marketing flags.
+- **How it Works:**
+  - **Flexible Pricing Engine:** A product can have a `base_price` and multiple `ProductVariant` records. If variants exist, their specific pricing overrides the base price.
+  - **Marketing Flags:** Boolean columns in the `products` table (e.g., `is_new`, `is_featured`, `is_hot_deal`) dictate where the product appears on the frontend.
+  - **Multi-Image Gallery:** Handled via a dedicated `product_images` table, allowing infinite images per product with one designated as the primary thumbnail.
+- **Implementation Details:** 
+  - `ProductService` orchestrates the creation of the product, uploads the primary image, iterates through variant arrays to create `ProductVariant` rows (handling SKU and stock), and stores secondary images in the `product_images` table.
+
+### 3.4 Customer Shop & Frontend Filtering
+- **What:** The public-facing product catalog with advanced search and filtering capabilities.
+- **How it Works:**
+  - **Sidebar Filtering:** Users can filter by Categories, Brands, and Price. The backend captures these query parameters (e.g., `?category=electronics&min_price=100`) and dynamically builds Eloquent queries in `FrontendController`/`ProductService`.
+  - **Global Search:** Powered by `FlexSearch`. When a user types in the navbar, the query is passed to the FlexSearch engine which indexes multiple tables (Name, Brand, Category) to return rapid, highly relevant results without heavy `LIKE %...%` queries.
+  - **Variant Selection:** On the product details page, selecting different variants dynamically updates the displayed price and available stock using JavaScript/AJAX.
+
+### 3.5 Wishlist System
+- **What:** A persistent feature allowing logged-in users to save products for later.
+- **How it Works:**
+  - Authenticated users click a heart icon, triggering an AJAX POST request to `WishlistController`.
+  - The `WishlistService` checks if the item is already saved; if not, it attaches the `product_id` to the `user_id` in the `wishlists` table.
+- **Implementation Details:** 
+  - The wishlist view dynamically calculates the "Net Price" of items, automatically resolving whether the product should display its base price or its lowest available variant price.
+
+### 3.6 Site Settings & Dynamic Configuration
+- **What:** Admin-controlled global settings for SEO, Branding, SMTP, and Contact Information.
+- **How it Works:** 
+  - **General Settings:** Stores business name, logos (dark/light), favicons, and currency in the database.
+  - **Mail Settings:** Stores SMTP credentials.
+  - **Contact Settings:** Stores company name, email, phone number, and physical address.
+- **Implementation Details:** 
+  - **Dynamic Boot Overrides:** In `AppServiceProvider::boot()`, the system queries the `general_settings` and `mail_settings` tables. If records exist, it dynamically overrides Laravel's config (`config(['app.name' => $gs->business_name])` and `config(['mail.mailers.smtp...'])`). This allows the admin to change email servers and site names without touching `.env` files.
+  - **Contact Data Integration:** The `ContactSetting` model is accessible globally via `App\HelperClass::contactSettings()`. This data is dynamically injected into printable templates, such as the Invoice, so that the seller's information always reflects the latest contact settings rather than hardcoded configurations.
+  - **Homepage Sections:** `SectionSetting` records control the visibility (True/False) and logic (e.g., Organic bestsellers vs Custom selected) of homepage UI blocks.
+
+### 3.7 Hybrid Shopping Cart System
+- **What:** A persistent shopping cart that works for both guests (visitors) and authenticated users.
+- **How it Works:**
+  - **Guest Users:** Cart items are stored in the Laravel `Session`.
+  - **Authenticated Users:** Cart items are stored in the `carts` database table.
+  - **Synchronization:** When a guest logs in or registers, a listener/service automatically migrates their session cart data into the database, ensuring no items are lost.
+- **Implementation Details:**
+  - `CartService` acts as an abstraction layer. When `addToCart()` is called, the service checks `Auth::check()`. If true, it performs Eloquent inserts/updates; if false, it manipulates the session array.
+  - **UI/UX:** Uses AJAX for adding items, updating quantities, and removing items. The frontend dynamically updates the Mini-Cart, Cart Count, and Grand Totals without page reloads.
+
+### 3.8 Checkout & Order Management System
+- **What:** The complete flow from cart conversion to order fulfillment and admin tracking.
+- **How it Works:**
+  - **Shipping Methods:** Admins create shipping methods (Name, Price, Status). On the Cart page, customers select a method via AJAX, which temporarily stores the `shipping_method_id` in the session and updates the Grand Total.
+  - **Checkout Processing:** The customer fills out their billing/shipping info. `OrderService::placeOrder()` retrieves the cart items, calculates final totals (including the selected shipping charge), and inserts a record into `orders` and multiple records into `order_items`.
+  - **Order ID Generation:** A unique tracking ID (e.g., `ORD-XXXXXXXXXX`) is generated programmatically to ensure collision-free tracking.
+  - **Cart Clearing:** Upon successful insertion, the `CartService` clears the session or database cart.
+- **Implementation Details:** 
+  - Supports Cash on Delivery (COD).
+  - Triggers an `OrderConfirmationMail` to the customer immediately upon successful creation.
+
+### 3.9 Order History & Guest Tracking
+- **What:** Customer-facing interfaces to view past purchases and track order status.
+- **How it Works:**
+  - **Authenticated Users:** Can navigate to "My Orders" in their account dashboard. `OrderService::getUserOrders()` fetches paginated results explicitly tied to their `user_id`.
+  - **Guest Tracking:** A public "Track Order" page allows anyone with a valid `order_id` to view the status. `OrderService::trackOrderById()` fetches the order and its items.
+- **Implementation Details:**
+  - **Visual Progress Bar:** The frontend Blade template uses a calculated index array `['Pending', 'Processing', 'Out for Delivery', 'Delivered']` to dynamically highlight a CSS progress bar based on the current `order_status`.
+
+### 3.10 Invoice Management Module
+- **What:** Automated and manual generation of printable/downloadable PDF-style invoices.
+- **How it Works:**
+  - **Admin Side:** Admins view an order and click "Generate Invoice". `OrderService::generateInvoice()` creates a sequential number (`INV-YYYYMMDD-0001`) and stamps the `invoice_date`. Admins can subsequently "Regenerate" (updates the date) or "View".
+  - **Client Side:** Customers click "Download Invoice" on their order details page. If the invoice wasn't generated by the admin yet, the system auto-generates it on the fly to prevent errors.
+- **Implementation Details (JS Print Engine):** 
+  - To maximize performance and avoid heavy PHP PDF libraries (like DomPDF), the system uses a dedicated, highly-styled Blade view (`invoice-print.blade.php`).
+  - This view utilizes `@media print` CSS to strip away all website UI (navbars, footers, buttons) and formats the tables perfectly for A4 printing.
+  - A snippet of JavaScript (`window.onload = function() { window.print(); }`) automatically triggers the browser's native Print/Save-as-PDF dialog upon page load.
 
 ---
 
-## 5. Development Guidelines (Synced from `.ai/guidelines`)
-
-### Coding Style
-- **PHP 8.3:** Use constructor property promotion and explicit return type hints.
-- **Laravel 12:** Use `casts()` method on models; define relationship return types.
-- **Testing:** Every new feature requires a PHPUnit test in `tests/Feature`.
-- **Formatting:** Run `./vendor/bin/pint --dirty` before every commit.
-
-### Design Principles
-- **Mobile-First:** Ensure all components are responsive.
-- **Visual Feedback:** All asynchronous (AJAX) actions must show loading states.
-- **Consistency:** Follow existing spacing, typography, and color schemes.
-
----
-
-## 6. Current Modules & Features
-- **Multi-Guard Auth:** Separate logic for Admin and Customer sessions.
-- **Product Flexible Pricing:** Support for **Base Pricing** and **Variant Pricing**.
-- **Inventory Management:** SKU-level stock tracking for variants.
-- **Dynamic Shop Sidebar:** Filters for Categories, Brands, Sizes, Colors, and Price Range.
-- **Global Search:** FlexSearch integration across multiple tables.
-- **Wishlist:** Authenticated persistent wishlist with dynamic pricing logic.
-- **Hybrid Cart System:**
-    - Uses **Database** for authenticated users and **Sessions** for guest users.
-    - Synchronizes guest cart items to the database automatically upon login or registration.
-    - Dynamic AJAX updates for cart count, totals, and mini-cart in the header.
-    - Full cart management page with **8/4 grid split** for promotional banner and grand totals.
-    - **UI Alignment:** Flexbox `align-items-stretch` used to match promotional banner height with the Cart Total card.
-    - Mobile-optimized **40/60 Grid layout** for product items (Centered Image / Stacked Details).
-- **Mobile Header Refinements:**
-    - Clean **3-6-3 Column Grid** for Menu, Logo, and Action Icons.
-    - Optimized logo centering and action button spacing for small devices.
-- **Search Component Refinements:**
-    - Streamlined global search by removing the category dropdown, ensuring a cleaner UI and focused search experience across all devices.
-- **Checkout & Order System:**
-    - **Dual-User Support:** Form pre-fills for authenticated users; guest users can fill data manually (matches registration schema).
-    - **Shipping Methods:** Integrated selection on Cart page with dynamic price updates via AJAX.
-    - **Payment Logic:** Support for Cash on Delivery (COD) and placeholders for online payment.
-    - **Order Tracking:** Unique `order_id` generation (e.g., ORD-XXXXXXXXXX).
-    - **Automated Notifications:** Email confirmation sent upon order placement.
-    - **Admin Controls:** 
-        - Comprehensive management including status updates (Pending, Processing, Delivered, etc.), order rejection, and deletion.
-        - **Shipping Method CRUD:** Admin can manage shipping names, prices, and descriptions.
-    - **Order History & Tracking:**
-        - Authenticated users can view their past orders and detailed history in the "My Orders" section of their account.
-        - Guests can track any order by inputting a valid `order_id` on the dedicated "Track Order" page.
-        - Visual status tracking using progress bars (Pending, Processing, Out for Delivery, Delivered).
-    - **Conditional Alerts:** "Email Notify" checkbox in Admin allows sending status update emails to customers only when needed.
-- **SMTP Settings:**
- Dynamic DB-driven mail configuration.
-- **Homepage Sections:** Configurable sections (Bestsellers, Sliders, Featured).
-- **Complete Seeder Support:** All database seeders are fully aligned with model schemas and provide comprehensive sample data for rapid development.
-- **Admin Asset Refactoring:** Public admin directory renamed to `admin_assets` to avoid routing conflicts with the `/admin` prefix.
+## 4. Frontend & UI Standardization Refinements
+- **Cart & Checkout UI:** Utilizes an 8/4 Bootstrap grid split. Flexbox `align-items-stretch` ensures promotional banners explicitly match the height of summary cards.
+- **Mobile Header:** Implements a strict 3-6-3 column grid to ensure the hamburger menu, centered logo, and action icons (cart/user) remain perfectly aligned on small devices.
+- **Search UI:** Streamlined to a pure text-input with FlexSearch autocomplete, omitting clunky category dropdowns for a cleaner aesthetic.
+- **Button Standardization:** All action elements (Add to Cart, Track, Details, Start Shopping) strictly utilize core theme classes (e.g., Bootstrap `.btn` overrides combined with theme colors `#7AAACE` and `#333`, specific uppercase typography, and zero border-radius) ensuring 1:1 visual continuity.
+- **Admin Assets:** Public admin CSS/JS directories renamed from `public/admin` to `public/admin_assets` to permanently resolve routing conflicts with the `Route::prefix('admin')` backend architecture.
 
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*

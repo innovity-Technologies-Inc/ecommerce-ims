@@ -13,6 +13,8 @@ class Order extends Model
 
     protected $fillable = [
         'order_id',
+        'invoice_no',
+        'invoice_date',
         'user_id',
         'name',
         'email',
@@ -37,6 +39,7 @@ class Order extends Model
     protected function casts(): array
     {
         return [
+            'invoice_date' => 'datetime',
             'subtotal' => 'decimal:2',
             'shipping_charge' => 'decimal:2',
             'discount' => 'decimal:2',

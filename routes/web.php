@@ -44,15 +44,20 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::post('/general/update', 'updateGeneralSettings')->name('admin.settings.general.update');
         Route::get('/mail', 'mailSettings')->name('admin.settings.mail');
         Route::post('/mail/update', 'updateMailSettings')->name('admin.settings.mail.update');
+        Route::get('/contact', 'contactSettings')->name('admin.settings.contact');
+        Route::post('/contact/update', 'updateContactSettings')->name('admin.settings.contact.update');
     });
 
     Route::resource('sliders', \App\Http\Controllers\SliderController::class)->names('admin.sliders');
 
-    Route::prefix('orders')->name('admin.orders.')->group(function () {
-        Route::get('/', [OrderController::class, 'index'])->name('index');
-        Route::get('/{order}', [OrderController::class, 'show'])->name('show');
-        Route::put('/{order}/update-status', [OrderController::class, 'updateStatus'])->name('update-status');
-        Route::delete('/{order}/destroy', [OrderController::class, 'destroy'])->name('destroy');
+    Route::prefix('orders')->name('admin.orders.')->controller(OrderController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/{order}', 'show')->name('show');
+        Route::put('/{order}/update-status', 'updateStatus')->name('update-status');
+        Route::post('/{order}/generate-invoice', 'generateInvoice')->name('generate-invoice');
+        Route::post('/{order}/regenerate-invoice', 'regenerateInvoice')->name('regenerate-invoice');
+        Route::get('/{order}/view-invoice', 'viewInvoice')->name('view-invoice');
+        Route::delete('/{order}/destroy', 'destroy')->name('destroy');
     });
 
     Route::prefix('sections')->group(function () {
@@ -98,6 +103,7 @@ Route::middleware(['auth:web'])->prefix('user')->controller(CustomerController::
     Route::put('address-update', 'addressUpdate')->name('user.address.update');
     Route::get('orders', 'orderHistory')->name('user.orders');
     Route::get('orders/{orderId}', 'orderDetails')->name('user.order_details');
+    Route::get('orders/{orderId}/invoice', 'viewInvoice')->name('user.view_invoice');
 
     Route::controller(WishlistController::class)->prefix('wishlist')->group(function () {
         Route::get('/', 'index')->name('user.wishlist.index');

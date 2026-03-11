@@ -41,6 +41,24 @@ class CustomerController extends Controller
         return view('client.account.order-details', compact('title', 'section', 'order'));
     }
 
+    public function viewInvoice(string $orderId)
+    {
+        $order = $this->orderService->trackOrderById($orderId);
+
+        if (! $order || $order->user_id !== Auth::guard('web')->id()) {
+            abort(404);
+        }
+
+        // Auto-generate invoice if not exists when user tries to view it
+        if (! $order->invoice_no) {
+            $this->orderService->generateInvoice($order);
+        }
+
+        $order->load(['orderItems']);
+
+        return view('client.orders.invoice-print', compact('order'));
+    }
+
     public function profileUpdate(Request $request)
     {
         $user = Auth::guard('web')->user();

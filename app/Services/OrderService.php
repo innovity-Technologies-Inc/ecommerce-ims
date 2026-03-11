@@ -123,6 +123,41 @@ class OrderService
         return $orderId;
     }
 
+    /**
+     * Generate an invoice for the given order.
+     */
+    public function generateInvoice(Order $order): Order
+    {
+        if (! $order->invoice_no) {
+            $lastInvoice = Order::whereNotNull('invoice_no')->latest('id')->first();
+            $sequence = $lastInvoice ? (int) substr($lastInvoice->invoice_no, -4) + 1 : 1;
+            $invoiceNo = 'INV-'.date('Ymd').'-'.str_pad($sequence, 4, '0', STR_PAD_LEFT);
+
+            $order->update([
+                'invoice_no' => $invoiceNo,
+                'invoice_date' => now(),
+            ]);
+        }
+
+        return $order;
+    }
+
+    /**
+     * Regenerate an invoice (updates the date).
+     */
+    public function regenerateInvoice(Order $order): Order
+    {
+        if (! $order->invoice_no) {
+            return $this->generateInvoice($order);
+        }
+
+        $order->update([
+            'invoice_date' => now(),
+        ]);
+
+        return $order;
+    }
+
     public function getStatusList(): array
     {
         return [

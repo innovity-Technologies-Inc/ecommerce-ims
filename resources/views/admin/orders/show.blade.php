@@ -151,6 +151,43 @@
 
                 <div class="card mt-3">
                     <div class="card-header">
+                        <h5 class="card-title mb-0">Invoice</h5>
+                    </div>
+                    <div class="card-body">
+                        @if($order->invoice_no)
+                            <div class="mb-3">
+                                <label class="form-label d-block text-muted small text-uppercase fw-bold">Invoice Number</label>
+                                <span class="fw-bold fs-16">{{ $order->invoice_no }}</span>
+                                <br>
+                                <small class="text-muted">Generated on: {{ $order->invoice_date->format('d M, Y') }}</small>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <a href="{{ route('admin.orders.view-invoice', $order->id) }}" target="_blank" class="btn btn-outline-primary">
+                                    <i class="bx bx-show me-1"></i> View / Print Invoice
+                                </a>
+                                <form action="{{ route('admin.orders.regenerate-invoice', $order->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-soft-secondary w-100">
+                                        <i class="bx bx-refresh me-1"></i> Regenerate Date
+                                    </button>
+                                </form>
+                            </div>
+                        @else
+                            <div class="text-center py-2">
+                                <p class="text-muted mb-3">No invoice has been generated for this order yet.</p>
+                                <form action="{{ route('admin.orders.generate-invoice', $order->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="bx bx-receipt me-1"></i> Generate Invoice
+                                    </button>
+                                </form>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-header">
                         <h5 class="card-title mb-0">Payment Info</h5>
                     </div>
                     <div class="card-body">
