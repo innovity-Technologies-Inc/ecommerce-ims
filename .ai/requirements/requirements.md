@@ -47,5 +47,9 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-28:** Admin Management Architectural Refactoring (Refactor Admin CRUD to Service Layer and Form Request patterns).
 - [x] **REQ-29:** Sidebar UI Refinement (Hide unlinked menus, link Users to Admin CRUD).
 - [x] **REQ-31:** Admin Route Conflict Resolution (Rename public/admin to public/admin_assets to avoid 403 Forbidden errors).
-- [ ] **REQ-32:** Checkout System & Order Management (Checkout form, guest/user support, COD payment, Order status tracking, Admin order management, and Email notifications).
-- [ ] **REQ-33:** Shipping Method Module & UI Integration (Admin CRUD, Cart selection with dynamic price update, and Checkout display).
+- [x] **REQ-32:** Checkout System & Order Management (Checkout form, guest/user support, COD payment, Order status tracking, Admin order management, and Email notifications).
+- [x] **REQ-33:** Shipping Method Module & UI Integration (Admin CRUD, Cart selection with dynamic price update, and Checkout display).
+- [x] **REQ-34:** Dynamic App Configuration (App Name and Mail From Name loaded from General Settings).
+- [x] **REQ-35:** Order History & Tracking (Authenticated user history and guest order tracking by ID).
+- [ ] **REQ-36:** Invoice Management Module (Admin invoice generation, regeneration, and client-side download).
+

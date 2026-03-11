@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\OrderController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
@@ -8,6 +7,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FrontendController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
@@ -72,6 +72,7 @@ Route::controller(FrontendController::class)->group(function () {
     Route::get('/', 'home')->name('home');
     Route::get('/products', 'products')->name('client.products.index');
     Route::get('/product/{slug}', 'productDetails')->name('client.products.details');
+    Route::match(['get', 'post'], '/track-order', 'trackOrder')->name('client.track_order');
 });
 
 // Cart Routes
@@ -95,6 +96,8 @@ Route::middleware(['auth:web'])->prefix('user')->controller(CustomerController::
     Route::put('profile-update', 'profileUpdate')->name('user.profile.update');
     Route::put('password-update', 'changePassword')->name('user.password.update');
     Route::put('address-update', 'addressUpdate')->name('user.address.update');
+    Route::get('orders', 'orderHistory')->name('user.orders');
+    Route::get('orders/{orderId}', 'orderDetails')->name('user.order_details');
 
     Route::controller(WishlistController::class)->prefix('wishlist')->group(function () {
         Route::get('/', 'index')->name('user.wishlist.index');

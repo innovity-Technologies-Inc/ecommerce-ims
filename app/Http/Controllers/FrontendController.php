@@ -5,17 +5,40 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\SectionSetting;
 use App\Services\HomepageService;
+use App\Services\OrderService;
 use DaiyanMozumder\LaravelFlexSearch\FlexSearch;
 use Illuminate\Http\Request;
 
 class FrontendController extends Controller
 {
-    public function __construct(protected HomepageService $homepageService) {}
+    public function __construct(
+        protected HomepageService $homepageService,
+        protected OrderService $orderService
+    ) {}
+
+    public function trackOrder(Request $request)
+    {
+        $title = 'Track Your Order';
+        $section = 'Track Order';
+        $order = null;
+
+        if ($request->filled('order_id')) {
+            $request->validate([
+                'order_id' => 'required|string|exists:orders,order_id',
+            ], [
+                'order_id.exists' => 'This order ID does not exist in our records.',
+            ]);
+
+            $order = $this->orderService->trackOrderById($request->order_id);
+        }
+
+        return view('client.track-order', compact('title', 'section', 'order'));
+    }
 
     public function home()
     {
         $sliders = $this->homepageService->getActiveSliders();
-        
+
         $bestsellerSection = SectionSetting::where('section_name', 'bestsellers')->first();
         $bestsellingProducts = $this->homepageService->getSectionProducts('bestsellers');
 
@@ -29,11 +52,11 @@ class FrontendController extends Controller
         $recentlyAddedProducts = $this->homepageService->getSectionProducts('recently_added');
 
         return view('client.homepage', compact(
-            'sliders', 
-            'bestsellerSection', 
-            'bestsellingProducts', 
+            'sliders',
+            'bestsellerSection',
+            'bestsellingProducts',
             'hotDealsSection',
-            'hotDealProducts', 
+            'hotDealProducts',
             'featuredSection',
             'featuredProducts',
             'recentlyAddedSection',

@@ -24,6 +24,8 @@ class Order extends Model
         'zip',
         'subtotal',
         'shipping_charge',
+        'shipping_method_id',
+        'shipping_method_name',
         'discount',
         'total_amount',
         'payment_method',

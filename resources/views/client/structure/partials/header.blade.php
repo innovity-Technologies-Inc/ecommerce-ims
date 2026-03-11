@@ -26,6 +26,9 @@
                     <div class="header-right-nav hover-style-default">
                         <ul>
                             <li class="border-color-white">
+                                <a href="{{ route('client.track_order') }}"><i class="ion-ios-location-outline"></i>Track Order</a>
+                            </li>
+                            <li class="border-color-white">
                                 <a href="{{ route('user.wishlist.index') }}"><i class="ion-android-favorite-outline"></i>Wishlist ({{ \App\HelperClass::wishlistCount() }})</a>
                             </li>
                         </ul>
@@ -37,6 +40,7 @@
                                 <ul class="dropdown-menu">
                                     @if(Auth::guard('web')->check())
                                     <li><a class="dropdown-item" href="{{route('user.account')}}">My account</a></li>
+                                    <li><a class="dropdown-item" href="{{route('user.orders')}}">My orders</a></li>
                                     @endif
                                         @if(Auth::guard('web')->check())
                                             <form action="{{route('logout')}}" method="post">
@@ -230,6 +234,7 @@
                             <ul class="dropdown-menu">
                                 @if(Auth::guard('web')->check())
                                     <li><a class="dropdown-item" href="{{route('user.account')}}">My account</a></li>
+                                    <li><a class="dropdown-item" href="{{route('user.orders')}}">My orders</a></li>
                                     <li><a class="dropdown-item" href="{{ route('user.wishlist.index') }}">Wishlist</a></li>
                                     <form action="{{route('logout')}}" method="post">
                                         @csrf
@@ -237,6 +242,7 @@
                                         <li><button class="dropdown-item" type="submit">Log Out</button></li>
                                     </form>
                                 @else
+                                    <li><a class="dropdown-item" href="{{ route('client.track_order') }}">Track Order</a></li>
                                     <li><a class="dropdown-item" href="{{ route('login') }}">Sign in</a></li>
                                     <li><a class="dropdown-item" href="{{ route('register') }}">Register</a></li>
                                 @endif
@@ -333,6 +339,7 @@
         <div class="offcanvas-menu mb-4">
             <ul>
                 <li><a href="{{ route('home') }}"><span class="menu-text">Home</span></a></li>
+                <li><a href="{{ route('client.track_order') }}"><span class="menu-text">Track Order</span></a></li>
                 <li><a href="{{ route('client.products.index') }}"><span class="menu-text">Products</span></a></li>
                 <li><a href="{{ route('client.products.index') }}"><span class="menu-text">Shop</span></a>
                     <ul class="sub-menu">
@@ -369,6 +376,7 @@
                         <li><a href="cart.html">Cart Page</a></li>
                         <li><a href="checkout.html">Checkout Page</a></li>
                         @if(Auth::guard('web')->check())
+                            <li><a href="{{ route('user.orders') }}">My Orders</a></li>
                             <li><a href="{{ route('user.wishlist.index') }}">Wishlist Page</a></li>
                             <li><a href="{{route('user.account')}}">Account Page</a></li>
                         @else

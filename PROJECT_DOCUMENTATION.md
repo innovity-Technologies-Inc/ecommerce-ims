@@ -51,8 +51,8 @@
     - Uses `FlexSearch` for keywords and relationships (Name, Brand, Category).
     - Sidebar filters interact with `Product` attributes (Brand, Category, Size, Color, Price).
 - **Settings System:**
-    - `GeneralSetting`: Site-wide SEO, Logos, and Currency.
-    - `MailSetting`: Dynamic SMTP configuration loaded via Middleware or at runtime.
+    - `GeneralSetting`: Site-wide SEO, Logos, Currency, and Dynamic Application Name (`app.name`).
+    - `MailSetting`: Dynamic SMTP configuration and default Sender Name (`mail.from.name`) loaded via `AppServiceProvider`.
     - `SectionSetting`: Homepage visibility and "Bestseller" logic (Organic vs. Custom).
 - **Homepage Management:**
     - `Slider`: Carousel management.
@@ -123,6 +123,10 @@ Strict adherence to `App\HelperClass` for:
     - **Admin Controls:** 
         - Comprehensive management including status updates (Pending, Processing, Delivered, etc.), order rejection, and deletion.
         - **Shipping Method CRUD:** Admin can manage shipping names, prices, and descriptions.
+    - **Order History & Tracking:**
+        - Authenticated users can view their past orders and detailed history in the "My Orders" section of their account.
+        - Guests can track any order by inputting a valid `order_id` on the dedicated "Track Order" page.
+        - Visual status tracking using progress bars (Pending, Processing, Out for Delivery, Delivered).
     - **Conditional Alerts:** "Email Notify" checkbox in Admin allows sending status update emails to customers only when needed.
 - **SMTP Settings:**
  Dynamic DB-driven mail configuration.

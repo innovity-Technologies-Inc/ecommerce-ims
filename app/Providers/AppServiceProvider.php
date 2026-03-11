@@ -22,8 +22,20 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useBootstrapFive();
 
-        // Dynamic Mail Configuration
+        // Dynamic Application & Mail Configuration
         try {
+            // 1. General Settings (Sets App Name and default Mail From Name)
+            if (\Illuminate\Support\Facades\Schema::hasTable('general_settings')) {
+                $generalSetting = \App\Models\GeneralSetting::first();
+                if ($generalSetting && $generalSetting->business_name) {
+                    config([
+                        'app.name' => $generalSetting->business_name,
+                        'mail.from.name' => $generalSetting->business_name, // Default to business name
+                    ]);
+                }
+            }
+
+            // 2. Mail Settings (Overrides Mail configuration if defined)
             if (\Illuminate\Support\Facades\Schema::hasTable('mail_settings')) {
                 $mailSetting = \App\Models\MailSetting::first();
                 if ($mailSetting) {
@@ -34,8 +46,12 @@ class AppServiceProvider extends ServiceProvider
                         'mail.mailers.smtp.username' => $mailSetting->mail_username,
                         'mail.mailers.smtp.password' => $mailSetting->mail_password,
                         'mail.from.address' => $mailSetting->mail_from_address,
-                        'mail.from.name' => $mailSetting->mail_from_name,
                     ]);
+
+                    // Only override mail.from.name if specifically set in mail_settings
+                    if ($mailSetting->mail_from_name) {
+                        config(['mail.from.name' => $mailSetting->mail_from_name]);
+                    }
                 }
             }
         } catch (\Exception $e) {

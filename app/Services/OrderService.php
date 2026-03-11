@@ -34,7 +34,6 @@ class OrderService
         return true;
     }
 
-
     /**
      * Delete an order.
      */
@@ -134,5 +133,21 @@ class OrderService
             'Cancelled' => 'Cancelled',
             'Rejected' => 'Rejected',
         ];
+    }
+
+    /**
+     * Get orders for a specific user.
+     */
+    public function getUserOrders(int $userId): \Illuminate\Pagination\LengthAwarePaginator
+    {
+        return Order::where('user_id', $userId)->latest()->paginate(10);
+    }
+
+    /**
+     * Track an order by its order_id.
+     */
+    public function trackOrderById(string $orderId): ?Order
+    {
+        return Order::with(['orderItems'])->where('order_id', $orderId)->first();
     }
 }
