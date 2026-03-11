@@ -48,6 +48,9 @@
                                         </td>
                                         <td>
                                             <div class="d-flex gap-2">
+                                                <a href="{{ route('admin.contact_messages.show', $message->id) }}" class="btn btn-soft-primary btn-sm" title="View Message">
+                                                    <i class="bx bx-show fs-16"></i>
+                                                </a>
                                                 @if(!$message->is_read)
                                                     <form action="{{ route('admin.contact_messages.read', $message->id) }}" method="POST">
                                                         @csrf

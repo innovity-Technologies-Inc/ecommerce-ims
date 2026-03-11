@@ -63,6 +63,7 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     // Contact Messages
     Route::prefix('contact-messages')->name('admin.contact_messages.')->controller(AdminContactMessageController::class)->group(function () {
         Route::get('/', 'index')->name('index');
+        Route::get('/{id}', 'show')->name('show');
         Route::post('/{id}/read', 'markAsRead')->name('read');
         Route::delete('/{id}', 'destroy')->name('destroy');
     });

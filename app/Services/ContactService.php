@@ -35,6 +35,20 @@ class ContactService
     }
 
     /**
+     * Get a message by ID and mark it as read.
+     */
+    public function getMessageById(int $id): ContactMessage
+    {
+        $message = ContactMessage::findOrFail($id);
+
+        if (! $message->is_read) {
+            $message->update(['is_read' => true]);
+        }
+
+        return $message;
+    }
+
+    /**
      * Mark a message as read.
      */
     public function markAsRead(int $id): bool

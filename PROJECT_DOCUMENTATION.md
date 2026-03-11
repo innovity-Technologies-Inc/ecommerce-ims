@@ -150,10 +150,11 @@ Every module or architectural change must be documented in this file before a ta
   - **Database Storage:** Submissions are stored in the `contact_messages` table for administrative tracking.
   - **Automated Feedback:** Upon submission, the system triggers a `ContactConfirmationMail` to the customer, providing an immediate professional acknowledgment. A Toastr success notification is displayed upon redirect.
   - **Admin Dashboard:** Admins can view a chronological list of messages, mark them as "Read," or delete them. New/Unread messages are visually highlighted (bold text).
+  - **Message Detail View:** A dedicated view page allows admins to read the full content of a specific inquiry. Viewing a message automatically marks it as "Read" if it was previously unread.
 - **Implementation Details:** 
-  - **`ContactService`:** Orchestrates the storage of data and the mailing process. It includes a `try-catch` block for the mailer to ensure the user's experience isn't interrupted by SMTP connection issues.
+  - **`ContactService`:** Orchestrates the storage of data and the mailing process. It includes a `try-catch` block for the mailer to ensure the user's experience isn't interrupted by SMTP connection issues. `getMessageById()` handles both data retrieval and the "Mark as Read" status update logic.
   - **Mailable:** Uses Laravel's Markdown mailables for a consistent, responsive email layout.
-  - **Admin Controller:** `ContactMessageController` provides standard administrative actions (Index, Read toggle, Delete) with SweetAlert2 protection for destructive actions.
+  - **Admin Controller:** `ContactMessageController` provides standard administrative actions (Index, Show, Read toggle, Delete) with SweetAlert2 protection for destructive actions.
 
 ---
 

@@ -22,6 +22,16 @@ class ContactMessageController extends Controller
     }
 
     /**
+     * Display the specified contact message.
+     */
+    public function show(int $id): View
+    {
+        $message = $this->contactService->getMessageById($id);
+
+        return view('admin.contact_messages.show', compact('message'));
+    }
+
+    /**
      * Mark a message as read.
      */
     public function markAsRead(int $id): RedirectResponse
