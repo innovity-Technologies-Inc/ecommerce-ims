@@ -52,5 +52,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-34:** Dynamic App Configuration (App Name and Mail From Name loaded from General Settings).
 - [x] **REQ-35:** Order History & Tracking (Authenticated user history and guest order tracking by ID).
 - [x] **REQ-36:** Invoice Management Module (Admin invoice generation, regeneration, and client-side download via JS Print).
-- [ ] **REQ-37:** Contact Settings Module (Admin settings for company name, email, address, phone number, integrated into invoices).
+- [x] **REQ-37:** Contact Settings Module (Admin settings for company name, email, address, phone number, integrated into invoices).
+- [ ] **REQ-38:** Customer Management Module (Admin panel for managing authenticated users: list, profile, purchase history, status toggle, and deletion).
+
 

@@ -21,6 +21,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'state',
         'country',
         'zip',
+        'status',
     ];
 
     protected $hidden = [
@@ -33,6 +34,15 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'status' => 'boolean',
         ];
+    }
+
+    /**
+     * Get all orders for the user.
+     */
+    public function orders(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Order::class);
     }
 }

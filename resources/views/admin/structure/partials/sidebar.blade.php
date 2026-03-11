@@ -131,14 +131,14 @@
                 </div>
             </li>
 
-            <li class="menu-title mt-2">Users</li>
+            <li class="menu-title mt-2">Management</li>
 
             <li class="nav-item">
                 <a class="nav-link menu-arrow" href="#sidebarUsers" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarUsers">
                                    <span class="nav-icon">
                                         <iconify-icon icon="solar:user-speak-bold-duotone"></iconify-icon>
                                    </span>
-                    <span class="nav-text"> Users </span>
+                    <span class="nav-text"> Admins </span>
                 </a>
                 <div class="collapse" id="sidebarUsers">
                     <ul class="nav sub-navbar-nav">
@@ -150,6 +150,15 @@
                         </li>
                     </ul>
                 </div>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.customers.index') }}">
+                                   <span class="nav-icon">
+                                        <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon>
+                                   </span>
+                    <span class="nav-text"> Customers </span>
+                </a>
             </li>
 
             <li class="menu-title mt-2">Settings</li>

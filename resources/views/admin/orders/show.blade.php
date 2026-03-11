@@ -168,7 +168,7 @@
                                 <form action="{{ route('admin.orders.regenerate-invoice', $order->id) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="btn btn-soft-secondary w-100">
-                                        <i class="bx bx-refresh me-1"></i> Regenerate Date
+                                        <i class="bx bx-refresh me-1"></i> Generate
                                     </button>
                                 </form>
                             </div>

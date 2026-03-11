@@ -9,15 +9,20 @@
         .invoice-box { max-width: 800px; margin: auto; padding: 30px; border: 1px solid #eee; box-shadow: 0 0 10px rgba(0, 0, 0, .15); font-size: 16px; background: #fff; }
         .invoice-box table { width: 100%; line-height: inherit; text-align: left; border-collapse: collapse; }
         .invoice-box table td { padding: 5px; vertical-align: top; }
-        .invoice-box table tr td:nth-child(2) { text-align: right; }
+        .invoice-box table tr td:last-child { text-align: right; }
+        .invoice-box table tr.top table td:last-child { text-align: right; }
+        .invoice-box table tr.information table td:last-child { text-align: right; }
         .invoice-box table tr.top table td { padding-bottom: 20px; }
         .invoice-box table tr.top table td.title { font-size: 45px; line-height: 45px; color: #333; }
         .invoice-box table tr.information table td { padding-bottom: 40px; }
         .invoice-box table tr.heading td { background: #eee; border-bottom: 1px solid #ddd; font-weight: bold; }
+        .invoice-box table tr.heading td:nth-child(2) { text-align: center; }
         .invoice-box table tr.details td { padding-bottom: 20px; }
+        .invoice-box table tr.details td:nth-child(2) { text-align: center; }
         .invoice-box table tr.item td { border-bottom: 1px solid #eee; }
+        .invoice-box table tr.item td:nth-child(2) { text-align: center; }
         .invoice-box table tr.item.last td { border-bottom: none; }
-        .invoice-box table tr.total td:nth-child(2) { border-top: 2px solid #eee; font-weight: bold; }
+        .invoice-box table tr.total td:last-child { border-top: 2px solid #eee; font-weight: bold; }
         
         .badge { padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
         .bg-success { background-color: #28a745; color: #fff; }
@@ -44,7 +49,7 @@
     <div class="invoice-box">
         <table>
             <tr class="top">
-                <td colspan="2">
+                <td colspan="3">
                     <table>
                         <tr>
                             <td class="title">
@@ -66,7 +71,7 @@
             </tr>
 
             <tr class="information">
-                <td colspan="2">
+                <td colspan="3">
                     <table>
                         <tr>
                             <td>
@@ -107,16 +112,17 @@
             </tr>
 
             <tr class="heading">
-                <td>Payment Method</td>
+                <td colspan="2">Payment Method</td>
                 <td>Status</td>
             </tr>
             <tr class="details">
-                <td>{{ $order->payment_method }}</td>
+                <td colspan="2">{{ $order->payment_method }}</td>
                 <td>{{ $order->payment_status }}</td>
             </tr>
 
             <tr class="heading">
                 <td>Item</td>
+                <td>Qty</td>
                 <td>Price</td>
             </tr>
             @foreach($order->orderItems as $item)
@@ -126,13 +132,14 @@
                         @if($item->variant_name)
                             <br><small style="color: #777;">Variant: {{ $item->variant_name }}</small>
                         @endif
-                        <br><small style="color: #777;">Qty: {{ $item->quantity }}</small>
                     </td>
+                    <td>{{ $item->quantity }}</td>
                     <td>${{ number_format($item->total_price, 2) }}</td>
                 </tr>
             @endforeach
 
             <tr class="total">
+                <td></td>
                 <td></td>
                 <td>
                    Subtotal: ${{ number_format($order->subtotal, 2) }}<br>

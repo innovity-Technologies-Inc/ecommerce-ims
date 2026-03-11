@@ -128,6 +128,18 @@ Every module or architectural change must be documented in this file before a ta
   - This view utilizes `@media print` CSS to strip away all website UI (navbars, footers, buttons) and formats the tables perfectly for A4 printing.
   - A snippet of JavaScript (`window.onload = function() { window.print(); }`) automatically triggers the browser's native Print/Save-as-PDF dialog upon page load.
 
+### 3.11 Customer Management Module (Admin)
+- **What:** A comprehensive administrative interface to manage registered customers, their profiles, and their engagement history.
+- **How it Works:** 
+  - **Listing & Search:** Admins can view a paginated list of all authenticated users.
+  - **Status Control:** Implements an "Active/Inactive" toggle. This is enforced at the database level via a `status` boolean in the `users` table. 
+  - **Profile & History:** A dedicated details view fetches the user's profile data and eager-loads their entire purchase history (orders) for high-level customer analysis.
+  - **Deletion:** Allows for permanent removal of customer accounts.
+- **Implementation Details:** 
+  - **`CustomerManagementService`:** Centralizes all logic for fetching users with their orders, toggling statuses, and deletion.
+  - **Authentication Guardrail:** The `LoginRequest` is modified to include a `status => 1` check during `Auth::attempt()`. If a user is inactive, they are prevented from logging in with a specific error message.
+  - **Admin UI:** Built with Bootstrap 5 switches for instant status toggling and clean detailed views for profile data.
+
 ---
 
 ## 4. Frontend & UI Standardization Refinements

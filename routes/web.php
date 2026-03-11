@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
@@ -49,6 +50,14 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     });
 
     Route::resource('sliders', \App\Http\Controllers\SliderController::class)->names('admin.sliders');
+
+    // Customer Management
+    Route::prefix('customers')->name('admin.customers.')->controller(AdminCustomerController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/{id}', 'show')->name('show');
+        Route::post('/{id}/toggle-status', 'toggleStatus')->name('toggle-status');
+        Route::delete('/{id}/destroy', 'destroy')->name('destroy');
+    });
 
     Route::prefix('orders')->name('admin.orders.')->controller(OrderController::class)->group(function () {
         Route::get('/', 'index')->name('index');
