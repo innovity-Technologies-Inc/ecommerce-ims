@@ -13,7 +13,11 @@
                     <div id="map">
                         <div class="mapouter">
                             <div class="gmap_canvas">
-                                {!! $cs->map_link !!}
+                                @if(str_contains($cs->map_link, '<iframe'))
+                                    {!! $cs->map_link !!}
+                                @else
+                                    <iframe id="gmap_canvas" src="{{ $cs->map_link }}" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
+                                @endif
                             </div>
                         </div>
                     </div>
