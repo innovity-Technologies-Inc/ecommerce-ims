@@ -1,15 +1,9 @@
 @if($featuredSection && $featuredSection->is_visible && $featuredProducts->isNotEmpty())
-<section class="feature-area-2">
+<section class="feature-area-2" style="background-image: url('{{ $featuredSection->background_image ? asset('storage/'.$featuredSection->background_image) : asset('client/assets/images/feature-bg/feature-bg.jpg') }}'); background-size: cover; background-position: center; background-repeat: no-repeat;">
     <div class="container">
         <div class="row">
-            <!-- left side -->
-            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
-                <div class="feature-left">
-                    <img src="{{ $featuredSection->background_image ? asset('storage/'.$featuredSection->background_image) : asset('client/assets/images/feature-bg/2.png') }}" alt="Featured Background" class="img-responsive">
-                </div>
-            </div>
-            <!-- left side -->
-            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+            <!-- Content side -->
+            <div class="col-lg-6 offset-lg-6 col-md-12 col-sm-12 col-xs-12">
                 <!-- Section Title -->
                 <div class="section-title">
                     <h2>{{ $featuredSection->section_title }}</h2>

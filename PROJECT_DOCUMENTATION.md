@@ -87,7 +87,8 @@ Every module or architectural change must be documented in this file before a ta
 - **Implementation Details:** 
   - **Dynamic Boot Overrides:** In `AppServiceProvider::boot()`, the system queries the `general_settings` and `mail_settings` tables. If records exist, it dynamically overrides Laravel's config (`config(['app.name' => $gs->business_name])` and `config(['mail.mailers.smtp...'])`). This allows the admin to change email servers and site names without touching `.env` files.
   - **Contact Data Integration:** The `ContactSetting` model is accessible globally via `App\HelperClass::contactSettings()`. This data is dynamically injected into printable templates, such as the Invoice, so that the seller's information always reflects the latest contact settings rather than hardcoded configurations.
-  - **Homepage Sections:** `SectionSetting` records control the visibility (True/False) and logic (e.g., Organic bestsellers vs Custom selected) of homepage UI blocks.
+  - **Homepage Sections:** `SectionSetting` records control the visibility (True/False) and logic (e.g., Organic bestsellers vs Custom selected) of homepage UI blocks. 
+    - **Dynamic Backgrounds:** The "Featured" section on the homepage dynamically loads its background image from the `background_image` field in `SectionSetting`. This is applied as an inline CSS style to the section container, allowing admins to fully customize the section's visual theme from the Admin Panel.
 
 ### 3.7 Hybrid Shopping Cart System
 - **What:** A persistent shopping cart that works for both guests (visitors) and authenticated users.
