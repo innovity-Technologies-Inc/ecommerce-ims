@@ -43,7 +43,7 @@
                                 <a href="#shop-2" data-bs-toggle="tab">
                                     <i class="fa fa-list-ul"></i>
                                 </a>
-                                <p>There Are {{ $products->total() }} Products.</p>
+                                <p>Showing <span class="fw-semibold">{{ $products->firstItem() ?? 0 }}</span> to <span class="fw-semibold">{{ $products->lastItem() ?? 0 }}</span> of <span class="fw-semibold">{{ $products->total() }}</span> Results</p>
                             </div>
                             <!-- Left Side End -->
                             <!-- Right Side Start -->
@@ -188,6 +188,9 @@
                             <!-- Shop Tab Content End -->
                             <!--  Pagination Area Start -->
                             <div class="pro-pagination-style text-center">
+                                <div class="text-muted mb-2">
+                                    Showing <span class="fw-semibold">{{ $products->firstItem() ?? 0 }}</span> to <span class="fw-semibold">{{ $products->lastItem() ?? 0 }}</span> of <span class="fw-semibold">{{ $products->total() }}</span> Results
+                                </div>
                                 {{ $products->links() }}
                             </div>
                             <!--  Pagination Area End -->

@@ -57,7 +57,8 @@ This document lists the high-level requirements for the modules implemented in t
 - [ ] **REQ-39:** Map Integration in Contact Settings (Add map link field to contact settings for frontend display).
 - [x] **REQ-40:** Dynamic Contact Page (Replace static content in client contact page with dynamic data from database).
 - [x] **REQ-41:** Dynamic Social Links (Manage social media URLs and visibility toggles in contact settings, integrated into frontend).
-- [ ] **REQ-42:** Contact Message Management (Client-side form submission, DB storage, email confirmation, and Admin panel listing).
+- [x] **REQ-42:** Contact Message Management (Client-side form submission, DB storage, email confirmation, and Admin panel listing).
+- [x] **REQ-43:** Pagination Info (Add "Showing X to Y of Z Results" text to all index pages' pagination areas).
 
 
 

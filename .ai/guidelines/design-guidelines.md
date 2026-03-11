@@ -24,6 +24,6 @@ This project focuses on a clean, modern, and high-performance e-commerce interfa
 
 ## 4. UI/UX Principles
 - **Visual Feedback:** Provide immediate feedback for user actions (e.g., loading spinners on buttons, Toastr for success/error).
-- **Consistency:** Use consistent spacing, typography (sans-serif), and color palettes across all views.
 - **Forms:** Labels should always be present; use placeholders appropriately. Use Select2 for all searchable/multi-select dropdowns.
-- **Tables:** Use responsive Bootstrap tables with consistent styling for actions (icons for edit/delete).
+- **Tables & Pagination:** Use responsive Bootstrap tables with consistent styling for actions. All paginated lists MUST include "Showing X to Y of Z Results" text next to the pagination links.
+- **Consistency:** Use consistent spacing, typography (sans-serif), and color palettes across all views.

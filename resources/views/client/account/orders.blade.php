@@ -141,6 +141,9 @@
                                             </table>
                                         </div>
                                         <div class="mt-4 pro-pagination-style text-center">
+                                            <div class="text-muted mb-2">
+                                                Showing <span class="fw-semibold">{{ $orders->firstItem() ?? 0 }}</span> to <span class="fw-semibold">{{ $orders->lastItem() ?? 0 }}</span> of <span class="fw-semibold">{{ $orders->total() }}</span> Results
+                                            </div>
                                             {{ $orders->links() }}
                                         </div>
                                     </div>
