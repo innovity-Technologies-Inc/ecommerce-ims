@@ -17,7 +17,6 @@
                                     <th>Date</th>
                                     <th>Customer</th>
                                     <th>Subject</th>
-                                    <th>Message</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -34,11 +33,6 @@
                                             </div>
                                         </td>
                                         <td>{{ $message->subject }}</td>
-                                        <td style="max-width: 300px;">
-                                            <div class="text-truncate" title="{{ $message->message }}">
-                                                {{ $message->message }}
-                                            </div>
-                                        </td>
                                         <td>
                                             @if(!$message->is_read)
                                                 <span class="badge bg-warning">Unread</span>
