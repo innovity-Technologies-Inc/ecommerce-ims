@@ -40,6 +40,13 @@
                                     @error('address') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
                             </div>
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                    <label for="map_link" class="form-label">Map (Iframe Source)</label>
+                                    <textarea name="map_link" id="map_link" class="form-control" rows="4">{{ old('map_link', $setting->map_link ?? '') }}</textarea>
+                                    @error('map_link') <span class="text-danger small">{{ $message }}</span> @enderror
+                                </div>
+                            </div>
                         </div>
 
                         <div class="d-flex justify-content-end">

@@ -11,5 +11,6 @@ class ContactSetting extends Model
         'company_email',
         'phone_number',
         'address',
+        'map_link',
     ];
 }

@@ -26,6 +26,7 @@ class ContactSettingRequest extends FormRequest
             'company_email' => 'nullable|email|max:255',
             'phone_number' => 'nullable|string|max:255',
             'address' => 'nullable|string',
+            'map_link' => 'nullable|string',
         ];
     }
 }
