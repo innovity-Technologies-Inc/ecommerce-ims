@@ -56,7 +56,9 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-38:** Customer Management Module (Admin panel for managing authenticated users: list, profile, purchase history, status toggle, and deletion).
 - [ ] **REQ-39:** Map Integration in Contact Settings (Add map link field to contact settings for frontend display).
 - [x] **REQ-40:** Dynamic Contact Page (Replace static content in client contact page with dynamic data from database).
-- [ ] **REQ-41:** Dynamic Social Links (Manage social media URLs and visibility toggles in contact settings, integrated into frontend).
+- [x] **REQ-41:** Dynamic Social Links (Manage social media URLs and visibility toggles in contact settings, integrated into frontend).
+- [ ] **REQ-42:** Contact Message Management (Client-side form submission, DB storage, email confirmation, and Admin panel listing).
+
 
 
 

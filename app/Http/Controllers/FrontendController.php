@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ContactMessageRequest;
 use App\Models\Product;
 use App\Models\SectionSetting;
+use App\Services\ContactService;
 use App\Services\HomepageService;
 use App\Services\OrderService;
 use DaiyanMozumder\LaravelFlexSearch\FlexSearch;
@@ -13,7 +15,8 @@ class FrontendController extends Controller
 {
     public function __construct(
         protected HomepageService $homepageService,
-        protected OrderService $orderService
+        protected OrderService $orderService,
+        protected ContactService $contactService
     ) {}
 
     public function trackOrder(Request $request)
@@ -245,6 +248,16 @@ class FrontendController extends Controller
         return view('client.contact', [
             'title' => 'Contact Us',
             'section' => 'Contact Us',
+        ]);
+    }
+
+    public function storeContactMessage(ContactMessageRequest $request)
+    {
+        $this->contactService->storeMessage($request->validated());
+
+        return back()->with([
+            'message' => 'Thanks for contacting us. We will be reaching out soon.',
+            'alert-type' => 'success',
         ]);
     }
 }

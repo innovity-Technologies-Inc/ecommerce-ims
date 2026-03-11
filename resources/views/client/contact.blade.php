@@ -111,27 +111,38 @@
                         <div class="contact-title mb-30">
                             <h2>Get In Touch</h2>
                         </div>
-                        <form class="contact-form-style" id="contact-form" action="#" method="post">
+                        <form id="contact-form-final" action="{{ route('client.contact.send') }}" method="post">
                             @csrf
                             <div class="row">
                                 <div class="col-lg-6">
-                                    <input name="name" placeholder="Name*" type="text" required>
+                                    <div class="form-group mb-3">
+                                        <input name="name" class="form-control" placeholder="Name*" type="text" value="{{ old('name') }}" required style="height: 50px; border-radius: 0;">
+                                        @error('name') <span class="text-danger small">{{ $message }}</span> @enderror
+                                    </div>
                                 </div>
                                 <div class="col-lg-6">
-                                    <input name="email" placeholder="Email*" type="email" required>
+                                    <div class="form-group mb-3">
+                                        <input name="email" class="form-control" placeholder="Email*" type="email" value="{{ old('email') }}" required style="height: 50px; border-radius: 0;">
+                                        @error('email') <span class="text-danger small">{{ $message }}</span> @enderror
+                                    </div>
                                 </div>
                                 <div class="col-lg-12">
-                                    <input name="subject" placeholder="Subject*" type="text" required>
+                                    <div class="form-group mb-3">
+                                        <input name="subject" class="form-control" placeholder="Subject*" type="text" value="{{ old('subject') }}" required style="height: 50px; border-radius: 0;">
+                                        @error('subject') <span class="text-danger small">{{ $message }}</span> @enderror
+                                    </div>
                                 </div>
                                 <div class="col-lg-12">
-                                    <textarea name="message" placeholder="Your Message*" required></textarea>
-                                    <div class="billing-btn">
-                                        <button type="submit">SEND</button>
+                                    <div class="form-group mb-3">
+                                        <textarea name="message" class="form-control" placeholder="Your Message*" required style="min-height: 150px; border-radius: 0;">{{ old('message') }}</textarea>
+                                        @error('message') <span class="text-danger small">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="mt-3">
+                                        <button type="submit" class="btn btn-primary px-5 text-white" style="background-color: #7AAACE; border-color: #7AAACE; height: 50px; font-weight: 700; text-transform: uppercase; border-radius: 0;">SEND MESSAGE</button>
                                     </div>
                                 </div>
                             </div>
                         </form>
-                        <p class="form-messege"></p>
                     </div>
                 </div>
             </div>

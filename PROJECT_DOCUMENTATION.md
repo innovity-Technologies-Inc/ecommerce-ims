@@ -141,6 +141,19 @@ Every module or architectural change must be documented in this file before a ta
   - **Authentication Guardrail:** The `LoginRequest` is modified to include a `status => 1` check during `Auth::attempt()`. If a user is inactive, they are prevented from logging in with a specific error message.
   - **Admin UI:** Built with Bootstrap 5 switches for instant status toggling and clean detailed views for profile data.
 
+### 3.12 Contact Message Management Module
+- **What:** An automated system to handle customer inquiries submitted via the contact form.
+- **How it Works:** 
+  - **Form Submission:** Customers fill out a validated form (Name, Email, Subject, Message) on the Contact page. The form uses a standard synchronous POST submission.
+  - **Validation Handling:** Server-side validation errors are displayed using Laravel's standard `@error` directives under each input field.
+  - **Database Storage:** Submissions are stored in the `contact_messages` table for administrative tracking.
+  - **Automated Feedback:** Upon submission, the system triggers a `ContactConfirmationMail` to the customer, providing an immediate professional acknowledgment. A Toastr success notification is displayed upon redirect.
+  - **Admin Dashboard:** Admins can view a chronological list of messages, mark them as "Read," or delete them. New/Unread messages are visually highlighted (bold text).
+- **Implementation Details:** 
+  - **`ContactService`:** Orchestrates the storage of data and the mailing process. It includes a `try-catch` block for the mailer to ensure the user's experience isn't interrupted by SMTP connection issues.
+  - **Mailable:** Uses Laravel's Markdown mailables for a consistent, responsive email layout.
+  - **Admin Controller:** `ContactMessageController` provides standard administrative actions (Index, Read toggle, Delete) with SweetAlert2 protection for destructive actions.
+
 ---
 
 ## 4. Frontend & UI Standardization Refinements

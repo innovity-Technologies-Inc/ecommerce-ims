@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ContactMessageController as AdminContactMessageController;
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CartController;
@@ -59,6 +60,13 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::delete('/{id}/destroy', 'destroy')->name('destroy');
     });
 
+    // Contact Messages
+    Route::prefix('contact-messages')->name('admin.contact_messages.')->controller(AdminContactMessageController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/{id}/read', 'markAsRead')->name('read');
+        Route::delete('/{id}', 'destroy')->name('destroy');
+    });
+
     Route::prefix('orders')->name('admin.orders.')->controller(OrderController::class)->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/{order}', 'show')->name('show');
@@ -88,6 +96,7 @@ Route::controller(FrontendController::class)->group(function () {
     Route::get('/product/{slug}', 'productDetails')->name('client.products.details');
     Route::match(['get', 'post'], '/track-order', 'trackOrder')->name('client.track_order');
     Route::get('/contact', 'contact')->name('client.contact');
+    Route::post('/contact/send', 'storeContactMessage')->name('client.contact.send');
 });
 
 // Cart Routes

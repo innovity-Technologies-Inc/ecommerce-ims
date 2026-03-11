@@ -1,0 +1,86 @@
+@extends('admin.structure.app')
+@section('content')
+
+    <div class="container-xxl">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="card-title">Contact Messages</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-centered mb-0">
+                                <thead class="bg-light-subtle">
+                                <tr>
+                                    <th>SL</th>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>Subject</th>
+                                    <th>Message</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @forelse($messages as $index => $message)
+                                    <tr class="{{ !$message->is_read ? 'fw-bold' : '' }}">
+                                        <td>{{ \App\HelperClass::indexNumberSerialization($messages) + $index }}</td>
+                                        <td>{{ $message->created_at->format('d M, Y h:i A') }}</td>
+                                        <td>
+                                            <div>
+                                                <h6 class="mb-0">{{ $message->name }}</h6>
+                                                <small class="text-muted">{{ $message->email }}</small>
+                                            </div>
+                                        </td>
+                                        <td>{{ $message->subject }}</td>
+                                        <td style="max-width: 300px;">
+                                            <div class="text-truncate" title="{{ $message->message }}">
+                                                {{ $message->message }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            @if(!$message->is_read)
+                                                <span class="badge bg-warning">Unread</span>
+                                            @else
+                                                <span class="badge bg-success">Read</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <div class="d-flex gap-2">
+                                                @if(!$message->is_read)
+                                                    <form action="{{ route('admin.contact_messages.read', $message->id) }}" method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-soft-success btn-sm" title="Mark as Read">
+                                                            <i class="bx bx-check-double fs-16"></i>
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                                <form action="{{ route('admin.contact_messages.destroy', $message->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-soft-danger btn-sm confirmDelete" title="Delete Message">
+                                                        <i class="bx bx-trash fs-16"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="7" class="text-center">No messages found.</td>
+                                    </tr>
+                                @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-3">
+                            {{ $messages->links() }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@endsection

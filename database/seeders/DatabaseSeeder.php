@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             MailSettingSeeder::class,
             SliderSeeder::class,
             SectionSettingSeeder::class,
+            ContactSettingSeeder::class,
         ]);
     }
 }
