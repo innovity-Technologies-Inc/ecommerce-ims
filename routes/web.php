@@ -87,6 +87,7 @@ Route::controller(FrontendController::class)->group(function () {
     Route::get('/products', 'products')->name('client.products.index');
     Route::get('/product/{slug}', 'productDetails')->name('client.products.details');
     Route::match(['get', 'post'], '/track-order', 'trackOrder')->name('client.track_order');
+    Route::get('/contact', 'contact')->name('client.contact');
 });
 
 // Cart Routes

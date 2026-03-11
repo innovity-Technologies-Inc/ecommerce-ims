@@ -239,4 +239,12 @@ class FrontendController extends Controller
             'section' => 'Product Details',
         ]);
     }
+
+    public function contact()
+    {
+        return view('client.contact', [
+            'title' => 'Contact Us',
+            'section' => 'Contact Us',
+        ]);
+    }
 }

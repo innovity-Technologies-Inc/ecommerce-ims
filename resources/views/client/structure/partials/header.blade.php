@@ -152,7 +152,7 @@
                             <li>
                                 <a href="{{ route('client.track_order') }}">Track Order</a>
                             </li>
-                            <li><a href="contact.html">Contact Us</a></li>
+                            <li><a href="{{ route('client.contact') }}">Contact Us</a></li>
                         </ul>
                     </div>
                     <!--Main Navigation End -->
@@ -334,7 +334,7 @@
                         @endif
                     </ul>
                 </li>
-                <li><a href="contact.html">Contact Us</a></li>
+                <li><a href="{{ route('client.contact') }}">Contact Us</a></li>
             </ul>
         </div>
         <!-- OffCanvas Menu End -->

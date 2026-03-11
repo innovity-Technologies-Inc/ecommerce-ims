@@ -55,6 +55,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-37:** Contact Settings Module (Admin settings for company name, email, address, phone number, integrated into invoices).
 - [x] **REQ-38:** Customer Management Module (Admin panel for managing authenticated users: list, profile, purchase history, status toggle, and deletion).
 - [ ] **REQ-39:** Map Integration in Contact Settings (Add map link field to contact settings for frontend display).
+- [ ] **REQ-40:** Dynamic Contact Page (Replace static content in client contact page with dynamic data from database).
 
 
 

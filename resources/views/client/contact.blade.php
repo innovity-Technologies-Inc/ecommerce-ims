@@ -1,50 +1,58 @@
 @extends('client.structure.app')
 
 @section('content')
-
+    @php
+        $gs = \App\HelperClass::generalSettings();
+        $cs = \App\HelperClass::contactSettings();
+    @endphp
     <!-- contact area start -->
     <div class="contact-area mtb-60px">
         <div class="container">
-            <div class="contact-map mb-10">
-                <div id="map">
-                    <div class="mapouter">
-                        <div class="gmap_canvas">
-                            <iframe id="gmap_canvas" src="https://maps.google.com/maps?q=121%20King%20St%2C%20Melbourne%20VIC%203000%2C%20Australia&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
-                            <a href="https://sites.google.com/view/maps-api-v2/mapv2"></a>
+            @if($cs && $cs->map_link)
+                <div class="contact-map mb-10">
+                    <div id="map">
+                        <div class="mapouter">
+                            <div class="gmap_canvas">
+                                {!! $cs->map_link !!}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            @endif
             <div class="custom-row-2">
                 <div class="col-lg-4 col-md-5">
                     <div class="contact-info-wrap">
-                        <div class="single-contact-info">
-                            <div class="contact-icon">
-                                <i class="fa fa-phone"></i>
+                        @if($cs && $cs->phone_number)
+                            <div class="single-contact-info">
+                                <div class="contact-icon">
+                                    <i class="fa fa-phone"></i>
+                                </div>
+                                <div class="contact-info-dec">
+                                    <p>{{ $cs->phone_number }}</p>
+                                </div>
                             </div>
-                            <div class="contact-info-dec">
-                                <p>+012 345 678 102</p>
-                                <p>+012 345 678 102</p>
+                        @endif
+                        @if($cs && $cs->company_email)
+                            <div class="single-contact-info">
+                                <div class="contact-icon">
+                                    <i class="fa fa-globe"></i>
+                                </div>
+                                <div class="contact-info-dec">
+                                    <p><a href="mailto:{{ $cs->company_email }}">{{ $cs->company_email }}</a></p>
+                                    <p><a href="{{ url('/') }}">{{ str_replace(['http://', 'https://'], '', config('app.url')) }}</a></p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="single-contact-info">
-                            <div class="contact-icon">
-                                <i class="fa fa-globe"></i>
+                        @endif
+                        @if($cs && $cs->address)
+                            <div class="single-contact-info">
+                                <div class="contact-icon">
+                                    <i class="fa fa-map-marker"></i>
+                                </div>
+                                <div class="contact-info-dec">
+                                    <p>{!! nl2br(e($cs->address)) !!}</p>
+                                </div>
                             </div>
-                            <div class="contact-info-dec">
-                                <p><a href="#">urname@email.com</a></p>
-                                <p><a href="#">urwebsitenaem.com</a></p>
-                            </div>
-                        </div>
-                        <div class="single-contact-info">
-                            <div class="contact-icon">
-                                <i class="fa fa-map-marker"></i>
-                            </div>
-                            <div class="contact-info-dec">
-                                <p>Address goes here,</p>
-                                <p>street, Crossroad 123.</p>
-                            </div>
-                        </div>
+                        @endif
                         <div class="contact-social">
                             <h3>Follow Us</h3>
                             <div class="social-info">
@@ -74,20 +82,23 @@
                         <div class="contact-title mb-30">
                             <h2>Get In Touch</h2>
                         </div>
-                        <form class="contact-form-style" id="contact-form" action="https://whizthemes.com/nazmul/php/mail.php" method="post">
+                        <form class="contact-form-style" id="contact-form" action="#" method="post">
+                            @csrf
                             <div class="row">
                                 <div class="col-lg-6">
-                                    <input name="name" placeholder="Name*" type="text">
+                                    <input name="name" placeholder="Name*" type="text" required>
                                 </div>
                                 <div class="col-lg-6">
-                                    <input name="email" placeholder="Email*" type="email">
+                                    <input name="email" placeholder="Email*" type="email" required>
                                 </div>
                                 <div class="col-lg-12">
-                                    <input name="subject" placeholder="Subject*" type="text">
+                                    <input name="subject" placeholder="Subject*" type="text" required>
                                 </div>
                                 <div class="col-lg-12">
-                                    <textarea name="message" placeholder="Your Message*"></textarea>
-                                    <button class="submit" type="submit">SEND</button>
+                                    <textarea name="message" placeholder="Your Message*" required></textarea>
+                                    <div class="billing-btn">
+                                        <button type="submit">SEND</button>
+                                    </div>
                                 </div>
                             </div>
                         </form>
@@ -98,5 +109,14 @@
         </div>
     </div>
     <!-- contact area end -->
-
 @endsection
+
+@push('styles')
+    <style>
+        .gmap_canvas iframe {
+            width: 100%;
+            height: 450px;
+            border: 0;
+        }
+    </style>
+@endpush
