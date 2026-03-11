@@ -56,9 +56,11 @@ You MUST strictly follow this sequence for **EVERY** request:
 - **Configuration:** Always use `config('key')`, never `env('KEY')` outside of config files.
 
 ## 4. HelperClass Usage
+- **MANDATORY:** Always use `HelperClass` for retrieving global settings (General, Contact, Brands, etc.) within Blade templates. Global view sharing via Service Providers (`View::share`) is strictly prohibited.
 - **File Uploads:** `HelperClass::file_upload($file, $folder)`.
 - **File Deletions:** `HelperClass::file_delete($path)`.
 - **Table Serialization:** `HelperClass::indexNumberSerialization($paginatedData)`.
+- **Global Data Access:** Use `HelperClass::generalSettings()`, `HelperClass::contactSettings()`, `HelperClass::getCategories()`, etc.
 
 ## 5. Development Workflow
 1. **Migration & Model:** Set up the DB layer.

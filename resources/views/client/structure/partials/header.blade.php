@@ -1,6 +1,7 @@
 <!-- Header Start -->
 @php
     $gs = \App\HelperClass::generalSettings();
+    $cs = \App\HelperClass::contactSettings();
     $nav_categories = \App\HelperClass::getCategories();
     $nav_brands = \App\HelperClass::getBrands();
 @endphp
@@ -342,7 +343,6 @@
             </ul>
         </div>
         <!-- OffCanvas Menu End -->
-        @php($cs = \App\HelperClass::contactSettings())
         <div class="offcanvas-social mt-5">
             <ul>
                 @if($cs && $cs->facebook_status && $cs->facebook_url)

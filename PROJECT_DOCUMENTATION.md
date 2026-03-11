@@ -24,9 +24,10 @@
 6. **Response:** Controller returns a Blade view or a structured JSON response.
 
 ### Centralized Helper (`App\HelperClass`)
-A globally accessible class used for repetitive tasks:
+A globally accessible class used for repetitive tasks and data retrieval. **MANDATORY:** Always use `HelperClass` for retrieving global settings (General, Contact, Brands, etc.) within Blade templates. Global view sharing via Service Providers is strictly prohibited to maintain performance and explicit data flow.
 - **File Management:** `HelperClass::file_upload()` securely stores files and returns paths; `HelperClass::file_delete()` removes old assets to prevent server bloat.
 - **Indexing:** `HelperClass::indexNumberSerialization($paginatedData)` ensures accurate row numbering across paginated tables.
+- **Global Data:** `HelperClass::generalSettings()`, `HelperClass::contactSettings()`, `HelperClass::getCategories()`, etc., are the only approved methods for accessing site-wide data in views.
 
 ### Documentation Protocol
 Every module or architectural change must be documented in this file before a task is considered complete. Documentation must include:
