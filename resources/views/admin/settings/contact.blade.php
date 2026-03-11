@@ -49,8 +49,51 @@
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn btn-primary">Save Settings</button>
+                        <hr class="my-4">
+                        <h4 class="card-title mb-4">Social Media Links</h4>
+                        
+                        <div class="row">
+                            @php
+                                $socials = [
+                                    ['id' => 'facebook', 'label' => 'Facebook'],
+                                    ['id' => 'instagram', 'label' => 'Instagram'],
+                                    ['id' => 'tiktok', 'label' => 'TikTok'],
+                                    ['id' => 'x', 'label' => 'X (Twitter)'],
+                                    ['id' => 'thread', 'label' => 'Threads'],
+                                    ['id' => 'linkedin', 'label' => 'LinkedIn'],
+                                    ['id' => 'whatsapp', 'label' => 'WhatsApp'],
+                                    ['id' => 'youtube', 'label' => 'YouTube'],
+                                ];
+                            @endphp
+
+                            @foreach($socials as $social)
+                                <div class="col-lg-6 mb-4">
+                                    <div class="card border border-light-subtle h-100 mb-0 shadow-none">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <h5 class="card-title mb-0">{{ $social['label'] }}</h5>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" role="switch" 
+                                                           id="{{ $social['id'] }}_status" name="{{ $social['id'] }}_status" value="1"
+                                                           {{ old($social['id'].'_status', $setting->{$social['id'].'_status'} ?? false) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="{{ $social['id'] }}_status">Visible</label>
+                                                </div>
+                                            </div>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bx bxl-{{ $social['id'] === 'x' ? 'twitter' : ($social['id'] === 'thread' ? 'messenger' : $social['id']) }}"></i></span>
+                                                <input type="text" name="{{ $social['id'] }}_url" id="{{ $social['id'] }}_url" 
+                                                       class="form-control" placeholder="{{ $social['label'] }} Profile URL"
+                                                       value="{{ old($social['id'].'_url', $setting->{$social['id'].'_url'} ?? '') }}">
+                                            </div>
+                                            @error($social['id'].'_url') <span class="text-danger small">{{ $message }}</span> @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="submit" class="btn btn-primary px-5">Save All Settings</button>
                         </div>
                     </form>
                 </div>

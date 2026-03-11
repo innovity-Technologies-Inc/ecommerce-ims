@@ -1,5 +1,8 @@
 <!-- Footer Area start -->
-@php($gs = \App\HelperClass::generalSettings())
+@php
+    $gs = \App\HelperClass::generalSettings();
+    $cs = \App\HelperClass::contactSettings();
+@endphp
 <footer class="footer-area">
     <div class="footer-top">
         <div class="container">
@@ -12,33 +15,44 @@
                     </div>
                     <!-- footer logo -->
                     <div class="about-footer">
-                        <p class="text-info">{{ $gs->meta_description ?? 'We are a team of designers and developers that create high quality HTML template' }}</p>
-                        <div class="need-help">
-                            <p class="phone-info">
-                                NEED HELP?
-                                <span>
-                                                (+800) 345 678 <br>
-                                                (+800) 123 456
-                                            </span>
-                            </p>
-                        </div>
+                        <p class="text-info">{{ $gs->meta_description ?? 'High quality e-commerce products at your doorstep.' }}</p>
+                        @if($cs && $cs->phone_number)
+                            <div class="need-help">
+                                <p class="phone-info">
+                                    NEED HELP?
+                                    <span>
+                                        {{ $cs->phone_number }}
+                                    </span>
+                                </p>
+                            </div>
+                        @endif
                         <div class="social-info">
                             <ul>
-                                <li>
-                                    <a href="#"><i class="ion-social-facebook"></i></a>
-                                </li>
-                                <li>
-                                    <a href="#"><i class="ion-social-twitter"></i></a>
-                                </li>
-                                <li>
-                                    <a href="#"><i class="ion-social-youtube"></i></a>
-                                </li>
-                                <li>
-                                    <a href="#"><i class="ion-social-google"></i></a>
-                                </li>
-                                <li>
-                                    <a href="#"><i class="ion-social-instagram"></i></a>
-                                </li>
+                                @if($cs && $cs->facebook_status && $cs->facebook_url)
+                                    <li>
+                                        <a href="{{ $cs->facebook_url }}" target="_blank"><i class="ion-social-facebook"></i></a>
+                                    </li>
+                                @endif
+                                @if($cs && $cs->x_status && $cs->x_url)
+                                    <li>
+                                        <a href="{{ $cs->x_url }}" target="_blank"><i class="ion-social-twitter"></i></a>
+                                    </li>
+                                @endif
+                                @if($cs && $cs->instagram_status && $cs->instagram_url)
+                                    <li>
+                                        <a href="{{ $cs->instagram_url }}" target="_blank"><i class="ion-social-instagram"></i></a>
+                                    </li>
+                                @endif
+                                @if($cs && $cs->youtube_status && $cs->youtube_url)
+                                    <li>
+                                        <a href="{{ $cs->youtube_url }}" target="_blank"><i class="ion-social-youtube"></i></a>
+                                    </li>
+                                @endif
+                                @if($cs && $cs->linkedin_status && $cs->linkedin_url)
+                                    <li>
+                                        <a href="{{ $cs->linkedin_url }}" target="_blank"><i class="ion-social-linkedin"></i></a>
+                                    </li>
+                                @endif
                             </ul>
                         </div>
                     </div>
@@ -50,9 +64,9 @@
                         <div class="footer-links">
                             <ul>
                                 <li><a href="#">Delivery</a></li>
-                                <li><a href="about.html">About Us</a></li>
+                                <li><a href="#">About Us</a></li>
                                 <li><a href="#">Secure Payment</a></li>
-                                <li><a href="contact.html">Contact Us</a></li>
+                                <li><a href="{{ route('client.contact') }}">Contact Us</a></li>
                                 <li><a href="#">Sitemap</a></li>
                                 <li><a href="#">Stores</a></li>
                             </ul>

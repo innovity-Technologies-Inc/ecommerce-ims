@@ -61,21 +61,46 @@
                             <h3>Follow Us</h3>
                             <div class="social-info">
                                 <ul>
-                                    <li>
-                                        <a href="#"><i class="ion-social-facebook"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="ion-social-twitter"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="ion-social-youtube"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="ion-social-google"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="ion-social-instagram"></i></a>
-                                    </li>
+                                    @if($cs && $cs->facebook_status && $cs->facebook_url)
+                                        <li>
+                                            <a href="{{ $cs->facebook_url }}" target="_blank"><i class="ion-social-facebook"></i></a>
+                                        </li>
+                                    @endif
+                                    @if($cs && $cs->x_status && $cs->x_url)
+                                        <li>
+                                            <a href="{{ $cs->x_url }}" target="_blank"><i class="ion-social-twitter"></i></a>
+                                        </li>
+                                    @endif
+                                    @if($cs && $cs->instagram_status && $cs->instagram_url)
+                                        <li>
+                                            <a href="{{ $cs->instagram_url }}" target="_blank"><i class="ion-social-instagram"></i></a>
+                                        </li>
+                                    @endif
+                                    @if($cs && $cs->youtube_status && $cs->youtube_url)
+                                        <li>
+                                            <a href="{{ $cs->youtube_url }}" target="_blank"><i class="ion-social-youtube"></i></a>
+                                        </li>
+                                    @endif
+                                    @if($cs && $cs->whatsapp_status && $cs->whatsapp_url)
+                                        <li>
+                                            <a href="{{ $cs->whatsapp_url }}" target="_blank"><i class="ion-social-whatsapp"></i></a>
+                                        </li>
+                                    @endif
+                                    @if($cs && $cs->tiktok_status && $cs->tiktok_url)
+                                        <li>
+                                            <a href="{{ $cs->tiktok_url }}" target="_blank"><i class="fa fa-music"></i></a>
+                                        </li>
+                                    @endif
+                                    @if($cs && $cs->linkedin_status && $cs->linkedin_url)
+                                        <li>
+                                            <a href="{{ $cs->linkedin_url }}" target="_blank"><i class="ion-social-linkedin"></i></a>
+                                        </li>
+                                    @endif
+                                    @if($cs && $cs->thread_status && $cs->thread_url)
+                                        <li>
+                                            <a href="{{ $cs->thread_url }}" target="_blank"><i class="ion-chatbubble-working"></i></a>
+                                        </li>
+                                    @endif
                                 </ul>
                             </div>
                         </div>

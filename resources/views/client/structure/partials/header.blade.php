@@ -170,12 +170,14 @@
                         </div>
                         <!--Seach Area End -->
                         <!--Contact info Start -->
-                        <div class="contact-link">
-                            <div class="phone">
-                                <p>Call us:</p>
-                                <a href="tel:(+800)345678">(+800)345678</a>
+                        @if($cs && $cs->phone_number)
+                            <div class="contact-link">
+                                <div class="phone">
+                                    <p>Call us:</p>
+                                    <a href="tel:{{ $cs->phone_number }}">{{ $cs->phone_number }}</a>
+                                </div>
                             </div>
-                        </div>
+                        @endif
                         <!--Contact info End -->
                         <!--Cart info Start -->
                         <div class="cart-info d-flex">
@@ -269,11 +271,13 @@
 <div id="offcanvas-mobile-menu" class="offcanvas offcanvas-mobile-menu hover-style-default">
     <button class="offcanvas-close"></button>
     <!-- contact Info -->
-    <div class="contact-info d-flex align-items-center justify-content-center color-black py-3">
-        <img class="me-3" src="{{asset('client/assets/images/icons/mobile-contact.png')}}" alt="">
-        <p>Call us:</p>
-        <a class="color-black" href="tel:(+800)345678">(+800)345678</a>
-    </div>
+    @if($cs && $cs->phone_number)
+        <div class="contact-info d-flex align-items-center justify-content-center color-black py-3">
+            <img class="me-3" src="{{asset('client/assets/images/icons/mobile-contact.png')}}" alt="">
+            <p>Call us:</p>
+            <a class="color-black" href="tel:{{ $cs->phone_number }}">{{ $cs->phone_number }}</a>
+        </div>
+    @endif
     <!-- offcanvas wishlist -->
     <div class="user-panel">
         <ul class="d-flex justify-content-center">
@@ -338,23 +342,34 @@
             </ul>
         </div>
         <!-- OffCanvas Menu End -->
+        @php($cs = \App\HelperClass::contactSettings())
         <div class="offcanvas-social mt-5">
             <ul>
-                <li>
-                    <a href="#"><i class="ion-social-facebook"></i></a>
-                </li>
-                <li>
-                    <a href="#"><i class="ion-social-twitter"></i></a>
-                </li>
-                <li>
-                    <a href="#"><i class="ion-social-google"></i></a>
-                </li>
-                <li>
-                    <a href="#"><i class="ion-social-youtube"></i></a>
-                </li>
-                <li>
-                    <a href="#"><i class="ion-social-instagram"></i></a>
-                </li>
+                @if($cs && $cs->facebook_status && $cs->facebook_url)
+                    <li>
+                        <a href="{{ $cs->facebook_url }}" target="_blank"><i class="ion-social-facebook"></i></a>
+                    </li>
+                @endif
+                @if($cs && $cs->x_status && $cs->x_url)
+                    <li>
+                        <a href="{{ $cs->x_url }}" target="_blank"><i class="ion-social-twitter"></i></a>
+                    </li>
+                @endif
+                @if($cs && $cs->instagram_status && $cs->instagram_url)
+                    <li>
+                        <a href="{{ $cs->instagram_url }}" target="_blank"><i class="ion-social-instagram"></i></a>
+                    </li>
+                @endif
+                @if($cs && $cs->youtube_status && $cs->youtube_url)
+                    <li>
+                        <a href="{{ $cs->youtube_url }}" target="_blank"><i class="ion-social-youtube"></i></a>
+                    </li>
+                @endif
+                @if($cs && $cs->linkedin_status && $cs->linkedin_url)
+                    <li>
+                        <a href="{{ $cs->linkedin_url }}" target="_blank"><i class="ion-social-linkedin"></i></a>
+                    </li>
+                @endif
             </ul>
         </div>
     </div>
