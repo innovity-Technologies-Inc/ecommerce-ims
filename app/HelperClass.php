@@ -4,6 +4,7 @@ namespace App;
 
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\ContactSetting;
 use App\Models\GeneralSetting;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -13,6 +14,11 @@ class HelperClass
     public static function generalSettings()
     {
         return GeneralSetting::first();
+    }
+
+    public static function contactSettings()
+    {
+        return ContactSetting::first();
     }
 
     public static function getCategories()

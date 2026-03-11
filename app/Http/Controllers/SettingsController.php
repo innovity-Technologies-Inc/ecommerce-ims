@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ContactSettingRequest;
 use App\Http\Requests\GeneralSettingRequest;
 use App\Http\Requests\MailSettingRequest;
+use App\Models\ContactSetting;
 use App\Models\GeneralSetting;
 use App\Models\MailSetting;
 use App\Services\SettingsService;
@@ -28,6 +30,13 @@ class SettingsController extends Controller
         return view('admin.settings.mail', compact('setting'));
     }
 
+    public function contactSettings(): View
+    {
+        $setting = ContactSetting::first();
+
+        return view('admin.settings.contact', compact('setting'));
+    }
+
     public function updateGeneralSettings(GeneralSettingRequest $request): RedirectResponse
     {
         $this->settingsService->updateGeneralSettings($request->validated());
@@ -44,6 +53,16 @@ class SettingsController extends Controller
 
         return back()->with([
             'message' => 'Mail settings updated successfully',
+            'alert-type' => 'success',
+        ]);
+    }
+
+    public function updateContactSettings(ContactSettingRequest $request): RedirectResponse
+    {
+        $this->settingsService->updateContactSettings($request->validated());
+
+        return back()->with([
+            'message' => 'Contact settings updated successfully',
             'alert-type' => 'success',
         ]);
     }

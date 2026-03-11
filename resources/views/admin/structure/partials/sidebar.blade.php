@@ -169,6 +169,9 @@
                         <li class="sub-nav-item">
                             <a class="sub-nav-link" href="{{ route('admin.settings.mail') }}">Mail Settings</a>
                         </li>
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="{{ route('admin.settings.contact') }}">Contact Settings</a>
+                        </li>
                     </ul>
                 </div>
             </li>

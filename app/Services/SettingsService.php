@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\HelperClass;
+use App\Models\ContactSetting;
 use App\Models\GeneralSetting;
 use App\Models\MailSetting;
 
@@ -62,6 +63,18 @@ class SettingsService
     public function updateMailSettings(array $data): MailSetting
     {
         $setting = MailSetting::first() ?? new MailSetting;
+        $setting->fill($data);
+        $setting->save();
+
+        return $setting;
+    }
+
+    /**
+     * Update contact settings.
+     */
+    public function updateContactSettings(array $data): ContactSetting
+    {
+        $setting = ContactSetting::first() ?? new ContactSetting;
         $setting->fill($data);
         $setting->save();
 
