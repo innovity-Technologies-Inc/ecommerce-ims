@@ -4,16 +4,23 @@
     <div class="container-xxl">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h4 class="mb-0">Sliders</h4>
-            <a href="{{ route('admin.sliders.create') }}" class="btn btn-primary btn-sm">Add</a>
+            <a href="{{ route('admin.sliders.create') }}" class="btn btn-primary btn-sm">Add Slider</a>
         </div>
 
         <div class="card overflow-hidden">
             <div class="card-header">
                 <div class="row align-items-center g-2">
-                    <div class="col-lg-3">
+                    <div class="col-lg-4">
                         <div class="search-box">
                             <input type="text" class="form-control" id="search-input" placeholder="Search sliders..." value="{{ request('search') }}">
                         </div>
+                    </div>
+                    <div class="col-lg-2">
+                        <select class="form-select filter-select" id="status-select">
+                            <option value="">Status (All)</option>
+                            <option value="1" {{ request('is_active') == '1' ? 'selected' : '' }}>Active</option>
+                            <option value="0" {{ request('is_active') == '0' ? 'selected' : '' }}>Inactive</option>
+                        </select>
                     </div>
                     <div class="col-lg-auto ms-auto">
                         <div class="d-flex align-items-center gap-2">
@@ -44,6 +51,7 @@
 
         function fetchSliders() {
             const search = $('#search-input').val();
+            const status = $('#status-select').val();
             const sort = $('#sort-select').val();
             
             // Add loading state
@@ -54,6 +62,7 @@
                 type: 'GET',
                 data: {
                     search: search,
+                    is_active: status,
                     sort: sort
                 },
                 success: function(response) {
@@ -62,8 +71,9 @@
                     
                     // Update URL without refresh
                     const url = new URL(window.location.href);
-                    url.searchParams.set('search', search);
-                    url.searchParams.set('sort', sort);
+                    if (search) url.searchParams.set('search', search); else url.searchParams.delete('search');
+                    if (status) url.searchParams.set('is_active', status); else url.searchParams.delete('is_active');
+                    if (sort) url.searchParams.set('sort', sort); else url.searchParams.delete('sort');
                     window.history.pushState({}, '', url);
                 },
                 error: function() {
@@ -77,7 +87,7 @@
             searchTimer = setTimeout(fetchSliders, 500);
         });
 
-        $('#sort-select').on('change', fetchSliders);
+        $('#status-select, #sort-select').on('change', fetchSliders);
 
         $(document).on('click', '.pagination a', function(e) {
             e.preventDefault();
@@ -96,4 +106,3 @@
     });
 </script>
 @endsection
-

@@ -108,7 +108,7 @@
                                         <li>${{ number_format($selectedShippingMethod->price, 2) }}</li>
                                     </ul>
                                 </div>
-                                <div class="your-order-bottom coupon-discount-row" style="{{ session('coupon') ? '' : 'display: none;' }}">
+                                <div class="your-order-bottom coupon-discount-row" style="{{ session('coupon') ? 'margin-top: 15px !important;' : 'display: none; margin-top: 15px !important;' }}">
                                     <ul>
                                         <li class="your-order-shipping">Discount ({{ session('coupon.code') }}) <a href="javascript:void(0)" id="remove-coupon-btn" class="text-danger small"><i class="fa fa-trash-o"></i></a></li>
                                         <li>-$<span id="discount-amount">{{ number_format(session('coupon.discount', 0), 2) }}</span></li>
@@ -121,11 +121,16 @@
                                     </ul>
                                 </div>
                             </div>
-                            <div class="coupon-area mt-10 p-3 bg-white border">
+                            <div class="coupon-area mt-20 mb-40px p-3 bg-white border">
                                 <label>Have a coupon?</label>
                                 <div class="input-group mt-2">
                                     <input type="text" id="coupon_code" class="form-control" placeholder="Enter coupon code" value="{{ session('coupon.code') }}">
                                     <button class="btn btn-dark" type="button" id="apply-coupon-btn">Apply</button>
+                                </div>
+                                <div id="coupon-message" class="mt-2 small" style="{{ session('coupon') ? '' : 'display: none;' }}">
+                                    @if(session('coupon'))
+                                        <span class="text-success">* Coupon Applied!</span>
+                                    @endif
                                 </div>
                             </div>
                             <div class="payment-method">
@@ -187,8 +192,11 @@
                         $('.coupon-discount-row li:first-child').html(`Discount (${code}) <a href="javascript:void(0)" id="remove-coupon-btn" class="text-danger small"><i class="fa fa-trash-o"></i></a>`);
                         $('#discount-amount').text(response.discount);
                         $('#grand-total').text(response.grand_total);
+                        
+                        $('#coupon-message').html(`<span class="text-success">* ${response.message}</span>`).show();
                     } else {
                         toastr.error(response.message);
+                        $('#coupon-message').html(`<span class="text-danger">* ${response.message}</span>`).show();
                     }
                 }
             });
@@ -207,6 +215,7 @@
                         $('.coupon-discount-row').hide();
                         $('#coupon_code').val('');
                         $('#grand-total').text(response.grand_total);
+                        $('#coupon-message').hide();
                     }
                 }
             });
