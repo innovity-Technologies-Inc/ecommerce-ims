@@ -108,11 +108,24 @@
                                         <li>${{ number_format($selectedShippingMethod->price, 2) }}</li>
                                     </ul>
                                 </div>
+                                <div class="your-order-bottom coupon-discount-row" style="{{ session('coupon') ? '' : 'display: none;' }}">
+                                    <ul>
+                                        <li class="your-order-shipping">Discount ({{ session('coupon.code') }}) <a href="javascript:void(0)" id="remove-coupon-btn" class="text-danger small"><i class="fa fa-trash-o"></i></a></li>
+                                        <li>-$<span id="discount-amount">{{ number_format(session('coupon.discount', 0), 2) }}</span></li>
+                                    </ul>
+                                </div>
                                 <div class="your-order-total">
                                     <ul>
                                         <li class="order-total">Total</li>
-                                        <li>${{ number_format($grandTotal, 2) }}</li>
+                                        <li>$<span id="grand-total">{{ number_format($grandTotal - session('coupon.discount', 0), 2) }}</span></li>
                                     </ul>
+                                </div>
+                            </div>
+                            <div class="coupon-area mt-10 p-3 bg-white border">
+                                <label>Have a coupon?</label>
+                                <div class="input-group mt-2">
+                                    <input type="text" id="coupon_code" class="form-control" placeholder="Enter coupon code" value="{{ session('coupon.code') }}">
+                                    <button class="btn btn-dark" type="button" id="apply-coupon-btn">Apply</button>
                                 </div>
                             </div>
                             <div class="payment-method">
@@ -148,4 +161,56 @@
     </div>
 </div>
 <!-- checkout area end -->
+@endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        $('#apply-coupon-btn').on('click', function() {
+            const code = $('#coupon_code').val();
+            if (!code) {
+                toastr.error('Please enter a coupon code.');
+                return;
+            }
+
+            $.ajax({
+                url: "{{ route('checkout.apply_coupon') }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    coupon_code: code
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        toastr.success(response.message);
+                        $('.coupon-discount-row').show();
+                        $('.coupon-discount-row li:first-child').html(`Discount (${code}) <a href="javascript:void(0)" id="remove-coupon-btn" class="text-danger small"><i class="fa fa-trash-o"></i></a>`);
+                        $('#discount-amount').text(response.discount);
+                        $('#grand-total').text(response.grand_total);
+                    } else {
+                        toastr.error(response.message);
+                    }
+                }
+            });
+        });
+
+        $(document).on('click', '#remove-coupon-btn', function() {
+            $.ajax({
+                url: "{{ route('checkout.remove_coupon') }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}"
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        toastr.success(response.message);
+                        $('.coupon-discount-row').hide();
+                        $('#coupon_code').val('');
+                        $('#grand-total').text(response.grand_total);
+                    }
+                }
+            });
+        });
+    });
+</script>
 @endsection

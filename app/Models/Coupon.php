@@ -42,7 +42,7 @@ class Coupon extends Model
     /**
      * Check if the coupon is currently valid.
      */
-    public function isValid(): bool
+    public function isValid(?int $userId = null): bool
     {
         if (! $this->status) {
             return false;
@@ -58,6 +58,7 @@ class Coupon extends Model
             return false;
         }
 
+        // Global usage limit
         if ($this->usage_limit !== null && $this->used_count >= $this->usage_limit) {
             return false;
         }

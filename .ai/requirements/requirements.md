@@ -67,6 +67,8 @@ This document lists the high-level requirements for the modules implemented in t
 
 ## 9. Promotions & Marketing
 - [x] **REQ-49:** Coupon Management Module (Admin CRUD, code generation, discount logic, usage limits, and date range filtering).
+- [x] **REQ-50:** Client-side Coupon Application (AJAX-based application on checkout page, instant price updates).
+- [x] **REQ-51:** Coupon Usage Tracking (History table tracking User ID, Email, Name, and total usage limits).
 
 
 

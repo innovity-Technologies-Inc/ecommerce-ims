@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\Coupon;
+use App\Models\CouponUsage;
+use App\Models\Order;
 use DaiyanMozumder\LaravelFlexSearch\FlexSearch;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -104,5 +106,76 @@ class CouponService
         $coupon->status = ! $coupon->status;
 
         return $coupon->save();
+    }
+
+    /**
+     * Find coupon by code.
+     */
+    public function getCouponByCode(string $code): ?Coupon
+    {
+        return Coupon::where('code', $code)->first();
+    }
+
+    /**
+     * Validate a coupon for application.
+     */
+    public function validateCoupon(?Coupon $coupon, float $totalAmount): array
+    {
+        if (! $coupon) {
+            return ['valid' => false, 'message' => 'Invalid coupon code.'];
+        }
+
+        $userId = auth()->id();
+
+        if (! $coupon->isValid($userId)) {
+            return ['valid' => false, 'message' => 'This coupon is expired, inactive or usage limit reached.'];
+        }
+
+        if ($totalAmount < $coupon->min_spend) {
+            return [
+                'valid' => false,
+                'message' => 'Minimum spend of '.number_format($coupon->min_spend, 2).' required to use this coupon.',
+            ];
+        }
+
+        return ['valid' => true];
+    }
+
+    /**
+     * Calculate discount for a coupon.
+     */
+    public function calculateDiscount(Coupon $coupon, float $subtotal, float $shippingCharge): float
+    {
+        $discount = 0;
+        $baseAmount = $coupon->apply_for === 'total_product_price' ? $subtotal : $shippingCharge;
+
+        if ($coupon->discount_type === 'percentage') {
+            $discount = ($baseAmount * $coupon->discount_amount) / 100;
+            if ($coupon->max_discount_amount && $discount > $coupon->max_discount_amount) {
+                $discount = $coupon->max_discount_amount;
+            }
+        } else {
+            $discount = $coupon->discount_amount;
+        }
+
+        // Discount cannot exceed the base amount it's applied to
+        return min($discount, $baseAmount);
+    }
+
+    /**
+     * Record usage of a coupon.
+     */
+    public function recordUsage(Coupon $coupon, Order $order): void
+    {
+        CouponUsage::create([
+            'coupon_id' => $coupon->id,
+            'user_id' => $order->user_id,
+            'user_name' => $order->name,
+            'user_email' => $order->email,
+            'order_id' => $order->id,
+            'discount_amount' => $order->discount,
+        ]);
+
+        $coupon->increment('used_count');
     }
 }

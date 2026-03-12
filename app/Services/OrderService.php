@@ -74,7 +74,10 @@ class OrderService
         return $query->paginate($perPage);
     }
 
-    public function __construct(protected CartService $cartService) {}
+    public function __construct(
+        protected CartService $cartService,
+        protected CouponService $couponService
+    ) {}
 
     /**
      * Update order status and send notification if requested.
@@ -87,7 +90,7 @@ class OrderService
             try {
                 Mail::to($order->email)->send(new OrderStatusUpdateMail($order));
             } catch (\Exception $e) {
-                \Log::error('Order Status Update Email failed: '.$e->getMessage());
+                Log::error('Order Status Update Email failed: '.$e->getMessage());
             }
         }
 
@@ -121,7 +124,27 @@ class OrderService
             $orderId = $this->generateOrderId();
             $subtotal = $this->cartService->getCartTotal();
             $shippingCharge = $shippingMethod->price;
-            $totalAmount = $subtotal + $shippingCharge;
+
+            // Coupon Calculation
+            $discount = 0;
+            $couponId = null;
+            $appliedCoupon = null;
+
+            if (session()->has('coupon')) {
+                $sessionCoupon = session('coupon');
+                $coupon = $this->couponService->getCouponByCode($sessionCoupon['code']);
+                $validation = $this->couponService->validateCoupon($coupon, $subtotal);
+
+                if ($validation['valid']) {
+                    $discount = $this->couponService->calculateDiscount($coupon, $subtotal, $shippingCharge);
+                    $couponId = $coupon->id;
+                    $appliedCoupon = $coupon;
+                } else {
+                    session()->forget('coupon');
+                }
+            }
+
+            $totalAmount = ($subtotal + $shippingCharge) - $discount;
 
             $order = Order::create([
                 'order_id' => $orderId,
@@ -136,9 +159,10 @@ class OrderService
                 'zip' => $data['zip'] ?? null,
                 'shipping_method_id' => $shippingMethod->id,
                 'shipping_method_name' => $shippingMethod->name,
+                'coupon_id' => $couponId,
                 'subtotal' => $subtotal,
                 'shipping_charge' => $shippingCharge,
-                'discount' => 0,
+                'discount' => $discount,
                 'total_amount' => $totalAmount,
                 'payment_method' => $data['payment_method'],
                 'payment_status' => 'Pending',
@@ -159,15 +183,20 @@ class OrderService
                 ]);
             }
 
+            // Record Coupon Usage
+            if ($appliedCoupon) {
+                $this->couponService->recordUsage($appliedCoupon, $order);
+            }
+
             $this->cartService->clearCart();
-            session()->forget('shipping_method_id');
+            session()->forget(['shipping_method_id', 'coupon', 'shipping_charge', 'subtotal']);
 
             // Send order confirmation email
             try {
                 Mail::to($order->email)->send(new OrderConfirmationMail($order));
             } catch (\Exception $e) {
                 // Log the error but don't fail the order placement
-                \Log::error('Order Confirmation Email failed: '.$e->getMessage());
+                Log::error('Order Confirmation Email failed: '.$e->getMessage());
             }
 
             return $order;

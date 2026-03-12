@@ -120,6 +120,8 @@ Route::prefix('checkout')->name('checkout.')->group(function () {
     Route::get('/', [CheckoutController::class, 'index'])->name('index');
     Route::post('/store', [CheckoutController::class, 'store'])->name('store');
     Route::get('/success/{order_id}', [CheckoutController::class, 'success'])->name('success');
+    Route::post('/apply-coupon', [CouponApplyController::class, 'apply'])->name('apply_coupon');
+    Route::post('/remove-coupon', [CouponApplyController::class, 'remove'])->name('remove_coupon');
 });
 
 Route::middleware(['auth:web'])->prefix('user')->controller(CustomerController::class)->group(function () {

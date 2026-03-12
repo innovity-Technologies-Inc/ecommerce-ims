@@ -13,11 +13,9 @@ use Illuminate\View\View;
 class CheckoutController extends Controller
 {
     public function __construct(
-        protected CartService  $cartService,
+        protected CartService $cartService,
         protected OrderService $orderService
-    )
-    {
-    }
+    ) {}
 
     /**
      * Display the checkout page.
@@ -30,18 +28,20 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('error', 'Your cart is empty. Please add items before checkout.');
         }
 
-        if (!session('shipping_method_id')) {
+        if (! session('shipping_method_id')) {
             return redirect()->route('cart.index')->with('error', 'Please select a shipping method before checkout.');
         }
 
         $selectedShippingMethod = ShippingMethod::find(session('shipping_method_id'));
-        if (!$selectedShippingMethod) {
+        if (! $selectedShippingMethod) {
             return redirect()->route('cart.index')->with('error', 'Selected shipping method is no longer available.');
         }
 
         $user = Auth::guard('web')->user();
         $subtotal = $this->cartService->getCartTotal();
         $grandTotal = $subtotal + $selectedShippingMethod->price;
+
+        session(['shipping_charge' => $selectedShippingMethod->price, 'subtotal' => $subtotal]);
 
         return view('client.checkout.index', compact('user', 'cartItems', 'subtotal', 'selectedShippingMethod', 'grandTotal'));
     }
