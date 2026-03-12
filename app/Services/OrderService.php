@@ -23,34 +23,35 @@ class OrderService
     {
         $query = Order::with('user');
 
-        // Apply Search using FlexSearch
-        if (! empty($params['search'])) {
-            $flexSearch = app(FlexSearch::class);
-            $query = $flexSearch->apply($query, [], $params['search'], ['order_id', 'name', 'email', 'mobile']);
-        }
+        $filters = [];
 
-        // Apply Order Status Filter
+        // Map parameters to FlexSearch filters
         if (! empty($params['order_status'])) {
-            $query->where('order_status', $params['order_status']);
+            $filters['order_status'] = $params['order_status'];
         }
 
-        // Apply Payment Method Filter
         if (! empty($params['payment_method'])) {
-            $query->where('payment_method', $params['payment_method']);
+            $filters['payment_method'] = $params['payment_method'];
         }
 
-        // Apply Payment Status Filter
         if (! empty($params['payment_status'])) {
-            $query->where('payment_status', $params['payment_status']);
+            $filters['payment_status'] = $params['payment_status'];
         }
 
-        // Apply Date Range Filter
         if (! empty($params['date_from'])) {
-            $query->whereDate('created_at', '>=', $params['date_from']);
+            $filters['created_at>='] = $params['date_from'];
         }
+
         if (! empty($params['date_to'])) {
-            $query->whereDate('created_at', '<=', $params['date_to']);
+            $filters['created_at<='] = $params['date_to'];
         }
+
+        $flexSearch = app(FlexSearch::class);
+        $searchTerm = $params['search'] ?? null;
+        $searchableColumns = ['order_id', 'name', 'email', 'mobile'];
+
+        // Apply both filtering and searching via FlexSearch
+        $query = $flexSearch->apply($query, $filters, $searchTerm, $searchableColumns);
 
         // Apply Sorting
         $sort = $params['sort'] ?? 'latest';

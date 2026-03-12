@@ -16,11 +16,17 @@ class ShippingMethodService
     {
         $query = ShippingMethod::query();
 
-        // Apply Search using FlexSearch
-        if (! empty($params['search'])) {
-            $flexSearch = new FlexSearch;
-            $query = $flexSearch->apply($query, [], $params['search'], ['name', 'short_description']);
+        $filters = [];
+        if (isset($params['status']) && $params['status'] !== '') {
+            $filters['status'] = $params['status'];
         }
+
+        $flexSearch = app(FlexSearch::class);
+        $searchTerm = $params['search'] ?? null;
+        $searchableColumns = ['name', 'short_description'];
+
+        // Apply Search and Filtering using FlexSearch
+        $query = $flexSearch->apply($query, $filters, $searchTerm, $searchableColumns);
 
         // Apply Sorting
         $sort = $params['sort'] ?? 'latest';

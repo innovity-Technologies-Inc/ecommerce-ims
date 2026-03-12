@@ -17,11 +17,17 @@ class AdminService
     {
         $query = Admin::query();
 
-        // Apply Search using FlexSearch
-        if (! empty($params['search'])) {
-            $flexSearch = app(FlexSearch::class);
-            $query = $flexSearch->apply($query, [], $params['search'], ['name', 'email']);
+        $filters = [];
+        if (! empty($params['email'])) {
+            $filters['email'] = $params['email'];
         }
+
+        $flexSearch = app(FlexSearch::class);
+        $searchTerm = $params['search'] ?? null;
+        $searchableColumns = ['name', 'email'];
+
+        // Apply Search and Filtering using FlexSearch
+        $query = $flexSearch->apply($query, $filters, $searchTerm, $searchableColumns);
 
         // Apply Sorting
         $sort = $params['sort'] ?? 'latest';

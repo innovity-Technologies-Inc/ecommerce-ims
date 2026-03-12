@@ -19,11 +19,17 @@ class HomepageService
     {
         $query = Slider::query();
 
-        // Apply Search using FlexSearch
-        if (! empty($params['search'])) {
-            $flexSearch = app(FlexSearch::class);
-            $query = $flexSearch->apply($query, [], $params['search'], ['title', 'subtitle', 'subtext', 'button_name']);
+        $filters = [];
+        if (isset($params['is_active']) && $params['is_active'] !== '') {
+            $filters['is_active'] = $params['is_active'];
         }
+
+        $flexSearch = app(FlexSearch::class);
+        $searchTerm = $params['search'] ?? null;
+        $searchableColumns = ['title', 'subtitle', 'subtext', 'button_name'];
+
+        // Apply Search and Filtering using FlexSearch
+        $query = $flexSearch->apply($query, $filters, $searchTerm, $searchableColumns);
 
         // Apply Sorting
         $sort = $params['sort'] ?? 'latest';

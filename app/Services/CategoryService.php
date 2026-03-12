@@ -17,11 +17,20 @@ class CategoryService
     {
         $query = Category::with('parent');
 
-        // Apply Search using FlexSearch
-        if (! empty($params['search'])) {
-            $flexSearch = app(FlexSearch::class);
-            $query = $flexSearch->apply($query, [], $params['search'], ['name', 'slug', 'parent.name']);
+        $filters = [];
+        if (! empty($params['parent_id'])) {
+            $filters['parent_id'] = $params['parent_id'];
         }
+        if (! empty($params['slug'])) {
+            $filters['slug'] = $params['slug'];
+        }
+
+        $flexSearch = app(FlexSearch::class);
+        $searchTerm = $params['search'] ?? null;
+        $searchableColumns = ['name', 'slug', 'parent.name'];
+
+        // Apply Search and Filtering using FlexSearch
+        $query = $flexSearch->apply($query, $filters, $searchTerm, $searchableColumns);
 
         // Apply Sorting
         $sort = $params['sort'] ?? 'latest';

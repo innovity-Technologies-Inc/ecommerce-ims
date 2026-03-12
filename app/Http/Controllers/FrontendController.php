@@ -160,7 +160,7 @@ class FrontendController extends Controller
             });
         }
 
-        // Apply Search
+        // Apply Search and Filters via FlexSearch
         $searchTerm = $request->input('search');
         $searchableColumns = ['name', 'description', 'brand.name', 'category.name'];
 

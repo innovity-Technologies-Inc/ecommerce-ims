@@ -17,11 +17,17 @@ class BrandService
     {
         $query = Brand::query();
 
-        // Apply Search using FlexSearch
-        if (! empty($params['search'])) {
-            $flexSearch = app(FlexSearch::class);
-            $query = $flexSearch->apply($query, [], $params['search'], ['name', 'slug']);
+        $filters = [];
+        if (! empty($params['slug'])) {
+            $filters['slug'] = $params['slug'];
         }
+
+        $flexSearch = app(FlexSearch::class);
+        $searchTerm = $params['search'] ?? null;
+        $searchableColumns = ['name', 'slug'];
+
+        // Apply Search and Filtering using FlexSearch
+        $query = $flexSearch->apply($query, $filters, $searchTerm, $searchableColumns);
 
         // Apply Sorting
         $sort = $params['sort'] ?? 'latest';

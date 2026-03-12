@@ -15,11 +15,17 @@ class CustomerManagementService
     {
         $query = User::query();
 
-        // Apply Search using FlexSearch
-        if (! empty($params['search'])) {
-            $flexSearch = app(FlexSearch::class);
-            $query = $flexSearch->apply($query, [], $params['search'], ['name', 'email', 'mobile']);
+        $filters = [];
+        if (isset($params['status']) && $params['status'] !== '') {
+            $filters['status'] = $params['status'];
         }
+
+        $flexSearch = app(FlexSearch::class);
+        $searchTerm = $params['search'] ?? null;
+        $searchableColumns = ['name', 'email', 'mobile'];
+
+        // Apply Search and Filtering using FlexSearch
+        $query = $flexSearch->apply($query, $filters, $searchTerm, $searchableColumns);
 
         // Apply Sorting
         $sort = $params['sort'] ?? 'latest';
