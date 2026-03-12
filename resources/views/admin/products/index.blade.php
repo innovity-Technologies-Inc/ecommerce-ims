@@ -10,13 +10,14 @@
     <div class="card overflow-hidden">
         <div class="card-header">
             <div class="row g-3">
-                <div class="col-lg-3">
+                <!-- First Row: Search, Category, Sub Category -->
+                <div class="col-lg-4">
                     <label class="form-label">Search</label>
                     <div class="search-box">
                         <input type="text" class="form-control" id="search-input" placeholder="Search products..." value="{{ request('search') }}">
                     </div>
                 </div>
-                <div class="col-lg-2">
+                <div class="col-lg-4">
                     <label class="form-label">Category</label>
                     <select class="form-select filter-select" id="category-select">
                         <option value="">All Categories</option>
@@ -25,13 +26,15 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-lg-2">
+                <div class="col-lg-4">
                     <label class="form-label">Sub Category</label>
                     <select class="form-select filter-select" id="subcategory-select">
                         <option value="">All Sub Categories</option>
                     </select>
                 </div>
-                <div class="col-lg-2">
+
+                <!-- Second Row: Brand, Status, Sort, Reset -->
+                <div class="col-lg-3">
                     <label class="form-label">Brand</label>
                     <select class="form-select filter-select" id="brand-select">
                         <option value="">All Brands</option>
@@ -40,7 +43,7 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-lg-2">
+                <div class="col-lg-3">
                     <label class="form-label">Status</label>
                     <select class="form-select filter-select" id="status-select">
                         <option value="">All Status</option>
@@ -48,7 +51,7 @@
                         <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>Discontinued</option>
                     </select>
                 </div>
-                <div class="col-lg-1">
+                <div class="col-lg-3">
                     <label class="form-label">Sort</label>
                     <select class="form-select filter-select" id="sort-select">
                         <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Latest</option>
@@ -57,8 +60,8 @@
                         <option value="z-a" {{ request('sort') == 'z-a' ? 'selected' : '' }}>Z to A</option>
                     </select>
                 </div>
-                <div class="col-lg-12 d-flex justify-content-end">
-                    <button type="button" class="btn btn-outline-danger btn-sm" id="reset-filters">Reset Filters</button>
+                <div class="col-lg-3 d-flex align-items-end">
+                    <button type="button" class="btn btn-outline-danger w-100" id="reset-filters">Reset Filters</button>
                 </div>
             </div>
         </div>
@@ -83,17 +86,19 @@
             
             if (categoryId) {
                 const category = categories.find(c => c.id == categoryId);
-                if (category && category.subcategories) {
+                if (category && category.subcategories && category.subcategories.length > 0) {
                     category.subcategories.forEach(sub => {
-                        subcategorySelect.append(`<option value="${sub.id}" ${selectedSubId == sub.id ? 'selected' : ''}>${sub.name}</option>`);
+                        const isSelected = selectedSubId && sub.id == selectedSubId ? 'selected' : '';
+                        subcategorySelect.append(`<option value="${sub.id}" ${isSelected}>${sub.name}</option>`);
                     });
                 }
             }
         }
 
         // Initialize subcategories if category is selected
-        if ($('#category-select').val()) {
-            populateSubcategories($('#category-select').val(), "{{ request('sub_category_id') }}");
+        const initialCategoryId = $('#category-select').val();
+        if (initialCategoryId) {
+            populateSubcategories(initialCategoryId, "{{ request('sub_category_id') }}");
         }
 
         $('#category-select').on('change', function() {
