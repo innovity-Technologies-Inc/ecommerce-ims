@@ -63,6 +63,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-45:** Admin Profile Image (Admin should be able to upload and update their profile image).
 - [ ] **REQ-46:** Product Status (Active/Discontinued toggle for products with client-side red badge display).
 - [x] **REQ-47:** Admin Live Search/Filter/Sort (AJAX-based live searching, filtering, and sorting using laravel-flexsearch across all admin index pages).
+- [x] **REQ-48:** Advanced Order Filtering (Filter orders by Status, Payment Method, Payment Status, and Date Range in admin index).
 
 
 

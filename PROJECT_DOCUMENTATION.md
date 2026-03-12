@@ -183,12 +183,13 @@ Every module or architectural change must be documented in this file before a ta
 - **How it Works:** 
   - **Live Search:** As an admin types in the search box, the system waits for a short debounce period (500ms) before triggering an AJAX request to fetch filtered results.
   - **Dynamic Sorting:** Admins can sort data by "Latest", "Oldest", "A to Z", and "Z to A" via a dropdown menu, which updates the list instantly without page reloads.
+  - **Advanced Order Filtering:** Specifically for the Orders module, admins can filter results by Order Status, Payment Method, Payment Status, and a custom Date Range (From/To).
   - **Seamless Pagination:** Pagination links are intercepted via jQuery to ensure that active search and sort parameters are preserved during navigation.
   - **URL Synchronization:** The browser's URL is dynamically updated using `window.history.pushState` to reflect the current search/sort state, allowing for easy bookmarking and sharing.
 - **Implementation Details:** 
   - **FlexSearch Engine:** Integrated `laravel-flexsearch` in the Service layer to handle complex, multi-column search queries efficiently.
   - **Architecture:** Each module (Products, Orders, Customers, etc.) follows a consistent pattern:
-    - **Service:** Accepts a `$params` array to apply search and sort logic to the Eloquent query.
+    - **Service:** Accepts a `$params` array to apply search, sort, and specific filters (like status or date ranges) to the Eloquent query.
     - **Controller:** Detects AJAX requests and returns a specialized partial view containing only the table and pagination.
     - **Views:** Uses a main `index` view for the layout and a `partials/table` view for the data rows, enabling surgical UI updates.
   - **Frontend:** A centralized jQuery script manages the AJAX calls, loading states (opacity feedback), and error handling.

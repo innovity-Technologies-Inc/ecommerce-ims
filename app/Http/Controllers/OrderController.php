@@ -19,12 +19,15 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $orders = $this->orderService->getAllOrders($request->all());
+        $statuses = $this->orderService->getStatusList();
+        $paymentMethods = $this->orderService->getPaymentMethods();
+        $paymentStatuses = $this->orderService->getPaymentStatuses();
 
         if ($request->ajax()) {
             return view('admin.orders.partials.table', compact('orders'))->render();
         }
 
-        return view('admin.orders.index', compact('orders'));
+        return view('admin.orders.index', compact('orders', 'statuses', 'paymentMethods', 'paymentStatuses'));
     }
 
     /**

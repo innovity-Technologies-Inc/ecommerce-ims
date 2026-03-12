@@ -29,6 +29,29 @@ class OrderService
             $query = $flexSearch->apply($query, [], $params['search'], ['order_id', 'name', 'email', 'mobile']);
         }
 
+        // Apply Order Status Filter
+        if (! empty($params['order_status'])) {
+            $query->where('order_status', $params['order_status']);
+        }
+
+        // Apply Payment Method Filter
+        if (! empty($params['payment_method'])) {
+            $query->where('payment_method', $params['payment_method']);
+        }
+
+        // Apply Payment Status Filter
+        if (! empty($params['payment_status'])) {
+            $query->where('payment_status', $params['payment_status']);
+        }
+
+        // Apply Date Range Filter
+        if (! empty($params['date_from'])) {
+            $query->whereDate('created_at', '>=', $params['date_from']);
+        }
+        if (! empty($params['date_to'])) {
+            $query->whereDate('created_at', '<=', $params['date_to']);
+        }
+
         // Apply Sorting
         $sort = $params['sort'] ?? 'latest';
         switch ($sort) {
@@ -203,6 +226,23 @@ class OrderService
             'Delivered' => 'Delivered',
             'Cancelled' => 'Cancelled',
             'Rejected' => 'Rejected',
+        ];
+    }
+
+    public function getPaymentMethods(): array
+    {
+        return [
+            'COD' => 'Cash On Delivery',
+            'Online' => 'Online Payment',
+        ];
+    }
+
+    public function getPaymentStatuses(): array
+    {
+        return [
+            'Pending' => 'Pending',
+            'Paid' => 'Paid',
+            'Failed' => 'Failed',
         ];
     }
 
