@@ -12,6 +12,7 @@ precision, strictly following the project's established architectural patterns a
     - **Service Layer:** ALL business logic and DB operations reside in `app/Services`.
     - **Thin Controllers:** Controllers ONLY handle routing and response returning.
     - **Form Requests:** ALL validation MUST be handled by dedicated Request classes.
+    - **Search & Filtering:** ALL search/filter logic MUST use `FlexSearch` in the Service Layer. Manual `LIKE %...%` queries are prohibited.
 - **Tech Stack:** Use ONLY Bootstrap 5, jQuery, and standard JavaScript. Prohibited: Tailwind CSS, Alpine.js, React,
   Vue.
 
@@ -32,8 +33,9 @@ Whenever ANY feature, modification, or change is requested, you MUST strictly fo
     - Run `./vendor/bin/pint --dirty` to ensure project styling.
     - **Seeder-Driven Verification:** ALWAYS use existing Seeders to populate test data. DO NOT create factories.
     - Verify with PHPUnit tests before finalization.
-5. **Documentation Update (STRICT & DETAILED):**
-    - Once the task is implemented and verified, update `PROJECT_DOCUMENTATION.md` to reflect the new module.
+5. **Documentation Update (STRICT & MANDATORY):**
+    - You MUST update `PROJECT_DOCUMENTATION.md` after completing **EVERY SINGLE INSTRUCTION**, feature, or modification.
+    - Reflect the new module or changes immediately.
     - **Detail Requirement:** You MUST provide a "What" (high-level description) and a "How it Works / Implementation Details" (technical flow, services, and logic) section for every module.
     - **NEVER** consider a task complete until `PROJECT_DOCUMENTATION.md` is updated with these technical specifics.
 

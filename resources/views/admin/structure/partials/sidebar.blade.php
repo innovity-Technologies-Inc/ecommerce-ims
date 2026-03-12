@@ -131,6 +131,22 @@
                 </div>
             </li>
 
+            <li class="nav-item">
+                <a class="nav-link menu-arrow" href="#sidebarPromotions" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarPromotions">
+                                   <span class="nav-icon">
+                                        <iconify-icon icon="solar:ticket-sale-bold-duotone"></iconify-icon>
+                                   </span>
+                    <span class="nav-text"> Promotions </span>
+                </a>
+                <div class="collapse" id="sidebarPromotions">
+                    <ul class="nav sub-navbar-nav">
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="{{ route('admin.coupons.index') }}">Coupons</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
             <li class="menu-title mt-2">Management</li>
 
             <li class="nav-item">

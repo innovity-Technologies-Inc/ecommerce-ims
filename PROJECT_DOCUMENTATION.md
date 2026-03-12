@@ -199,14 +199,30 @@ Every module or architectural change must be documented in this file before a ta
 - **How it Works:** 
   - **Enhanced Listing:** Displays a comprehensive table of products with primary images, dynamic pricing ranges, and status toggles.
   - **Hierarchical Display:** The "Category" column dynamically renders both the parent category and its assigned subcategory (e.g., "Electronics > Smartphones") using a nested visual indicator.
-  - **Advanced Filtering:** Admins can drill down into the catalog using filters for **Category**, **Subcategory**, **Brand**, and **Status**.
-  - **Dynamic Dependencies:** The filtering UI includes a reactive Subcategory dropdown that automatically populates based on the selected parent Category.
+  - **Advanced Filtering Layout:** Implements a logical two-row filter bar for high efficiency:
+    - **Row 1:** High-level search and hierarchical categorization (Category & Subcategory).
+    - **Row 2:** Brand, Status, Sorting, and a dedicated Reset button for rapid clearing.
+  - **Dynamic Dependencies:** The filtering UI includes a reactive Subcategory dropdown that automatically populates via jQuery based on the selected parent Category, maintaining state persistence across AJAX calls.
   - **Quick Actions:** Allows for instant status updates (Active/Discontinued) via AJAX-enabled switches directly from the index.
 - **Implementation Details:** 
   - **Optimized Data Retrieval:** `ProductService::getAllProducts()` utilizes eager-loading (`with(['primaryImage', 'category', 'subCategory', 'brand'])`) to ensure maximum performance and minimal database overhead.
   - **Filter Logic:** Integrated `laravel-flexsearch` to handle multi-column filtering parameters seamlessly within the service layer.
-  - **Frontend Reactivity:** Uses jQuery to manage the dynamic population of subcategories and trigger AJAX-based list updates, providing a desktop-like responsive experience.
+  - **Frontend Reactivity:** Uses a specialized jQuery handler to manage the dynamic population of subcategories, URL synchronization via `history.pushState`, and debounced AJAX-based list updates.
   - **Visual Hierarchy:** Uses Bootstrap icons and typography (`<small>`, `bx-subdirectory-right`) to clearly differentiate between parent and child categories in the admin UI.
+
+### 3.17 Coupon Management Module
+- **What:** A comprehensive promotion engine allowing administrators to create and manage discount coupons for products and shipping.
+- **How it Works:** 
+  - **Flexible Application:** Coupons can be applied to either the "Total Product Price" or the "Shipping Cost".
+  - **Discount Logic:** Supports both "Percentage" and "Fixed" discount types. For percentage discounts, an optional "Maximum Discount Amount" can be set to cap the total savings.
+  - **Usage Controls:** Includes "Minimum Spend" requirements and "Usage Limits" (total times a coupon can be used).
+  - **Time-Bound Validity:** Each coupon has mandatory "Active From" and "Expired On" dates, ensuring promotions are automatically managed by the system.
+  - **Advanced Admin Filtering:** Admins can search by code and filter by Application Area (Product vs Shipping), Status (Active/Inactive), and two separate date ranges (Active Range and Expiry Range).
+- **Implementation Details:** 
+  - **Service Layer Pattern:** `CouponService` centralizes all CRUD logic, multi-column filtering, and status toggling.
+  - **Model Validation:** The `Coupon` model includes an `isValid()` method that encapsulates the complex business logic for checking status, date ranges, and usage limits in a single, reusable call.
+  - **Form Requests:** `CouponRequest` ensures strict data integrity, including conditional validation where `max_discount_amount` is required only if the `discount_type` is "percentage".
+  - **Frontend Interactivity:** Uses jQuery for dynamic form field visibility (toggling the Max Discount field) and AJAX for instant status updates and debounced searching/filtering in the admin index.
 
 ---
 

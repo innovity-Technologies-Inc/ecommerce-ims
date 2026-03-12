@@ -69,6 +69,11 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::delete('/{id}', 'destroy')->name('destroy');
     });
 
+    Route::prefix('promotions')->group(function () {
+        Route::resource('coupons', \App\Http\Controllers\CouponController::class)->names('admin.coupons');
+        Route::post('coupons/{coupon}/toggle-status', [\App\Http\Controllers\CouponController::class, 'toggleStatus'])->name('admin.coupons.toggle-status');
+    });
+
     Route::prefix('orders')->name('admin.orders.')->controller(OrderController::class)->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/{order}', 'show')->name('show');

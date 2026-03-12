@@ -19,8 +19,9 @@ You MUST strictly follow this sequence for **EVERY** request:
     - **Seeder-Driven Verification (STRICT):** Verify logic using existing Seeders (`php artisan db:seed`) to populate dummy data. DO NOT create new Model Factories.
     - Verify with PHPUnit tests before finalization.
     - **Optimization (MANDATORY):** ALWAYS run `php artisan optimize` after completing a requirement to ensure the configuration and routes are correctly cached.
-5. **Documentation Update (STRICT & DETAILED):**
-    - Update `PROJECT_DOCUMENTATION.md` to reflect the new module, connections, and system flow.
+5. **Documentation Update (STRICT & MANDATORY):**
+    - You MUST update `PROJECT_DOCUMENTATION.md` after completing **EVERY SINGLE INSTRUCTION** or modification.
+    - Reflect the new module, connections, and system flow immediately.
     - **Detail Requirement:** Every update must include a "What" (Business purpose) and "How it Works / Implementation Details" (Technical flow, Service logic, DB interactions).
     - A task is ONLY complete when the documentation is updated with these technical specifics.
 
@@ -41,6 +42,12 @@ You MUST strictly follow this sequence for **EVERY** request:
 ### **Validation (Mandatory Form Requests)**
 - Every store, update, or action-based request **MUST** have a dedicated class created via `php artisan make:request`.
 - Inline `$request->validate([...])` is strictly prohibited.
+
+### **Search & Filtering (Mandatory FlexSearch)**
+- **MANDATORY:** Every search and filtering operation in the Admin Panel **MUST** utilize the `FlexSearch` engine (powered by `daiyanmozumder/laravel-flexsearch`).
+- **ALL** search logic and multi-column filtering parameters **MUST** be implemented within the **Service Layer** by injecting `FlexSearch` and using its `apply()` method.
+- Controllers **MUST NOT** build search queries using `->where('name', 'like', ...)` or similar manual logic.
+- AJAX-driven live searching and sorting with URL synchronization (`window.history.pushState`) is the project standard.
 
 ## 2. PHP 8.3 Standards
 - **Constructor Property Promotion:** Use `public function __construct(protected Service $service) {}`.

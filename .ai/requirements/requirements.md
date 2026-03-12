@@ -65,6 +65,10 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-47:** Admin Live Search/Filter/Sort (AJAX-based live searching, filtering, and sorting using laravel-flexsearch across all admin index pages).
 - [x] **REQ-48:** Advanced Order Filtering (Filter orders by Status, Payment Method, Payment Status, and Date Range in admin index).
 
+## 9. Promotions & Marketing
+- [x] **REQ-49:** Coupon Management Module (Admin CRUD, code generation, discount logic, usage limits, and date range filtering).
+
+
 
 
 
