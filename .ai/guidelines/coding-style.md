@@ -49,6 +49,11 @@ You MUST strictly follow this sequence for **EVERY** request:
 - Controllers **MUST NOT** build search queries using `->where('name', 'like', ...)` or similar manual logic.
 - AJAX-driven live searching and sorting with URL synchronization (`window.history.pushState`) is the project standard.
 
+### **Frontend Actions (Mandatory Standards)**
+- **MANDATORY:** All delete buttons **MUST** use the `confirmDelete` class.
+- The system uses a global SweetAlert2 handler for all elements with the `confirmDelete` class to provide a consistent deletion experience.
+- Example: `<button type="submit" class="btn btn-soft-danger btn-sm confirmDelete">...</button>`
+
 ## 2. PHP 8.3 Standards
 - **Constructor Property Promotion:** Use `public function __construct(protected Service $service) {}`.
 - **Explicit Typing:** Every method MUST have a defined return type hint (e.g., `: bool`, `: View`, `: RedirectResponse`).
