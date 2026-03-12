@@ -15,6 +15,7 @@
                         <thead class="bg-light-subtle">
                         <tr>
                             <th>#</th>
+                            <th>Image</th>
                             <th>Name</th>
                             <th>Email</th>
                             <th>Action</th>
@@ -27,6 +28,9 @@
                         @foreach ($users as $data)
                         <tr>
                             <td>{{$sl++}}</td>
+                            <td>
+                                <img src="{{ $data->image ? asset('storage/' . $data->image) : asset('admin_assets/images/users/avatar-1.jpg') }}" alt="" class="avatar-sm rounded-circle me-2">
+                            </td>
                            <td>{{$data->name}}</td>
                             <td>{{$data->email}}</td>
                             <td>

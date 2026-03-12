@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\HelperClass;
 use App\Models\Admin;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Hash;
@@ -21,10 +22,16 @@ class AdminService
      */
     public function storeAdmin(array $data): Admin
     {
+        $imagePath = null;
+        if (isset($data['image'])) {
+            $imagePath = HelperClass::file_upload($data['image'], 'admins');
+        }
+
         return Admin::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'image' => $imagePath,
         ]);
     }
 
@@ -48,6 +55,13 @@ class AdminService
             'email' => $data['email'],
         ];
 
+        if (isset($data['image'])) {
+            if ($admin->image) {
+                HelperClass::file_delete($admin->image);
+            }
+            $updateData['image'] = HelperClass::file_upload($data['image'], 'admins');
+        }
+
         if (! empty($data['password'])) {
             $updateData['password'] = Hash::make($data['password']);
         }
@@ -65,6 +79,10 @@ class AdminService
         $admin = Admin::find($id);
 
         if ($admin) {
+            if ($admin->image) {
+                HelperClass::file_delete($admin->image);
+            }
+
             return $admin->delete();
         }
 

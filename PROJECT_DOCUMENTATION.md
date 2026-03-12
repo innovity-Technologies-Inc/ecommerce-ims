@@ -156,6 +156,17 @@ Every module or architectural change must be documented in this file before a ta
   - **Mailable:** Uses Laravel's Markdown mailables for a consistent, responsive email layout.
   - **Admin Controller:** `ContactMessageController` provides standard administrative actions (Index, Show, Read toggle, Delete) with SweetAlert2 protection for destructive actions.
 
+### 3.13 Admin Profile Management
+- **What:** Allows administrators to manage their own profile, including name, email, password, and a profile image.
+- **How it Works:** 
+  - Admins can edit their profile information through the Admin User Management module. 
+  - The profile image is uploaded via a standard file input and stored on the server's public storage disk.
+  - The authenticated admin's profile image is displayed in the admin panel header.
+- **Implementation Details:** 
+  - **AdminService:** Handles the logic for storing and updating admin records, including secure password hashing and image upload/deletion via `App\HelperClass`.
+  - **File Storage:** Profile images are stored in `storage/app/public/upload/admins` and accessed via the `storage/` symbolic link.
+  - **Global Header Integration:** The admin panel header dynamically retrieves the authenticated admin's image using the `admin` guard (`Auth::guard('admin')->user()->image`). If no image is set, it falls back to a default avatar.
+
 ---
 
 ## 4. Frontend & UI Standardization Refinements

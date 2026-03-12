@@ -6,7 +6,7 @@
 
         <div class="row">
             <div class="col-lg-12">
-                <form action="{{ isset($user) ? route('admin.update', $user->id) : route('admin.register') }}" method="post">
+                <form action="{{ isset($user) ? route('admin.update', $user->id) : route('admin.register') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     @if(isset($user))
                         @method('put')
@@ -26,21 +26,6 @@
                                         @enderror
                                     </div>
                                 </div>
-                                {{--<div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="workspace" class="form-label">Add Workspace</label>
-                                            <select class="form-control" id="workspace" data-choices data-choices-groups data-placeholder="Select Workspace">
-                                                <option value="Select Workspace"></option>
-                                                <option value="Facebook">Facebook</option>
-                                                <option value="Slack">Slack</option>
-                                                <option value="Zoom">Zoom</option>
-                                                <option value="Analytics">Analytics</option>
-                                                <option value="Meet">Meet</option>
-                                                <option value="Mail">Mail</option>
-                                                <option value="Strip">Strip</option>
-                                            </select>
-                                        </div>
-                                </div>--}}
 
                                 <div class="col-lg-6">
                                     <div class="mb-3">
@@ -56,10 +41,10 @@
                                     <div class="mb-3">
                                         <label for="password" class="form-label">Password</label>
                                         <input type="password" id="password" name="password" class="form-control" placeholder="Enter password">
+                                        @error('password')
+                                        <span class="small text-danger">{{$message}}</span>
+                                        @enderror
                                     </div>
-                                    @error('password')
-                                    <span class="small text-danger">{{$message}}</span>
-                                    @enderror
                                 </div>
 
                                 <div class="col-lg-6">
@@ -67,6 +52,21 @@
                                         <label for="confirm_password" class="form-label">Confirm Password</label>
                                         <input type="password" id="confirm_password" name="password_confirmation" class="form-control" placeholder="Enter password">
                                     </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="image" class="form-label">Profile Image</label>
+                                        <input type="file" id="image" name="image" class="form-control">
+                                        @error('image')
+                                        <span class="small text-danger">{{$message}}</span>
+                                        @enderror
+                                    </div>
+                                    @if(isset($user) && $user->image)
+                                        <div class="mb-3">
+                                            <img src="{{ asset('storage/' . $user->image) }}" alt="Profile Image" class="img-thumbnail" width="100">
+                                        </div>
+                                    @endif
                                 </div>
 
 

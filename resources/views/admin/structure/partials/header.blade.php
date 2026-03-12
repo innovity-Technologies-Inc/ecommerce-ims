@@ -127,13 +127,13 @@
                 <div class="dropdown topbar-item">
                     <a type="button" class="topbar-button" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <span class="d-flex align-items-center">
-                                             <img class="rounded-circle" width="32" src="assets/images/users/avatar-1.jpg" alt="avatar-3">
+                                             <img class="rounded-circle" width="32" src="{{ Auth::guard('admin')->user()->image ? asset('storage/' . Auth::guard('admin')->user()->image) : asset('admin_assets/images/users/avatar-1.jpg') }}" alt="avatar">
                                         </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end">
                         <!-- item-->
-                        <h6 class="dropdown-header">Welcome {{ucwords(Auth::guard('admin')->name)}}</h6>
-                        <a class="dropdown-item" href="pages-profile.html">
+                        <h6 class="dropdown-header">Welcome {{ucwords(Auth::guard('admin')->user()->name)}}</h6>
+                        <a class="dropdown-item" href="{{ route('admin.edit', Auth::guard('admin')->id()) }}">
                             <i class="bx bx-user-circle text-muted fs-18 align-middle me-1"></i><span class="align-middle">Profile</span>
                         </a>
 
