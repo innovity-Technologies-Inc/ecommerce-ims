@@ -18,7 +18,7 @@ class ProductService
      */
     public function getAllProducts(array $params = [], int $perPage = 10): LengthAwarePaginator
     {
-        $query = Product::with(['primaryImage', 'category', 'brand']);
+        $query = Product::with(['primaryImage', 'category', 'subCategory', 'brand']);
 
         $filters = [];
         if (! empty($params['category_id'])) {

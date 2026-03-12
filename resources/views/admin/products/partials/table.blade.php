@@ -26,7 +26,13 @@
                     @endif
                 </td>
                 <td>{{$data->name}}</td>
-                <td>{{ $data->category ? $data->category->name : '-' }}</td>
+                <td>
+                    {{ $data->category ? $data->category->name : '-' }}
+                    @if($data->subCategory)
+                        <br>
+                        <small class="text-muted"> <i class="bx bx-subdirectory-right"></i> {{ $data->subCategory->name }}</small>
+                    @endif
+                </td>
                 <td>
                     @php
                         $gs = \App\HelperClass::generalSettings();
