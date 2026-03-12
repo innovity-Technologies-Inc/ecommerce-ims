@@ -39,6 +39,7 @@ class ProductService
                 'is_new_arrival' => isset($data['is_new_arrival']),
                 'is_hot_deal' => isset($data['is_hot_deal']),
                 'is_featured' => isset($data['is_featured']),
+                'status' => isset($data['status']),
                 'sales_count' => 0,
             ]);
 
@@ -86,6 +87,7 @@ class ProductService
                 'is_new_arrival' => isset($data['is_new_arrival']),
                 'is_hot_deal' => isset($data['is_hot_deal']),
                 'is_featured' => isset($data['is_featured']),
+                'status' => isset($data['status']),
             ]);
 
             // Simple strategy for variants: Replace them
@@ -117,6 +119,17 @@ class ProductService
             }
             $product->delete();
         });
+    }
+
+    /**
+     * Toggle the status of a product.
+     */
+    public function toggleStatus(int $productId): bool
+    {
+        $product = Product::findOrFail($productId);
+        $product->status = ! $product->status;
+
+        return $product->save();
     }
 
     /**

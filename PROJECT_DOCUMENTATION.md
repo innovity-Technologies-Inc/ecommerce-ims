@@ -167,6 +167,17 @@ Every module or architectural change must be documented in this file before a ta
   - **File Storage:** Profile images are stored in `storage/app/public/upload/admins` and accessed via the `storage/` symbolic link.
   - **Global Header Integration:** The admin panel header dynamically retrieves the authenticated admin's image using the `admin` guard (`Auth::guard('admin')->user()->image`). If no image is set, it falls back to a default avatar.
 
+### 3.14 Product Status Management (Active/Discontinued)
+- **What:** Allows administrators to toggle a product's availability status (Active or Discontinued) without deleting the product from the database.
+- **How it Works:** 
+  - Admins can toggle the status directly from the Product List index page using a quick-action switch, or explicitly set it when creating/editing a product.
+  - Discontinued products remain in the catalog but prominently display a red "Discontinued" badge.
+  - The "Add to Cart" functionality is disabled on both the product list cards and the product details page for discontinued items.
+- **Implementation Details:** 
+  - **Database:** A `status` boolean column defaults to `true` on the `products` table.
+  - **ProductService:** Includes a `toggleStatus()` method to handle the fast AJAX/form toggles from the admin index.
+  - **Client UI:** Blade directives (`@if(!$product->status)`) conditionally render the "Discontinued" warning badge and replace the standard "Add to Cart" button with a disabled "Product Unavailable" button, or swap it for a "View Details" link to prevent cart entries.
+
 ---
 
 ## 4. Frontend & UI Standardization Refinements

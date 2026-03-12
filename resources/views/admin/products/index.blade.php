@@ -18,6 +18,7 @@
                             <th>Name</th>
                             <th>Category</th>
                             <th>Price Range</th>
+                            <th>Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -59,6 +60,14 @@
                                 @if($minPrice != $maxPrice)
                                     - {{ $gs->currency ?? '$' }}{{ number_format($maxPrice, 2) }}
                                 @endif
+                            </td>
+                            <td>
+                                <form action="{{ route('admin.products.toggle-status', $data->id) }}" method="POST">
+                                    @csrf
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="status_{{ $data->id }}" onChange="this.form.submit()" {{ $data->status ? 'checked' : '' }}>
+                                    </div>
+                                </form>
                             </td>
                             <td>
                                 <div class="d-flex gap-2">

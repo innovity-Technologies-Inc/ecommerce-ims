@@ -114,4 +114,17 @@ class ProductController extends Controller
             ]);
         }
     }
+
+    /**
+     * Toggle the product status.
+     */
+    public function toggleStatus(int $id)
+    {
+        $this->productService->toggleStatus($id);
+
+        return back()->with([
+            'message' => 'Product status updated successfully',
+            'alert-type' => 'success',
+        ]);
+    }
 }

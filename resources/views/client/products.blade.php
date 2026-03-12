@@ -120,7 +120,9 @@
                                                                 @php
                                                                     $maxDiscount = $product->variants->max('discount_percentage');
                                                                 @endphp
-                                                                @if($maxDiscount && $maxDiscount > 0)
+                                                                @if(!$product->status)
+                                                                    <li class="new bg-danger" style="background-color: #dc3545 !important;">Discontinued</li>
+                                                                @elseif($maxDiscount && $maxDiscount > 0)
                                                                     <li class="new bg-danger" style="background-color: #ff4545 !important;">-{{ $maxDiscount }}%</li>
                                                                 @elseif($product->is_new_arrival)
                                                                     <li class="new">New</li>
@@ -163,7 +165,9 @@
                                                             </div>
                                                             <div class="add-to-link">
                                                                 <ul>
-                                                                    @if($product->variants->count() > 0)
+                                                                    @if(!$product->status)
+                                                                        <li class="cart"><a class="cart-btn" href="{{ route('client.products.details', $product->slug) }}">VIEW DETAILS</a></li>
+                                                                    @elseif($product->variants->count() > 0)
                                                                         <li class="cart"><a class="cart-btn" href="{{ route('client.products.details', $product->slug) }}">SELECT OPTIONS</a></li>
                                                                     @else
                                                                         <li class="cart"><a class="cart-btn add-to-cart-btn" href="javascript:void(0)" data-product-id="{{ $product->id }}" data-quantity="1">ADD TO CART</a></li>

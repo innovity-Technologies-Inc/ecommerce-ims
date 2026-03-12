@@ -18,6 +18,7 @@ You MUST strictly follow this sequence for **EVERY** request:
     - Run `./vendor/bin/pint --dirty` to maintain project styling.
     - **Seeder-Driven Verification (STRICT):** Verify logic using existing Seeders (`php artisan db:seed`) to populate dummy data. DO NOT create new Model Factories.
     - Verify with PHPUnit tests before finalization.
+    - **Optimization (MANDATORY):** ALWAYS run `php artisan optimize` after completing a requirement to ensure the configuration and routes are correctly cached.
 5. **Documentation Update (STRICT & DETAILED):**
     - Update `PROJECT_DOCUMENTATION.md` to reflect the new module, connections, and system flow.
     - **Detail Requirement:** Every update must include a "What" (Business purpose) and "How it Works / Implementation Details" (Technical flow, Service logic, DB interactions).
@@ -71,3 +72,4 @@ You MUST strictly follow this sequence for **EVERY** request:
     - **Seeder-Driven Verification:** ALWAYS use existing Seeders to populate test data. DO NOT create factories.
     - Write PHPUnit tests in `tests/Feature` or verify manually using seeded data.
 6. **Formatting:** Run `./vendor/bin/pint --dirty` before finalizing.
+7. **Optimization:** Run `php artisan optimize` to refresh configuration, route, and view caches.

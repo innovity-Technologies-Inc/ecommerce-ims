@@ -60,6 +60,8 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-42:** Contact Message Management (Client-side form submission, DB storage, email confirmation, and Admin panel listing).
 - [x] **REQ-43:** Pagination Info (Add "Showing X to Y of Z Results" text to all index pages' pagination areas).
 - [x] **REQ-44:** Contact Message Detail View (Individual page for viewing a single contact message in admin panel).
+- [x] **REQ-45:** Admin Profile Image (Admin should be able to upload and update their profile image).
+- [ ] **REQ-46:** Product Status (Active/Discontinued toggle for products with client-side red badge display).
 
 
 

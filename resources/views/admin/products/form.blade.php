@@ -151,6 +151,15 @@
                                 </div>
                             </div>
 
+                            <!-- Product Status -->
+                            <div class="col-lg-12 mb-3">
+                                <label class="form-label d-block">Product Status</label>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="status" id="status" value="1" {{ old('status', $product->status ?? true) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="status">Active (Uncheck to discontinue)</label>
+                                </div>
+                            </div>
+
                             <!-- Image Upload Section -->
                             <div class="col-lg-12">
                                 <div class="mb-3">

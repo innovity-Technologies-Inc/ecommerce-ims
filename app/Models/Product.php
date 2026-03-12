@@ -21,6 +21,7 @@ class Product extends Model
         'is_hot_deal',
         'is_featured',
         'sales_count',
+        'status',
     ];
 
     protected function casts(): array
@@ -32,6 +33,7 @@ class Product extends Model
             'is_new_arrival' => 'boolean',
             'is_hot_deal' => 'boolean',
             'is_featured' => 'boolean',
+            'status' => 'boolean',
             'sales_count' => 'integer',
         ];
     }

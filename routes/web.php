@@ -32,6 +32,7 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::get('/create', [ProductController::class, 'create'])->name('admin.products.create');
         Route::post('/store', [ProductController::class, 'store'])->name('admin.products.store');
         Route::get('/{product}', [ProductController::class, 'show'])->name('admin.products.show');
+        Route::post('/{id}/toggle-status', [ProductController::class, 'toggleStatus'])->name('admin.products.toggle-status');
         Route::get('/{product}/edit', [ProductController::class, 'edit'])->name('admin.products.edit');
         Route::put('/{product}/update', [ProductController::class, 'update'])->name('admin.products.update');
         Route::delete('/{product}/destroy', [ProductController::class, 'destroy'])->name('admin.products.destroy');

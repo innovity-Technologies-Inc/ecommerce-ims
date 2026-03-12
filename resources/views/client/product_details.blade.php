@@ -39,7 +39,12 @@
                 </div>
                 <div class="col-xl-6 col-lg-6 col-md-12">
                     <div class="product-details-content">
-                        <h2>{{ $product->name }}</h2>
+                        <h2>
+                            {{ $product->name }}
+                            @if(!$product->status)
+                                <span class="badge bg-danger" style="font-size: 14px; vertical-align: middle; margin-left: 10px;">Discontinued</span>
+                            @endif
+                        </h2>
                         <p class="reference">Brand:<span> {{ $product->brand->name ?? '-' }}</span></p>
                         <div class="pro-details-rating-wrap">
                             <div class="rating-product">
@@ -108,6 +113,7 @@
                         </div>
                         @endif
 
+                        @if($product->status)
                         <div class="pro-details-quality">
                             <div class="cart-plus-minus">
                                 <input class="cart-plus-minus-box" type="text" name="qtybutton" value="1" id="product-quantity">
@@ -116,6 +122,13 @@
                                 <a href="javascript:void(0)" class="add-to-cart-btn" data-product-id="{{ $product->id }}"> + Add To Cart</a>
                             </div>
                         </div>
+                        @else
+                        <div class="pro-details-quality">
+                            <div class="pro-details-cart">
+                                <span class="btn btn-danger disabled" style="cursor: not-allowed; opacity: 0.7; padding: 15px 35px; text-transform: uppercase; font-weight: 600; border-radius: 0;">Product Unavailable</span>
+                            </div>
+                        </div>
+                        @endif
                         <div class="pro-details-wish-com">
                             <div class="pro-details-wishlist">
                                 @if(Auth::guard('web')->check())
