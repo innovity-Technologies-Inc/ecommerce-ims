@@ -19,12 +19,14 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $products = $this->productService->getAllProducts($request->all());
+        $categories = $this->productService->getCategoriesForDropdown();
+        $brands = $this->productService->getBrandsForDropdown();
 
         if ($request->ajax()) {
             return view('admin.products.partials.table', compact('products'))->render();
         }
 
-        return view('admin.products.index', compact('products'));
+        return view('admin.products.index', compact('products', 'categories', 'brands'));
     }
 
     /**

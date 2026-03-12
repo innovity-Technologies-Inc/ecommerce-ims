@@ -194,6 +194,20 @@ Every module or architectural change must be documented in this file before a ta
     - **Views:** Uses a main `index` view for the layout and a `partials/table` view for the data rows, enabling surgical UI updates.
   - **Frontend:** A centralized jQuery script manages the AJAX calls, loading states (opacity feedback), and error handling.
 
+### 3.16 Admin Product Management Module
+- **What:** A central hub for administrators to manage the entire product catalog, including inventory, pricing, and hierarchical categorization.
+- **How it Works:** 
+  - **Enhanced Listing:** Displays a comprehensive table of products with primary images, dynamic pricing ranges, and status toggles.
+  - **Hierarchical Display:** The "Category" column dynamically renders both the parent category and its assigned subcategory (e.g., "Electronics > Smartphones") using a nested visual indicator.
+  - **Advanced Filtering:** Admins can drill down into the catalog using filters for **Category**, **Subcategory**, **Brand**, and **Status**.
+  - **Dynamic Dependencies:** The filtering UI includes a reactive Subcategory dropdown that automatically populates based on the selected parent Category.
+  - **Quick Actions:** Allows for instant status updates (Active/Discontinued) via AJAX-enabled switches directly from the index.
+- **Implementation Details:** 
+  - **Optimized Data Retrieval:** `ProductService::getAllProducts()` utilizes eager-loading (`with(['primaryImage', 'category', 'subCategory', 'brand'])`) to ensure maximum performance and minimal database overhead.
+  - **Filter Logic:** Integrated `laravel-flexsearch` to handle multi-column filtering parameters seamlessly within the service layer.
+  - **Frontend Reactivity:** Uses jQuery to manage the dynamic population of subcategories and trigger AJAX-based list updates, providing a desktop-like responsive experience.
+  - **Visual Hierarchy:** Uses Bootstrap icons and typography (`<small>`, `bx-subdirectory-right`) to clearly differentiate between parent and child categories in the admin UI.
+
 ---
 
 ## 4. Frontend & UI Standardization Refinements

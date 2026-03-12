@@ -24,6 +24,9 @@ class ProductService
         if (! empty($params['category_id'])) {
             $filters['category_id'] = $params['category_id'];
         }
+        if (! empty($params['sub_category_id'])) {
+            $filters['sub_category_id'] = $params['sub_category_id'];
+        }
         if (! empty($params['brand_id'])) {
             $filters['brand_id'] = $params['brand_id'];
         }
