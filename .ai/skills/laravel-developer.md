@@ -43,4 +43,4 @@ Whenever ANY feature, modification, or change is requested, you MUST strictly fo
 - **Laravel:** `casts()` method in models, named routes, dynamic config via `config()`.
 - **Frontend:** Bootstrap 5 responsive grids, jQuery AJAX for interactivity, SweetAlert2 for modals, Toastr for
   notifications.
-- **Verification:** Run `./vendor/bin/pint --dirty`. ALWAYS use existing Seeders for verification; DO NOT create factories. Verify with PHPUnit tests before finalization.
+- **Verification:** Run `./vendor/bin/pint --dirty` and `php artisan optimize`. ALWAYS use existing Seeders for verification; DO NOT create factories. Verify with PHPUnit tests before finalization.
