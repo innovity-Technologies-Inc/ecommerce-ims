@@ -19,7 +19,7 @@ class BrandService
 
         // Apply Search using FlexSearch
         if (! empty($params['search'])) {
-            $flexSearch = new FlexSearch;
+            $flexSearch = app(FlexSearch::class);
             $query = $flexSearch->apply($query, [], $params['search'], ['name', 'slug']);
         }
 

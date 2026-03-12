@@ -17,8 +17,8 @@ class CustomerManagementService
 
         // Apply Search using FlexSearch
         if (! empty($params['search'])) {
-            $flexSearch = new FlexSearch;
-            $query = $flexSearch->apply($query, [], $params['search'], ['name', 'email', 'phone']);
+            $flexSearch = app(FlexSearch::class);
+            $query = $flexSearch->apply($query, [], $params['search'], ['name', 'email', 'mobile']);
         }
 
         // Apply Sorting

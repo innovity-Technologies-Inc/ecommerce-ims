@@ -45,19 +45,28 @@
         function fetchSliders() {
             const search = $('#search-input').val();
             const sort = $('#sort-select').val();
-            const url = new URL(window.location.href);
             
-            url.searchParams.set('search', search);
-            url.searchParams.set('sort', sort);
-            
-            window.history.pushState({}, '', url);
+            // Add loading state
             tableContainer.css('opacity', '0.5');
 
             $.ajax({
-                url: url.href,
+                url: "{{ route('admin.sliders.index') }}",
                 type: 'GET',
+                data: {
+                    search: search,
+                    sort: sort
+                },
                 success: function(response) {
                     tableContainer.html(response);
+                    tableContainer.css('opacity', '1');
+                    
+                    // Update URL without refresh
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('search', search);
+                    url.searchParams.set('sort', sort);
+                    window.history.pushState({}, '', url);
+                },
+                error: function() {
                     tableContainer.css('opacity', '1');
                 }
             });

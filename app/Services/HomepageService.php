@@ -21,8 +21,8 @@ class HomepageService
 
         // Apply Search using FlexSearch
         if (! empty($params['search'])) {
-            $flexSearch = new FlexSearch;
-            $query = $flexSearch->apply($query, [], $params['search'], ['title', 'subtitle', 'link_text']);
+            $flexSearch = app(FlexSearch::class);
+            $query = $flexSearch->apply($query, [], $params['search'], ['title', 'subtitle', 'subtext', 'button_name']);
         }
 
         // Apply Sorting
