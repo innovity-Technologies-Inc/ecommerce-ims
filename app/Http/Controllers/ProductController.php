@@ -35,7 +35,7 @@ class ProductController extends Controller
     public function create(): View
     {
         $categories = $this->productService->getCategoriesForDropdown();
-        $brands = Brand::all();
+        $brands = Brand::active()->get();
 
         return view('admin.products.form', compact('categories', 'brands'));
     }
@@ -77,7 +77,7 @@ class ProductController extends Controller
     {
         $product->load(['images', 'variants', 'category', 'subCategory']);
         $categories = $this->productService->getCategoriesForDropdown();
-        $brands = Brand::all();
+        $brands = Brand::active()->get();
 
         return view('admin.products.form', compact('product', 'categories', 'brands'));
     }

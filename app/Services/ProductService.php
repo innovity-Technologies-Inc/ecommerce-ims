@@ -242,10 +242,10 @@ class ProductService
     }
 
     /**
-     * Fetch all brands.
+     * Fetch all active brands.
      */
     public function getBrandsForDropdown()
     {
-        return \App\Models\Brand::all();
+        return \App\Models\Brand::active()->get();
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\BrandRequest;
 use App\Models\Brand;
 use App\Services\BrandService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -78,6 +79,20 @@ class BrandController extends Controller
         return redirect()->route('admin.brands.index')->with([
             'message' => 'Brand deleted successfully',
             'alert-type' => 'success',
+        ]);
+    }
+
+    /**
+     * Toggle the status of a brand.
+     */
+    public function toggleStatus(int $id): JsonResponse
+    {
+        $brand = Brand::findOrFail($id);
+        $this->brandService->toggleStatus($brand);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Brand status updated successfully',
         ]);
     }
 }

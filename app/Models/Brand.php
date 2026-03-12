@@ -10,7 +10,28 @@ class Brand extends Model
         'name',
         'slug',
         'icon',
+        'status',
     ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'status' => 'boolean',
+        ];
+    }
+
+    /**
+     * Scope a query to only include active brands.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', true);
+    }
 
     public function products()
     {

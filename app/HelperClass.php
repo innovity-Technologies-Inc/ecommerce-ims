@@ -28,7 +28,7 @@ class HelperClass
 
     public static function getBrands()
     {
-        return Brand::all();
+        return Brand::active()->get();
     }
 
     public static function wishlistCount()

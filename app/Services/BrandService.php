@@ -22,6 +22,10 @@ class BrandService
             $filters['slug'] = $params['slug'];
         }
 
+        if (isset($params['status']) && $params['status'] !== '') {
+            $filters['status'] = $params['status'];
+        }
+
         $flexSearch = app(FlexSearch::class);
         $searchTerm = $params['search'] ?? null;
         $searchableColumns = ['name', 'slug'];
@@ -58,6 +62,7 @@ class BrandService
         $brandData = [
             'name' => $data['name'],
             'slug' => Str::slug($data['name']),
+            'status' => isset($data['status']),
         ];
 
         if (isset($data['icon'])) {
@@ -75,6 +80,7 @@ class BrandService
         $brandData = [
             'name' => $data['name'],
             'slug' => Str::slug($data['name']),
+            'status' => isset($data['status']),
         ];
 
         if (isset($data['icon'])) {
@@ -98,5 +104,15 @@ class BrandService
             HelperClass::file_delete($brand->icon);
         }
         $brand->delete();
+    }
+
+    /**
+     * Toggle the status of a brand.
+     */
+    public function toggleStatus(Brand $brand): bool
+    {
+        $brand->status = ! $brand->status;
+
+        return $brand->save();
     }
 }

@@ -24,6 +24,7 @@ class BrandRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'icon' => ['nullable', 'image', 'mimes:png,jpg,jpeg,svg,webp', 'max:2048'],
+            'status' => ['nullable'],
         ];
     }
 }

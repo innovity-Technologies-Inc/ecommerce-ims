@@ -18,10 +18,20 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="name" class="form-label">Brand Name</label>
-                                        <input type="text" name="name" id="name" class="form-control" placeholder="Enter Brand Name" value="{{ old('name', $brand->name ?? '') }}" >
+                                        <input type="text" name="name" id="name" class="form-control" placeholder="Enter Brand Name" value="{{ old('name', $brand->name ?? '') }}" required>
                                         @error('name')
                                         <span class="small text-danger">{{$message}}</span>
                                         @enderror
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label class="form-label d-block">Status</label>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" name="status" id="statusSwitch" value="1" {{ old('status', $brand->status ?? true) ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="statusSwitch">Active</label>
+                                        </div>
                                     </div>
                                 </div>
 

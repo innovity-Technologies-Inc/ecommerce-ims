@@ -6,6 +6,7 @@
             <th>Icon</th>
             <th>Name</th>
             <th>Slug</th>
+            <th>Status</th>
             <th>Action</th>
         </tr>
         </thead>
@@ -26,6 +27,12 @@
             <td>{{$data->name}}</td>
             <td>{{$data->slug}}</td>
             <td>
+                <div class="form-check form-switch">
+                    <input class="form-check-input status-toggle" type="checkbox" role="switch" 
+                        data-id="{{ $data->id }}" {{ $data->status ? 'checked' : '' }}>
+                </div>
+            </td>
+            <td>
                 <div class="d-flex gap-2">
                     <a href="{{ route('admin.brands.edit', $data->id) }}" class="btn btn-soft-primary btn-sm">
                         <iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon>
@@ -43,7 +50,7 @@
         @endforeach
         @if($brands->isEmpty())
             <tr>
-                <td colspan="5" class="text-center">No brands found.</td>
+                <td colspan="6" class="text-center">No brands found.</td>
             </tr>
         @endif
         </tbody>
