@@ -9,27 +9,32 @@
 
         <div class="card overflow-hidden">
             <div class="card-header">
-                <div class="row g-2">
-                    <div class="col-lg-3">
+                <div class="row g-2 align-items-end">
+                    <!-- First Row: Search and Basic Filters -->
+                    <div class="col-lg-4">
+                        <label class="form-label small">Search</label>
                         <div class="search-box">
                             <input type="text" class="form-control" id="search-input" placeholder="Search coupon code..." value="{{ request('search') }}">
                         </div>
                     </div>
                     <div class="col-lg-2">
+                        <label class="form-label small">Apply For</label>
                         <select class="form-select filter-select" id="apply-for-select">
-                            <option value="">Apply For (All)</option>
-                            <option value="total_product_price" {{ request('apply_for') == 'total_product_price' ? 'selected' : '' }}>Total Product Price</option>
+                            <option value="">All</option>
+                            <option value="total_product_price" {{ request('apply_for') == 'total_product_price' ? 'selected' : '' }}>Product Price</option>
                             <option value="shipping_cost" {{ request('apply_for') == 'shipping_cost' ? 'selected' : '' }}>Shipping Cost</option>
                         </select>
                     </div>
                     <div class="col-lg-2">
+                        <label class="form-label small">Status</label>
                         <select class="form-select filter-select" id="status-select">
-                            <option value="">Status (All)</option>
+                            <option value="">All</option>
                             <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Active</option>
                             <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Inactive</option>
                         </select>
                     </div>
                     <div class="col-lg-2">
+                        <label class="form-label small">Sort By</label>
                         <select class="form-select" id="sort-select">
                             <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Latest</option>
                             <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest</option>
@@ -37,34 +42,28 @@
                             <option value="z-a" {{ request('sort') == 'z-a' ? 'selected' : '' }}>Z to A</option>
                         </select>
                     </div>
-                    <div class="col-lg-3 text-end">
-                        <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFilters" aria-expanded="false" aria-controls="advancedFilters">
-                            <iconify-icon icon="solar:filter-bold-duotone"></iconify-icon> Advanced
-                        </button>
-                        <button class="btn btn-outline-danger btn-sm" id="reset-filters" type="button">
-                            Reset
+                    <div class="col-lg-2 text-end">
+                        <button class="btn btn-outline-danger w-100" id="reset-filters" type="button">
+                            Reset Filters
                         </button>
                     </div>
-                </div>
 
-                <div class="collapse mt-2" id="advancedFilters">
-                    <div class="row g-2">
-                        <div class="col-lg-3">
-                            <label class="form-label small">Active From</label>
-                            <input type="date" class="form-control form-control-sm filter-select" id="active-on-from" value="{{ request('active_on_from') }}">
-                        </div>
-                        <div class="col-lg-3">
-                            <label class="form-label small">Active To</label>
-                            <input type="date" class="form-control form-control-sm filter-select" id="active-on-to" value="{{ request('active_on_to') }}">
-                        </div>
-                        <div class="col-lg-3">
-                            <label class="form-label small">Expired From</label>
-                            <input type="date" class="form-control form-control-sm filter-select" id="expired-on-from" value="{{ request('expired_on_from') }}">
-                        </div>
-                        <div class="col-lg-3">
-                            <label class="form-label small">Expired To</label>
-                            <input type="date" class="form-control form-control-sm filter-select" id="expired-on-to" value="{{ request('expired_on_to') }}">
-                        </div>
+                    <!-- Second Row: Date Filters -->
+                    <div class="col-lg-3">
+                        <label class="form-label small">Active From</label>
+                        <input type="date" class="form-control filter-select" id="active-on-from" value="{{ request('active_on_from') }}">
+                    </div>
+                    <div class="col-lg-3">
+                        <label class="form-label small">Active To</label>
+                        <input type="date" class="form-control filter-select" id="active-on-to" value="{{ request('active_on_to') }}">
+                    </div>
+                    <div class="col-lg-3">
+                        <label class="form-label small">Expired From</label>
+                        <input type="date" class="form-control filter-select" id="expired-on-from" value="{{ request('expired_on_from') }}">
+                    </div>
+                    <div class="col-lg-3">
+                        <label class="form-label small">Expired To</label>
+                        <input type="date" class="form-control filter-select" id="expired-on-to" value="{{ request('expired_on_to') }}">
                     </div>
                 </div>
             </div>
