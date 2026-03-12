@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Services\CustomerManagementService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class CustomerController extends Controller
@@ -12,11 +13,15 @@ class CustomerController extends Controller
     public function __construct(protected CustomerManagementService $customerService) {}
 
     /**
-     * Display a listing of the customers.
+     * Display a listing of registered customers.
      */
-    public function index(): View
+    public function index(Request $request)
     {
-        $customers = $this->customerService->getAllCustomers();
+        $customers = $this->customerService->getAllCustomers($request->all());
+
+        if ($request->ajax()) {
+            return view('admin.customers.partials.table', compact('customers'))->render();
+        }
 
         return view('admin.customers.index', compact('customers'));
     }

@@ -20,9 +20,13 @@ class AdminController extends Controller
     /**
      * Display a listing of the admins.
      */
-    public function index(): View
+    public function index(Request $request)
     {
-        $users = $this->adminService->getAllAdmins();
+        $users = $this->adminService->getAllAdmins($request->all());
+
+        if ($request->ajax()) {
+            return view('admin.users.partials.table', compact('users'))->render();
+        }
 
         return view('admin.users.index', compact('users'));
     }

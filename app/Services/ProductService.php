@@ -6,11 +6,47 @@ use App\HelperClass;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductVariant;
+use DaiyanMozumder\LaravelFlexSearch\FlexSearch;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ProductService
 {
+    /**
+     * Get all products with search and sorting.
+     */
+    public function getAllProducts(array $params = [], int $perPage = 10): LengthAwarePaginator
+    {
+        $query = Product::with(['primaryImage', 'category', 'brand']);
+
+        // Apply Search using FlexSearch
+        if (! empty($params['search'])) {
+            $flexSearch = new FlexSearch;
+            $query = $flexSearch->apply($query, [], $params['search'], ['name', 'slug', 'category.name', 'brand.name']);
+        }
+
+        // Apply Sorting
+        $sort = $params['sort'] ?? 'latest';
+        switch ($sort) {
+            case 'oldest':
+                $query->oldest();
+                break;
+            case 'a-z':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'z-a':
+                $query->orderBy('name', 'desc');
+                break;
+            case 'latest':
+            default:
+                $query->latest();
+                break;
+        }
+
+        return $query->paginate($perPage);
+    }
+
     /**
      * Store a newly created product with variants and images.
      */

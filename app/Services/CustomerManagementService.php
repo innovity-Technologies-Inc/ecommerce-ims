@@ -3,16 +3,43 @@
 namespace App\Services;
 
 use App\Models\User;
+use DaiyanMozumder\LaravelFlexSearch\FlexSearch;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class CustomerManagementService
 {
     /**
-     * Get all registered customers.
+     * Get all registered customers with search and sorting.
      */
-    public function getAllCustomers(): LengthAwarePaginator
+    public function getAllCustomers(array $params = [], int $perPage = 10): LengthAwarePaginator
     {
-        return User::latest()->paginate(10);
+        $query = User::query();
+
+        // Apply Search using FlexSearch
+        if (! empty($params['search'])) {
+            $flexSearch = new FlexSearch;
+            $query = $flexSearch->apply($query, [], $params['search'], ['name', 'email', 'phone']);
+        }
+
+        // Apply Sorting
+        $sort = $params['sort'] ?? 'latest';
+        switch ($sort) {
+            case 'oldest':
+                $query->oldest();
+                break;
+            case 'a-z':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'z-a':
+                $query->orderBy('name', 'desc');
+                break;
+            case 'latest':
+            default:
+                $query->latest();
+                break;
+        }
+
+        return $query->paginate($perPage);
     }
 
     /**

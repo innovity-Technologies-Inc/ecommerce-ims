@@ -5,82 +5,31 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h4 class="card-title">Customer List</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-centered mb-0">
-                                <thead class="bg-light-subtle">
-                                <tr>
-                                    <th>SL</th>
-                                    <th>Customer Name</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @forelse($customers as $index => $customer)
-                                    <tr>
-                                        <td>{{ \App\HelperClass::indexNumberSerialization($customers) + $index }}</td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="ms-2">
-                                                    <h6 class="mb-0">{{ $customer->name }}</h6>
-                                                    <small class="text-muted">Joined: {{ $customer->created_at->format('d M, Y') }}</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>{{ $customer->email }}</td>
-                                        <td>{{ $customer->mobile ?? 'N/A' }}</td>
-                                        <td>
-                                            <form action="{{ route('admin.customers.toggle-status', $customer->id) }}" method="POST">
-                                                @csrf
-                                                <div class="form-check form-switch">
-                                                    <input class="form-check-input" type="checkbox" role="switch" id="statusSwitch{{ $customer->id }}" {{ $customer->status ? 'checked' : '' }} onchange="this.form.submit()">
-                                                    <label class="form-check-label" for="statusSwitch{{ $customer->id }}">
-                                                        <span class="badge {{ $customer->status ? 'bg-success' : 'bg-danger' }}">
-                                                            {{ $customer->status ? 'Active' : 'Inactive' }}
-                                                        </span>
-                                                    </label>
-                                                </div>
-                                            </form>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex gap-2">
-                                                <a href="{{ route('admin.customers.show', $customer->id) }}" class="btn btn-soft-primary btn-sm" title="View Profile">
-                                                    <i class="bx bx-show fs-16"></i>
-                                                </a>
-                                                <form action="{{ route('admin.customers.destroy', $customer->id) }}" method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-soft-danger btn-sm confirmDelete" title="Delete Customer">
-                                                        <i class="bx bx-trash fs-16"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="6" class="text-center">No customers found.</td>
-                                    </tr>
-                                @endforelse
-                                </tbody>
-                            </table>
+                    <div class="card-header">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <h4 class="card-title">Customer List</h4>
                         </div>
-                        <div class="card-footer border-top">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div class="text-muted">
-                                    Showing <span class="fw-semibold">{{ $customers->firstItem() ?? 0 }}</span> to <span class="fw-semibold">{{ $customers->lastItem() ?? 0 }}</span> of <span class="fw-semibold">{{ $customers->total() }}</span> Results
+                        <div class="row align-items-center g-2">
+                            <div class="col-lg-3">
+                                <div class="search-box">
+                                    <input type="text" class="form-control" id="search-input" placeholder="Search customers..." value="{{ request('search') }}">
                                 </div>
-                                <div>
-                                    {{ $customers->links() }}
+                            </div>
+                            <div class="col-lg-auto ms-auto">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="text-muted text-nowrap">Sort By:</span>
+                                    <select class="form-select" id="sort-select">
+                                        <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Latest</option>
+                                        <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest</option>
+                                        <option value="a-z" {{ request('sort') == 'a-z' ? 'selected' : '' }}>A to Z</option>
+                                        <option value="z-a" {{ request('sort') == 'z-a' ? 'selected' : '' }}>Z to A</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="card-body p-0" id="table-container">
+                        @include('admin.customers.partials.table')
                     </div>
                 </div>
             </div>
@@ -88,3 +37,56 @@
     </div>
 
 @endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        let searchTimer;
+        const tableContainer = $('#table-container');
+
+        function fetchCustomers() {
+            const search = $('#search-input').val();
+            const sort = $('#sort-select').val();
+            const url = new URL(window.location.href);
+            
+            url.searchParams.set('search', search);
+            url.searchParams.set('sort', sort);
+            
+            window.history.pushState({}, '', url);
+            tableContainer.css('opacity', '0.5');
+
+            $.ajax({
+                url: url.href,
+                type: 'GET',
+                success: function(response) {
+                    tableContainer.html(response);
+                    tableContainer.css('opacity', '1');
+                }
+            });
+        }
+
+        $('#search-input').on('keyup', function() {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(fetchCustomers, 500);
+        });
+
+        $('#sort-select').on('change', fetchCustomers);
+
+        $(document).on('click', '.pagination a', function(e) {
+            e.preventDefault();
+            const url = $(this).attr('href');
+            tableContainer.css('opacity', '0.5');
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function(response) {
+                    tableContainer.html(response);
+                    tableContainer.css('opacity', '1');
+                    window.history.pushState({}, '', url);
+                }
+            });
+        });
+    });
+</script>
+@endsection
+

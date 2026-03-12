@@ -7,89 +7,83 @@
         </div>
 
         <div class="card overflow-hidden">
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table align-middle mb-0 table-hover table-centered">
-                        <thead class="bg-light-subtle">
-                        <tr>
-                            <th>#</th>
-                            <th>Order ID</th>
-                            <th>Customer</th>
-                            <th>Total</th>
-                            <th>Payment</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @php
-                            $sl = \App\HelperClass::indexNumberSerialization($orders);
-                        @endphp
-                        @foreach ($orders as $data)
-                        <tr>
-                            <td>{{$sl++}}</td>
-                            <td><span class="fw-bold">{{ $data->order_id }}</span></td>
-                            <td>
-                                <div class="d-flex flex-column">
-                                    <span>{{ $data->name }}</span>
-                                    <small class="text-muted">{{ $data->email }}</small>
-                                </div>
-                            </td>
-                            <td>${{ number_format($data->total_amount, 2) }}</td>
-                            <td>
-                                <span class="badge {{ $data->payment_method === 'COD' ? 'bg-info' : 'bg-primary' }} text-white">
-                                    {{ $data->payment_method }}
-                                </span>
-                                <br>
-                                <small class="text-muted">{{ $data->payment_status }}</small>
-                            </td>
-                            <td>
-                                @php
-                                    $statusClass = match($data->order_status) {
-                                        'Pending' => 'bg-warning',
-                                        'Processing' => 'bg-info',
-                                        'Out for Delivery' => 'bg-primary',
-                                        'Delivered' => 'bg-success',
-                                        'Cancelled' => 'bg-danger',
-                                        'Rejected' => 'bg-secondary',
-                                        default => 'bg-dark'
-                                    };
-                                @endphp
-                                <span class="badge {{ $statusClass }} text-white">{{ $data->order_status }}</span>
-                            </td>
-                            <td>{{ $data->created_at->format('d M, Y') }}</td>
-                            <td>
-                                <div class="d-flex gap-2">
-                                    <a href="{{ route('admin.orders.show', $data->id) }}" class="btn btn-soft-primary btn-sm">
-                                        <iconify-icon icon="solar:eye-broken" class="align-middle fs-18"></iconify-icon>
-                                    </a>
-                                    <form method="post" action="{{ route('admin.orders.destroy', $data->id) }}">
-                                        @csrf
-                                        @method('delete')
-                                        <button type="submit" class="btn btn-soft-danger btn-sm confirmDelete">
-                                            <iconify-icon icon="solar:trash-bin-minimalistic-2-broken" class="align-middle fs-18"></iconify-icon>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
+            <div class="card-header">
+                <div class="row align-items-center g-2">
+                    <div class="col-lg-3">
+                        <div class="search-box">
+                            <input type="text" class="form-control" id="search-input" placeholder="Search orders (ID, Name, Email)..." value="{{ request('search') }}">
+                        </div>
+                    </div>
+                    <div class="col-lg-auto ms-auto">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-muted text-nowrap">Sort By:</span>
+                            <select class="form-select" id="sort-select">
+                                <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Latest</option>
+                                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest</option>
+                                <option value="a-z" {{ request('sort') == 'a-z' ? 'selected' : '' }}>ID A-Z</option>
+                                <option value="z-a" {{ request('sort') == 'z-a' ? 'selected' : '' }}>ID Z-A</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="card-footer border-top">
-                <div class="d-flex align-items-center justify-content-between">
-                    <div class="text-muted">
-                        Showing <span class="fw-semibold">{{ $orders->firstItem() ?? 0 }}</span> to <span class="fw-semibold">{{ $orders->lastItem() ?? 0 }}</span> of <span class="fw-semibold">{{ $orders->total() }}</span> Results
-                    </div>
-                    <div>
-                        {{ $orders->links() }}
-                    </div>
-                </div>
+            <div class="card-body p-0" id="table-container">
+                @include('admin.orders.partials.table')
             </div>
         </div>
     </div>
 
 @endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        let searchTimer;
+        const tableContainer = $('#table-container');
+
+        function fetchOrders() {
+            const search = $('#search-input').val();
+            const sort = $('#sort-select').val();
+            const url = new URL(window.location.href);
+            
+            url.searchParams.set('search', search);
+            url.searchParams.set('sort', sort);
+            
+            window.history.pushState({}, '', url);
+            tableContainer.css('opacity', '0.5');
+
+            $.ajax({
+                url: url.href,
+                type: 'GET',
+                success: function(response) {
+                    tableContainer.html(response);
+                    tableContainer.css('opacity', '1');
+                }
+            });
+        }
+
+        $('#search-input').on('keyup', function() {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(fetchOrders, 500);
+        });
+
+        $('#sort-select').on('change', fetchOrders);
+
+        $(document).on('click', '.pagination a', function(e) {
+            e.preventDefault();
+            const url = $(this).attr('href');
+            tableContainer.css('opacity', '0.5');
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function(response) {
+                    tableContainer.html(response);
+                    tableContainer.css('opacity', '1');
+                    window.history.pushState({}, '', url);
+                }
+            });
+        });
+    });
+</script>
+@endsection
+

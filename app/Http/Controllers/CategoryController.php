@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use App\Services\CategoryService;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class CategoryController extends Controller
@@ -14,9 +15,13 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(Request $request)
     {
-        $categories = Category::with('parent')->latest()->paginate(10);
+        $categories = $this->categoryService->getAllCategories($request->all());
+
+        if ($request->ajax()) {
+            return view('admin.categories.partials.table', compact('categories'))->render();
+        }
 
         return view('admin.categories.index', compact('categories'));
     }

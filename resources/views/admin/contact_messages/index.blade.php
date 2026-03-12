@@ -5,82 +5,31 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h4 class="card-title">Contact Messages</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-centered mb-0">
-                                <thead class="bg-light-subtle">
-                                <tr>
-                                    <th>SL</th>
-                                    <th>Date</th>
-                                    <th>Customer</th>
-                                    <th>Subject</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @forelse($messages as $index => $message)
-                                    <tr class="{{ !$message->is_read ? 'fw-bold' : '' }}">
-                                        <td>{{ \App\HelperClass::indexNumberSerialization($messages) + $index }}</td>
-                                        <td>{{ $message->created_at->format('d M, Y h:i A') }}</td>
-                                        <td>
-                                            <div>
-                                                <h6 class="mb-0">{{ $message->name }}</h6>
-                                                <small class="text-muted">{{ $message->email }}</small>
-                                            </div>
-                                        </td>
-                                        <td>{{ $message->subject }}</td>
-                                        <td>
-                                            @if(!$message->is_read)
-                                                <span class="badge bg-warning">Unread</span>
-                                            @else
-                                                <span class="badge bg-success">Read</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <div class="d-flex gap-2">
-                                                <a href="{{ route('admin.contact_messages.show', $message->id) }}" class="btn btn-soft-primary btn-sm" title="View Message">
-                                                    <i class="bx bx-show fs-16"></i>
-                                                </a>
-                                                @if(!$message->is_read)
-                                                    <form action="{{ route('admin.contact_messages.read', $message->id) }}" method="POST">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-soft-success btn-sm" title="Mark as Read">
-                                                            <i class="bx bx-check-double fs-16"></i>
-                                                        </button>
-                                                    </form>
-                                                @endif
-                                                <form action="{{ route('admin.contact_messages.destroy', $message->id) }}" method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-soft-danger btn-sm confirmDelete" title="Delete Message">
-                                                        <i class="bx bx-trash fs-16"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="7" class="text-center">No messages found.</td>
-                                    </tr>
-                                @endforelse
-                                </tbody>
-                            </table>
+                    <div class="card-header">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <h4 class="card-title">Contact Messages</h4>
                         </div>
-                        <div class="card-footer border-top">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div class="text-muted">
-                                    Showing <span class="fw-semibold">{{ $messages->firstItem() ?? 0 }}</span> to <span class="fw-semibold">{{ $messages->lastItem() ?? 0 }}</span> of <span class="fw-semibold">{{ $messages->total() }}</span> Results
+                        <div class="row align-items-center g-2">
+                            <div class="col-lg-3">
+                                <div class="search-box">
+                                    <input type="text" class="form-control" id="search-input" placeholder="Search messages..." value="{{ request('search') }}">
                                 </div>
-                                <div>
-                                    {{ $messages->links() }}
+                            </div>
+                            <div class="col-lg-auto ms-auto">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="text-muted text-nowrap">Sort By:</span>
+                                    <select class="form-select" id="sort-select">
+                                        <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Latest</option>
+                                        <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest</option>
+                                        <option value="a-z" {{ request('sort') == 'a-z' ? 'selected' : '' }}>Name A-Z</option>
+                                        <option value="z-a" {{ request('sort') == 'z-a' ? 'selected' : '' }}>Name Z-A</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="card-body p-0" id="table-container">
+                        @include('admin.contact_messages.partials.table')
                     </div>
                 </div>
             </div>
@@ -88,3 +37,56 @@
     </div>
 
 @endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        let searchTimer;
+        const tableContainer = $('#table-container');
+
+        function fetchMessages() {
+            const search = $('#search-input').val();
+            const sort = $('#sort-select').val();
+            const url = new URL(window.location.href);
+            
+            url.searchParams.set('search', search);
+            url.searchParams.set('sort', sort);
+            
+            window.history.pushState({}, '', url);
+            tableContainer.css('opacity', '0.5');
+
+            $.ajax({
+                url: url.href,
+                type: 'GET',
+                success: function(response) {
+                    tableContainer.html(response);
+                    tableContainer.css('opacity', '1');
+                }
+            });
+        }
+
+        $('#search-input').on('keyup', function() {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(fetchMessages, 500);
+        });
+
+        $('#sort-select').on('change', fetchMessages);
+
+        $(document).on('click', '.pagination a', function(e) {
+            e.preventDefault();
+            const url = $(this).attr('href');
+            tableContainer.css('opacity', '0.5');
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function(response) {
+                    tableContainer.html(response);
+                    tableContainer.css('opacity', '1');
+                    window.history.pushState({}, '', url);
+                }
+            });
+        });
+    });
+</script>
+@endsection
+

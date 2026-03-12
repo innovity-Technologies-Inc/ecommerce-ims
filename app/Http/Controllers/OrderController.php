@@ -6,6 +6,7 @@ use App\Http\Requests\UpdateOrderStatusRequest;
 use App\Models\Order;
 use App\Services\OrderService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class OrderController extends Controller
@@ -15,9 +16,13 @@ class OrderController extends Controller
     /**
      * Display a listing of orders.
      */
-    public function index(): View
+    public function index(Request $request)
     {
-        $orders = Order::latest()->paginate(20);
+        $orders = $this->orderService->getAllOrders($request->all());
+
+        if ($request->ajax()) {
+            return view('admin.orders.partials.table', compact('orders'))->render();
+        }
 
         return view('admin.orders.index', compact('orders'));
     }

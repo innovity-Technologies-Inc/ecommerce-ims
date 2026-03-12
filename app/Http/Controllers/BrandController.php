@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\BrandRequest;
 use App\Models\Brand;
 use App\Services\BrandService;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class BrandController extends Controller
@@ -14,9 +15,13 @@ class BrandController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(Request $request)
     {
-        $brands = Brand::latest()->paginate(10);
+        $brands = $this->brandService->getAllBrands($request->all());
+
+        if ($request->ajax()) {
+            return view('admin.brands.partials.table', compact('brands'))->render();
+        }
 
         return view('admin.brands.index', compact('brands'));
     }

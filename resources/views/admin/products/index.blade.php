@@ -8,101 +8,92 @@
     </div>
 
     <div class="card overflow-hidden">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table align-middle mb-0 table-hover table-centered">
-                    <thead class="bg-light-subtle">
-                        <tr>
-                            <th>#</th>
-                            <th>Image</th>
-                            <th>Name</th>
-                            <th>Category</th>
-                            <th>Price Range</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    @php
-                        $sl = \App\HelperClass::indexNumberSerialization($products);
-                    @endphp
-                    @foreach ($products as $data)
-                        <tr>
-                            <td>{{$sl++}}</td>
-                            <td>
-                                @if($data->primaryImage)
-                                    <img src="{{ asset('storage/'.$data->primaryImage->image_path) }}" alt="{{ $data->name }}" class="avatar-sm rounded">
-                                @else
-                                    <span class="text-muted">No Image</span>
-                                @endif
-                            </td>
-                            <td>{{$data->name}}</td>
-                            <td>{{ $data->category ? $data->category->name : '-' }}</td>
-                            <td>
-                                @php
-                                    $gs = \App\HelperClass::generalSettings();
-                                    $prices = collect();
-                                    
-                                    if($data->variants->count() > 0) {
-                                        foreach($data->variants as $variant) {
-                                            $prices->push($variant->discount_price ?? $variant->regular_price ?? $data->discount_price ?? $data->regular_price);
-                                        }
-                                    } else {
-                                        $prices->push($data->discount_price ?? $data->regular_price);
-                                    }
-                                    
-                                    $prices = $prices->filter();
-                                    $minPrice = $prices->min() ?? 0;
-                                    $maxPrice = $prices->max() ?? 0;
-                                @endphp
-                                
-                                {{ $gs->currency ?? '$' }}{{ number_format($minPrice, 2) }} 
-                                @if($minPrice != $maxPrice)
-                                    - {{ $gs->currency ?? '$' }}{{ number_format($maxPrice, 2) }}
-                                @endif
-                            </td>
-                            <td>
-                                <form action="{{ route('admin.products.toggle-status', $data->id) }}" method="POST">
-                                    @csrf
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" role="switch" id="status_{{ $data->id }}" onChange="this.form.submit()" {{ $data->status ? 'checked' : '' }}>
-                                    </div>
-                                </form>
-                            </td>
-                            <td>
-                                <div class="d-flex gap-2">
-                                    <a href="{{ route('admin.products.show', $data->id) }}" class="btn btn-soft-info btn-sm">
-                                        <iconify-icon icon="solar:eye-broken" class="align-middle fs-18"></iconify-icon>
-                                    </a>
-                                    <a href="{{ route('admin.products.edit', $data->id) }}" class="btn btn-soft-primary btn-sm">
-                                        <iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon>
-                                    </a>
-                                    <form action="{{ route('admin.products.destroy', $data->id) }}" method="post" class="d-inline">
-                                        @csrf
-                                        @method('delete')
-                                        <button type="submit" class="btn btn-soft-danger btn-sm confirmDelete">
-                                            <iconify-icon icon="solar:trash-bin-trash-broken" class="align-middle fs-18"></iconify-icon>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+        <div class="card-header">
+            <div class="row align-items-center g-2">
+                <div class="col-lg-3">
+                    <div class="search-box">
+                        <input type="text" class="form-control" id="search-input" placeholder="Search products..." value="{{ request('search') }}">
+                    </div>
+                </div>
+                <div class="col-lg-auto ms-auto">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-muted text-nowrap">Sort By:</span>
+                        <select class="form-select" id="sort-select">
+                            <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Latest</option>
+                            <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest</option>
+                            <option value="a-z" {{ request('sort') == 'a-z' ? 'selected' : '' }}>A to Z</option>
+                            <option value="z-a" {{ request('sort') == 'z-a' ? 'selected' : '' }}>Z to A</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="card-footer border-top">
-            <div class="d-flex align-items-center justify-content-between">
-                <div class="text-muted">
-                    Showing <span class="fw-semibold">{{ $products->firstItem() ?? 0 }}</span> to <span class="fw-semibold">{{ $products->lastItem() ?? 0 }}</span> of <span class="fw-semibold">{{ $products->total() }}</span> Results
-                </div>
-                <div>
-                    {{ $products->links() }}
-                </div>
-            </div>
+        <div class="card-body p-0" id="table-container">
+            @include('admin.products.partials.table')
         </div>
     </div>
 </div>
 
+@endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        let searchTimer;
+        const tableContainer = $('#table-container');
+
+        function fetchProducts() {
+            const search = $('#search-input').val();
+            const sort = $('#sort-select').val();
+            const url = new URL(window.location.href);
+            
+            url.searchParams.set('search', search);
+            url.searchParams.set('sort', sort);
+            
+            // Update URL without refresh
+            window.history.pushState({}, '', url);
+
+            // Add loading state
+            tableContainer.css('opacity', '0.5');
+
+            $.ajax({
+                url: url.href,
+                type: 'GET',
+                success: function(response) {
+                    tableContainer.html(response);
+                    tableContainer.css('opacity', '1');
+                },
+                error: function() {
+                    tableContainer.css('opacity', '1');
+                    toastr.error('Failed to fetch products');
+                }
+            });
+        }
+
+        $('#search-input').on('keyup', function() {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(fetchProducts, 500);
+        });
+
+        $('#sort-select').on('change', fetchProducts);
+
+        // Handle pagination clicks
+        $(document).on('click', '.pagination a', function(e) {
+            e.preventDefault();
+            const url = $(this).attr('href');
+            
+            tableContainer.css('opacity', '0.5');
+            
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function(response) {
+                    tableContainer.html(response);
+                    tableContainer.css('opacity', '1');
+                    window.history.pushState({}, '', url);
+                }
+            });
+        });
+    });
+</script>
 @endsection

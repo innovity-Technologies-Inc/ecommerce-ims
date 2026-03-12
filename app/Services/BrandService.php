@@ -4,10 +4,46 @@ namespace App\Services;
 
 use App\HelperClass;
 use App\Models\Brand;
+use DaiyanMozumder\LaravelFlexSearch\FlexSearch;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 
 class BrandService
 {
+    /**
+     * Get all brands with search and sorting.
+     */
+    public function getAllBrands(array $params = [], int $perPage = 10): LengthAwarePaginator
+    {
+        $query = Brand::query();
+
+        // Apply Search using FlexSearch
+        if (! empty($params['search'])) {
+            $flexSearch = new FlexSearch;
+            $query = $flexSearch->apply($query, [], $params['search'], ['name', 'slug']);
+        }
+
+        // Apply Sorting
+        $sort = $params['sort'] ?? 'latest';
+        switch ($sort) {
+            case 'oldest':
+                $query->oldest();
+                break;
+            case 'a-z':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'z-a':
+                $query->orderBy('name', 'desc');
+                break;
+            case 'latest':
+            default:
+                $query->latest();
+                break;
+        }
+
+        return $query->paginate($perPage);
+    }
+
     /**
      * Store a newly created brand.
      */

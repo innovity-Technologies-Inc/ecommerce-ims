@@ -8,74 +8,83 @@
         </div>
 
         <div class="card overflow-hidden">
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table align-middle mb-0 table-hover table-centered">
-                        <thead class="bg-light-subtle">
-                        <tr>
-                            <th>#</th>
-                            <th>Image</th>
-                            <th>Title</th>
-                            <th>Subtitle</th>
-                            <th>Position</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @php
-                            $sl = \App\HelperClass::indexNumberSerialization($sliders);
-                        @endphp
-                        @foreach ($sliders as $data)
-                        <tr>
-                            <td>{{$sl++}}</td>
-                            <td>
-                                <img src="{{ asset('storage/'.$data->image) }}" alt="{{ $data->title }}" class="avatar-lg rounded">
-                            </td>
-                            <td>
-                                <p class="mb-0 fw-bold">{{ $data->title }}</p>
-                                <small class="text-muted">{{ $data->subtext }}</small>
-                            </td>
-                            <td>{{ $data->subtitle }}</td>
-                            <td>{{ $data->position }}</td>
-                            <td>
-                                @if($data->is_active)
-                                    <span class="badge bg-success-subtle text-success">Active</span>
-                                @else
-                                    <span class="badge bg-danger-subtle text-danger">Inactive</span>
-                                @endif
-                            </td>
-                            <td>
-                                <div class="d-flex gap-2">
-                                    <a href="{{ route('admin.sliders.edit', $data->id) }}" class="btn btn-soft-primary btn-sm">
-                                        <iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon>
-                                    </a>
-                                    <form method="post" action="{{ route('admin.sliders.destroy', $data->id) }}">
-                                        @csrf
-                                        @method('delete')
-                                        <button type="submit" class="btn btn-soft-danger btn-sm confirmDelete">
-                                            <iconify-icon icon="solar:trash-bin-minimalistic-2-broken" class="align-middle fs-18"></iconify-icon>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
+            <div class="card-header">
+                <div class="row align-items-center g-2">
+                    <div class="col-lg-3">
+                        <div class="search-box">
+                            <input type="text" class="form-control" id="search-input" placeholder="Search sliders..." value="{{ request('search') }}">
+                        </div>
+                    </div>
+                    <div class="col-lg-auto ms-auto">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-muted text-nowrap">Sort By:</span>
+                            <select class="form-select" id="sort-select">
+                                <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Latest</option>
+                                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest</option>
+                                <option value="a-z" {{ request('sort') == 'a-z' ? 'selected' : '' }}>Title A-Z</option>
+                                <option value="z-a" {{ request('sort') == 'z-a' ? 'selected' : '' }}>Title Z-A</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="card-footer border-top">
-                <div class="d-flex align-items-center justify-content-between">
-                    <div class="text-muted">
-                        Showing <span class="fw-semibold">{{ $sliders->firstItem() ?? 0 }}</span> to <span class="fw-semibold">{{ $sliders->lastItem() ?? 0 }}</span> of <span class="fw-semibold">{{ $sliders->total() }}</span> Results
-                    </div>
-                    <div>
-                        {{ $sliders->links() }}
-                    </div>
-                </div>
+            <div class="card-body p-0" id="table-container">
+                @include('admin.sliders.partials.table')
             </div>
         </div>
     </div>
 
 @endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        let searchTimer;
+        const tableContainer = $('#table-container');
+
+        function fetchSliders() {
+            const search = $('#search-input').val();
+            const sort = $('#sort-select').val();
+            const url = new URL(window.location.href);
+            
+            url.searchParams.set('search', search);
+            url.searchParams.set('sort', sort);
+            
+            window.history.pushState({}, '', url);
+            tableContainer.css('opacity', '0.5');
+
+            $.ajax({
+                url: url.href,
+                type: 'GET',
+                success: function(response) {
+                    tableContainer.html(response);
+                    tableContainer.css('opacity', '1');
+                }
+            });
+        }
+
+        $('#search-input').on('keyup', function() {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(fetchSliders, 500);
+        });
+
+        $('#sort-select').on('change', fetchSliders);
+
+        $(document).on('click', '.pagination a', function(e) {
+            e.preventDefault();
+            const url = $(this).attr('href');
+            tableContainer.css('opacity', '0.5');
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function(response) {
+                    tableContainer.html(response);
+                    tableContainer.css('opacity', '1');
+                    window.history.pushState({}, '', url);
+                }
+            });
+        });
+    });
+</script>
+@endsection
+

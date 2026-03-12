@@ -2,36 +2,44 @@
 
 namespace App\Services;
 
-use App\Mail\ContactConfirmationMail;
 use App\Models\ContactMessage;
+use DaiyanMozumder\LaravelFlexSearch\FlexSearch;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Mail;
 
 class ContactService
 {
     /**
-     * Store a new contact message and send confirmation email.
+     * Get all contact messages with search and sorting.
      */
-    public function storeMessage(array $data): ContactMessage
+    public function getAllMessages(array $params = [], int $perPage = 15): LengthAwarePaginator
     {
-        $message = ContactMessage::create($data);
+        $query = ContactMessage::query();
 
-        try {
-            Mail::to($message->email)->send(new ContactConfirmationMail($message));
-        } catch (\Exception $e) {
-            // Log error but don't fail the request
-            \Illuminate\Support\Facades\Log::error('Contact Confirmation Email failed: '.$e->getMessage());
+        // Apply Search using FlexSearch
+        if (! empty($params['search'])) {
+            $flexSearch = new FlexSearch;
+            $query = $flexSearch->apply($query, [], $params['search'], ['name', 'email', 'subject', 'message']);
         }
 
-        return $message;
-    }
+        // Apply Sorting
+        $sort = $params['sort'] ?? 'latest';
+        switch ($sort) {
+            case 'oldest':
+                $query->oldest();
+                break;
+            case 'a-z':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'z-a':
+                $query->orderBy('name', 'desc');
+                break;
+            case 'latest':
+            default:
+                $query->latest();
+                break;
+        }
 
-    /**
-     * Get all contact messages for admin listing.
-     */
-    public function getAllMessages(): LengthAwarePaginator
-    {
-        return ContactMessage::latest()->paginate(15);
+        return $query->paginate($perPage);
     }
 
     /**

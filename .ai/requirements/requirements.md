@@ -62,6 +62,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-44:** Contact Message Detail View (Individual page for viewing a single contact message in admin panel).
 - [x] **REQ-45:** Admin Profile Image (Admin should be able to upload and update their profile image).
 - [ ] **REQ-46:** Product Status (Active/Discontinued toggle for products with client-side red badge display).
+- [x] **REQ-47:** Admin Live Search/Filter/Sort (AJAX-based live searching, filtering, and sorting using laravel-flexsearch across all admin index pages).
 
 
 

@@ -6,6 +6,7 @@ use App\Http\Requests\ShippingMethodRequest;
 use App\Models\ShippingMethod;
 use App\Services\ShippingMethodService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ShippingMethodController extends Controller
@@ -15,9 +16,13 @@ class ShippingMethodController extends Controller
     /**
      * Display a listing of shipping methods.
      */
-    public function index(): View
+    public function index(Request $request)
     {
-        $shippingMethods = $this->shippingMethodService->getPaginatedMethods();
+        $shippingMethods = $this->shippingMethodService->getPaginatedMethods($request->all());
+
+        if ($request->ajax()) {
+            return view('admin.shipping_methods.partials.table', compact('shippingMethods'))->render();
+        }
 
         return view('admin.shipping_methods.index', compact('shippingMethods'));
     }

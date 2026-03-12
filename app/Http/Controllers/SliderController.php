@@ -6,6 +6,7 @@ use App\Http\Requests\SliderRequest;
 use App\Models\Slider;
 use App\Services\HomepageService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class SliderController extends Controller
@@ -15,9 +16,13 @@ class SliderController extends Controller
     /**
      * Display a listing of the sliders.
      */
-    public function index(): View
+    public function index(Request $request)
     {
-        $sliders = Slider::orderBy('position')->paginate(10);
+        $sliders = $this->homepageService->getAllSliders($request->all());
+
+        if ($request->ajax()) {
+            return view('admin.sliders.partials.table', compact('sliders'))->render();
+        }
 
         return view('admin.sliders.index', compact('sliders'));
     }

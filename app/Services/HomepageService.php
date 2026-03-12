@@ -5,11 +5,47 @@ namespace App\Services;
 use App\HelperClass;
 use App\Models\SectionSetting;
 use App\Models\Slider;
+use DaiyanMozumder\LaravelFlexSearch\FlexSearch;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class HomepageService
 {
+    /**
+     * Get all sliders with search and sorting.
+     */
+    public function getAllSliders(array $params = [], int $perPage = 10): LengthAwarePaginator
+    {
+        $query = Slider::query();
+
+        // Apply Search using FlexSearch
+        if (! empty($params['search'])) {
+            $flexSearch = new FlexSearch;
+            $query = $flexSearch->apply($query, [], $params['search'], ['title', 'subtitle', 'link_text']);
+        }
+
+        // Apply Sorting
+        $sort = $params['sort'] ?? 'latest';
+        switch ($sort) {
+            case 'oldest':
+                $query->oldest();
+                break;
+            case 'a-z':
+                $query->orderBy('title', 'asc');
+                break;
+            case 'z-a':
+                $query->orderBy('title', 'desc');
+                break;
+            case 'latest':
+            default:
+                $query->latest();
+                break;
+        }
+
+        return $query->paginate($perPage);
+    }
+
     /**
      * Store a new slider.
      */
@@ -113,17 +149,17 @@ class HomepageService
 
         // Organic mode: Logic depends on the section
         $query = \App\Models\Product::with(['primaryImage', 'variants'])->latest();
-        
+
         switch ($sectionName) {
             case 'bestsellers':
                 return $query->orderBy('sales_count', 'desc')->limit($section->limit)->get();
-            
+
             case 'hot_deals':
                 return $query->where('is_hot_deal', true)->limit(2)->get();
-            
+
             case 'featured':
                 return $query->where('is_featured', true)->limit(4)->get();
-            
+
             case 'recently_added':
                 return $query->limit($section->limit)->get();
         }

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\ContactService;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ContactMessageController extends Controller
@@ -12,11 +12,15 @@ class ContactMessageController extends Controller
     public function __construct(protected ContactService $contactService) {}
 
     /**
-     * Display a listing of the contact messages.
+     * Display a listing of contact messages.
      */
-    public function index(): View
+    public function index(Request $request)
     {
-        $messages = $this->contactService->getAllMessages();
+        $messages = $this->contactService->getAllMessages($request->all());
+
+        if ($request->ajax()) {
+            return view('admin.contact_messages.partials.table', compact('messages'))->render();
+        }
 
         return view('admin.contact_messages.index', compact('messages'));
     }

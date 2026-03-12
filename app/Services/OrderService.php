@@ -7,6 +7,8 @@ use App\Mail\OrderStatusUpdateMail;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\ShippingMethod;
+use DaiyanMozumder\LaravelFlexSearch\FlexSearch;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -14,6 +16,40 @@ use Illuminate\Support\Str;
 
 class OrderService
 {
+    /**
+     * Get all orders with search and sorting.
+     */
+    public function getAllOrders(array $params = [], int $perPage = 10): LengthAwarePaginator
+    {
+        $query = Order::with('user');
+
+        // Apply Search using FlexSearch
+        if (! empty($params['search'])) {
+            $flexSearch = new FlexSearch;
+            $query = $flexSearch->apply($query, [], $params['search'], ['order_id', 'name', 'email', 'mobile']);
+        }
+
+        // Apply Sorting
+        $sort = $params['sort'] ?? 'latest';
+        switch ($sort) {
+            case 'oldest':
+                $query->oldest();
+                break;
+            case 'a-z':
+                $query->orderBy('order_id', 'asc');
+                break;
+            case 'z-a':
+                $query->orderBy('order_id', 'desc');
+                break;
+            case 'latest':
+            default:
+                $query->latest();
+                break;
+        }
+
+        return $query->paginate($perPage);
+    }
+
     public function __construct(protected CartService $cartService) {}
 
     /**

@@ -6,6 +6,7 @@ use App\Http\Requests\ProductRequest;
 use App\Models\Brand;
 use App\Models\Product;
 use App\Services\ProductService;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ProductController extends Controller
@@ -15,9 +16,13 @@ class ProductController extends Controller
     /**
      * Display a listing of products.
      */
-    public function index(): View
+    public function index(Request $request)
     {
-        $products = Product::with(['primaryImage', 'category', 'brand'])->latest()->paginate(10);
+        $products = $this->productService->getAllProducts($request->all());
+
+        if ($request->ajax()) {
+            return view('admin.products.partials.table', compact('products'))->render();
+        }
 
         return view('admin.products.index', compact('products'));
     }
