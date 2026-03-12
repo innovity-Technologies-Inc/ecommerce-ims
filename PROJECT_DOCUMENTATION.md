@@ -211,18 +211,20 @@ Every module or architectural change must be documented in this file before a ta
   - **Visual Hierarchy:** Uses Bootstrap icons and typography (`<small>`, `bx-subdirectory-right`) to clearly differentiate between parent and child categories in the admin UI.
 
 ### 3.17 Coupon Management Module
-- **What:** A comprehensive promotion engine allowing administrators to create and manage discount coupons for products and shipping.
+- **What:** A comprehensive promotion engine allowing administrators to create and manage discount coupons, and customers to apply them at checkout.
 - **How it Works:** 
   - **Flexible Application:** Coupons can be applied to either the "Total Product Price" or the "Shipping Cost".
   - **Discount Logic:** Supports both "Percentage" and "Fixed" discount types. For percentage discounts, an optional "Maximum Discount Amount" can be set to cap the total savings.
   - **Usage Controls:** Includes "Minimum Spend" requirements and "Usage Limits" (total times a coupon can be used).
-  - **Time-Bound Validity:** Each coupon has mandatory "Active From" and "Expired On" dates, ensuring promotions are automatically managed by the system.
+  - **Client-Side Application:** Customers can apply coupons on the Checkout page. The system uses AJAX to validate the code and instantly update the Discount and Grand Total in the order summary without a page reload.
+  - **Usage Tracking:** Every successful coupon application is recorded in the `coupon_usages` table, tracking the Coupon ID, User ID, Name, Email, Order ID, and the specific discount amount applied.
   - **Advanced Admin Filtering:** Admins can search by code and filter by Application Area (Product vs Shipping), Status (Active/Inactive), and two separate date ranges (Active Range and Expiry Range).
 - **Implementation Details:** 
-  - **Service Layer Pattern:** `CouponService` centralizes all CRUD logic, multi-column filtering, and status toggling.
+  - **Service Layer Pattern:** `CouponService` centralizes all CRUD logic, multi-column filtering, validation, discount calculation, and usage recording.
   - **Model Validation:** The `Coupon` model includes an `isValid()` method that encapsulates the complex business logic for checking status, date ranges, and usage limits in a single, reusable call.
-  - **Form Requests:** `CouponRequest` ensures strict data integrity, including conditional validation where `max_discount_amount` is required only if the `discount_type` is "percentage".
-  - **Frontend Interactivity:** Uses jQuery for dynamic form field visibility (toggling the Max Discount field) and AJAX for instant status updates and debounced searching/filtering in the admin index.
+  - **Checkout Integration:** `OrderService::placeOrder()` performs a final server-side validation of the coupon before creating the order. It then calls `CouponService::recordUsage()` to update the tracking history and increment the global `used_count`.
+  - **Session Management:** Applied coupons are temporarily stored in the session (`session('coupon')`) during the checkout process to ensure persistence and easy removal.
+  - **Frontend Interactivity:** Uses jQuery for dynamic form field visibility in the Admin panel and AJAX-based application/removal with Toastr notifications on the Client-side checkout page.
 
 ---
 

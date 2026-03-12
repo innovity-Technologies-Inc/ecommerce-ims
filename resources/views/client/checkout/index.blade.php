@@ -163,7 +163,7 @@
 <!-- checkout area end -->
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script>
     $(document).ready(function() {
         $('#apply-coupon-btn').on('click', function() {
@@ -213,4 +213,4 @@
         });
     });
 </script>
-@endsection
+@endpush
