@@ -228,6 +228,27 @@
                                     </div>
                                 </div>
                                 <!-- Sidebar single item -->
+                                @if($flashSales->isNotEmpty())
+                                <div class="sidebar-widget mt-30">
+                                    <h4 class="pro-sidebar-title">Flash Sales</h4>
+                                    <div class="sidebar-widget-list">
+                                        <ul>
+                                            @foreach($flashSales as $sale)
+                                            <li>
+                                                <div class="sidebar-widget-list-left">
+                                                    <label class="d-flex align-items-center w-100" style="cursor: pointer;">
+                                                        <input type="checkbox" name="flash_sale[]" value="{{ $sale->id }}" {{ is_array(request('flash_sale')) && in_array($sale->id, request('flash_sale')) ? 'checked' : '' }} onchange="document.getElementById('filter-form').submit();">
+                                                        <span class="ms-4">{{ $sale->name }}</span>
+                                                        <span class="checkmark"></span>
+                                                    </label>
+                                                </div>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                                @endif
+                                <!-- Sidebar single item -->
                             </div>
                             <!-- Sidebar single item -->
                             <div class="sidebar-widget mt-20">

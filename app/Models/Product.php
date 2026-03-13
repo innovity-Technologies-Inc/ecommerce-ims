@@ -69,6 +69,11 @@ class Product extends Model
         return $this->belongsTo(Category::class, 'sub_category_id', 'id');
     }
 
+    public function flashSaleItems()
+    {
+        return $this->hasMany(FlashSaleItem::class, 'product_id', 'id');
+    }
+
     /**
      * Scope a query to only include active products.
      */

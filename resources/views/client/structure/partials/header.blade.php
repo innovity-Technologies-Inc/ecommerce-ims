@@ -105,13 +105,14 @@
                             <li>
                                 <a href="{{ route('client.products.index') }}">Products</a>
                             </li>
-                            <li class="menu-dropdown">                                <a href="#">Shop <i class="ion-ios-arrow-down"></i></a>
+                            <li class="menu-dropdown">
+                                <a href="{{ route('client.products.index') }}">Shop <i class="ion-ios-arrow-down"></i></a>
                                 <ul class="mega-menu-wrap">
                                     @foreach($nav_categories as $category)
                                     <li>
                                         <ul>
                                             <li class="mega-menu-title">
-                                                <a href="{{ route('client.products.index', ['category' => $category->id]) }}">
+                                                <a href="{{ route('client.products.index', ['category_nav' => $category->id]) }}">
                                                     @if($category->icon)
                                                         <img src="{{ asset('storage/'.$category->icon) }}" alt="" style="width: 20px; height: 20px; object-fit: contain; margin-right: 5px;">
                                                     @endif
@@ -120,7 +121,7 @@
                                             </li>
                                             @foreach($category->subcategories as $subcategory)
                                                <li>
-                                                   <a href="{{ route('client.products.index', ['category' => $subcategory->id]) }}">
+                                                   <a href="{{ route('client.products.index', ['category_nav' => $subcategory->id]) }}">
                                                        @if($subcategory->icon)
                                                            <img src="{{ asset('storage/'.$subcategory->icon) }}" alt="" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px;">
                                                        @endif
@@ -131,13 +132,15 @@
                                         </ul>
                                     </li>
                                     @endforeach
-                                    <li class="banner-wrapper">                                        <a href="#"><img
+                                    <li class="banner-wrapper">
+                                        <a href="{{ route('client.products.index') }}"><img
                                                 src="{{asset('client/assets/images/banner-image/banner-menu.jpg')}}"
                                                 alt=""></a>
                                     </li>
                                 </ul>
-                            </li>                            <li class="menu-dropdown">
-                                <a href="#">Account <i class="ion-ios-arrow-down"></i></a>
+                            </li>
+                            <li class="menu-dropdown">
+                                <a href="{{ Auth::guard('web')->check() ? route('user.account') : route('login') }}">Account <i class="ion-ios-arrow-down"></i></a>
                                 <ul class="sub-menu">
                                     @if(Auth::guard('web')->check())
                                         <li><a href="{{ route('user.account') }}">My Account</a></li>
@@ -301,7 +304,7 @@
                     <ul class="sub-menu">
                         @foreach($nav_categories as $category)
                         <li>
-                            <a href="{{ route('client.products.index', ['category' => $category->id]) }}">
+                            <a href="{{ route('client.products.index', ['category_nav' => $category->id]) }}">
                                 @if($category->icon)
                                     <img src="{{ asset('storage/'.$category->icon) }}" alt="" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px;">
                                 @endif
@@ -311,7 +314,7 @@
                             <ul class="sub-menu">
                                 @foreach($category->subcategories as $subcategory)
                                 <li>
-                                    <a href="{{ route('client.products.index', ['category' => $subcategory->id]) }}">
+                                    <a href="{{ route('client.products.index', ['category_nav' => $subcategory->id]) }}">
                                         @if($subcategory->icon)
                                             <img src="{{ asset('storage/'.$subcategory->icon) }}" alt="" style="width: 14px; height: 14px; object-fit: contain; margin-right: 5px;">
                                         @endif
@@ -326,7 +329,7 @@
                     </ul>
                 </li>
                 <li class="menu-dropdown">
-                    <a href="#">Account</a>
+                    <a href="{{ Auth::guard('web')->check() ? route('user.account') : route('login') }}">Account</a>
                     <ul class="sub-menu">
                         @if(Auth::guard('web')->check())
                             <li><a href="{{ route('user.account') }}">My Account</a></li>

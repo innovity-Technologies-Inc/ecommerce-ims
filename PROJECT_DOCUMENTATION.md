@@ -68,6 +68,7 @@ Every module or architectural change must be documented in this file before a ta
 - **What:** The public-facing product catalog with advanced search and filtering capabilities.
 - **How it Works:**
   - **Sidebar Filtering:** Users can filter by Categories, Brands, and Price. The backend captures these query parameters (e.g., `?category=electronics&min_price=100`) and dynamically builds Eloquent queries in `FrontendController`/`ProductService`.
+    - **Advanced Price Filtering:** The system implements a robust, variant-aware price filter. It prioritizes the `discount_price` if available; otherwise, it falls back to the `regular_price` (selling price). The filter explicitly checks both the base product and all associated variants. If a product's base price is `0` or `NULL` (indicating it is priced via variants), the product is still correctly included if any of its variants fall within the filtered range. This is implemented using `DB::raw` with `IF()` statements within a nested `where` closure to ensure high accuracy and performance.
   - **Global Search:** Powered by `FlexSearch`. When a user types in the navbar, the query is passed to the FlexSearch engine which indexes multiple tables (Name, Brand, Category) to return rapid, highly relevant results without heavy `LIKE %...%` queries.
   - **Variant Selection:** On the product details page, selecting different variants dynamically updates the displayed price and available stock using JavaScript/AJAX.
 
@@ -237,6 +238,7 @@ Every module or architectural change must be documented in this file before a ta
   - **`FlashSaleService`:** Orchestrates the complex logic of synchronizing state across `products`, `product_variants`, and `flash_sale_items` tables using database transactions to ensure data integrity.
   - **Optimized UI:** Built with a two-column layout using Bootstrap 5 and jQuery. The right panel uses debounced AJAX search and pagination (FlexSearch-powered) for seamless product discovery, while the left panel handles the active configuration and selected product list.
   - **Pricing Logic:** Supports both "Percentage" and "Fixed" discount types. Percentages are applied directly, while fixed amounts are converted into their approximate percentage equivalents for system consistency.
+  - **Shop Filter Integration:** Customers can filter products on the main Shop page by active Flash Sales. This is implemented using `FlexSearch` in the `FrontendController`, allowing for dynamic, multi-select filtering based on Flash Sale titles.
 
 ---
 

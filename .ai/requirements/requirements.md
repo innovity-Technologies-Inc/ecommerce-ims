@@ -77,6 +77,8 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-55:** Flash Sale Tracking (Maintain a dedicated table for flash sale metadata and product associations).
 - [x] **REQ-56:** Advanced Flash Sale Filtering (Add Brand, Category, Subcategory, and Sort filters to the product selection panel).
 - [x] **REQ-57:** Optimized Flash Sale Product Loading (Ensure products load on initial page load with pagination and fix image display issues).
+- [ ] **REQ-58:** Client-side Flash Sale Filter (Add a filter to the shop page to filter products by Flash Sale title using FlexSearch).
+
 
 
 

@@ -22,7 +22,8 @@ class TrackOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'order_id' => 'required|string|exists:orders,order_id',
+            // Only require and validate if order_id is actually provided
+            'order_id' => 'nullable|string|exists:orders,order_id',
         ];
     }
 
