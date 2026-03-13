@@ -7,6 +7,7 @@
             <th>Name</th>
             <th>Parent</th>
             <th>Slug</th>
+            <th>Status</th>
             <th>Action</th>
         </tr>
         </thead>
@@ -28,6 +29,12 @@
             <td>{{ $data->parent ? $data->parent->name : '-' }}</td>
             <td>{{$data->slug}}</td>
             <td>
+                <div class="form-check form-switch">
+                    <input class="form-check-input status-toggle" type="checkbox" role="switch" 
+                        data-id="{{ $data->id }}" {{ $data->status ? 'checked' : '' }}>
+                </div>
+            </td>
+            <td>
                 <div class="d-flex gap-2">
                     <a href="{{ route('admin.categories.edit', $data->id) }}" class="btn btn-soft-primary btn-sm">
                         <iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon>
@@ -45,7 +52,7 @@
         @endforeach
         @if($categories->isEmpty())
             <tr>
-                <td colspan="6" class="text-center">No categories found.</td>
+                <td colspan="7" class="text-center">No categories found.</td>
             </tr>
         @endif
         </tbody>

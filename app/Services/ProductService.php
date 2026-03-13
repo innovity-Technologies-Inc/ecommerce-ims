@@ -237,6 +237,7 @@ class ProductService
     public function getCategoriesForDropdown()
     {
         return \App\Models\Category::whereNull('parent_id')
+            ->active()
             ->with('subcategories')
             ->get();
     }

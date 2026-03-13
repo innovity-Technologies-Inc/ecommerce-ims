@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use App\Services\CategoryService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -31,7 +32,7 @@ class CategoryController extends Controller
      */
     public function create(): View
     {
-        $parentCategories = Category::whereNull('parent_id')->get();
+        $parentCategories = Category::whereNull('parent_id')->active()->get();
 
         return view('admin.categories.form', compact('parentCategories'));
     }
@@ -54,7 +55,10 @@ class CategoryController extends Controller
      */
     public function edit(Category $category): View
     {
-        $parentCategories = Category::whereNull('parent_id')->where('id', '!=', $category->id)->get();
+        $parentCategories = Category::whereNull('parent_id')
+            ->active()
+            ->where('id', '!=', $category->id)
+            ->get();
 
         return view('admin.categories.form', compact('category', 'parentCategories'));
     }
@@ -82,6 +86,20 @@ class CategoryController extends Controller
         return redirect()->route('admin.categories.index')->with([
             'message' => 'Category deleted successfully',
             'alert-type' => 'success',
+        ]);
+    }
+
+    /**
+     * Toggle the status of a category.
+     */
+    public function toggleStatus(int $id): JsonResponse
+    {
+        $category = Category::findOrFail($id);
+        $this->categoryService->toggleStatus($category);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Category status updated successfully',
         ]);
     }
 }

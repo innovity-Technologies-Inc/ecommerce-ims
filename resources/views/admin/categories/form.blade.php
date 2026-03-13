@@ -40,6 +40,16 @@
                                     </div>
                                 </div>
 
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label class="form-label d-block">Status</label>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" name="status" id="statusSwitch" value="1" {{ old('status', $category->status ?? true) ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="statusSwitch">Active</label>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="col-lg-12">
                                     <div class="mb-3">
                                         <label for="icon" class="form-label">Category Icon</label>

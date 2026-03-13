@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
 {
@@ -11,14 +13,41 @@ class Category extends Model
         'slug',
         'icon',
         'parent_id',
+        'status',
     ];
 
-    public function subcategories()
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
     {
-        return $this->hasMany(Category::class, 'parent_id', 'id');
+        return [
+            'status' => 'boolean',
+        ];
     }
 
-    public function parent()
+    /**
+     * Scope a query to only include active categories.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', true);
+    }
+
+    /**
+     * Get active subcategories.
+     */
+    public function subcategories(): HasMany
+    {
+        return $this->hasMany(Category::class, 'parent_id', 'id')->where('status', true);
+    }
+
+    /**
+     * Get parent category.
+     */
+    public function parent(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'parent_id', 'id');
     }

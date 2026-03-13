@@ -23,7 +23,7 @@ class HelperClass
 
     public static function getCategories()
     {
-        return Category::whereNull('parent_id')->with('subcategories')->get();
+        return Category::whereNull('parent_id')->active()->with('subcategories')->get();
     }
 
     public static function getBrands()

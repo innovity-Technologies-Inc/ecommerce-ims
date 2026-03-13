@@ -24,6 +24,9 @@ class CategoryService
         if (! empty($params['slug'])) {
             $filters['slug'] = $params['slug'];
         }
+        if (isset($params['status']) && $params['status'] !== '') {
+            $filters['status'] = $params['status'];
+        }
 
         $flexSearch = app(FlexSearch::class);
         $searchTerm = $params['search'] ?? null;
@@ -62,6 +65,7 @@ class CategoryService
             'name' => $data['name'],
             'parent_id' => $data['parent_id'] ?? null,
             'slug' => Str::slug($data['name']),
+            'status' => isset($data['status']),
         ];
 
         if (isset($data['icon'])) {
@@ -80,6 +84,7 @@ class CategoryService
             'name' => $data['name'],
             'parent_id' => $data['parent_id'] ?? null,
             'slug' => Str::slug($data['name']),
+            'status' => isset($data['status']),
         ];
 
         if (isset($data['icon'])) {
@@ -103,5 +108,15 @@ class CategoryService
             HelperClass::file_delete($category->icon);
         }
         $category->delete();
+    }
+
+    /**
+     * Toggle the status of a category.
+     */
+    public function toggleStatus(Category $category): bool
+    {
+        $category->status = ! $category->status;
+
+        return $category->save();
     }
 }

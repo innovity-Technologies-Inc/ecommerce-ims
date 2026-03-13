@@ -40,6 +40,7 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     });
 
     Route::resource('categories', CategoryController::class)->names('admin.categories');
+    Route::post('categories/{id}/toggle-status', [CategoryController::class, 'toggleStatus'])->name('admin.categories.toggle-status');
     Route::resource('brands', BrandController::class)->names('admin.brands');
     Route::post('brands/{id}/toggle-status', [BrandController::class, 'toggleStatus'])->name('admin.brands.toggle-status');
     Route::resource('shipping-methods', ShippingMethodController::class)->names('admin.shipping_methods');

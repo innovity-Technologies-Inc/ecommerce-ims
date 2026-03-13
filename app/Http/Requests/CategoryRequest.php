@@ -25,6 +25,7 @@ class CategoryRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'parent_id' => ['nullable', 'exists:categories,id'],
             'icon' => ['nullable', 'image', 'mimes:png,jpg,jpeg,svg,webp', 'max:2048'],
+            'status' => ['nullable'],
         ];
     }
 }
