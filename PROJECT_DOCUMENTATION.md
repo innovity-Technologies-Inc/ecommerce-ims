@@ -240,6 +240,17 @@ Every module or architectural change must be documented in this file before a ta
   - **Pricing Logic:** Supports both "Percentage" and "Fixed" discount types. Percentages are applied directly, while fixed amounts are converted into their approximate percentage equivalents for system consistency.
   - **Shop Filter Integration:** Customers can filter products on the main Shop page by active Flash Sales. This is implemented using `FlexSearch` in the `FrontendController`, allowing for dynamic, multi-select filtering based on Flash Sale titles.
 
+### 3.19 Frontend Refactoring & Public Invoice
+- **What:** Architectural cleanup of the Frontend module and expansion of order tracking features.
+- **How it Works:**
+  - **Thin Controllers:** `FrontendController` was refactored to remove all business logic, moving it to `FrontendService`.
+  - **Service Layer Pattern:** `FrontendService` now centralizes all product filtering (Category, Brand, Price, Search), related products logic, and sorting.
+  - **Form Requests:** `ProductFilterRequest` and `TrackOrderRequest` handle all input validation, ensuring clean and secure data flow.
+  - **Public Invoice Access:** Customers can now print invoices directly from the Order Tracking results without needing an account. This is enabled by a `publicInvoice` route that automatically generates an invoice if it doesn't already exist.
+- **Implementation Details:**
+  - **Refined Price Filter:** The pricing logic in `FrontendService` prioritizes `discount_price` and correctly handles products whose price is defined solely in variants (0/NULL base price) by performing a nested variant check.
+  - **Security:** While public, the invoice access is protected by the unique Order ID requirement and is read-only.
+
 ---
 
 ## 4. Frontend & UI Standardization Refinements

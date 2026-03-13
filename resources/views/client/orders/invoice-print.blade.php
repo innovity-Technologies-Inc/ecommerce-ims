@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invoice - {{ $order->invoice_no }}</title>
     <style>
+        body { font-family: 'Arial', sans-serif; color: #333; margin: 0; padding: 20px; line-height: 1.6; }
+        .invoice-box { max-width: 800px; margin: auto; padding: 30px; border: 1px solid #eee; box-shadow: 0 0 10px rgba(0, 0, 0, .15); font-size: 16px; background: #fff; }
+        .invoice-box table { width: 100%; line-height: inherit; text-align: left; border-collapse: collapse; }
         .invoice-box table td { padding: 5px; vertical-align: top; }
         .invoice-box table tr td:last-child { text-align: right; }
         .invoice-box table tr.top table td:last-child { text-align: right; }
@@ -21,6 +24,10 @@
         .invoice-box table tr.item.last td { border-bottom: none; }
         .invoice-box table tr.total td:last-child { border-top: 2px solid #eee; font-weight: bold; }
         
+        .badge { padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
+        .bg-success { background-color: #28a745; color: #fff; }
+        .bg-warning { background-color: #ffc107; color: #212529; }
+        
         @media print {
             .no-print { display: none; }
             body { padding: 0; }
@@ -36,7 +43,11 @@
 <body>
     <div class="btn-group no-print">
         <a href="javascript:window.print()" class="btn btn-primary">Download PDF / Print</a>
-        <a href="{{ route('user.order_details', $order->order_id) }}" class="btn btn-dark">Back to Order</a>
+        @if(Auth::guard('web')->check())
+            <a href="{{ route('user.order_details', $order->order_id) }}" class="btn btn-dark">Back to Order</a>
+        @else
+            <a href="{{ route('client.track_order', ['order_id' => $order->order_id]) }}" class="btn btn-dark">Back to Tracking</a>
+        @endif
     </div>
 
     <div class="invoice-box">
@@ -147,7 +158,7 @@
         </table>
         <div style="margin-top: 50px; text-align: center; color: #777; font-size: 12px;">
             Thank you for shopping with {{ config('app.name') }}!<br>
-            For any queries, please visit our help center.
+            If you have any questions about this invoice, please contact us.
         </div>
     </div>
     
