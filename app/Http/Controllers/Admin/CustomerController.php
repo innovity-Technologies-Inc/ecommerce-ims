@@ -39,13 +39,13 @@ class CustomerController extends Controller
     /**
      * Toggle customer status.
      */
-    public function toggleStatus(int $id): RedirectResponse
+    public function toggleStatus(int $id): \Illuminate\Http\JsonResponse
     {
         $this->customerService->toggleCustomerStatus($id);
 
-        return back()->with([
+        return response()->json([
+            'status' => 'success',
             'message' => 'Customer status updated successfully',
-            'alert-type' => 'success',
         ]);
     }
 

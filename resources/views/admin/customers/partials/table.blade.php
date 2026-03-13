@@ -28,17 +28,12 @@
                 <td>{{ $customer->email }}</td>
                 <td>{{ $customer->mobile ?? 'N/A' }}</td>
                 <td>
-                    <form action="{{ route('admin.customers.toggle-status', $customer->id) }}" method="POST">
-                        @csrf
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" role="switch" id="statusSwitch{{ $customer->id }}" {{ $customer->status ? 'checked' : '' }} onchange="this.form.submit()">
-                            <label class="form-check-label" for="statusSwitch{{ $customer->id }}">
-                                <span class="badge {{ $customer->status ? 'bg-success' : 'bg-danger' }}">
-                                    {{ $customer->status ? 'Active' : 'Inactive' }}
-                                </span>
-                            </label>
-                        </div>
-                    </form>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input status-toggle" type="checkbox" role="switch" 
+                            id="statusSwitch{{ $customer->id }}" 
+                            data-id="{{ $customer->id }}"
+                            {{ $customer->status ? 'checked' : '' }}>
+                    </div>
                 </td>
                 <td>
                     <div class="d-flex gap-2">
