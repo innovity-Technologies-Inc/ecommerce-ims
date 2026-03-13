@@ -21,9 +21,10 @@
             <td>{{ \App\HelperClass::generalSettings()->currency ?? '$' }}{{number_format($data->price, 2)}}</td>
             <td>{{ \Illuminate\Support\Str::limit($data->short_description, 50) }}</td>
             <td>
-                <span class="badge {{ $data->status ? 'bg-success' : 'bg-danger' }} text-white">
-                    {{ $data->status ? 'Active' : 'Inactive' }}
-                </span>
+                <div class="form-check form-switch">
+                    <input class="form-check-input status-toggle" type="checkbox" role="switch" 
+                        data-id="{{ $data->id }}" {{ $data->status ? 'checked' : '' }}>
+                </div>
             </td>
             <td>
                 <div class="d-flex gap-2">

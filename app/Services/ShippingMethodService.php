@@ -92,4 +92,14 @@ class ShippingMethodService
     {
         return $method->delete();
     }
+
+    /**
+     * Toggle the status of a shipping method.
+     */
+    public function toggleStatus(ShippingMethod $method): bool
+    {
+        $method->status = ! $method->status;
+
+        return $method->save();
+    }
 }

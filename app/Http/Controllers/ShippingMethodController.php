@@ -72,4 +72,17 @@ class ShippingMethodController extends Controller
 
         return redirect()->route('admin.shipping_methods.index')->with('success', 'Shipping method deleted successfully!');
     }
+
+    /**
+     * Toggle the status of a shipping method.
+     */
+    public function toggleStatus(ShippingMethod $shippingMethod): \Illuminate\Http\JsonResponse
+    {
+        $this->shippingMethodService->toggleStatus($shippingMethod);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Shipping method status updated successfully',
+        ]);
+    }
 }
