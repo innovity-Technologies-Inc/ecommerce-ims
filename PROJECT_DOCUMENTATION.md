@@ -98,6 +98,7 @@ Every module or architectural change must be documented in this file before a ta
   - **Guest Users:** Cart items are stored in the Laravel `Session`.
   - **Authenticated Users:** Cart items are stored in the `carts` database table.
   - **Synchronization:** When a guest logs in or registers, a listener/service automatically migrates their session cart data into the database, ensuring no items are lost.
+  - **Optimized Variant Display:** Variant details in the cart, mini-cart, and checkout are intelligently formatted. The system checks for available size and color attributes; if missing, it falls back to the `variant_name` to prevent broken UI elements (like empty slashes).
 - **Implementation Details:**
   - `CartService` acts as an abstraction layer. When `addToCart()` is called, the service checks `Auth::check()`. If true, it performs Eloquent inserts/updates; if false, it manipulates the session array.
   - **UI/UX:** Uses AJAX for adding items, updating quantities, and removing items. The frontend dynamically updates the Mini-Cart, Cart Count, and Grand Totals without page reloads.

@@ -45,8 +45,7 @@
     </div>
     <div class="foot">
         <div class="buttons">
-            <a href="{{ route('cart.index') }}" class="btn btn-dark btn-hover-primary mb-30px">view cart</a>
-            <a href="checkout.html" class="btn btn-outline-dark current-btn">checkout</a>
+            <a href="{{ route('cart.index') }}" class="btn btn-dark btn-hover-primary">view cart</a>
         </div>
     </div>
 </div>
