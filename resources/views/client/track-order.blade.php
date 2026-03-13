@@ -92,7 +92,12 @@
                                         @if($order)
                                             <div class="order-tracking-result mt-5 pt-5 border-top">
                                                 <div class="text-center mb-5">
-                                                    <h4 class="fw-bold text-dark mb-3">Order #{{ $order->order_id }}</h4>
+                                                    <div class="d-flex flex-column flex-sm-row justify-content-center align-items-center gap-3 mb-4">
+                                                        <h4 class="fw-bold text-dark mb-0">Order #{{ $order->order_id }}</h4>
+                                                        <a href="{{ route('client.public_invoice', $order->order_id) }}" target="_blank" class="btn btn-outline-dark btn-sm rounded-0">
+                                                            <i class="fa fa-print me-2"></i>Print Invoice
+                                                        </a>
+                                                    </div>
                                                     <div class="d-flex align-items-center justify-content-center">
                                                         <span class="text-muted">Current Status:</span>
                                                         <span class="badge {{ match($order->order_status) {

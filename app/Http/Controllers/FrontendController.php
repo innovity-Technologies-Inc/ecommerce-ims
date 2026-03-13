@@ -130,4 +130,25 @@ class FrontendController extends Controller
             'alert-type' => 'success',
         ]);
     }
+
+    /**
+     * Display the invoice for printing (Public Access).
+     */
+    public function publicInvoice(string $orderId): View
+    {
+        $order = $this->orderService->trackOrderById($orderId);
+
+        if (! $order) {
+            abort(404);
+        }
+
+        // Auto-generate invoice if not exists
+        if (! $order->invoice_no) {
+            $this->orderService->generateInvoice($order);
+        }
+
+        $order->load(['orderItems']);
+
+        return view('client.orders.invoice-print', compact('order'));
+    }
 }

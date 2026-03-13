@@ -112,6 +112,7 @@ Route::controller(FrontendController::class)->group(function () {
     Route::get('/products', 'products')->name('client.products.index');
     Route::get('/product/{slug}', 'productDetails')->name('client.products.details');
     Route::match(['get', 'post'], '/track-order', 'trackOrder')->name('client.track_order');
+    Route::get('/order/{order_id}/invoice', 'publicInvoice')->name('client.public_invoice');
     Route::get('/contact', 'contact')->name('client.contact');
     Route::post('/contact/send', 'storeContactMessage')->name('client.contact.send');
 });
