@@ -95,8 +95,14 @@
                                 <div class="your-order-middle">
                                     <ul>
                                         @foreach($cartItems as $item)
-                                            <li>
-                                                <span class="order-middle-left">{{ $item->product_name }} X {{ $item->quantity }}</span>
+                                            <li class="mb-2">
+                                                <span class="order-middle-left">
+                                                    <strong>{{ $item->product_name }}</strong>
+                                                    @if($item->variant_name)
+                                                        <br><small class="text-muted">Variant: {{ $item->variant_details }}</small>
+                                                    @endif
+                                                    <br><small>Qty: {{ $item->quantity }}</small>
+                                                </span>
                                                 <span class="order-price">${{ number_format($item->subtotal, 2) }}</span>
                                             </li>
                                         @endforeach

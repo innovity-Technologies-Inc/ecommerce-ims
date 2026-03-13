@@ -31,19 +31,33 @@ class CartService
                 $price = ($item->product->discount_price > 0) ? $item->product->discount_price : $item->product->regular_price;
             }
 
+            $variantName = $item->variant ? $item->variant->variant_name : null;
+            $variantDetails = null;
+            if ($item->variant) {
+                $details = [];
+                if ($item->variant->size) {
+                    $details[] = $item->variant->size;
+                }
+                if ($item->variant->color) {
+                    $details[] = $item->variant->color;
+                }
+
+                $variantDetails = count($details) > 0 ? implode(' / ', $details) : $item->variant->variant_name;
+            }
+
             return (object) [
                 'id' => $item->id,
                 'product_id' => $item->product_id,
                 'product_name' => $item->product->name,
                 'product_slug' => $item->product->slug,
                 'variant_id' => $item->product_variant_id,
-                'variant_name' => $item->variant ? $item->variant->variant_name : null,
-                'variant_details' => $item->variant ? "{$item->variant->size} / {$item->variant->color}" : null,
+                'variant_name' => $variantName,
+                'variant_details' => $variantDetails,
                 'image' => $item->product->primaryImage ? $item->product->primaryImage->image_path : null,
                 'price' => (float) $price,
                 'quantity' => $item->quantity,
                 'subtotal' => (float) $price * $item->quantity,
-                'stock' => $item->variant ? $item->variant->stock : 0, // Simplified, should check product stock too if no variants
+                'stock' => $item->variant ? $item->variant->stock : 0,
             ];
         });
     }
