@@ -100,11 +100,10 @@
                                                background-position: right 15px center;
                                                background-size: 12px auto;">
                                     @foreach($product->variants as $variant)
-                                        <option value="{{ $variant->id }}" 
+                                        <option value="{{ $variant->id }}"
                                                 data-regular-price="{{ number_format($variant->regular_price ?? $product->regular_price, 2) }}"
-                                                data-discount-price="{{ $variant->discount_price ? number_format($variant->discount_price, 2) : ( $product->discount_price ? number_format($product->discount_price, 2) : '' ) }}"
-                                                data-discount-percentage="{{ $variant->discount_percentage ?? $product->discount_percentage ?? '' }}"
-                                                data-stock="{{ $variant->stock ?? 'In Stock' }}">
+                                                data-discount-price="{{ ($variant->discount_price > 0) ? number_format($variant->discount_price, 2) : ( ($product->discount_price > 0) ? number_format($product->discount_price, 2) : '' ) }}"
+                                                data-discount-percentage="{{ $variant->discount_percentage ?? $product->discount_percentage ?? '' }}"                                                data-stock="{{ $variant->stock ?? 'In Stock' }}">
                                             {{ $variant->variant_name }}
                                         </option>
                                     @endforeach
@@ -213,10 +212,9 @@
                         <div class="pricing-meta">
                             <ul>
                                 @php
-                                    $itemMin = $item->variants->min(fn($v) => $v->discount_price ?? $v->regular_price ?? $item->discount_price ?? $item->regular_price);
+                                    $priceRange = \App\HelperClass::getProductPriceRange($item);
                                 @endphp
-                                <li class="current-price">{{ $gs->currency ?? '$' }}{{ number_format($itemMin, 2) }}</li>
-                            </ul>
+                                <li class="current-price">{{ $gs->currency ?? '$' }}{{ number_format($priceRange['min'], 2) }}</li>                            </ul>
                         </div>
                     </div>
                 </article>

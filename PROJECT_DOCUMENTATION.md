@@ -226,6 +226,18 @@ Every module or architectural change must be documented in this file before a ta
   - **Session Management:** Applied coupons are temporarily stored in the session (`session('coupon')`) during the checkout process to ensure persistence and easy removal.
   - **Frontend Interactivity:** Uses jQuery for dynamic form field visibility in the Admin panel and AJAX-based application/removal with Toastr notifications on the Client-side checkout page.
 
+### 3.18 Flash Sale Module
+- **What:** A time-sensitive promotional system that applies deep discounts to a selected group of products.
+- **How it Works:**
+  - **Centralized Control:** Managed via a single administrative form that controls the global Flash Sale status (Active/Inactive) and its end date.
+  - **Dynamic Product Selection:** Admins can search, filter, and add products from the entire active catalog using a high-performance AJAX selector within the edit form.
+  - **Automated Price Sync:** When a Flash Sale is activated, the system automatically calculates and updates the `discount_price` and `discount_percentage` for both the base product and all its variants.
+  - **Global Reset:** Deactivating the Flash Sale or removing a product from the list instantly resets its `is_flash_sale` status and wipes its associated discounts (sets them to 0).
+- **Implementation Details:**
+  - **`FlashSaleService`:** Orchestrates the complex logic of synchronizing state across `products`, `product_variants`, and `flash_sale_items` tables using database transactions to ensure data integrity.
+  - **Optimized UI:** Built with a two-column layout using Bootstrap 5 and jQuery. The right panel uses debounced AJAX search and pagination (FlexSearch-powered) for seamless product discovery, while the left panel handles the active configuration and selected product list.
+  - **Pricing Logic:** Supports both "Percentage" and "Fixed" discount types. Percentages are applied directly, while fixed amounts are converted into their approximate percentage equivalents for system consistency.
+
 ---
 
 ## 4. Frontend & UI Standardization Refinements

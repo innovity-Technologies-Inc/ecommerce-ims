@@ -25,9 +25,11 @@ class CartService
         }
 
         return $items->map(function ($item) {
-            $price = $item->variant
-                ? ($item->variant->discount_price ?? $item->variant->regular_price ?? $item->product->discount_price ?? $item->product->regular_price)
-                : ($item->product->discount_price ?? $item->product->regular_price);
+            if ($item->variant) {
+                $price = ($item->variant->discount_price > 0) ? $item->variant->discount_price : ($item->variant->regular_price ?? $item->product->regular_price);
+            } else {
+                $price = ($item->product->discount_price > 0) ? $item->product->discount_price : $item->product->regular_price;
+            }
 
             return (object) [
                 'id' => $item->id,
@@ -88,6 +90,7 @@ class CartService
                 'quantity' => $data['quantity'],
             ]);
         }
+
         return true;
     }
 

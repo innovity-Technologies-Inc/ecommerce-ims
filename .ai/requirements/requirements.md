@@ -54,14 +54,14 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-36:** Invoice Management Module (Admin invoice generation, regeneration, and client-side download via JS Print).
 - [x] **REQ-37:** Contact Settings Module (Admin settings for company name, email, address, phone number, integrated into invoices).
 - [x] **REQ-38:** Customer Management Module (Admin panel for managing authenticated users: list, profile, purchase history, status toggle, and deletion).
-- [ ] **REQ-39:** Map Integration in Contact Settings (Add map link field to contact settings for frontend display).
+- [x] **REQ-39:** Map Integration in Contact Settings (Add map link field to contact settings for frontend display).
 - [x] **REQ-40:** Dynamic Contact Page (Replace static content in client contact page with dynamic data from database).
 - [x] **REQ-41:** Dynamic Social Links (Manage social media URLs and visibility toggles in contact settings, integrated into frontend).
 - [x] **REQ-42:** Contact Message Management (Client-side form submission, DB storage, email confirmation, and Admin panel listing).
 - [x] **REQ-43:** Pagination Info (Add "Showing X to Y of Z Results" text to all index pages' pagination areas).
 - [x] **REQ-44:** Contact Message Detail View (Individual page for viewing a single contact message in admin panel).
 - [x] **REQ-45:** Admin Profile Image (Admin should be able to upload and update their profile image).
-- [ ] **REQ-46:** Product Status (Active/Discontinued toggle for products with client-side red badge display).
+- [x] **REQ-46:** Product Status (Active/Discontinued toggle for products with client-side red badge display).
 - [x] **REQ-47:** Admin Live Search/Filter/Sort (AJAX-based live searching, filtering, and sorting using laravel-flexsearch across all admin index pages).
 - [x] **REQ-48:** Advanced Order Filtering (Filter orders by Status, Payment Method, Payment Status, and Date Range in admin index).
 
@@ -69,6 +69,16 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-49:** Coupon Management Module (Admin CRUD, code generation, discount logic, usage limits, and date range filtering).
 - [x] **REQ-50:** Client-side Coupon Application (AJAX-based application on checkout page, instant price updates).
 - [x] **REQ-51:** Coupon Usage Tracking (History table tracking User ID, Email, Name, and total usage limits).
+
+## 10. Flash Sale Module
+- [x] **REQ-52:** Flash Sale Management (Single edit form for managing active/inactive status and global configuration).
+- [x] **REQ-53:** Optimized Product Selection (Paginated and searchable product list using FlexSearch for flash sale inclusion).
+- [x] **REQ-54:** Dynamic Discount Synchronization (Automatically apply/remove discounts to products and variants based on flash sale status or product removal).
+- [x] **REQ-55:** Flash Sale Tracking (Maintain a dedicated table for flash sale metadata and product associations).
+- [x] **REQ-56:** Advanced Flash Sale Filtering (Add Brand, Category, Subcategory, and Sort filters to the product selection panel).
+- [x] **REQ-57:** Optimized Flash Sale Product Loading (Ensure products load on initial page load with pagination and fix image display issues).
+
+
 
 
 

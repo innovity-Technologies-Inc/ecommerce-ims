@@ -22,6 +22,7 @@ class Product extends Model
         'is_featured',
         'sales_count',
         'status',
+        'is_flash_sale',
     ];
 
     protected function casts(): array
@@ -66,5 +67,13 @@ class Product extends Model
     public function subCategory()
     {
         return $this->belongsTo(Category::class, 'sub_category_id', 'id');
+    }
+
+    /**
+     * Scope a query to only include active products.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', true);
     }
 }

@@ -35,25 +35,13 @@
                 </td>
                 <td>
                     @php
+                        $priceData = \App\HelperClass::getProductPriceRange($data);
                         $gs = \App\HelperClass::generalSettings();
-                        $prices = collect();
-                        
-                        if($data->variants->count() > 0) {
-                            foreach($data->variants as $variant) {
-                                $prices->push($variant->discount_price ?? $variant->regular_price ?? $data->discount_price ?? $data->regular_price);
-                            }
-                        } else {
-                            $prices->push($data->discount_price ?? $data->regular_price);
-                        }
-                        
-                        $prices = $prices->filter();
-                        $minPrice = $prices->min() ?? 0;
-                        $maxPrice = $prices->max() ?? 0;
                     @endphp
                     
-                    {{ $gs->currency ?? '$' }}{{ number_format($minPrice, 2) }} 
-                    @if($minPrice != $maxPrice)
-                        - {{ $gs->currency ?? '$' }}{{ number_format($maxPrice, 2) }}
+                    {{ $gs->currency ?? '$' }}{{ number_format($priceData['min'], 2) }} 
+                    @if($priceData['has_range'])
+                        - {{ $gs->currency ?? '$' }}{{ number_format($priceData['max'], 2) }}
                     @endif
                 </td>
                 <td>

@@ -76,17 +76,17 @@ class HelperClass
 
         if ($product->variants->count() > 0) {
             foreach ($product->variants as $variant) {
-                // If variant doesn't have its own price, it should fallback to product's base price.
-                $price = $variant->discount_price ?? $variant->regular_price ?? $product->discount_price ?? $product->regular_price;
-                if ($price) {
+                // Use regular price if discount price is 0 or null
+                $price = ($variant->discount_price > 0) ? $variant->discount_price : $variant->regular_price;
+                if ($price > 0) {
                     $prices->push((float) $price);
                 }
             }
         }
 
-        // Always include product's base prices as well, if variants don't fully override them.
-        $basePrice = $product->discount_price ?? $product->regular_price;
-        if ($basePrice) {
+        // Check base product price
+        $basePrice = ($product->discount_price > 0) ? $product->discount_price : $product->regular_price;
+        if ($basePrice > 0) {
             $prices->push((float) $basePrice);
         }
 

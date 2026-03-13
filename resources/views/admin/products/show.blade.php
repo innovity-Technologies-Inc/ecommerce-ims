@@ -69,7 +69,7 @@
                         <div class="col-sm-3 fw-bold">Base Price:</div>
                         <div class="col-sm-9 text-muted">
                             @php($gs = \App\HelperClass::generalSettings())
-                            @if($product->discount_price)
+                            @if($product->discount_price > 0)
                                 <span class="text-decoration-line-through text-muted small">{{ $gs->currency ?? '$' }}{{ number_format($product->regular_price, 2) }}</span>
                                 <span class="text-danger fw-bold ms-1">{{ $gs->currency ?? '$' }}{{ number_format($product->discount_price, 2) }}</span>
                                 <span class="badge bg-soft-danger text-danger ms-1">-{{ $product->discount_percentage }}%</span>
@@ -100,7 +100,7 @@
                                     <td>{{ $variant->variant_name ?? '-' }}</td>
                                     <td>{{ $variant->sku }}</td>
                                     <td>
-                                        @if($variant->discount_price)
+                                        @if($variant->discount_price > 0)
                                             <span class="text-decoration-line-through text-muted small">{{ $gs->currency ?? '$' }}{{ number_format($variant->regular_price, 2) }}</span>
                                             <span class="text-danger fw-bold ms-1">{{ $gs->currency ?? '$' }}{{ number_format($variant->discount_price, 2) }}</span>
                                             <span class="badge bg-soft-danger text-danger ms-1">-{{ $variant->discount_percentage }}%</span>

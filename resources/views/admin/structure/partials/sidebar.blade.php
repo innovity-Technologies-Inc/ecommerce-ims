@@ -143,6 +143,9 @@
                         <li class="sub-nav-item">
                             <a class="sub-nav-link" href="{{ route('admin.coupons.index') }}">Coupons</a>
                         </li>
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="{{ route('admin.flash_sale.edit') }}">Flash Sale</a>
+                        </li>
                     </ul>
                 </div>
             </li>
