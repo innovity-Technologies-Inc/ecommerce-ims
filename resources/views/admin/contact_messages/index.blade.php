@@ -10,10 +10,17 @@
                             <h4 class="card-title">Contact Messages</h4>
                         </div>
                         <div class="row align-items-center g-2">
-                            <div class="col-lg-3">
+                            <div class="col-lg-4">
                                 <div class="search-box">
                                     <input type="text" class="form-control" id="search-input" placeholder="Search messages..." value="{{ request('search') }}">
                                 </div>
+                            </div>
+                            <div class="col-lg-2">
+                                <select class="form-select filter-select" id="read-status-select">
+                                    <option value="">Status (All)</option>
+                                    <option value="1" {{ request('is_read') == '1' ? 'selected' : '' }}>Read</option>
+                                    <option value="0" {{ request('is_read') == '0' ? 'selected' : '' }}>Unread</option>
+                                </select>
                             </div>
                             <div class="col-lg-auto ms-auto">
                                 <div class="d-flex align-items-center gap-2">
@@ -46,11 +53,13 @@
 
         function fetchMessages() {
             const search = $('#search-input').val();
+            const status = $('#read-status-select').val();
             const sort = $('#sort-select').val();
             const url = new URL(window.location.href);
             
-            url.searchParams.set('search', search);
-            url.searchParams.set('sort', sort);
+            if (search) url.searchParams.set('search', search); else url.searchParams.delete('search');
+            if (status !== '') url.searchParams.set('is_read', status); else url.searchParams.delete('is_read');
+            if (sort) url.searchParams.set('sort', sort); else url.searchParams.delete('sort');
             
             window.history.pushState({}, '', url);
             tableContainer.css('opacity', '0.5');
@@ -61,6 +70,9 @@
                 success: function(response) {
                     tableContainer.html(response);
                     tableContainer.css('opacity', '1');
+                },
+                error: function() {
+                    tableContainer.css('opacity', '1');
                 }
             });
         }
@@ -70,7 +82,7 @@
             searchTimer = setTimeout(fetchMessages, 500);
         });
 
-        $('#sort-select').on('change', fetchMessages);
+        $('#read-status-select, #sort-select').on('change', fetchMessages);
 
         $(document).on('click', '.pagination a', function(e) {
             e.preventDefault();
@@ -86,7 +98,35 @@
                 }
             });
         });
+
+        $(document).on('click', '.mark-as-read', function(e) {
+            e.preventDefault();
+            const btn = $(this);
+            const url = btn.data('url');
+
+            if (!url) return;
+
+            btn.prop('disabled', true);
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success(response.message);
+                        }
+                        fetchMessages(); 
+                    }
+                },
+                error: function() {
+                    btn.prop('disabled', false);
+                }
+            });
+        });
     });
 </script>
 @endsection
-

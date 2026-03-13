@@ -38,12 +38,12 @@
                             <i class="bx bx-show fs-16"></i>
                         </a>
                         @if(!$message->is_read)
-                            <form action="{{ route('admin.contact_messages.read', $message->id) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-soft-success btn-sm" title="Mark as Read">
-                                    <i class="bx bx-check-double fs-16"></i>
-                                </button>
-                            </form>
+                            <button type="button" class="btn btn-soft-success btn-sm mark-as-read" 
+                                data-id="{{ $message->id }}" 
+                                data-url="{{ route('admin.contact_messages.read', $message->id) }}"
+                                title="Mark as Read">
+                                <i class="bx bx-check-double fs-16"></i>
+                            </button>
                         @endif
                         <form action="{{ route('admin.contact_messages.destroy', $message->id) }}" method="POST">
                             @csrf

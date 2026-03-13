@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\ContactService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -38,13 +40,26 @@ class ContactMessageController extends Controller
     /**
      * Mark a message as read.
      */
-    public function markAsRead(int $id): RedirectResponse
+    public function markAsRead(int $id): JsonResponse
     {
         $this->contactService->markAsRead($id);
 
-        return back()->with([
+        return response()->json([
+            'status' => 'success',
             'message' => 'Message marked as read',
-            'alert-type' => 'success',
+        ]);
+    }
+
+    /**
+     * Toggle read status of a message.
+     */
+    public function toggleReadStatus(int $id): JsonResponse
+    {
+        $this->contactService->toggleReadStatus($id);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Message status updated successfully',
         ]);
     }
 

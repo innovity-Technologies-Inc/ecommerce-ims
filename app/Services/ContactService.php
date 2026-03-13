@@ -73,7 +73,18 @@ class ContactService
     }
 
     /**
+     * Toggle the read status of a message.
+     */
+    public function toggleReadStatus(int $id): bool
+    {
+        $message = ContactMessage::findOrFail($id);
+
+        return $message->update(['is_read' => ! $message->is_read]);
+    }
+
+    /**
      * Delete a contact message.
+...
      */
     public function deleteMessage(int $id): bool
     {

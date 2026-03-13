@@ -65,11 +65,11 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::delete('/{id}/destroy', 'destroy')->name('destroy');
     });
 
-    // Contact Messages
     Route::prefix('contact-messages')->name('admin.contact_messages.')->controller(AdminContactMessageController::class)->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/{id}', 'show')->name('show');
         Route::post('/{id}/read', 'markAsRead')->name('read');
+        Route::post('/{id}/toggle-read', 'toggleReadStatus')->name('toggle-read');
         Route::delete('/{id}', 'destroy')->name('destroy');
     });
 
