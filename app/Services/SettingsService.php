@@ -80,4 +80,17 @@ class SettingsService
 
         return $setting;
     }
+
+    /**
+     * Update social login settings.
+     */
+    public function updateSocialLoginSettings(array $data): \App\Models\SocialLoginSetting
+    {
+        $setting = \App\Models\SocialLoginSetting::first() ?? new \App\Models\SocialLoginSetting;
+        $data['google_status'] = isset($data['google_status']);
+        $setting->fill($data);
+        $setting->save();
+
+        return $setting;
+    }
 }

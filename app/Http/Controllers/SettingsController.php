@@ -5,12 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ContactSettingRequest;
 use App\Http\Requests\GeneralSettingRequest;
 use App\Http\Requests\MailSettingRequest;
+use App\Http\Requests\SocialLoginSettingRequest;
 use App\Models\ContactSetting;
 use App\Models\GeneralSetting;
 use App\Models\MailSetting;
-use App\Services\SettingsService;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
+use App\Models\SocialLoginSetting;
 
 class SettingsController extends Controller
 {
@@ -35,6 +34,13 @@ class SettingsController extends Controller
         $setting = ContactSetting::first();
 
         return view('admin.settings.contact', compact('setting'));
+    }
+
+    public function socialLoginSettings(): View
+    {
+        $setting = SocialLoginSetting::first() ?? new SocialLoginSetting;
+
+        return view('admin.settings.social-login', compact('setting'));
     }
 
     public function updateGeneralSettings(GeneralSettingRequest $request): RedirectResponse
@@ -63,6 +69,16 @@ class SettingsController extends Controller
 
         return back()->with([
             'message' => 'Contact settings updated successfully',
+            'alert-type' => 'success',
+        ]);
+    }
+
+    public function updateSocialLoginSettings(SocialLoginSettingRequest $request): RedirectResponse
+    {
+        $this->settingsService->updateSocialLoginSettings($request->validated());
+
+        return back()->with([
+            'message' => 'Social login settings updated successfully',
             'alert-type' => 'success',
         ]);
     }
