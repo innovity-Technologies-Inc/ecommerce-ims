@@ -209,6 +209,9 @@
                         <li class="sub-nav-item">
                             <a class="sub-nav-link" href="{{ route('admin.settings.contact') }}">Contact Settings</a>
                         </li>
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="{{ route('admin.settings.social_login') }}">Social Login Settings</a>
+                        </li>
                     </ul>
                 </div>
             </li>

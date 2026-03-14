@@ -42,6 +42,19 @@
 
                                                 <button type="submit"><span>Login</span></button>
                                             </div>
+
+                                            @php
+                                                $socialSetting = \App\HelperClass::socialLoginSettings();
+                                            @endphp
+                                            
+                                            @if($socialSetting && $socialSetting->google_status)
+                                                <div class="login-social mt-4 text-center">
+                                                    <p class="mb-2">Or Login with</p>
+                                                    <a href="{{ route('auth.google') }}" class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2">
+                                                        <i class="bx bxl-google fs-20"></i> Google
+                                                    </a>
+                                                </div>
+                                            @endif
                                         </form>
                                     </div>
                                 </div>
