@@ -6,6 +6,7 @@ use App\Mail\OrderConfirmationMail;
 use App\Mail\OrderStatusUpdateMail;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\OrderStatusLog;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\ShippingMethod;
@@ -92,6 +93,12 @@ class OrderService
             if (in_array($oldStatus, ['Delivered', 'Cancelled', 'Rejected'])) {
                 throw new \Exception("Order status cannot be changed once it is {$oldStatus}.");
             }
+
+            // Historical check: Prevent moving to a status that has already been used
+            if ($order->statusLogs()->where('status', $status)->exists()) {
+                throw new \Exception("Order has already been in the '{$status}' status. Status cannot be reused.");
+            }
+
             // Define statuses that are considered "Active" (stock is deducted)
             $activeStatuses = ['Pending', 'Processing', 'Out for Delivery', 'Delivered'];
             // Define statuses that are considered "Restorative" (stock should be returned)
@@ -109,6 +116,13 @@ class OrderService
 
             $order->order_status = $status;
             $order->save();
+
+            // Log status change
+            OrderStatusLog::create([
+                'order_id' => $order->id,
+                'status' => $status,
+                'changed_at' => now(),
+            ]);
 
             Log::info("Order {$order->order_id} status updated from {$oldStatus} to {$status}");
 
@@ -225,6 +239,13 @@ class OrderService
                 'payment_status' => 'Pending',
                 'order_status' => 'Pending',
                 'notes' => $data['notes'] ?? null,
+            ]);
+
+            // Log initial Pending status
+            OrderStatusLog::create([
+                'order_id' => $order->id,
+                'status' => 'Pending',
+                'changed_at' => now(),
             ]);
 
             foreach ($cartItems as $item) {
@@ -353,6 +374,6 @@ class OrderService
      */
     public function trackOrderById(string $orderId): ?Order
     {
-        return Order::with(['orderItems'])->where('order_id', $orderId)->first();
+        return Order::with(['orderItems', 'statusLogs'])->where('order_id', $orderId)->first();
     }
 }

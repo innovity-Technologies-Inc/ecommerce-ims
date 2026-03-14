@@ -277,9 +277,10 @@ Every module or architectural change must be documented in this file before a ta
 - **How it Works:**
   - **Restriction:** Once an order's status is set to `Delivered`, `Cancelled`, or `Rejected`, it becomes final. No further status transitions are allowed.
   - **Workflow Optimization:** The `Pending` status has been removed from the manual update dropdown. Orders start as `Pending` by default upon creation, and admins can move them forward to `Processing`, `Out for Delivery`, etc., but cannot manually revert an order back to a `Pending` state.
+  - **Process Integrity:** To prevent cyclical workflows and redundant logging, the system prevents an order from being moved to any status it has previously held. For example, if an order moves from `Processing` to `Out for Delivery`, it cannot be moved back to `Processing`.
   - **UI Feedback:** The status update form in the Admin Order Details page is automatically hidden and replaced with an informative alert message (Success for Delivered, Danger for Cancelled/Rejected) when an order reaches a terminal state.
 - **Implementation Details:**
-  - **Service-Level Guard:** `OrderService::updateOrderStatus` throws an exception if an attempt is made to change the status of an already delivered, cancelled, or rejected order.
+  - **Service-Level Guard:** `OrderService::updateOrderStatus` throws an exception if an attempt is made to change the status of an already delivered, cancelled, or rejected order, or if the new status exists in the order's history (`statusLogs`).
   - **Controller Handling:** `OrderController` catches these exceptions and returns a session error message to the admin.
 
 ---

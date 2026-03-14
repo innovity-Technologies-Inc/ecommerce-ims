@@ -152,6 +152,24 @@
                                                     </div>
                                                 @endif
 
+                                                <!-- Status Change History -->
+                                                @if($order->statusLogs->count() > 0)
+                                                    <div class="status-history mb-5">
+                                                        <h6 class="fw-bold border-bottom pb-2 mb-3 text-primary"><i class="fa fa-history me-2"></i>Status History</h6>
+                                                        <div class="timeline-wrapper ps-3">
+                                                            @foreach($order->statusLogs as $log)
+                                                                <div class="timeline-item position-relative ps-4 pb-3 {{ !$loop->last ? 'border-start' : '' }}" style="border-color: #eee !important;">
+                                                                    <div class="timeline-dot position-absolute start-0 translate-middle-x rounded-circle bg-white border border-2 {{ $loop->first ? 'border-primary' : 'border-secondary' }}" style="width: 12px; height: 12px; margin-left: -1px; top: 5px;"></div>
+                                                                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center">
+                                                                        <span class="fw-bold text-dark">{{ $log->status }}</span>
+                                                                        <span class="small text-muted">{{ $log->changed_at->format('M d, Y - h:i A') }}</span>
+                                                                    </div>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                @endif
+
                                                 <div class="row g-4 mt-4">
                                                     <div class="col-md-6">
                                                         <div class="p-4 border rounded bg-light-subtle h-100">
