@@ -252,6 +252,16 @@ Every module or architectural change must be documented in this file before a ta
   - **Refined Price Filter:** The pricing logic in `FrontendService` prioritizes `discount_price` and correctly handles products whose price is defined solely in variants (0/NULL base price) by performing a nested variant check.
   - **Security:** While public, the invoice access is protected by the unique Order ID requirement and is read-only.
 
+### 3.20 Product Stock Display
+- **What:** Real-time visibility of inventory levels for both admins and customers.
+- **How it Works:**
+  - **Admin Interface:** The product details page in the admin panel now displays "Base Stock" for simple products and a detailed breakdown of stock for each variant in the variation table.
+  - **Client Interface:** The product details page features an "Availability" badge that dynamically updates based on the selected variant.
+  - **Dynamic Interactivity:** Integrated with JavaScript, selecting a variant instantly updates the stock status (e.g., "15 In Stock" vs "Out of Stock").
+- **Implementation Details:**
+  - **Unified Stock Tracking:** Supports the hybrid inventory model where stock can be managed globally at the product level (Base Stock) or specifically per variant.
+  - **Auto-Disable Cart:** The "Add to Cart" button is automatically hidden if the selected item/variant is out of stock, ensuring a smooth customer experience.
+
 ---
 
 ## 4. Frontend & UI Standardization Refinements

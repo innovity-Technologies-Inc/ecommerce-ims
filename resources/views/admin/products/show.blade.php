@@ -79,6 +79,10 @@
                         </div>
                     </div>
                     <div class="row mb-3">
+                        <div class="col-sm-3 fw-bold">Base Stock:</div>
+                        <div class="col-sm-9 text-muted">{{ $product->stock ?? 0 }}</div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-sm-3 fw-bold">Description:</div>
                         <div class="col-sm-9 text-muted">{!! $product->description !!}</div>
                     </div>

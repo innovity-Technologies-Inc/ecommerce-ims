@@ -82,6 +82,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-60:** Frontend Architectural Refactoring (Implementation of Thin Controllers, Service Layer, and Form Requests for the Frontend module).
 - [x] **REQ-61:** Public Invoice Access (Ability to print invoices from the Order Tracking page without authentication).
 - [x] **REQ-62:** Optimized Variant Display (Intelligent formatting of variant details in Cart, Mini-Cart, and Checkout to handle missing size/color attributes gracefully).
+- [x] **REQ-63:** Product Stock Display (Detailed stock availability on Product Details pages for both Client and Admin interfaces, supporting both base and variant-wise quantities).
 
 
 
