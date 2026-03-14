@@ -54,6 +54,18 @@ class AppServiceProvider extends ServiceProvider
                     }
                 }
             }
+
+            // 3. Social Login Settings (Overrides Socialite configuration if defined)
+            if (\Illuminate\Support\Facades\Schema::hasTable('social_login_settings')) {
+                $socialSetting = \App\Models\SocialLoginSetting::first();
+                if ($socialSetting) {
+                    config([
+                        'services.google.client_id' => $socialSetting->google_client_id,
+                        'services.google.client_secret' => $socialSetting->google_client_secret,
+                        'services.google.redirect' => $socialSetting->google_redirect_url,
+                    ]);
+                }
+            }
         } catch (\Exception $e) {
             // Silently fail if DB not migrated yet
         }
