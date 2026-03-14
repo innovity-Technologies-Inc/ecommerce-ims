@@ -262,6 +262,16 @@ Every module or architectural change must be documented in this file before a ta
   - **Unified Stock Tracking:** Supports the hybrid inventory model where stock can be managed globally at the product level (Base Stock) or specifically per variant.
   - **Auto-Disable Cart:** The "Add to Cart" button is automatically hidden if the selected item/variant is out of stock, ensuring a smooth customer experience.
 
+### 3.21 Automated Stock Management
+- **What:** Automatic synchronization of inventory levels during the order lifecycle.
+- **How it Works:**
+  - **Deduction on Placement:** When a customer places an order (`placeOrder`), the system automatically decrements the stock for each purchased item (either base stock or variant stock) based on the quantity ordered.
+  - **Restoration on Cancellation/Rejection:** If an admin or system update changes an order's status to `Cancelled` or `Rejected`, the system automatically increments the stock back to its previous levels.
+  - **Status Reversibility:** If an order is moved from a restorative status (`Cancelled`/`Rejected`) back to an active status (e.g., `Pending`), the stock is intelligently re-deducted.
+- **Implementation Details:**
+  - **Transaction Integrity:** All stock adjustments are wrapped in database transactions (`DB::transaction`) within the `OrderService` to prevent data inconsistencies.
+  - **Intelligent Logic:** The `adjustStock` helper method in `OrderService` handles the heavy lifting, ensuring that variant-specific stock is prioritized over base stock where applicable.
+
 ---
 
 ## 4. Frontend & UI Standardization Refinements

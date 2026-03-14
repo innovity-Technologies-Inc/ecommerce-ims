@@ -6,6 +6,8 @@ use App\Mail\OrderConfirmationMail;
 use App\Mail\OrderStatusUpdateMail;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\ShippingMethod;
 use DaiyanMozumder\LaravelFlexSearch\FlexSearch;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -16,6 +18,11 @@ use Illuminate\Support\Str;
 
 class OrderService
 {
+    public function __construct(
+        protected CartService $cartService,
+        protected CouponService $couponService
+    ) {}
+
     /**
      * Get all orders with search and sorting.
      */
@@ -25,7 +32,6 @@ class OrderService
 
         $filters = [];
 
-        // Map parameters to FlexSearch filters
         if (! empty($params['order_status'])) {
             $filters['order_status'] = $params['order_status'];
         }
@@ -50,10 +56,8 @@ class OrderService
         $searchTerm = $params['search'] ?? null;
         $searchableColumns = ['order_id', 'name', 'email', 'mobile'];
 
-        // Apply both filtering and searching via FlexSearch
         $query = $flexSearch->apply($query, $filters, $searchTerm, $searchableColumns);
 
-        // Apply Sorting
         $sort = $params['sort'] ?? 'latest';
         switch ($sort) {
             case 'oldest':
@@ -74,27 +78,65 @@ class OrderService
         return $query->paginate($perPage);
     }
 
-    public function __construct(
-        protected CartService $cartService,
-        protected CouponService $couponService
-    ) {}
-
     /**
      * Update order status and send notification if requested.
      */
     public function updateOrderStatus(Order $order, string $status, bool $notify = false): bool
     {
-        $order->update(['order_status' => $status]);
+        return DB::transaction(function () use ($order, $status, $notify) {
+            $oldStatus = $order->order_status;
 
-        if ($notify) {
-            try {
-                Mail::to($order->email)->send(new OrderStatusUpdateMail($order));
-            } catch (\Exception $e) {
-                Log::error('Order Status Update Email failed: '.$e->getMessage());
+            // Define statuses that are considered "Active" (stock is deducted)
+            $activeStatuses = ['Pending', 'Processing', 'Out for Delivery', 'Delivered'];
+            // Define statuses that are considered "Restorative" (stock should be returned)
+            $restorativeStatuses = ['Cancelled', 'Rejected'];
+
+            // If changing from an active status to a restorative status, return the stock
+            if (in_array($oldStatus, $activeStatuses) && in_array($status, $restorativeStatuses)) {
+                $this->adjustStock($order, 'increase');
+            }
+
+            // If changing from a restorative status back to an active status, deduct the stock again
+            if (in_array($oldStatus, $restorativeStatuses) && in_array($status, $activeStatuses)) {
+                $this->adjustStock($order, 'decrease');
+            }
+
+            $order->update(['order_status' => $status]);
+
+            if ($notify) {
+                try {
+                    Mail::to($order->email)->send(new OrderStatusUpdateMail($order));
+                } catch (\Exception $e) {
+                    Log::error('Order Status Update Email failed: '.$e->getMessage());
+                }
+            }
+
+            return true;
+        });
+    }
+
+    /**
+     * Adjust stock for all items in an order.
+     */
+    protected function adjustStock(Order $order, string $direction): void
+    {
+        $order->load('orderItems');
+
+        foreach ($order->orderItems as $item) {
+            $quantity = ($direction === 'increase') ? $item->quantity : -$item->quantity;
+
+            if ($item->product_variant_id) {
+                $variant = ProductVariant::find($item->product_variant_id);
+                if ($variant) {
+                    $variant->increment('stock', $quantity);
+                }
+            } else {
+                $product = Product::find($item->product_id);
+                if ($product) {
+                    $product->increment('stock', $quantity);
+                }
             }
         }
-
-        return true;
     }
 
     /**
@@ -181,6 +223,15 @@ class OrderService
                     'quantity' => $item->quantity,
                     'total_price' => $item->subtotal,
                 ]);
+
+                // Deduct Stock
+                if ($item->variant_id) {
+                    $variant = ProductVariant::findOrFail($item->variant_id);
+                    $variant->decrement('stock', $item->quantity);
+                } else {
+                    $product = Product::findOrFail($item->product_id);
+                    $product->decrement('stock', $item->quantity);
+                }
             }
 
             // Record Coupon Usage
@@ -195,7 +246,6 @@ class OrderService
             try {
                 Mail::to($order->email)->send(new OrderConfirmationMail($order));
             } catch (\Exception $e) {
-                // Log the error but don't fail the order placement
                 Log::error('Order Confirmation Email failed: '.$e->getMessage());
             }
 
