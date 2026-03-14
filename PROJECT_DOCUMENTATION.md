@@ -219,10 +219,10 @@ Every module or architectural change must be documented in this file before a ta
   - **Discount Logic:** Supports both "Percentage" and "Fixed" discount types. For percentage discounts, an optional "Maximum Discount Amount" can be set to cap the total savings.
   - **Usage Controls:** Includes "Minimum Spend" requirements and "Usage Limits" (total times a coupon can be used).
   - **Client-Side Application:** Customers can apply coupons on the Checkout page. The system uses AJAX to validate the code and instantly update the Discount and Grand Total in the order summary without a page reload.
-  - **Usage Tracking:** Every successful coupon application is recorded in the `coupon_usages` table, tracking the Coupon ID, User ID, Name, Email, Order ID, and the specific discount amount applied.
+  - **Usage Tracking & Audit:** Every successful coupon application is recorded in the `coupon_usages` table. Administrators can access a dedicated **Usage History** page for any specific coupon via a history icon in the coupon list. This page provides a granular audit trail including Customer Name, Email, Order ID, exact discount applied, and timestamp.
   - **Advanced Admin Filtering:** Admins can search by code and filter by Application Area (Product vs Shipping), Status (Active/Inactive), and two separate date ranges (Active Range and Expiry Range).
 - **Implementation Details:** 
-  - **Service Layer Pattern:** `CouponService` centralizes all CRUD logic, multi-column filtering, validation, discount calculation, and usage recording.
+  - **Service Layer Pattern:** `CouponService` centralizes all CRUD logic, multi-column filtering, validation, discount calculation, and history retrieval.
   - **Model Validation:** The `Coupon` model includes an `isValid()` method that encapsulates the complex business logic for checking status, date ranges, and usage limits in a single, reusable call.
   - **Checkout Integration:** `OrderService::placeOrder()` performs a final server-side validation of the coupon before creating the order. It then calls `CouponService::recordUsage()` to update the tracking history and increment the global `used_count`.
   - **Session Management:** Applied coupons are temporarily stored in the session (`session('coupon')`) during the checkout process to ensure persistence and easy removal.

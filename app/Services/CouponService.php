@@ -178,4 +178,15 @@ class CouponService
 
         $coupon->increment('used_count');
     }
+
+    /**
+     * Get usage history for a specific coupon.
+     */
+    public function getUsageHistory(Coupon $coupon, int $perPage = 15): LengthAwarePaginator
+    {
+        return $coupon->usages()
+            ->with(['order', 'user'])
+            ->latest()
+            ->paginate($perPage);
+    }
 }

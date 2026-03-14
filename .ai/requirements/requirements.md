@@ -86,6 +86,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-64:** Automated Stock Management (Automatic decrement of stock upon order placement and restorative increment upon order cancellation/rejection).
 - [x] **REQ-65:** Order Status Finality (Prevent further status changes once an order is set to 'Delivered', 'Cancelled' or 'Rejected').
 - [x] **REQ-66:** Status Reuse Restriction (Prevent an order from being moved to any status it has previously held in its lifecycle).
+- [x] **REQ-67:** Coupon Usage History (Dedicated administrative page to track detailed audit trails of specific coupon applications, including user and order data).
 
 
 

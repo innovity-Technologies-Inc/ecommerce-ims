@@ -51,6 +51,9 @@
                     </td>
                     <td>
                         <div class="d-flex gap-2">
+                            <a href="{{ route('admin.coupons.history', $coupon->id) }}" class="btn btn-soft-info btn-sm" title="Usage History">
+                                <iconify-icon icon="solar:history-bold-duotone" class="fs-16"></iconify-icon>
+                            </a>
                             <a href="{{ route('admin.coupons.edit', $coupon->id) }}" class="btn btn-soft-primary btn-sm">
                                 <iconify-icon icon="solar:pen-bold-duotone" class="fs-16"></iconify-icon>
                             </a>

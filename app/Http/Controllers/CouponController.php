@@ -95,4 +95,14 @@ class CouponController extends Controller
             'message' => 'Coupon status updated successfully',
         ]);
     }
+
+    /**
+     * Display usage history for a specific coupon.
+     */
+    public function usageHistory(Coupon $coupon): View
+    {
+        $usages = $this->couponService->getUsageHistory($coupon);
+
+        return view('admin.coupons.usage-history', compact('coupon', 'usages'));
+    }
 }
