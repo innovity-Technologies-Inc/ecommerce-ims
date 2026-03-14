@@ -2,12 +2,30 @@
 
 namespace App\Services;
 
+use App\Mail\ContactConfirmationMail;
 use App\Models\ContactMessage;
 use DaiyanMozumder\LaravelFlexSearch\FlexSearch;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Mail;
 
 class ContactService
 {
+    /**
+     * Store a new contact message and send confirmation mail.
+     */
+    public function storeMessage(array $data): ContactMessage
+    {
+        $message = ContactMessage::create($data);
+
+        try {
+            Mail::to($message->email)->send(new ContactConfirmationMail($message));
+        } catch (\Exception $e) {
+            // Log or ignore to ensure the user's experience isn't interrupted by SMTP connection issues
+        }
+
+        return $message;
+    }
+
     /**
      * Get all contact messages with search and sorting.
      */
