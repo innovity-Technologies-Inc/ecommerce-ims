@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ContactMessageController as AdminContactMessageController;
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
+use App\Http\Controllers\Auth\SocialLoginController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
@@ -17,6 +18,9 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\ShippingMethodController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/auth/google', [SocialLoginController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [SocialLoginController::class, 'handleGoogleCallback']);
 
 Route::get('/test', function () {
     return view('dashboard');
@@ -54,6 +58,8 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::post('/mail/update', 'updateMailSettings')->name('admin.settings.mail.update');
         Route::get('/contact', 'contactSettings')->name('admin.settings.contact');
         Route::post('/contact/update', 'updateContactSettings')->name('admin.settings.contact.update');
+        Route::get('/social-login', 'socialLoginSettings')->name('admin.settings.social_login');
+        Route::post('/social-login/update', 'updateSocialLoginSettings')->name('admin.settings.social_login.update');
     });
 
     Route::resource('sliders', \App\Http\Controllers\SliderController::class)->names('admin.sliders');
