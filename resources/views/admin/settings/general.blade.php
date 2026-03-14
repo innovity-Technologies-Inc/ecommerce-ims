@@ -12,18 +12,25 @@
                     <form action="{{ route('admin.settings.general.update') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
-                            <div class="col-lg-6">
+                            <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="business_name" class="form-label">Business Name</label>
                                     <input type="text" name="business_name" id="business_name" class="form-control" value="{{ old('business_name', $setting->business_name ?? '') }}">
                                     @error('business_name') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
                             </div>
-                            <div class="col-lg-6">
+                            <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="currency" class="form-label">Currency (e.g. $, €)</label>
                                     <input type="text" name="currency" id="currency" class="form-control" value="{{ old('currency', $setting->currency ?? '') }}">
                                     @error('currency') <span class="text-danger small">{{ $message }}</span> @enderror
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                    <label for="low_stock_limit" class="form-label">Low Stock Limit</label>
+                                    <input type="number" name="low_stock_limit" id="low_stock_limit" class="form-control" value="{{ old('low_stock_limit', $setting->low_stock_limit ?? 5) }}">
+                                    @error('low_stock_limit') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
                             </div>
 
