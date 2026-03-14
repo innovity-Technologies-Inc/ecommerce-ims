@@ -36,6 +36,7 @@ class ProductRequest extends FormRequest
             'is_hot_deal' => ['nullable', 'boolean'],
             'is_featured' => ['nullable', 'boolean'],
             'status' => ['nullable', 'boolean'],
+            'stock' => ['nullable', 'integer', 'min:0'],
             'variants' => ['nullable', 'array'],
             'variants.*.variant_name' => ['required_with:variants', 'string', 'max:255'],
             'variants.*.sku' => [

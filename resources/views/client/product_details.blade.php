@@ -76,6 +76,17 @@
                             <p>{{ $product->short_description }}</p>
                         </div>
 
+                        <div class="mb-3">
+                            <label class="fw-bold text-dark me-2">Availability:</label>
+                            <span id="stock-display" class="badge {{ ($product->variants->count() > 0 ? ($product->variants->first()->stock > 0) : ($product->stock > 0)) ? 'bg-success' : 'bg-danger' }}">
+                                @if($product->variants->count() > 0)
+                                    {{ $product->variants->first()->stock > 0 ? $product->variants->first()->stock . ' In Stock' : 'Out of Stock' }}
+                                @else
+                                    {{ $product->stock > 0 ? $product->stock . ' In Stock' : 'Out of Stock' }}
+                                @endif
+                            </span>
+                        </div>
+
                         @if($product->variants->count() > 0)
                         <div class="mb-4 pt-2">
                             <label class="d-block mb-2 fw-bold" style="color: #253237; font-size: 14px;">Available Variants</label>
@@ -103,7 +114,7 @@
                                         <option value="{{ $variant->id }}"
                                                 data-regular-price="{{ number_format($variant->regular_price ?? $product->regular_price, 2) }}"
                                                 data-discount-price="{{ ($variant->discount_price > 0) ? number_format($variant->discount_price, 2) : ( ($product->discount_price > 0) ? number_format($product->discount_price, 2) : '' ) }}"
-                                                data-discount-percentage="{{ $variant->discount_percentage ?? $product->discount_percentage ?? '' }}"                                                data-stock="{{ $variant->stock ?? 'In Stock' }}">
+                                                data-discount-percentage="{{ $variant->discount_percentage ?? $product->discount_percentage ?? '' }}"                                                data-stock="{{ $variant->stock ?? 0 }}">
                                             {{ $variant->variant_name }}
                                         </option>
                                     @endforeach
@@ -256,13 +267,27 @@
                 const selected = $(this).find(':selected');
                 const regPrice = selected.data('regular-price');
                 const discPrice = selected.data('discount-price');
+                const stock = parseInt(selected.data('stock'));
+                const stockDisplay = $('#stock-display');
                 
+                // Update Price
                 if (discPrice) {
                     $('#current-selling-price').text(currency + discPrice);
                     $('#old-regular-price').text(currency + regPrice).show();
                 } else {
                     $('#current-selling-price').text(currency + regPrice);
                     $('#old-regular-price').hide();
+                }
+
+                // Update Stock
+                if (!isNaN(stock)) {
+                    if (stock > 0) {
+                        stockDisplay.text(stock + ' In Stock').removeClass('bg-danger').addClass('bg-success');
+                        $('.add-to-cart-btn').parent().show();
+                    } else {
+                        stockDisplay.text('Out of Stock').removeClass('bg-success').addClass('bg-danger');
+                        $('.add-to-cart-btn').parent().hide();
+                    }
                 }
             });
         });

@@ -256,6 +256,7 @@ Every module or architectural change must be documented in this file before a ta
 
 ## 4. Frontend & UI Standardization Refinements
 - **Cart & Checkout UI:** Utilizes an 8/4 Bootstrap grid split. Flexbox `align-items-stretch` ensures promotional banners explicitly match the height of summary cards.
+- **Mini-Cart Simplification:** The off-canvas mini-cart has been streamlined by removing the redundant "Checkout" button, leaving only the "View Cart" button. This encourages users to review their items and select a shipping method on the full cart page before proceeding to checkout, reducing potential errors.
 - **Mobile Header:** Implements a strict 3-6-3 column grid to ensure the hamburger menu, centered logo, and action icons (cart/user) remain perfectly aligned on small devices.
 - **Search UI:** Streamlined to a pure text-input with FlexSearch autocomplete, omitting clunky category dropdowns for a cleaner aesthetic.
 - **Navbar Simplification:** Removed redundant "Pages" and "Blog" menus from the main navigation. Replaced them with a consolidated "Account" dropdown menu that provides direct access to User Profile, Order History, Wishlist, and Authentication links (Login/Register/Logout) for both desktop and mobile views.

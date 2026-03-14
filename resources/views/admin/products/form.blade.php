@@ -134,6 +134,16 @@
                                 </div>
                             </div>
 
+                            <div class="col-lg-12 base-price-section" style="{{ isset($product) && !$product->regular_price ? 'display:none;' : '' }}">
+                                <div class="mb-3">
+                                    <label for="stock" class="form-label">Base Stock Quantity</label>
+                                    <input type="number" name="stock" id="stock" class="form-control" placeholder="e.g. 100" value="{{ old('stock', $product->stock ?? '') }}">
+                                    @error('stock')
+                                    <span class="small text-danger">{{$message}}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
                             <!-- Product Flags -->
                             <div class="col-lg-12 mb-3">
                                 <label class="form-label d-block">Product Flags</label>

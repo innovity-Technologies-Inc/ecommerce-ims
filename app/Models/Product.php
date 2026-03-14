@@ -23,6 +23,7 @@ class Product extends Model
         'sales_count',
         'status',
         'is_flash_sale',
+        'stock',
     ];
 
     protected function casts(): array
@@ -36,6 +37,7 @@ class Product extends Model
             'is_featured' => 'boolean',
             'status' => 'boolean',
             'sales_count' => 'integer',
+            'stock' => 'integer',
         ];
     }
 
