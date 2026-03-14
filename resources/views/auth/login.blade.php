@@ -10,11 +10,11 @@
                                 <div class="auth-logo mb-4">
                                     @php($gs = \App\HelperClass::generalSettings())
                                     <a href="{{route('admin.login')}}" class="logo-dark">
-                                        <img src="{{ $gs->light_logo ? asset('storage/'.$gs->light_logo) : asset('admin_assets/assets/images/logo-light.png') }}" height="50" alt="logo dark">
+                                        <img src="{{ ($gs && $gs->light_logo) ? asset('storage/'.$gs->light_logo) : asset('admin_assets/assets/images/logo-light.png') }}" height="50" alt="logo dark">
                                     </a>
 
                                     <a href="{{route('admin.login')}}" class="logo-light">
-                                        <img src="{{ $gs->light_logo ? asset('storage/'.$gs->light_logo) : asset('admin_assets/assets/images/logo-light.png') }}" height="50" alt="logo light">
+                                        <img src="{{ ($gs && $gs->light_logo) ? asset('storage/'.$gs->light_logo) : asset('admin_assets/assets/images/logo-light.png') }}" height="50" alt="logo light">
                                     </a>
                                 </div>
 

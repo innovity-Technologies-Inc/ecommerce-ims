@@ -13,17 +13,17 @@ class HelperClass
 {
     public static function generalSettings()
     {
-        return GeneralSetting::first();
+        return GeneralSetting::first() ?? new GeneralSetting;
     }
 
     public static function contactSettings()
     {
-        return ContactSetting::first();
+        return ContactSetting::first() ?? new ContactSetting;
     }
 
     public static function socialLoginSettings()
     {
-        return \App\Models\SocialLoginSetting::first();
+        return \App\Models\SocialLoginSetting::first() ?? new \App\Models\SocialLoginSetting;
     }
 
     public static function getCategories()
