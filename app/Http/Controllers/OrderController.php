@@ -46,13 +46,23 @@ class OrderController extends Controller
      */
     public function updateStatus(UpdateOrderStatusRequest $request, Order $order): RedirectResponse
     {
-        $this->orderService->updateOrderStatus(
-            $order,
-            $request->order_status,
-            $request->has('email_notify')
-        );
+        try {
+            $this->orderService->updateOrderStatus(
+                $order,
+                $request->order_status,
+                $request->has('email_notify')
+            );
 
-        return redirect()->back()->with('success', 'Order status updated successfully!');
+            return redirect()->back()->with([
+                'message' => 'Order status updated successfully!',
+                'alert-type' => 'success',
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with([
+                'message' => $e->getMessage(),
+                'alert-type' => 'error',
+            ]);
+        }
     }
 
     /**
@@ -62,7 +72,10 @@ class OrderController extends Controller
     {
         $this->orderService->generateInvoice($order);
 
-        return redirect()->back()->with('success', 'Invoice generated successfully!');
+        return redirect()->back()->with([
+            'message' => 'Invoice generated successfully!',
+            'alert-type' => 'success',
+        ]);
     }
 
     /**
@@ -72,7 +85,10 @@ class OrderController extends Controller
     {
         $this->orderService->regenerateInvoice($order);
 
-        return redirect()->back()->with('success', 'Invoice regenerated successfully!');
+        return redirect()->back()->with([
+            'message' => 'Invoice regenerated successfully!',
+            'alert-type' => 'success',
+        ]);
     }
 
     /**
@@ -96,6 +112,9 @@ class OrderController extends Controller
     {
         $this->orderService->deleteOrder($order);
 
-        return redirect()->route('admin.orders.index')->with('success', 'Order deleted successfully!');
+        return redirect()->route('admin.orders.index')->with([
+            'message' => 'Order deleted successfully!',
+            'alert-type' => 'success',
+        ]);
     }
 }

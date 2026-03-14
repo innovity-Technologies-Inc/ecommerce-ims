@@ -83,9 +83,15 @@ class OrderService
      */
     public function updateOrderStatus(Order $order, string $status, bool $notify = false): bool
     {
+        $status = trim($status);
+
         return DB::transaction(function () use ($order, $status, $notify) {
             $oldStatus = $order->order_status;
 
+            // Finality check: If current status is Delivered, Cancelled or Rejected, do not allow changes
+            if (in_array($oldStatus, ['Delivered', 'Cancelled', 'Rejected'])) {
+                throw new \Exception("Order status cannot be changed once it is {$oldStatus}.");
+            }
             // Define statuses that are considered "Active" (stock is deducted)
             $activeStatuses = ['Pending', 'Processing', 'Out for Delivery', 'Delivered'];
             // Define statuses that are considered "Restorative" (stock should be returned)
@@ -101,7 +107,10 @@ class OrderService
                 $this->adjustStock($order, 'decrease');
             }
 
-            $order->update(['order_status' => $status]);
+            $order->order_status = $status;
+            $order->save();
+
+            Log::info("Order {$order->order_id} status updated from {$oldStatus} to {$status}");
 
             if ($notify) {
                 try {
@@ -123,17 +132,23 @@ class OrderService
         $order->load('orderItems');
 
         foreach ($order->orderItems as $item) {
-            $quantity = ($direction === 'increase') ? $item->quantity : -$item->quantity;
-
             if ($item->product_variant_id) {
                 $variant = ProductVariant::find($item->product_variant_id);
                 if ($variant) {
-                    $variant->increment('stock', $quantity);
+                    if ($direction === 'increase') {
+                        $variant->increment('stock', $item->quantity);
+                    } else {
+                        $variant->decrement('stock', $item->quantity);
+                    }
                 }
             } else {
                 $product = Product::find($item->product_id);
                 if ($product) {
-                    $product->increment('stock', $quantity);
+                    if ($direction === 'increase') {
+                        $product->increment('stock', $item->quantity);
+                    } else {
+                        $product->decrement('stock', $item->quantity);
+                    }
                 }
             }
         }
@@ -300,7 +315,6 @@ class OrderService
     public function getStatusList(): array
     {
         return [
-            'Pending' => 'Pending',
             'Processing' => 'Processing',
             'Out for Delivery' => 'Out for Delivery',
             'Delivered' => 'Delivered',

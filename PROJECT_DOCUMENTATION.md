@@ -272,6 +272,16 @@ Every module or architectural change must be documented in this file before a ta
   - **Transaction Integrity:** All stock adjustments are wrapped in database transactions (`DB::transaction`) within the `OrderService` to prevent data inconsistencies.
   - **Intelligent Logic:** The `adjustStock` helper method in `OrderService` handles the heavy lifting, ensuring that variant-specific stock is prioritized over base stock where applicable.
 
+### 3.22 Order Status Finality & Flow Refinement
+- **What:** Enforces a terminal state for orders and streamlines the administrative status workflow.
+- **How it Works:**
+  - **Restriction:** Once an order's status is set to `Delivered`, `Cancelled`, or `Rejected`, it becomes final. No further status transitions are allowed.
+  - **Workflow Optimization:** The `Pending` status has been removed from the manual update dropdown. Orders start as `Pending` by default upon creation, and admins can move them forward to `Processing`, `Out for Delivery`, etc., but cannot manually revert an order back to a `Pending` state.
+  - **UI Feedback:** The status update form in the Admin Order Details page is automatically hidden and replaced with an informative alert message (Success for Delivered, Danger for Cancelled/Rejected) when an order reaches a terminal state.
+- **Implementation Details:**
+  - **Service-Level Guard:** `OrderService::updateOrderStatus` throws an exception if an attempt is made to change the status of an already delivered, cancelled, or rejected order.
+  - **Controller Handling:** `OrderController` catches these exceptions and returns a session error message to the admin.
+
 ---
 
 ## 4. Frontend & UI Standardization Refinements

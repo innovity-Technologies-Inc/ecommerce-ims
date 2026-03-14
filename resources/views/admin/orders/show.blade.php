@@ -126,26 +126,36 @@
 
                         <hr>
 
-                        <form action="{{ route('admin.orders.update-status', $order->id) }}" method="POST">
-                            @csrf
-                            @method('PUT')
-                            <div class="mb-3">
-                                <label for="order_status" class="form-label">Update Status</label>
-                                <select name="order_status" id="order_status" class="form-select">
-                                    @foreach($statuses as $key => $value)
-                                        <option value="{{ $key }}" {{ $order->order_status === $key ? 'selected' : '' }}>{{ $value }}</option>
-                                    @endforeach
-                                </select>
+                        @if(in_array($order->order_status, ['Delivered', 'Cancelled', 'Rejected']))
+                            @php
+                                $alertClass = $order->order_status === 'Delivered' ? 'alert-soft-success' : 'alert-soft-danger';
+                                $iconClass = $order->order_status === 'Delivered' ? 'bx-check-circle' : 'bx-info-circle';
+                            @endphp
+                            <div class="alert {{ $alertClass }} border-0 mb-0" role="alert">
+                                <i class="bx {{ $iconClass }} me-1"></i> This order is <strong>{{ $order->order_status }}</strong>. The status cannot be changed further.
                             </div>
-                            <div class="mb-4">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" name="email_notify" id="email_notify" value="1">
-                                    <label class="form-check-label fw-medium" for="email_notify">Email Notify Customer</label>
+                        @else
+                            <form action="{{ route('admin.orders.update-status', $order->id) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <div class="mb-3">
+                                    <label for="order_status" class="form-label">Update Status</label>
+                                    <select name="order_status" id="order_status" class="form-select">
+                                        @foreach($statuses as $key => $value)
+                                            <option value="{{ $key }}" {{ $order->order_status === $key ? 'selected' : '' }}>{{ $value }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
-                                <small class="text-muted">If checked, the customer will receive an email about this status update.</small>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100 py-2">Update Status</button>
-                        </form>
+                                <div class="mb-4">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="email_notify" id="email_notify" value="1">
+                                        <label class="form-check-label fw-medium" for="email_notify">Email Notify Customer</label>
+                                    </div>
+                                    <small class="text-muted">If checked, the customer will receive an email about this status update.</small>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100 py-2">Update Status</button>
+                            </form>
+                        @endif
                     </div>
                 </div>
 
