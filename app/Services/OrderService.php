@@ -117,6 +117,13 @@ class OrderService
             $order->order_status = $status;
             $order->save();
 
+            // Increment sales_count if delivered
+            if ($status === 'Delivered') {
+                foreach ($order->orderItems as $item) {
+                    Product::where('id', $item->product_id)->increment('sales_count', $item->quantity);
+                }
+            }
+
             // Log status change
             OrderStatusLog::create([
                 'order_id' => $order->id,
