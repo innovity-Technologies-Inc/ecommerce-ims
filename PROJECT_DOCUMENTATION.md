@@ -295,5 +295,21 @@ Every module or architectural change must be documented in this file before a ta
 - **Admin Assets:** Public admin CSS/JS directories renamed from `public/admin` to `public/admin_assets` to permanently resolve routing conflicts with the `Route::prefix('admin')` backend architecture.
 - **Pagination UI Standardization:** All paginated index pages (both Admin and Client) are standardized to include "Showing X to Y of Z Results" text next to the pagination links. In the Admin panel, this is placed within a `card-footer` using a `d-flex justify-content-between` layout. On the Client side, it is centered above the pagination links to maintain visual balance.
 
+### 3.23 Admin Advanced Dashboard
+- **What:** A comprehensive, real-time analytics hub for administrators to monitor business performance and inventory health.
+- **How it Works:**
+  - **Performance Metrics:** Displays key financial indicators including:
+    - **Total Sales Review:** Monthly and yearly sales totals, along with the lifetime cumulative sales amount.
+    - **Inventory Overview:** Real-time counts of total products and low-stock alerts.
+    - **Customer & Order Analytics:** Tracks total registered customers, this month's order volume, and pending (unfulfilled) orders.
+  - **Visual Data Representation:** Features an interactive **Sales Review Chart** (ApexCharts) that plots monthly sales data for the current year, enabling rapid identification of seasonal trends.
+  - **Proactive Inventory Management:** Automatically identifies and lists products with variants that have fallen below a customizable "Low Stock Limit". This limit can be adjusted in the **General Settings** module.
+  - **Business Intelligence:** Displays a "Best Selling Products" leaderboard based on the lifetime `sales_count` attribute, highlighting top-performing inventory.
+- **Implementation Details:**
+  - **`DashboardService`:** Centralizes all complex aggregation logic. It utilizes optimized Eloquent queries with `SUM()` and `COUNT()` aggregates to ensure high performance even as the database grows.
+  - **Dynamic Charting:** Monthly sales data is retrieved using `DB::raw` with `MONTH()` groupings and passed to an area-style ApexChart via JSON encoding in the Blade view.
+  - **Customizable Alerts:** The "Low Stock" threshold is stored in the `general_settings` table and injected into the service layer, allowing the admin to define what constitutes a stock emergency.
+  - **Integrated Navigation:** The dashboard provides direct links to "Restock" low-stock items or "View Details" for top-performing products, turning insights into immediate actions.
+
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*
