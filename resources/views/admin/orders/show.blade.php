@@ -161,6 +161,48 @@
 
                 <div class="card mt-3">
                     <div class="card-header">
+                        <h5 class="card-title mb-0">Status History</h5>
+                    </div>
+                    <div class="card-body">
+                        @if($order->statusLogs->count() > 0)
+                            <div class="timeline-wrapper">
+                                @foreach($order->statusLogs as $log)
+                                    <div class="d-flex mb-3">
+                                        <div class="flex-shrink-0 me-3">
+                                            @php
+                                                $logClass = match($log->status) {
+                                                    'Pending' => 'bg-warning',
+                                                    'Processing' => 'bg-info',
+                                                    'Out for Delivery' => 'bg-primary',
+                                                    'Delivered' => 'bg-success',
+                                                    'Cancelled' => 'bg-danger',
+                                                    'Rejected' => 'bg-secondary',
+                                                    default => 'bg-dark'
+                                                };
+                                            @endphp
+                                            <div class="avatar-xs">
+                                                <span class="avatar-title rounded-circle {{ $logClass }} shadow">
+                                                    <i class="bx bx-check fs-12"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1 fs-14 fw-bold text-dark">{{ $log->status }}</h6>
+                                            <p class="text-muted mb-0 small">
+                                                <i class="bx bx-time-five me-1"></i> {{ $log->changed_at->format('d M, Y - h:i A') }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <p class="text-muted text-center mb-0">No history available.</p>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-header">
                         <h5 class="card-title mb-0">Invoice</h5>
                     </div>
                     <div class="card-body">
