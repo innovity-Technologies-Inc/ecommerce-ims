@@ -75,7 +75,16 @@ You MUST strictly follow this sequence for **EVERY** request:
 - **Table Serialization:** `HelperClass::indexNumberSerialization($paginatedData)`.
 - **Global Data Access:** Use `HelperClass::generalSettings()`, `HelperClass::contactSettings()`, `HelperClass::getCategories()`, etc.
 
-## 5. Development Workflow
+## 6. Database Safety & Data Integrity (CRITICAL)
+
+### **Destructive Operations (STRICT & MANDATORY)**
+- **Warning Before Action:** The AI agent **MUST** explicitly warn the user before executing any command that modifies the database in a destructive way (e.g., `git reset --hard`, `php artisan migrate:fresh`, `db:wipe`, or manual `DELETE` queries).
+- **Confirmation Requirement:** You **MUST** seek explicit user confirmation before deleting any record from the database, even if it was previously implied in a request.
+- **Data Preservation:** During migrations (`php artisan migrate`), the agent **MUST** verify that the migration being run does not contain `dropColumn` or `dropTable` commands unless specifically requested and confirmed by the user.
+- **Backup Awareness:** Before any major database structural change, the agent should suggest that the user takes a backup of their current data.
+- **Error Handling:** If a database operation fails or returns a "null" result where data was expected, the agent **MUST** stop and investigate rather than proceeding with assumptions that could lead to data loss.
+
+## 7. Development Workflow
 1. **Migration & Model:** Set up the DB layer.
 2. **Form Request:** Define validation rules.
 3. **Service:** Implement business logic and DB operations.

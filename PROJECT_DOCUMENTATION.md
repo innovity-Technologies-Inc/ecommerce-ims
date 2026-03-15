@@ -39,12 +39,16 @@ Every module or architectural change must be documented in this file before a ta
 ## 3. Comprehensive Module Breakdowns
 
 ### 3.1 Authentication & Security
-- **What:** Separate login systems for Administrators and Customers.
-- **How it Works:** Implemented using Laravel Breeze with multiple authentication guards (`web` for customers, `admin` for administrators). 
+- **What:** Separate login systems for Administrators and Customers, including modern social authentication options.
+- **How it Works:** 
+  - **Multi-Guard Auth:** Implemented using Laravel Breeze with multiple authentication guards (`web` for customers, `admin` for administrators). 
+  - **Social Login (Google):** Customers can log in or register instantly using their Google account via Laravel Socialite.
 - **Implementation Details:** 
   - Admins authenticate against the `admins` table and are redirected to the admin dashboard.
   - Customers authenticate against the `users` table and are redirected to the homepage or their account dashboard.
-  - Middleware (`auth:admin`, `auth:web`) strictly protects routes, ensuring complete isolation of privileges.
+  - **Social Login UI:** The traditional full-width "Google" text button has been replaced with a modern, multi-colored Google "G" logo SVG on both the **Login** and **Registration** pages. The button features a clean, borderless design with a transparent background and a subtle scaling hover effect.
+  - **Logic:** `SocialLoginController` uses `updateOrCreate` to automatically register new users or log in existing ones based on their Google email.
+  - **Security:** Middleware (`auth:admin`, `auth:web`) strictly protects routes, ensuring complete isolation of privileges.
 
 ### 3.2 Catalog Management (Brands & Categories)
 - **What:** Management of the foundational hierarchical data (Brands and Categories) that products belong to.
@@ -310,6 +314,17 @@ Every module or architectural change must be documented in this file before a ta
   - **Dynamic Charting:** Monthly sales data is retrieved using `DB::raw` with `MONTH()` groupings and passed to an area-style ApexChart via JSON encoding in the Blade view.
   - **Customizable Alerts:** The "Low Stock" threshold is stored in the `general_settings` table and injected into the service layer, allowing the admin to define what constitutes a stock emergency.
   - **Integrated Navigation:** The dashboard provides direct links to "Restock" low-stock items or "View Details" for top-performing products, turning insights into immediate actions.
+
+### 3.24 Social Login Settings Module
+- **What:** Administrative interface to manage Google Social Authentication credentials and status.
+- **How it Works:** 
+  - **Credential Management:** Admins can securely store their Google Client ID and Client Secret.
+  - **Redirect URI Auto-Generation:** The system automatically generates and displays the required "Authorized Redirect URI" (e.g., `https://yourdomain.com/auth/google/callback`) in a read-only field for easy copying to the Google Cloud Console.
+  - **Global Toggle:** A master switch allows for instant activation/deactivation of the social login feature across the entire storefront.
+- **Implementation Details:** 
+  - **Dynamic Configuration:** Credentials stored in the `social_login_settings` table are dynamically injected into Laravel's `services.google` configuration during the application's boot process (`AppServiceProvider`).
+  - **Helper Integration:** `App\HelperClass::socialLoginSettings()` provides high-performance access to these settings in both Admin and Client views.
+  - **Security:** The Redirect URL field is marked `readonly` to prevent accidental misconfiguration that would break the OAuth flow.
 
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*

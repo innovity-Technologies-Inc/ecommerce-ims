@@ -1,4 +1,158 @@
 <laravel-boost-guidelines>
+=== .ai/coding-style rules ===
+
+# Coding Style & Architecture
+
+
+The smart-ecom project follows strict architectural standards and a **mandatory development workflow** to ensure code quality, testability, and long-term maintainability.
+
+
+## 1. Mandatory Development Workflow (NO EXCEPTIONS)
+
+
+You MUST strictly follow this sequence for **EVERY** request:
+
+1. **Requirement Logging (STRICT):**
+    - Append the new requirement to `.ai/requirements/requirements.md` with a unique ID (e.g., REQ-XX).
+2. **Task Creation (STRICT):**
+    - Create a new task file in `.ai/tasks/task-xx-name.md`.
+    - Detail the implementation steps and verification criteria based on the requirement.
+3. **Surgical Implementation:**
+    - Execute the task following the architectural patterns defined below.
+    - Use PHP 8.3 features and Laravel 12 standards.
+4. **Verification & Styling:**
+    - Run `./vendor/bin/pint --dirty` to maintain project styling.
+    - **Seeder-Driven Verification (STRICT):** Verify logic using existing Seeders (`php artisan db:seed`) to populate dummy data. DO NOT create new Model Factories.
+    - Verify with PHPUnit tests before finalization.
+    - **Optimization (MANDATORY):** ALWAYS run `php artisan optimize` after completing a requirement to ensure the configuration and routes are correctly cached.
+5. **Documentation Update (STRICT & MANDATORY):**
+    - You MUST update `PROJECT_DOCUMENTATION.md` after completing **EVERY SINGLE INSTRUCTION** or modification.
+    - Reflect the new module, connections, and system flow immediately.
+    - **Detail Requirement:** Every update must include a "What" (Business purpose) and "How it Works / Implementation Details" (Technical flow, Service logic, DB interactions).
+    - A task is ONLY complete when the documentation is updated with these technical specifics.
+
+
+## 2. Architectural Patterns (MANDATORY & ENFORCED)
+
+
+
+### **Service Layer & Form Request Pattern (STRICT)**
+
+- It is **MANDATORY** for every Controller to use a dedicated **Form Request** class for validation and a **Service** class for logic.
+- **ALL** business logic, data calculations, and database operations (queries, updates, deletions) **MUST** reside in Service classes (`app/Services`).
+- **NO** logic is allowed in Controllers. They are strictly for receiving validated data and returning responses.
+
+
+### **Thin Controllers (Routing Only)**
+
+- Controllers **MUST** be thin. Their sole responsibility is to:
+    1. Receive a **Form Request** (automatically validated).
+    2. Pass the validated data to a **Service**.
+    3. Return a view, redirect, or JSON response based on the Service's result.
+- **NEVER** use `Model::query()`, `DB::table()`, or any direct data manipulation inside a Controller.
+
+
+### **Validation (Mandatory Form Requests)**
+
+- Every store, update, or action-based request **MUST** have a dedicated class created via `php artisan make:request`.
+- Inline `$request->validate([...])` is strictly prohibited.
+
+
+### **Search & Filtering (Mandatory FlexSearch)**
+
+- **MANDATORY:** Every search and filtering operation in the Admin Panel **MUST** utilize the `FlexSearch` engine (powered by `daiyanmozumder/laravel-flexsearch`).
+- **ALL** search logic and multi-column filtering parameters **MUST** be implemented within the **Service Layer** by injecting `FlexSearch` and using its `apply()` method.
+- Controllers **MUST NOT** build search queries using `->where('name', 'like', ...)` or similar manual logic.
+- AJAX-driven live searching and sorting with URL synchronization (`window.history.pushState`) is the project standard.
+
+
+### **Frontend Actions (Mandatory Standards)**
+
+- **MANDATORY:** All delete buttons **MUST** use the `confirmDelete` class.
+- The system uses a global SweetAlert2 handler for all elements with the `confirmDelete` class to provide a consistent deletion experience.
+- Example: `<button type="submit" class="btn btn-soft-danger btn-sm confirmDelete">...</button>`
+
+
+## 2. PHP 8.3 Standards
+
+- **Constructor Property Promotion:** Use `public function __construct(protected Service $service) {}`.
+- **Explicit Typing:** Every method MUST have a defined return type hint (e.g., `: bool`, `: View`, `: RedirectResponse`).
+- **Typed Properties:** All class properties must have type declarations.
+- **Enums:** Use TitleCase for Enum keys.
+
+
+## 3. Laravel 12 Conventions
+
+- **Routing:** Use named routes for all links.
+- **Models:**
+    - Use `casts()` method instead of `$casts` property.
+    - Define relationships with explicit return types (e.g., `: HasMany`).
+- **Middleware/Exceptions:** Configured in `bootstrap/app.php`.
+- **Configuration:** Always use `config('key')`, never `env('KEY')` outside of config files.
+
+
+## 4. HelperClass Usage
+
+- **MANDATORY:** Always use `HelperClass` for retrieving global settings (General, Contact, Brands, etc.) within Blade templates. Global view sharing via Service Providers (`View::share`) is strictly prohibited.
+- **File Uploads:** `HelperClass::file_upload($file, $folder)`.
+- **File Deletions:** `HelperClass::file_delete($path)`.
+- **Table Serialization:** `HelperClass::indexNumberSerialization($paginatedData)`.
+- **Global Data Access:** Use `HelperClass::generalSettings()`, `HelperClass::contactSettings()`, `HelperClass::getCategories()`, etc.
+
+
+## 5. Development Workflow
+
+1. **Migration & Model:** Set up the DB layer.
+2. **Form Request:** Define validation rules.
+3. **Service:** Implement business logic and DB operations.
+4. **Controller:** Route the request to the Service.
+5. **Testing & Verification:**
+    - **Seeder-Driven Verification:** ALWAYS use existing Seeders to populate test data. DO NOT create factories.
+    - Write PHPUnit tests in `tests/Feature` or verify manually using seeded data.
+6. **Formatting:** Run `./vendor/bin/pint --dirty` before finalizing.
+7. **Optimization:** Run `php artisan optimize` to refresh configuration, route, and view caches.
+
+=== .ai/design-guidelines rules ===
+
+# Design Guidelines
+
+
+This project focuses on a clean, modern, and high-performance e-commerce interface using a classic, reliable tech stack.
+
+
+## 1. Core Tech Stack (MANDATORY)
+
+- **Framework:** Bootstrap 5 (Customized via SCSS/CSS variables).
+- **Interactivity:** jQuery 3.6+, standard JavaScript.
+- **Alerts/Modals:** SweetAlert2.
+- **Notifications:** Toastr.
+- **Selects:** Select2 (Bootstrap 5 theme).
+- **Rich Text:** Summernote.
+- **File Uploads:** FilePond.
+
+
+## 2. Prohibited Technologies
+
+- **NO Tailwind CSS:** Do not use utility-first CSS frameworks.
+- **NO Alpine.js:** All frontend interactivity must be handled via jQuery or standard JS.
+- **NO React/Vue/Svelte:** This is a Blade-centric application.
+
+
+## 3. Layout Structure
+
+- **Admin Panel:** Always extend `@extends('admin.structure.master')`.
+- **Client Frontend:** Always extend `@extends('client.structure.master')`.
+- **Modals:** Use Bootstrap 5 modal components.
+- **Responsive Design:** Ensure all components are mobile-first and fully responsive across breakpoints (xs, sm, md, lg, xl, xxl).
+
+
+## 4. UI/UX Principles
+
+- **Visual Feedback:** Provide immediate feedback for user actions (e.g., loading spinners on buttons, Toastr for success/error).
+- **Forms:** Labels should always be present; use placeholders appropriately. Use Select2 for all searchable/multi-select dropdowns.
+- **Tables & Pagination:** Use responsive Bootstrap tables with consistent styling for actions. All paginated lists MUST include "Showing X to Y of Z Results" text next to the pagination links.
+- **Consistency:** Use consistent spacing, typography (sans-serif), and color palettes across all views.
+
 === foundation rules ===
 
 # Laravel Boost Guidelines
@@ -12,40 +166,20 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - php - 8.3.8
 - laravel/framework (LARAVEL) - v12
 - laravel/prompts (PROMPTS) - v0
+- laravel/socialite (SOCIALITE) - v5
 - laravel/breeze (BREEZE) - v2
 - laravel/mcp (MCP) - v0
 - laravel/pint (PINT) - v1
 - laravel/sail (SAIL) - v1
 - phpunit/phpunit (PHPUNIT) - v11
+- alpinejs (ALPINEJS) - v3
+- tailwindcss (TAILWINDCSS) - v3
 
-## Frontend & Templating (CRITICAL)
+## Skills Activation
 
-- **Tech Stack:** Use only **Bootstrap, jQuery, and standard JavaScript** for all frontend and admin panel tasks.
-- **Tailwind/Alpine.js:** Do NOT use Tailwind CSS or Alpine.js for any new components or styling, even if they are present in `package.json`.
-- **Admin Template:** Use `resources/views/admin/structure/master.blade.php` as the base for all admin pages.
-- **Client Template:** Use `resources/views/client/structure/master.blade.php` as the base for all customer-facing pages.
-- **Existing Assets:** Leverage existing assets in `public/admin/assets/` and `public/client/assets/`.
+This project has domain-specific skills available. You MUST activate the relevant skill whenever you work in that domain—don't wait until you're stuck.
 
-## Documentation (CRITICAL)
-
-- **`PROJECT_DOCUMENTATION.md`**: This is the source of truth for the project's architecture, flow, and standards.
-- **Mandatory Updates**: Every time you add a new module, modify existing logic, or change the architectural direction, you MUST update this file to reflect the current state of the project.
-
-## Controllers, Requests & Services (CRITICAL & MANDATORY)
-
-- **Mandatory Pattern:** Every controller method **MUST** always utilize a dedicated **Form Request** for validation and a **Service** class for logic.
-- **Thin Controllers:** Controllers **MUST ONLY** handle request routing and response returning. No business logic or DB queries are allowed.
-- **Form Requests:** Use dedicated Form Request classes (`php artisan make:request`) for **ALL** validation. Inline validation is prohibited.
-- **Service Layer:** **ALL** business logic, complex calculations, and database operations **MUST** reside in Service classes.
-- **Workflow:** Controller receives validated data from Form Request -> Passes data to Service -> Service processes and returns result -> Controller returns view/redirect.
-
-## Helper Class Usage (CRITICAL)
-
-- **`App\HelperClass`:** You MUST use this class for the following operations:
-    - **Index Serialization:** Use `HelperClass::indexNumberSerialization($paginatedData)` in views to handle table row numbering.
-    - **File Uploads:** Use `HelperClass::file_upload($file, $folder)` for all file storage.
-    - **File Deletions:** Use `HelperClass::file_delete($path)` for removing files.
-- **Proactivity:** You are encouraged to add new, useful static methods to `App\HelperClass` if they can benefit the project or be reused across others.
+- `tailwindcss-development` — Styles applications using Tailwind CSS v3 utilities. Activates when adding styles, restyling components, working with gradients, spacing, layout, flex, grid, responsive design, dark mode, colors, typography, or borders; or when the user mentions CSS, styling, classes, Tailwind, restyle, hero section, cards, buttons, or any visual/UI changes.
 
 ## Conventions
 
@@ -180,6 +314,11 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 - For APIs, default to using Eloquent API Resources and API versioning unless existing API routes do not, then you should follow existing application convention.
 
+## Controllers & Validation
+
+- Always create Form Request classes for validation rather than inline validation in controllers. Include both validation rules and custom error messages.
+- Check sibling Form Requests to see if the application uses array or string based validation rules.
+
 ## Authentication & Authorization
 
 - Use Laravel's built-in authentication and authorization features (gates, policies, Sanctum, etc.).
@@ -255,4 +394,12 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - To run all tests: `php artisan test --compact`.
 - To run all tests in a file: `php artisan test --compact tests/Feature/ExampleTest.php`.
 - To filter on a particular test name: `php artisan test --compact --filter=testName` (recommended after making a change to a related file).
+
+=== tailwindcss/core rules ===
+
+# Tailwind CSS
+
+- Always use existing Tailwind conventions; check project patterns before adding new ones.
+- IMPORTANT: Always use `search-docs` tool for version-specific Tailwind CSS documentation and updated code examples. Never rely on training data.
+- IMPORTANT: Activate `tailwindcss-development` every time you're working with a Tailwind CSS or styling-related task.
 </laravel-boost-guidelines>

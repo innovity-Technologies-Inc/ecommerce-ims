@@ -64,15 +64,15 @@ class FrontendService
             $query->where(function ($q) use ($minPrice, $maxPrice) {
                 // 1. Check product base price (if it exists and is > 0)
                 $q->where(function ($q1) use ($minPrice, $maxPrice) {
-                    $q1->where('regular_price', '>', 0)
+                    $q1->where('products.regular_price', '>', 0)
                         ->where(function ($q2) use ($minPrice, $maxPrice) {
-                            $q2->whereBetween(DB::raw('IF(discount_price > 0, discount_price, regular_price)'), [$minPrice, $maxPrice]);
+                            $q2->whereBetween(DB::raw('IF(products.discount_price > 0, products.discount_price, products.regular_price)'), [$minPrice, $maxPrice]);
                         });
                 })
                 // 2. OR check variants (prioritize variant discount price, then regular price)
                     ->orWhereHas('variants', function ($v) use ($minPrice, $maxPrice) {
                         $v->where(function ($v1) use ($minPrice, $maxPrice) {
-                            $v1->whereBetween(DB::raw('IF(discount_price > 0, discount_price, regular_price)'), [$minPrice, $maxPrice]);
+                            $v1->whereBetween(DB::raw('IF(product_variants.discount_price > 0, product_variants.discount_price, product_variants.regular_price)'), [$minPrice, $maxPrice]);
                         });
                     });
             });

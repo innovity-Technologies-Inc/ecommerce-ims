@@ -45,7 +45,8 @@ class SocialLoginController extends Controller
             return redirect()->intended(route('home'));
 
         } catch (Exception $e) {
-            return redirect()->route('login')->withErrors(['error' => 'Google Login failed. Please try again.']);
+            \Illuminate\Support\Facades\Log::error('Google Login Error: ' . $e->getMessage(), ['exception' => $e]);
+            return redirect()->route('login')->withErrors(['error' => 'Google Login failed: ' . $e->getMessage()]);
         }
     }
 }

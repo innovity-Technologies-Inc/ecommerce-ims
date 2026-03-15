@@ -10,6 +10,9 @@ use App\Models\ContactSetting;
 use App\Models\GeneralSetting;
 use App\Models\MailSetting;
 use App\Models\SocialLoginSetting;
+use App\Services\SettingsService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class SettingsController extends Controller
 {

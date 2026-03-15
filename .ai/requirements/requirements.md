@@ -7,6 +7,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-02:** Client (Customer) Registration & Login.
 - [x] **REQ-03:** Multi-Guard Session Management (Admin vs. User).
 - [x] **REQ-04:** Profile Management for both Admins and Customers.
+- [x] **REQ-68:** Social Login Icon Update (Replace text-heavy Google login button with a modern icon-only or icon-dominant layout on the client login page).
 
 ## 2. Catalog Management
 - [x] **REQ-05:** Brand CRUD (Logo, Slug, Status).
