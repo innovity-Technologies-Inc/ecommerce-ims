@@ -33,13 +33,20 @@ class SocialLoginController extends Controller
 
             $oldSessionId = session()->getId();
 
+            // Check if user already exists and is inactive
+            $existingUser = User::where('email', $googleUser->email)->first();
+
+            if ($existingUser && ! $existingUser->status) {
+                return redirect()->route('login')->withErrors(['error' => 'Your account is inactive. Please contact support.']);
+            }
+
             $user = User::updateOrCreate([
                 'email' => $googleUser->email,
             ], [
                 'name' => $googleUser->name,
                 'google_id' => $googleUser->id,
                 'google_token' => $googleUser->token,
-                'status' => 1, // Ensure user is active
+                'status' => $existingUser ? $existingUser->status : 1, // Keep status if exists, else Active
             ]);
 
             Auth::login($user);
@@ -55,7 +62,8 @@ class SocialLoginController extends Controller
             ]);
 
         } catch (Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Google Login Error: ' . $e->getMessage(), ['exception' => $e]);
+            \Illuminate\Support\Facades\Log::error('Google Login Error: '.$e->getMessage(), ['exception' => $e]);
+
             return redirect()->route('login')->withErrors(['error' => 'Google Login failed. Please try again.']);
         }
     }
