@@ -31,22 +31,32 @@ class SocialLoginController extends Controller
         try {
             $googleUser = Socialite::driver('google')->user();
 
+            $oldSessionId = session()->getId();
+
             $user = User::updateOrCreate([
                 'email' => $googleUser->email,
             ], [
                 'name' => $googleUser->name,
                 'google_id' => $googleUser->id,
                 'google_token' => $googleUser->token,
-                // 'status' => 1, // Ensure user is active
+                'status' => 1, // Ensure user is active
             ]);
 
             Auth::login($user);
 
-            return redirect()->intended(route('home'));
+            // Sync Cart
+            app(\App\Services\CartService::class)->syncCartOnLogin($oldSessionId);
+
+            session()->regenerate();
+
+            return redirect()->route('home')->with([
+                'message' => 'You are now logged in',
+                'alert-type' => 'success',
+            ]);
 
         } catch (Exception $e) {
             \Illuminate\Support\Facades\Log::error('Google Login Error: ' . $e->getMessage(), ['exception' => $e]);
-            return redirect()->route('login')->withErrors(['error' => 'Google Login failed: ' . $e->getMessage()]);
+            return redirect()->route('login')->withErrors(['error' => 'Google Login failed. Please try again.']);
         }
     }
 }
