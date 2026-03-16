@@ -42,7 +42,12 @@
                             <div class="col-lg-12">
                                 <div class="mb-3">
                                     <label for="google_redirect_url" class="form-label">Google Redirect URL</label>
-                                    <input type="text" name="google_redirect_url" id="google_redirect_url" class="form-control" value="{{ old('google_redirect_url', $setting->google_redirect_url ?? url('/auth/google/callback')) }}" readonly>
+                                    <div class="input-group">
+                                        <input type="text" name="google_redirect_url" id="google_redirect_url" class="form-control" value="{{ rtrim(config('app.url'), '/') . '/auth/google/callback' }}" readonly>
+                                        <button class="btn btn-secondary" type="button" id="copy-url-btn">
+                                            <i class="bx bx-copy"></i> Copy
+                                        </button>
+                                    </div>
                                     <small class="text-muted">Copy this URL and paste it into your Google Console's "Authorized redirect URIs".</small>
                                     @error('google_redirect_url') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
@@ -59,4 +64,39 @@
     </div>
 </div>
 
+@endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        $('#copy-url-btn').on('click', function() {
+            const urlInput = document.getElementById('google_redirect_url');
+            urlInput.select();
+            urlInput.setSelectionRange(0, 99999); // For mobile devices
+            
+            try {
+                navigator.clipboard.writeText(urlInput.value).then(() => {
+                    if (window.Swal) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Copied!',
+                            text: 'Redirect URL copied to clipboard.',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        toastr.success('Redirect URL copied to clipboard!');
+                    }
+                }).catch(err => {
+                    // Fallback for non-secure contexts
+                    document.execCommand('copy');
+                    toastr.success('Redirect URL copied to clipboard!');
+                });
+            } catch (err) {
+                document.execCommand('copy');
+                toastr.success('Redirect URL copied to clipboard!');
+            }
+        });
+    });
+</script>
 @endsection
