@@ -73,6 +73,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-69:** Automated Flash Sale Expiry (Automatically reset product discounts to 0 when a flash sale expires based on its end date via a scheduled console command).
 - [x] **REQ-70:** Accurate Price Sorting (Ensure Shop page sorting by price correctly handles hybrid products with variants and base prices).
 - [x] **REQ-71:** Global Wishlist Functionality (Fix wishlist button on homepage and centralize logic to prevent redundancy).
+- [x] **REQ-72:** Wishlist Add-to-Cart (Ensure "Add to Cart" button on the wishlist page correctly handles variants and triggers AJAX for simple products).
 
 ## 10. Flash Sale Module
 - [x] **REQ-52:** Flash Sale Management (Single edit form for managing active/inactive status and global configuration).

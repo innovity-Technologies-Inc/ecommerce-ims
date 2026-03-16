@@ -346,10 +346,10 @@ Every module or architectural change must be documented in this file before a ta
 - **What:** Centralized implementation of wishlist functionality to ensure consistent behavior across all storefront pages.
 - **How it Works:** 
   - **Global Form & Function:** The hidden form and `addToWishlist` JavaScript function are placed within `master.blade.php`, making them available on the homepage, shop page, and product details pages.
-  - **Redundancy Removal:** Removed duplicate local implementations from specific view files, ensuring a single source of truth for wishlist triggers.
+  - **Functional Cart Integration:** The wishlist page includes a context-aware "Add to Cart" button that intelligently handles simple products, variant products, and discontinued items.
 - **Implementation Details:**
   - **JS Orchestration:** `addToWishlist(productId)` dynamically populates a hidden input and submits the form to the `user.wishlist.store` route.
-  - **Consistency:** Ensures that the wishlist button in `product_card.blade.php` functions correctly regardless of where the card is rendered (e.g., Homepage Bestsellers, Related Products, Shop Grid).
+  - **Smart Actions:** The wishlist table's action button dynamically switches between "Add to Cart" (AJAX-powered), "Select Options" (Redirects to details), and "View Details" based on the product's live status and configuration.
 
 ---
 

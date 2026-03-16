@@ -74,7 +74,13 @@
                     <td class="product-wishlist-cart">
                         <div class="d-flex align-items-center justify-content-center gap-3">
                             @if($type == 'wishlist')
-                                <a href="#" class="cart-btn-2">Add to Cart</a>
+                                @if(!$product->status)
+                                    <a href="{{ route('client.products.details', $product->slug) }}" class="cart-btn-2">View Details</a>
+                                @elseif($product->variants->count() > 0)
+                                    <a href="{{ route('client.products.details', $product->slug) }}" class="cart-btn-2">Select Options</a>
+                                @else
+                                    <a href="javascript:void(0)" class="cart-btn-2 add-to-cart-btn" data-product-id="{{ $product->id }}" data-quantity="1">Add to Cart</a>
+                                @endif
                                 <form action="{{ route('user.wishlist.destroy', $item->id) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
