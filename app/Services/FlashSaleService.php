@@ -69,12 +69,13 @@ class FlashSaleService
     /**
      * Sync all product and variant discounts based on Flash Sale status.
      */
-    protected function syncAllDiscounts(FlashSale $flashSale): void
+    public function syncAllDiscounts(FlashSale $flashSale): void
     {
         $items = $flashSale->items()->with('product.variants')->get();
+        $isActive = $flashSale->isActive();
 
         foreach ($items as $item) {
-            if ($flashSale->status) {
+            if ($isActive) {
                 $this->applyFlashSaleDiscount($item);
             } else {
                 $this->resetProductDiscount($item->product_id);

@@ -70,6 +70,8 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-49:** Coupon Management Module (Admin CRUD, code generation, discount logic, usage limits, and date range filtering).
 - [x] **REQ-50:** Client-side Coupon Application (AJAX-based application on checkout page, instant price updates).
 - [x] **REQ-51:** Coupon Usage Tracking (History table tracking User ID, Email, Name, and total usage limits).
+- [x] **REQ-69:** Automated Flash Sale Expiry (Automatically reset product discounts to 0 when a flash sale expires based on its end date via a scheduled console command).
+- [x] **REQ-70:** Accurate Price Sorting (Ensure Shop page sorting by price correctly handles hybrid products with variants and base prices).
 
 ## 10. Flash Sale Module
 - [x] **REQ-52:** Flash Sale Management (Single edit form for managing active/inactive status and global configuration).

@@ -25,4 +25,20 @@ class FlashSale extends Model
     {
         return $this->hasMany(FlashSaleItem::class, 'flash_sale_id', 'id');
     }
+
+    /**
+     * Check if the flash sale is currently active and not expired.
+     */
+    public function isActive(): bool
+    {
+        if (! $this->status) {
+            return false;
+        }
+
+        if ($this->end_date && now()->gt($this->end_date)) {
+            return false;
+        }
+
+        return true;
+    }
 }

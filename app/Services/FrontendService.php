@@ -93,20 +93,26 @@ class FrontendService
             case 'price-low':
                 $query->leftJoin('product_variants', 'products.id', '=', 'product_variants.product_id')
                     ->select('products.*')
+                    ->addSelect(DB::raw('MIN(
+                        CASE 
+                            WHEN products.regular_price > 0 THEN IF(products.discount_price > 0, products.discount_price, products.regular_price)
+                            ELSE IF(product_variants.discount_price > 0, product_variants.discount_price, product_variants.regular_price)
+                        END
+                    ) as sort_price'))
                     ->groupBy('products.id')
-                    ->orderByRaw('MIN(LEAST(
-                        IF(products.discount_price > 0, products.discount_price, products.regular_price),
-                        IF(product_variants.discount_price > 0, product_variants.discount_price, product_variants.regular_price)
-                    )) ASC');
+                    ->orderBy('sort_price', 'asc');
                 break;
             case 'price-high':
                 $query->leftJoin('product_variants', 'products.id', '=', 'product_variants.product_id')
                     ->select('products.*')
+                    ->addSelect(DB::raw('MAX(
+                        CASE 
+                            WHEN products.regular_price > 0 THEN IF(products.discount_price > 0, products.discount_price, products.regular_price)
+                            ELSE IF(product_variants.discount_price > 0, product_variants.discount_price, product_variants.regular_price)
+                        END
+                    ) as sort_price'))
                     ->groupBy('products.id')
-                    ->orderByRaw('MAX(GREATEST(
-                        IF(products.discount_price > 0, products.discount_price, products.regular_price),
-                        IF(product_variants.discount_price > 0, product_variants.discount_price, product_variants.regular_price)
-                    )) DESC');
+                    ->orderBy('sort_price', 'desc');
                 break;
             case 'a-z':
                 $query->orderBy('name', 'asc');

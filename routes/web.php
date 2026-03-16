@@ -22,6 +22,14 @@ use Illuminate\Support\Facades\Route;
 Route::get('/auth/google', [SocialLoginController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [SocialLoginController::class, 'handleGoogleCallback']);
 
+// Route to trigger the flash sale expiry check (useful for Web-based Cron Jobs)
+Route::get('/check-flash-sale-expiry', function (\App\Services\FlashSaleService $service) {
+    $flashSale = $service->getFlashSale();
+    $service->syncAllDiscounts($flashSale);
+
+    return "Flash sale expiry check executed successfully at " . now()->toDateTimeString();
+});
+
 Route::get('/test', function () {
     return view('dashboard');
 });
