@@ -375,6 +375,18 @@
     });
 </script>
 
+    <form id="wishlist-form" action="{{ route('user.wishlist.store') }}" method="POST" style="display: none;">
+        @csrf
+        <input type="hidden" name="product_id" id="wishlist-product-id">
+    </form>
+
+    <script>
+        function addToWishlist(productId) {
+            document.getElementById('wishlist-product-id').value = productId;
+            document.getElementById('wishlist-form').submit();
+        }
+    </script>
+
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
 </body>
 </html>

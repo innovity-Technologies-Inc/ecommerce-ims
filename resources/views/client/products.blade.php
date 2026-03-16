@@ -301,11 +301,6 @@
         </div>
     </div>
 
-    <form id="wishlist-form" action="{{ route('user.wishlist.store') }}" method="POST" style="display: none;">
-        @csrf
-        <input type="hidden" name="product_id" id="wishlist-product-id">
-    </form>
-
     <script>
         window.addEventListener('load', function() {
             // Trigger form submit when NiceSelect value changes
@@ -334,10 +329,5 @@
                 $("#amount-custom").val($("#slider-range-custom").slider("values", 0) + " - " + $("#slider-range-custom").slider("values", 1));
             }
         });
-
-        function addToWishlist(productId) {
-            document.getElementById('wishlist-product-id').value = productId;
-            document.getElementById('wishlist-form').submit();
-        }
     </script>
     @endsection

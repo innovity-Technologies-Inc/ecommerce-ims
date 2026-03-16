@@ -342,6 +342,15 @@ Every module or architectural change must be documented in this file before a ta
   - **Customizable Alerts:** The "Low Stock" threshold is stored in the `general_settings` table and injected into the service layer, allowing the admin to define what constitutes a stock emergency.
   - **Integrated Navigation:** The dashboard provides direct links to "Restock" low-stock items or "View Details" for top-performing products, turning insights into immediate actions.
 
+### 3.25 Global Wishlist Logic
+- **What:** Centralized implementation of wishlist functionality to ensure consistent behavior across all storefront pages.
+- **How it Works:** 
+  - **Global Form & Function:** The hidden form and `addToWishlist` JavaScript function are placed within `master.blade.php`, making them available on the homepage, shop page, and product details pages.
+  - **Redundancy Removal:** Removed duplicate local implementations from specific view files, ensuring a single source of truth for wishlist triggers.
+- **Implementation Details:**
+  - **JS Orchestration:** `addToWishlist(productId)` dynamically populates a hidden input and submits the form to the `user.wishlist.store` route.
+  - **Consistency:** Ensures that the wishlist button in `product_card.blade.php` functions correctly regardless of where the card is rendered (e.g., Homepage Bestsellers, Related Products, Shop Grid).
+
 ---
 
 ## 4. Frontend & UI Standardization Refinements

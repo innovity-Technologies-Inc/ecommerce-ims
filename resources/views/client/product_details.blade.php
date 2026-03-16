@@ -234,17 +234,7 @@
         </div>
     </section>
 
-    <form id="wishlist-form" action="{{ route('user.wishlist.store') }}" method="POST" style="display: none;">
-        @csrf
-        <input type="hidden" name="product_id" id="wishlist-product-id">
-    </form>
-
     <script>
-        function addToWishlist(productId) {
-            document.getElementById('wishlist-product-id').value = productId;
-            document.getElementById('wishlist-form').submit();
-        }
-
         window.addEventListener('load', function() {
             const currency = "{{ $gs->currency ?? '$' }}";
             const mainImg = $('#main-product-image');
