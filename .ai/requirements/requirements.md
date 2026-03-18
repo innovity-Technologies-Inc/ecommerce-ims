@@ -74,6 +74,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-70:** Accurate Price Sorting (Ensure Shop page sorting by price correctly handles hybrid products with variants and base prices).
 - [x] **REQ-71:** Global Wishlist Functionality (Fix wishlist button on homepage and centralize logic to prevent redundancy).
 - [x] **REQ-72:** Wishlist Add-to-Cart (Ensure "Add to Cart" button on the wishlist page correctly handles variants and triggers AJAX for simple products).
+- [ ] **REQ-73:** Flash Sale Refinement (Add dedicated `flash_discount_price` and `flash_discount_percentage` fields to products and variants. Implement a homepage Flash Sale section with a countdown timer and "View All" button).
 
 ## 10. Flash Sale Module
 - [x] **REQ-52:** Flash Sale Management (Single edit form for managing active/inactive status and global configuration).

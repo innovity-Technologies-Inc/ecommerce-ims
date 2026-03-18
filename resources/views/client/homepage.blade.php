@@ -5,6 +5,8 @@
 
     @include('client.partials.banner_1')
 
+    @include('client.partials.flash_sale')
+
     @include('client.partials.hot_deal')
 
     @include('client.partials.feature_2')

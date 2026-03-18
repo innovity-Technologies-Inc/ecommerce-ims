@@ -21,7 +21,8 @@ class FrontendController extends Controller
         protected HomepageService $homepageService,
         protected OrderService $orderService,
         protected ContactService $contactService,
-        protected FrontendService $frontendService
+        protected FrontendService $frontendService,
+        protected \App\Services\FlashSaleService $flashSaleService
     ) {}
 
     /**
@@ -47,6 +48,8 @@ class FrontendController extends Controller
     {
         $sliders = $this->homepageService->getActiveSliders();
 
+        $flashSale = $this->flashSaleService->getActiveFlashSale();
+
         $bestsellerSection = SectionSetting::where('section_name', 'bestsellers')->first();
         $bestsellingProducts = $this->homepageService->getSectionProducts('bestsellers');
 
@@ -61,6 +64,7 @@ class FrontendController extends Controller
 
         return view('client.homepage', compact(
             'sliders',
+            'flashSale',
             'bestsellerSection',
             'bestsellingProducts',
             'hotDealsSection',

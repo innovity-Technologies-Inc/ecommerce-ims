@@ -15,6 +15,8 @@ class ProductVariant extends Model
         'regular_price',
         'discount_price',
         'discount_percentage',
+        'flash_discount_price',
+        'flash_discount_percentage',
         'stock',
     ];
 
@@ -24,6 +26,8 @@ class ProductVariant extends Model
             'regular_price' => 'decimal:2',
             'discount_price' => 'decimal:2',
             'discount_percentage' => 'integer',
+            'flash_discount_price' => 'decimal:2',
+            'flash_discount_percentage' => 'integer',
             'stock' => 'integer',
         ];
     }

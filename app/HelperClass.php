@@ -81,8 +81,15 @@ class HelperClass
 
         if ($product->variants->count() > 0) {
             foreach ($product->variants as $variant) {
-                // Use regular price if discount price is 0 or null
-                $price = ($variant->discount_price > 0) ? $variant->discount_price : $variant->regular_price;
+                // Priority: Flash Discount > Standard Discount > Regular Price
+                if ($product->is_flash_sale && $variant->flash_discount_price > 0) {
+                    $price = $variant->flash_discount_price;
+                } elseif ($variant->discount_price > 0) {
+                    $price = $variant->discount_price;
+                } else {
+                    $price = $variant->regular_price;
+                }
+
                 if ($price > 0) {
                     $prices->push((float) $price);
                 }
@@ -90,16 +97,29 @@ class HelperClass
         }
 
         // Check base product price
-        $basePrice = ($product->discount_price > 0) ? $product->discount_price : $product->regular_price;
+        if ($product->is_flash_sale && $product->flash_discount_price > 0) {
+            $basePrice = $product->flash_discount_price;
+        } elseif ($product->discount_price > 0) {
+            $basePrice = $product->discount_price;
+        } else {
+            $basePrice = $product->regular_price;
+        }
+
         if ($basePrice > 0) {
             $prices->push((float) $basePrice);
         }
 
         $prices = $prices->unique();
 
-        $maxDiscount = $product->variants->count() > 0
-            ? $product->variants->max('discount_percentage')
-            : $product->discount_percentage;
+        if ($product->is_flash_sale) {
+            $maxDiscount = $product->variants->count() > 0
+                ? $product->variants->max('flash_discount_percentage')
+                : $product->flash_discount_percentage;
+        } else {
+            $maxDiscount = $product->variants->count() > 0
+                ? $product->variants->max('discount_percentage')
+                : $product->discount_percentage;
+        }
 
         return [
             'min' => $prices->min() ?? 0,

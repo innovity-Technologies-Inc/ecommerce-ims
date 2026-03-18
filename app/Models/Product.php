@@ -23,6 +23,8 @@ class Product extends Model
         'sales_count',
         'status',
         'is_flash_sale',
+        'flash_discount_price',
+        'flash_discount_percentage',
         'stock',
     ];
 
@@ -32,6 +34,8 @@ class Product extends Model
             'regular_price' => 'decimal:2',
             'discount_price' => 'decimal:2',
             'discount_percentage' => 'integer',
+            'flash_discount_price' => 'decimal:2',
+            'flash_discount_percentage' => 'integer',
             'is_new_arrival' => 'boolean',
             'is_hot_deal' => 'boolean',
             'is_featured' => 'boolean',

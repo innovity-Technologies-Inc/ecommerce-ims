@@ -5,8 +5,8 @@
             <div class="col-md-12">
                 <!-- Section Title -->
                 <div class="section-title">
-                    <h2>Recently Added</h2>
-                    <p>Add products to weekly line up</p>
+                    <h2>{{ $recentlyAddedSection->section_title }}</h2>
+                    <p>{{ $recentlyAddedSection->section_subtitle }}</p>
                 </div>
                 <!-- Section Title -->
             </div>

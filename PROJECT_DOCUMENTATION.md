@@ -253,14 +253,17 @@ Every module or architectural change must be documented in this file before a ta
   - **Frontend Interactivity:** Uses jQuery for dynamic form field visibility in the Admin panel and AJAX-based application/removal with Toastr notifications on the Client-side checkout page.
 
 ### 3.19 Flash Sale Module
-- **What:** A time-sensitive promotional system that applies deep discounts to a selected group of products.
+- **What:** A time-sensitive promotional system that applies deep discounts to a selected group of products without overwriting their standard discounts.
 - **How it Works:**
   - **Centralized Control:** Managed via a single administrative form that controls the global Flash Sale status (Active/Inactive) and its end date.
   - **Dynamic Product Selection:** Admins can search, filter, and add products from the entire active catalog using a high-performance AJAX selector.
-  - **Automated Price Sync:** When a Flash Sale is activated, the system automatically calculates and updates the `discount_price` and `discount_percentage` for both the base product and all its variants.
-  - **Automatic Expiry (Automation):** The system automatically detects when a Flash Sale's `end_date` has passed and resets all associated product/variant discounts to 0.
+  - **Dedicated Pricing Logic:** Flash Sale discounts are stored in dedicated `flash_discount_price` and `flash_discount_percentage` fields in both `products` and `product_variants` tables. This ensures that a product's standard `discount_price` remains untouched and is restored once the Flash Sale ends.
+  - **Automated Price Sync:** When a Flash Sale is activated, the system automatically calculates and updates the `flash_discount_*` fields.
+  - **Homepage Section & Timer:** A dedicated Flash Sale section appears on the homepage only when a sale is active and hasn't expired. It includes a real-time JavaScript countdown timer and a "View All" button.
+  - **Automatic Expiry (Automation):** The system automatically detects when a Flash Sale's `end_date` has passed and resets all associated `flash_discount_*` fields to 0, causing the system to fall back to standard discount or regular prices.
 - **Implementation Details:**
   - **`isActive()` Helper:** The `FlashSale` model includes an `isActive()` method that checks both the `status` toggle and the `end_date` against the current time.
+  - **`HelperClass::getProductPriceRange()`:** This central pricing logic prioritizes `flash_discount_price` if `is_flash_sale` is true; otherwise, it falls back to the standard discount or regular price.
   - **Console Command:** A custom Artisan command `flash-sale:check-expiry` is registered in `routes/console.php`. This command triggers the `FlashSaleService::syncAllDiscounts()` method.
   - **Scheduler:** The command is scheduled to run `everyMinute()`, ensuring prices revert to normal as soon as the sale ends.
 

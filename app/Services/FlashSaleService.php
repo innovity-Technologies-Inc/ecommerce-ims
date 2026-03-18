@@ -117,13 +117,13 @@ class FlashSaleService
 
         $product->update([
             'is_flash_sale' => false,
-            'discount_price' => 0,
-            'discount_percentage' => 0,
+            'flash_discount_price' => 0,
+            'flash_discount_percentage' => 0,
         ]);
 
         ProductVariant::where('product_id', $productId)->update([
-            'discount_price' => 0,
-            'discount_percentage' => 0,
+            'flash_discount_price' => 0,
+            'flash_discount_percentage' => 0,
         ]);
     }
 
@@ -150,8 +150,8 @@ class FlashSaleService
         }
 
         $updateData = [
-            'discount_price' => $discountPrice,
-            'discount_percentage' => $discountPercentage,
+            'flash_discount_price' => $discountPrice,
+            'flash_discount_percentage' => $discountPercentage,
         ];
 
         if ($isProductModel) {
@@ -159,6 +159,20 @@ class FlashSaleService
         }
 
         $model->update($updateData);
+    }
+
+    /**
+     * Get active flash sale with products.
+     */
+    public function getActiveFlashSale(): ?FlashSale
+    {
+        $flashSale = FlashSale::where('status', true)->first();
+
+        if ($flashSale && $flashSale->isActive()) {
+            return $flashSale->load(['items.product.primaryImage', 'items.product.variants']);
+        }
+
+        return null;
     }
 
     /**
