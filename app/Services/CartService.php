@@ -26,9 +26,23 @@ class CartService
 
         return $items->map(function ($item) {
             if ($item->variant) {
-                $price = ($item->variant->discount_price > 0) ? $item->variant->discount_price : ($item->variant->regular_price ?? $item->product->regular_price);
+                // Priority: Flash Discount > Standard Discount > Regular Price
+                if ($item->product->is_flash_sale && $item->variant->flash_discount_price > 0) {
+                    $price = $item->variant->flash_discount_price;
+                } elseif ($item->variant->discount_price > 0) {
+                    $price = $item->variant->discount_price;
+                } else {
+                    $price = $item->variant->regular_price ?? $item->product->regular_price;
+                }
             } else {
-                $price = ($item->product->discount_price > 0) ? $item->product->discount_price : $item->product->regular_price;
+                // Priority: Flash Discount > Standard Discount > Regular Price
+                if ($item->product->is_flash_sale && $item->product->flash_discount_price > 0) {
+                    $price = $item->product->flash_discount_price;
+                } elseif ($item->product->discount_price > 0) {
+                    $price = $item->product->discount_price;
+                } else {
+                    $price = $item->product->regular_price;
+                }
             }
 
             $variantName = $item->variant ? $item->variant->variant_name : null;

@@ -159,6 +159,10 @@
                                     <input class="form-check-input" type="checkbox" name="is_featured" id="is_featured" value="1" {{ old('is_featured', $product->is_featured ?? false) ? 'checked' : '' }}>
                                     <label class="form-check-label" for="is_featured">Featured</label>
                                 </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" name="is_top_pick" id="is_top_pick" value="1" {{ old('is_top_pick', $product->is_top_pick ?? false) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="is_top_pick">Top Picks</label>
+                                </div>
                             </div>
 
                             <!-- Product Status -->

@@ -62,6 +62,11 @@ class HomepageSectionController extends Controller
                 'section_subtitle' => 'Add products to weekly line up',
                 'limit' => 17
             ],
+            'top_picks' => [
+                'section_title' => 'Top Picks',
+                'section_subtitle' => 'Our highly recommended products for you',
+                'limit' => 8
+            ],
         ];
 
         $section = SectionSetting::firstOrCreate(

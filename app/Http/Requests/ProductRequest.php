@@ -35,6 +35,7 @@ class ProductRequest extends FormRequest
             'is_new_arrival' => ['nullable', 'boolean'],
             'is_hot_deal' => ['nullable', 'boolean'],
             'is_featured' => ['nullable', 'boolean'],
+            'is_top_pick' => ['nullable', 'boolean'],
             'status' => ['nullable', 'boolean'],
             'stock' => ['nullable', 'integer', 'min:0'],
             'variants' => ['nullable', 'array'],

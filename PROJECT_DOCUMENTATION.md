@@ -114,7 +114,10 @@ Every module or architectural change must be documented in this file before a ta
   - **Dynamic Boot Overrides:** In `AppServiceProvider::boot()`, the system queries the `general_settings` and `mail_settings` tables. If records exist, it dynamically overrides Laravel's config (`config(['app.name' => $gs->business_name])` and `config(['mail.mailers.smtp...'])`). This allows the admin to change email servers and site names without touching `.env` files.
   - **Contact & Social Data Integration:** The `ContactSetting` model is accessible globally via `App\HelperClass::contactSettings()`. This data is dynamically injected into printable templates (Invoices), the client-side **Contact Page**, the **Footer**, and both **Desktop/Mobile Headers**. Icons for social media only render if their specific status is toggled "On" in the Admin Panel and a URL is provided.
   - **Homepage Sections:** `SectionSetting` records control the visibility (True/False) and logic (e.g., Organic bestsellers vs Custom selected) of homepage UI blocks. 
-    - **Dynamic Backgrounds:** The "Featured" section on the homepage dynamically loads its background image from the `background_image` field in `SectionSetting`. This is applied as an inline CSS style to the section container, allowing admins to fully customize the section's visual theme from the Admin Panel.
+    - **Dynamic Sections:** All homepage sections (Bestsellers, Hot Deals, Featured, Recently Added, Top Picks) can be independently enabled or disabled from the Admin Panel.
+    - **Top Picks Section:** A curated section (Organic mode targets `is_new_arrival` products, or Custom mode) renamed from a redundant new arrivals section to provide more marketing flexibility.
+    - **Dynamic Backgrounds:** The "Featured" section on the homepage dynamically loads its background image from the `background_image` field in `SectionSetting`.
+ This is applied as an inline CSS style to the section container, allowing admins to fully customize the section's visual theme from the Admin Panel.
 
 ### 3.8 Hybrid Shopping Cart System
 - **What:** A persistent shopping cart that works for both guests (visitors) and authenticated users.

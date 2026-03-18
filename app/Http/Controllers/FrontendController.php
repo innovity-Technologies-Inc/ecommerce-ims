@@ -62,6 +62,9 @@ class FrontendController extends Controller
         $recentlyAddedSection = SectionSetting::where('section_name', 'recently_added')->first();
         $recentlyAddedProducts = $this->homepageService->getSectionProducts('recently_added');
 
+        $topPicksSection = SectionSetting::where('section_name', 'top_picks')->first();
+        $topPicksProducts = $this->homepageService->getSectionProducts('top_picks');
+
         return view('client.homepage', compact(
             'sliders',
             'flashSale',
@@ -72,7 +75,9 @@ class FrontendController extends Controller
             'featuredSection',
             'featuredProducts',
             'recentlyAddedSection',
-            'recentlyAddedProducts'
+            'recentlyAddedProducts',
+            'topPicksSection',
+            'topPicksProducts'
         ));
     }
 

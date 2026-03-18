@@ -15,7 +15,7 @@
 
     @include('client.partials.banner_2')
 
-    @include('client.partials.feature_1')
+    @include('client.partials.top_picks')
 
     @include('client.partials.testimonial')
 

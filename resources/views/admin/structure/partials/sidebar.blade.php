@@ -127,6 +127,9 @@
                         <li class="sub-nav-item">
                             <a class="sub-nav-link" href="{{ route('admin.sections.edit', 'recently_added') }}">Recently Added</a>
                         </li>
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="{{ route('admin.sections.edit', 'top_picks') }}">Top Picks</a>
+                        </li>
                     </ul>
                 </div>
             </li>

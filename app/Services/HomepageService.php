@@ -168,6 +168,9 @@ class HomepageService
 
             case 'recently_added':
                 return $query->limit($section->limit)->get();
+
+            case 'top_picks':
+                return $query->where('is_top_pick', true)->limit($section->limit)->get();
         }
 
         return collect();
