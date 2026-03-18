@@ -194,7 +194,7 @@
                                     </div>
                                     <div class="cart-clear">
                                         <button type="button" id="clear-cart">Clear Shopping Cart</button>
-                                        <a href="{{ route('checkout.index') }}">Proceed to Checkout</a>
+                                        <a href="{{ route('checkout.index') }}" class="proceed-checkout-btn">Proceed to Checkout</a>
                                     </div>
                                 </div>
                             </div>
@@ -247,7 +247,7 @@
                                 </div>
                                 <h4 class="grand-totall-title">Shipping <span id="shipping-total-display">${{ number_format($selectedShippingMethod ? $selectedShippingMethod->price : 0, 2) }}</span></h4>
                                 <h4 class="grand-totall-title">Grand Total <span class="grand-total-display">${{ number_format($cartItems->sum('subtotal') + ($selectedShippingMethod ? $selectedShippingMethod->price : 0), 2) }}</span></h4>
-                                <a href="{{ route('checkout.index') }}">Proceed to Checkout</a>
+                                <a href="{{ route('checkout.index') }}" class="proceed-checkout-btn">Proceed to Checkout</a>
                             </div>
                         </div>
                     </div>
@@ -282,6 +282,13 @@
                     toastr.error('Failed to update shipping method.');
                 }
             });
+        });
+
+        $('.proceed-checkout-btn').on('click', function(e) {
+            if (!$('input[name="shipping_method"]:checked').val()) {
+                e.preventDefault();
+                toastr.error('Please select a shipping method before checkout.');
+            }
         });
     </script>
 @endpush
