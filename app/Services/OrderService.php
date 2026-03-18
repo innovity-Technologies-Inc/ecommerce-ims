@@ -248,6 +248,19 @@ class OrderService
                 'notes' => $data['notes'] ?? null,
             ]);
 
+            // Update user profile if authenticated
+            if (auth()->check()) {
+                auth()->user()->update([
+                    'name' => $data['name'],
+                    'mobile' => $data['mobile'],
+                    'address' => $data['address'],
+                    'city' => $data['city'],
+                    'state' => $data['state'] ?? null,
+                    'country' => $data['country'] ?? null,
+                    'zip' => $data['zip'] ?? null,
+                ]);
+            }
+
             // Log initial Pending status
             OrderStatusLog::create([
                 'order_id' => $order->id,

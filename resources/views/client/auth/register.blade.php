@@ -18,11 +18,6 @@
                                         <form action="{{route('register')}}" method="post">
                                             @csrf
 
-                                            @error('name')
-                                            <span class="small text-danger">{{$message}}</span>
-                                            @enderror
-                                            <input type="text" name="name" placeholder="Full Name" value="{{old('name')}}" required>
-
                                             @error('email')
                                             <span class="small text-danger">{{$message}}</span>
                                             @enderror
@@ -32,31 +27,6 @@
                                             <span class="small text-danger">{{$message}}</span>
                                             @enderror
                                             <input name="mobile" placeholder="Mobile Number" value="{{old('mobile')}}" type="text" required>
-
-                                            @error('address')
-                                            <span class="small text-danger">{{$message}}</span>
-                                            @enderror
-                                            <input name="address" placeholder="Address" value="{{old('address')}}" type="text" required>
-
-                                            @error('city')
-                                            <span class="small text-danger">{{$message}}</span>
-                                            @enderror
-                                            <input name="city" placeholder="City" value="{{old('city')}}" type="text" required>
-
-                                            @error('state')
-                                            <span class="small text-danger">{{$message}}</span>
-                                            @enderror
-                                            <input name="state" placeholder="State" value="{{old('state')}}" type="text" required>
-
-                                            @error('country')
-                                            <span class="small text-danger">{{$message}}</span>
-                                            @enderror
-                                            <input name="country" placeholder="Country" value="{{old('country')}}" type="text" required>
-
-                                            @error('zip')
-                                            <span class="small text-danger">{{$message}}</span>
-                                            @enderror
-                                            <input name="zip" placeholder="Zip Code" value="{{old('zip')}}" type="text" required>
 
                                             @error('password')
                                             <span class="small text-danger">{{$message}}</span>

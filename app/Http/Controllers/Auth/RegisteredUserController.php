@@ -28,29 +28,17 @@ class RegisteredUserController extends Controller
     {
         // Base validation (for both)
         $rules = [
-            'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'mobile' => ['required', 'string', 'max:20'],
-            'address' => ['required', 'string', 'max:255'],
-            'city' => ['required', 'string', 'max:100'],
-            'state' => ['required', 'string', 'max:100'],
-            'country' => ['required', 'string', 'max:100'],
-            'zip' => ['required', 'string', 'max:20'],
         ];
 
         $validated = $request->validate($rules);
 
         $user = User::create([
-            'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'mobile' => $validated['mobile'],
-            'address' => $validated['address'],
-            'city' => $validated['city'],
-            'state' => $validated['state'],
-            'country' => $validated['country'],
-            'zip' => $validated['zip'],
         ]);
 
         $oldSessionId = $request->session()->getId();
