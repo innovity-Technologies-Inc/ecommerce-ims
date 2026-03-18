@@ -25,16 +25,25 @@ class CheckoutController extends Controller
         $cartItems = $this->cartService->getCartItems();
 
         if ($cartItems->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Your cart is empty. Please add items before checkout.');
+            return redirect()->route('cart.index')->with([
+                'message' => 'Your cart is empty. Please add items before checkout.',
+                'alert-type' => 'error'
+            ]);
         }
 
         if (! session('shipping_method_id')) {
-            return redirect()->route('cart.index')->with('error', 'Please select a shipping method before checkout.');
+            return redirect()->route('cart.index')->with([
+                'message' => 'Please select a shipping method before checkout.',
+                'alert-type' => 'error'
+            ]);
         }
 
         $selectedShippingMethod = ShippingMethod::find(session('shipping_method_id'));
         if (! $selectedShippingMethod) {
-            return redirect()->route('cart.index')->with('error', 'Selected shipping method is no longer available.');
+            return redirect()->route('cart.index')->with([
+                'message' => 'Selected shipping method is no longer available.',
+                'alert-type' => 'error'
+            ]);
         }
 
         $user = Auth::guard('web')->user();
@@ -56,9 +65,15 @@ class CheckoutController extends Controller
 
             // Redirect to success page or order details (to be implemented)
             return redirect()->route('checkout.success', ['order_id' => $order->order_id])
-                ->with('success', 'Order placed successfully!');
+                ->with([
+                    'message' => 'Order placed successfully!',
+                    'alert-type' => 'success'
+                ]);
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', $e->getMessage());
+            return back()->withInput()->with([
+                'message' => $e->getMessage(),
+                'alert-type' => 'error'
+            ]);
         }
     }
 
