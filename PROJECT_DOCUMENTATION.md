@@ -46,7 +46,7 @@ Every module or architectural change must be documented in this file before a ta
 - **Implementation Details (Social Login):** 
   - **Dynamic Configuration:** Credentials (Client ID, Secret, Redirect URI) are stored in the database and dynamically injected into Laravel's `services.google` config via `AppServiceProvider::boot()`.
   - **Social Login UI (REQ-68):** The traditional full-width "Google" text button has been replaced with a modern, multi-colored Google "G" SVG logo on both the **Login** and **Registration** pages. The design is borderless with a transparent background and features a smooth scaling hover effect.
-  - **Automatic Registration:** The `SocialLoginController` uses `updateOrCreate` to either log in an existing user or create a new one based on their Google email.
+  - **Automatic Registration & Verification:** The `SocialLoginController` uses `updateOrCreate` to either log in an existing user or create a new one based on their Google email. New accounts are automatically marked as verified (`email_verified_at => now()`).
   - **Database Integrity:**
     - The `password` field in the `users` table is nullable for social users.
     - `google_id` and `google_token` columns use the `TEXT` type to accommodate extremely long OAuth tokens provided by Google.

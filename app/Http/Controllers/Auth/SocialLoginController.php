@@ -47,6 +47,7 @@ class SocialLoginController extends Controller
                 'google_id' => $googleUser->id,
                 'google_token' => $googleUser->token,
                 'status' => $existingUser ? $existingUser->status : 1, // Keep status if exists, else Active
+                'email_verified_at' => $existingUser ? $existingUser->email_verified_at : now(),
             ]);
 
             Auth::login($user);
