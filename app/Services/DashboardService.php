@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\User;
 use Carbon\Carbon;
+use DaiyanMozumder\LaravelFlexSearch\FlexSearch;
 use Illuminate\Support\Facades\DB;
 
 class DashboardService
@@ -168,23 +169,49 @@ class DashboardService
     }
 
     /**
-     * Get best selling products with pagination and time-based filtering.
+     * Get best selling products with pagination and advanced filtering.
      */
     public function getBestSellingProductsPaged(array $params = [], int $perPage = 15): \Illuminate\Pagination\LengthAwarePaginator
     {
-        $query = Product::with(['primaryImage', 'category'])
+        $query = Product::with(['primaryImage', 'category', 'brand'])
             ->select('products.*', DB::raw('SUM(order_items.quantity) as period_sales_count'))
             ->join('order_items', 'products.id', '=', 'order_items.product_id')
             ->join('orders', 'order_items.order_id', '=', 'orders.id')
             ->where('orders.order_status', 'Delivered');
 
-        // Time Filtering
+        // Advanced Product Filters
+        $filters = [];
+        if (! empty($params['category_id'])) {
+            $filters['category_id'] = $params['category_id'];
+        }
+        if (! empty($params['brand_id'])) {
+            $filters['brand_id'] = $params['brand_id'];
+        }
+        if (isset($params['status']) && $params['status'] !== '') {
+            $filters['status'] = $params['status'];
+        }
+
+        // Time / Date Range Filtering
         $period = $params['period'] ?? 'all_time';
         if ($period === 'monthly') {
             $query->where('orders.created_at', '>=', Carbon::now()->startOfMonth());
         } elseif ($period === 'yearly') {
             $query->where('orders.created_at', '>=', Carbon::now()->startOfYear());
+        } elseif ($period === 'custom') {
+            if (! empty($params['date_from'])) {
+                $query->where('orders.created_at', '>=', $params['date_from'].' 00:00:00');
+            }
+            if (! empty($params['date_to'])) {
+                $query->where('orders.created_at', '<=', $params['date_to'].' 23:59:59');
+            }
         }
+
+        // FlexSearch Integration
+        $flexSearch = app(FlexSearch::class);
+        $searchTerm = $params['search'] ?? null;
+        $searchableColumns = ['products.name', 'products.slug', 'category.name', 'brand.name'];
+
+        $query = $flexSearch->apply($query, $filters, $searchTerm, $searchableColumns);
 
         return $query->groupBy('products.id')
             ->orderBy('period_sales_count', 'desc')

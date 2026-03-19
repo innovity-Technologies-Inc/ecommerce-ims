@@ -6,7 +6,10 @@ use App\Services\DashboardService;
 
 class DashboardController extends Controller
 {
-    public function __construct(protected DashboardService $dashboardService) {}
+    public function __construct(
+        protected DashboardService $dashboardService,
+        protected \App\Services\ProductService $productService
+    ) {}
 
     public function index()
     {
@@ -30,12 +33,14 @@ class DashboardController extends Controller
     public function bestSellingProducts(\Illuminate\Http\Request $request)
     {
         $products = $this->dashboardService->getBestSellingProductsPaged($request->all(), 20);
+        $categories = $this->productService->getCategoriesForDropdown();
+        $brands = $this->productService->getBrandsForDropdown();
 
         if ($request->ajax()) {
             return view('admin.products.partials.best_selling_table', compact('products'))->render();
         }
 
-        return view('admin.products.best-selling', compact('products'));
+        return view('admin.products.best-selling', compact('products', 'categories', 'brands'));
     }
 
     public function lowStockProducts()
