@@ -46,7 +46,7 @@ Every module or architectural change must be documented in this file before a ta
 - **Implementation Details (Social Login):** 
   - **Dynamic Configuration:** Credentials (Client ID, Secret, Redirect URI) are stored in the database and dynamically injected into Laravel's `services.google` config via `AppServiceProvider::boot()`.
   - **Social Login UI (REQ-68):** The traditional full-width "Google" text button has been replaced with a modern, multi-colored Google "G" SVG logo on both the **Login** and **Registration** pages. The design is borderless with a transparent background and features a smooth scaling hover effect.
-  - **Registration Email Guardrail:** The `RegisteredUserController::store` method wraps the `Registered` event (which triggers email verification) in a `try-catch` block. If the system fails to send the email (e.g., SMTP connection issues), the user is still logged in but redirected with a Toastr `warning` explaining the failure, instead of a Laravel debug error page.
+  - **Registration Email Guardrail:** The `RegisteredUserController::store` method wraps the `Registered` event (which triggers email verification) in a `try-catch` block. If the system fails to send the email (e.g., SMTP connection issues), the user is still logged in but redirected with a Toastr `error` message: "We cant send email right now, Please try again.", instead of a Laravel debug error page.
   - **Database Integrity:**
     - The `password` field in the `users` table is nullable for social users.
     - `google_id` and `google_token` columns use the `TEXT` type to accommodate extremely long OAuth tokens provided by Google.
