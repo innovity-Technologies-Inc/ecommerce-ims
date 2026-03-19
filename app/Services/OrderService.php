@@ -115,6 +115,12 @@ class OrderService
             }
 
             $order->order_status = $status;
+
+            // Automatically set payment status to Paid if delivered
+            if ($status === 'Delivered') {
+                $order->payment_status = 'Paid';
+            }
+
             $order->save();
 
             // Increment sales_count if delivered
