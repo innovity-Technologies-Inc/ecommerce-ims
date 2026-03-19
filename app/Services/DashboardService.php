@@ -206,12 +206,24 @@ class DashboardService
             }
         }
 
-        // FlexSearch Integration
-        $flexSearch = app(FlexSearch::class);
+        // Search and Relationship Filters
         $searchTerm = $params['search'] ?? null;
-        $searchableColumns = ['name', 'slug', 'category.name', 'brand.name'];
+        if ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('products.name', 'like', '%'.$searchTerm.'%')
+                    ->orWhere('products.slug', 'like', '%'.$searchTerm.'%')
+                    ->orWhereHas('category', function ($cq) use ($searchTerm) {
+                        $cq->where('name', 'like', '%'.$searchTerm.'%');
+                    })
+                    ->orWhereHas('brand', function ($bq) use ($searchTerm) {
+                        $bq->where('name', 'like', '%'.$searchTerm.'%');
+                    });
+            });
+        }
 
-        $query = $flexSearch->apply($query, $filters, $searchTerm, $searchableColumns);
+        // Apply other filters using FlexSearch (passing null for search to avoid the ambiguity issue)
+        $flexSearch = app(FlexSearch::class);
+        $query = $flexSearch->apply($query, $filters, null, []);
 
         return $query->groupBy('products.id')
             ->orderBy('period_sales_count', 'desc')
