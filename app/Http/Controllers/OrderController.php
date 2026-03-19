@@ -105,17 +105,4 @@ class OrderController extends Controller
 
         return view('admin.orders.invoice', compact('order'));
     }
-
-    /**
-     * Remove the specified order.
-     */
-    public function destroy(Order $order): RedirectResponse
-    {
-        $this->orderService->deleteOrder($order);
-
-        return redirect()->route('admin.orders.index')->with([
-            'message' => 'Order deleted successfully!',
-            'alert-type' => 'success',
-        ]);
-    }
 }

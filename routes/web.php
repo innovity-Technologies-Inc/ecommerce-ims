@@ -107,7 +107,6 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::post('/{order}/generate-invoice', 'generateInvoice')->name('generate-invoice');
         Route::post('/{order}/regenerate-invoice', 'regenerateInvoice')->name('regenerate-invoice');
         Route::get('/{order}/view-invoice', 'viewInvoice')->name('view-invoice');
-        Route::delete('/{order}/destroy', 'destroy')->name('destroy');
     });
 
     Route::prefix('sections')->group(function () {

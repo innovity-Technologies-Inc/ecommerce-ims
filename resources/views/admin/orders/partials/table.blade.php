@@ -54,13 +54,6 @@
                     <a href="{{ route('admin.orders.show', $data->id) }}" class="btn btn-soft-primary btn-sm">
                         <iconify-icon icon="solar:eye-broken" class="align-middle fs-18"></iconify-icon>
                     </a>
-                    <form method="post" action="{{ route('admin.orders.destroy', $data->id) }}">
-                        @csrf
-                        @method('delete')
-                        <button type="submit" class="btn btn-soft-danger btn-sm confirmDelete">
-                            <iconify-icon icon="solar:trash-bin-minimalistic-2-broken" class="align-middle fs-18"></iconify-icon>
-                        </button>
-                    </form>
                 </div>
             </td>
         </tr>
