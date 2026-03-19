@@ -61,12 +61,19 @@ class CustomerController extends Controller
 
     public function profileUpdate(Request $request)
     {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.Auth::guard('web')->id()],
+            'mobile' => ['required', 'string', 'max:20'],
+        ]);
+
         $user = Auth::guard('web')->user();
-        $user->update($request->all());
+        $user->update($request->only(['name', 'email', 'mobile']));
 
         return redirect()->back()->with([
             'message' => 'Profile updated successfully',
             'alert-type' => 'success',
+            'active_tab' => 'profile',
         ]);
     }
 
@@ -83,7 +90,7 @@ class CustomerController extends Controller
         if (! Hash::check($request->current_password, $user->password)) {
             return back()->withErrors([
                 'current_password' => 'Current password is incorrect.',
-            ]);
+            ])->withInput()->with('active_tab', 'password');
         }
 
         // Update password
@@ -97,17 +104,27 @@ class CustomerController extends Controller
         return back()->with([
             'message' => 'Password changed successfully',
             'alert-type' => 'success',
+            'active_tab' => 'password',
         ]);
     }
 
     public function addressUpdate(Request $request)
     {
+        $request->validate([
+            'address' => ['required', 'string', 'max:255'],
+            'city' => ['required', 'string', 'max:100'],
+            'state' => ['nullable', 'string', 'max:100'],
+            'country' => ['nullable', 'string', 'max:100'],
+            'zip' => ['nullable', 'string', 'max:20'],
+        ]);
+
         $user = Auth::guard('web')->user();
-        $user->update($request->all());
+        $user->update($request->only(['address', 'city', 'state', 'country', 'zip']));
 
         return redirect()->back()->with([
             'message' => 'Address updated successfully',
             'alert-type' => 'success',
+            'active_tab' => 'address',
         ]);
     }
 }

@@ -57,7 +57,8 @@ Every module or architectural change must be documented in this file before a ta
   - **Post-Login Workflow:**
     - **Cart Sync:** Guest items in the current session are automatically migrated to the user's account upon successful social login using `CartService::syncCartOnLogin()`.
     - **User Feedback:** Redirects to the home page with a standard "You are now logged in" success notification and `success` alert type.
-  - **Security:** Middleware (`auth:admin`, `auth:web`) strictly protects routes, ensuring complete isolation of privileges.
+  - **Account Profile UX:** The User Account Information page features persistent tab/collapse states. If a form submission fails (e.g., password validation error), the page automatically re-opens the relevant tab upon redirect. This is achieved by checking for specific field errors in the Blade view and utilizing a session-flashed `active_tab` variable.
+  - **Account Validation:** The `CustomerController` enforces strict validation for Profile, Password, and Address updates, ensuring data integrity and providing immediate user feedback.
 
 ### 3.2 Social Login Settings Module (Admin)
 - **What:** Administrative interface to manage Google Social Authentication credentials and status.
