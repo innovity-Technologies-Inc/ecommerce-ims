@@ -63,7 +63,7 @@ class ProductRequest extends FormRequest
             'variants.*.discount_percentage' => ['nullable', 'integer', 'min:0', 'max:100'],
             'variants.*.stock' => ['nullable', 'integer', 'min:0'],
             'images' => ['nullable', 'array'],
-            'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048'],
+            'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:600'],
         ];
     }
 }

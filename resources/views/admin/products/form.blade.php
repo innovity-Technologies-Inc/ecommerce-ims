@@ -31,7 +31,7 @@
                             <!-- Form Part 1: Category and Sub-category selection -->
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="category_id" class="form-label">Category</label>
+                                    <label for="category_id" class="form-label">Category <span class="text-danger">*</span></label>
                                     <select name="category_id" id="category_id" class="form-control select2_list" required>
                                         <option value="">Select Category</option>
                                         @foreach($categories as $category)
@@ -74,7 +74,7 @@
                             <!-- Form Part 2: Base product details -->
                             <div class="col-lg-12">
                                 <div class="mb-3">
-                                    <label for="name" class="form-label">Product Name</label>
+                                    <label for="name" class="form-label">Product Name <span class="text-danger">*</span></label>
                                     <input type="text" name="name" id="name" class="form-control" placeholder="Enter Product Name" value="{{ old('name', $product->name ?? '') }}" required>
                                     @error('name')
                                     <span class="small text-danger">{{$message}}</span>
@@ -116,7 +116,7 @@
 
                             <div class="col-lg-6 base-price-section" style="{{ isset($product) && !$product->regular_price ? 'display:none;' : '' }}">
                                 <div class="mb-3">
-                                    <label for="regular_price" class="form-label">Base Regular Price</label>
+                                    <label for="regular_price" class="form-label">Base Regular Price <span class="text-danger">*</span></label>
                                     <input type="number" step="0.01" name="regular_price" id="regular_price" class="form-control" placeholder="0.00" value="{{ old('regular_price', $product->regular_price ?? '') }}">
                                     @error('regular_price')
                                     <span class="small text-danger">{{$message}}</span>
@@ -179,7 +179,8 @@
                                 <div class="mb-3">
                                     <label for="images" class="form-label">{{ isset($product) ? 'Add More Images' : 'Product Images' }} (Multiple Selectable)</label>
                                     <input type="file" name="images[]" id="images" class="filepond" multiple>
-                                    <p class="small text-muted mt-1">Select one or more images. {{ !isset($product) ? 'The first image will be set as primary.' : '' }}</p>
+                                    <p class="small text-danger mt-1 fw-bold">Individual image size must not exceed 600 KB. Allowed formats: JPEG, PNG, JPG, GIF, SVG, WEBP.</p>
+                                    <p class="small text-muted">Select one or more images. {{ !isset($product) ? 'The first image will be set as primary.' : '' }}</p>
 
                                     @if(isset($product) && $product->images->count() > 0)
                                         <div class="row mt-3">
@@ -209,9 +210,9 @@
                                     <table class="table table-bordered" id="variant-table">
                                         <thead class="bg-light">
                                             <tr>
-                                                <th>Variant Name</th>
+                                                <th>Variant Name <span class="text-danger">*</span></th>
                                                 <th>SKU (Optional)</th>
-                                                <th>Regular Price</th>
+                                                <th>Regular Price <span class="text-danger">*</span></th>
                                                 <th>Discount %</th>
                                                 <th>Stock</th>
                                                 <th>Action</th>
