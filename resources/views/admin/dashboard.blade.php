@@ -4,7 +4,7 @@
 <div class="container-xxl">
     <div class="row">
         <div class="col-md-6 col-xl-3">
-            <a href="{{ route('admin.orders.index') }}" class="text-decoration-none">
+            <a href="{{ route('admin.orders.index', ['date_from' => now()->startOfMonth()->format('Y-m-d'), 'date_to' => now()->endOfMonth()->format('Y-m-d'), 'order_status' => 'Delivered']) }}" class="text-decoration-none">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between">
@@ -21,7 +21,7 @@
             </a>
         </div>
         <div class="col-md-6 col-xl-3">
-            <a href="{{ route('admin.orders.index') }}" class="text-decoration-none">
+            <a href="{{ route('admin.orders.index', ['date_from' => now()->startOfYear()->format('Y-m-d'), 'date_to' => now()->endOfYear()->format('Y-m-d'), 'order_status' => 'Delivered']) }}" class="text-decoration-none">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between">
@@ -38,7 +38,7 @@
             </a>
         </div>
         <div class="col-md-6 col-xl-3">
-            <a href="{{ route('admin.orders.index') }}" class="text-decoration-none">
+            <a href="{{ route('admin.orders.index', ['order_status' => 'Delivered']) }}" class="text-decoration-none">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between">
@@ -55,7 +55,7 @@
             </a>
         </div>
         <div class="col-md-6 col-xl-3">
-            <a href="{{ route('admin.orders.index') }}" class="text-decoration-none">
+            <a href="{{ route('admin.orders.index', ['order_status' => 'Delivered']) }}" class="text-decoration-none">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between">
@@ -92,7 +92,7 @@
             </a>
         </div>
         <div class="col-md-6 col-xl-3">
-            <a href="{{ route('admin.orders.index') }}" class="text-decoration-none">
+            <a href="{{ route('admin.orders.index', ['date_from' => now()->startOfMonth()->format('Y-m-d'), 'date_to' => now()->endOfMonth()->format('Y-m-d')]) }}" class="text-decoration-none">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between">
@@ -126,7 +126,7 @@
             </a>
         </div>
         <div class="col-md-6 col-xl-3">
-            <a href="{{ route('admin.orders.index') }}" class="text-decoration-none">
+            <a href="{{ route('admin.orders.index', ['order_status' => 'Pending']) }}" class="text-decoration-none">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between">
