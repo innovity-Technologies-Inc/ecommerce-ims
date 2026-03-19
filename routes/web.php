@@ -143,7 +143,7 @@ Route::prefix('cart')->name('cart.')->group(function () {
 });
 
 // Checkout Routes
-Route::prefix('checkout')->name('checkout.')->group(function () {
+Route::prefix('checkout')->middleware(['auth', 'verified'])->name('checkout.')->group(function () {
     Route::get('/', [CheckoutController::class, 'index'])->name('index');
     Route::post('/store', [CheckoutController::class, 'store'])->name('store');
     Route::get('/success/{order_id}', [CheckoutController::class, 'success'])->name('success');
@@ -151,7 +151,7 @@ Route::prefix('checkout')->name('checkout.')->group(function () {
     Route::post('/remove-coupon', [CouponApplyController::class, 'remove'])->name('remove_coupon');
 });
 
-Route::middleware(['auth:web'])->prefix('user')->controller(CustomerController::class)->group(function () {
+Route::middleware(['auth:web', 'verified'])->prefix('user')->controller(CustomerController::class)->group(function () {
     Route::get('my-account', 'accountInformation')->name('user.account');
     Route::put('profile-update', 'profileUpdate')->name('user.profile.update');
     Route::put('password-update', 'changePassword')->name('user.password.update');

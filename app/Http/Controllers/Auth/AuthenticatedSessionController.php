@@ -34,6 +34,13 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        if (! Auth::user()->hasVerifiedEmail()) {
+            return redirect()->route('verification.notice')->with([
+                'message' => 'Please verify your email address.',
+                'alert-type' => 'warning',
+            ]);
+        }
+
         return redirect()->route('home')->with([
             'message' => 'You are now logged in',
             'alert-type' => 'success',
