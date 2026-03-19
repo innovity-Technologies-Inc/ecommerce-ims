@@ -356,6 +356,7 @@ class OrderService
     public function getStatusList(): array
     {
         return [
+            'Pending' => 'Pending',
             'Processing' => 'Processing',
             'Out for Delivery' => 'Out for Delivery',
             'Delivered' => 'Delivered',

@@ -37,6 +37,7 @@ class OrderController extends Controller
     {
         $order->load(['orderItems', 'user']);
         $statuses = $this->orderService->getStatusList();
+        unset($statuses['Pending']);
 
         return view('admin.orders.show', compact('order', 'statuses'));
     }

@@ -23,29 +23,29 @@ class DashboardService
         $startOfYear = $now->copy()->startOfYear();
 
         $thisMonthSales = Order::where('created_at', '>=', $startOfMonth)
-            ->where('order_status', 'delivered')
+            ->where('order_status', 'Delivered')
             ->sum('total_amount');
 
         $thisYearSales = Order::where('created_at', '>=', $startOfYear)
-            ->where('order_status', 'delivered')
+            ->where('order_status', 'Delivered')
             ->sum('total_amount');
 
-        $totalSalesAmount = Order::where('order_status', 'delivered')
+        $totalSalesAmount = Order::where('order_status', 'Delivered')
             ->sum('total_amount');
 
         $totalProductSalesCount = OrderItem::whereHas('order', function ($query) {
-            $query->where('order_status', 'delivered');
+            $query->where('order_status', 'Delivered');
         })->sum('quantity');
 
         $totalProducts = Product::count();
 
         $thisMonthOrdersCount = Order::where('created_at', '>=', $startOfMonth)
-            ->whereNotIn('order_status', ['cancelled', 'rejected'])
+            ->whereNotIn('order_status', ['Cancelled', 'Rejected'])
             ->count();
 
         $totalCustomers = User::count();
 
-        $pendingOrdersCount = Order::whereIn('order_status', ['pending', 'processing', 'out for delivery'])
+        $pendingOrdersCount = Order::where('order_status', 'Pending')
             ->count();
 
         $lowStockLimit = GeneralSetting::first()->low_stock_limit ?? 5;
@@ -76,7 +76,7 @@ class DashboardService
             DB::raw('SUM(total_amount) as total')
         )
             ->whereYear('created_at', $year)
-            ->where('order_status', 'delivered')
+            ->where('order_status', 'Delivered')
             ->groupBy('month')
             ->orderBy('month')
             ->get()
@@ -109,7 +109,7 @@ class DashboardService
             DB::raw('SUM(total_amount) as total')
         )
             ->whereYear('created_at', '>=', $startYear)
-            ->where('order_status', 'delivered')
+            ->where('order_status', 'Delivered')
             ->groupBy('year')
             ->orderBy('year')
             ->get()
