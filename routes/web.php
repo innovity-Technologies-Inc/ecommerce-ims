@@ -27,7 +27,7 @@ Route::get('/check-flash-sale-expiry', function (\App\Services\FlashSaleService 
     $flashSale = $service->getFlashSale();
     $service->syncAllDiscounts($flashSale);
 
-    return "Flash sale expiry check executed successfully at " . now()->toDateTimeString();
+    return 'Flash sale expiry check executed successfully at '.now()->toDateTimeString();
 });
 
 Route::get('/test', function () {
@@ -43,6 +43,7 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     Route::prefix('products')->group(function () {
         Route::get('/', [ProductController::class, 'index'])->name('admin.products.index');
         Route::get('/low-stock', [DashboardController::class, 'lowStockProducts'])->name('admin.products.low-stock');
+        Route::get('/best-selling', [DashboardController::class, 'bestSellingProducts'])->name('admin.products.best-selling');
         Route::get('/create', [ProductController::class, 'create'])->name('admin.products.create');
         Route::post('/store', [ProductController::class, 'store'])->name('admin.products.store');
         Route::get('/{product}', [ProductController::class, 'show'])->name('admin.products.show');

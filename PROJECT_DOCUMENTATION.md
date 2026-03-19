@@ -347,7 +347,17 @@ Every module or architectural change must be documented in this file before a ta
   - **`DashboardService`:** Centralizes all complex aggregation logic. It utilizes optimized Eloquent queries with `SUM()` and `COUNT()` aggregates to ensure high performance even as the database grows.
   - **Dynamic Charting:** Monthly sales data is retrieved using `DB::raw` with `MONTH()` groupings and passed to an area-style ApexChart via JSON encoding in the Blade view.
   - **Customizable Alerts:** The "Low Stock" threshold is stored in the `general_settings` table and injected into the service layer, allowing the admin to define what constitutes a stock emergency.
-  - **Integrated Navigation:** The dashboard provides direct links to "Restock" low-stock items or "View Details" for top-performing products, turning insights into immediate actions.
+  - **Integrated Navigation:** The dashboard provides direct links to "Restock" low-stock items, filtered order lists, and a dedicated **Best Selling Products** report.
+
+### 3.25 Best Selling Products Report (Admin)
+- **What:** A specialized reporting page that identifies top-performing products over different time periods.
+- **How it Works:**
+  - **Time-Based Filtering:** Admins can filter the best-selling list by "Monthly" (current month), "Yearly" (current year), or "All Time".
+  - **Delivered Orders Only:** To ensure accuracy, the sales count is calculated by summing quantities from `order_items` that belong to orders with a `Delivered` status.
+  - **Live Dashboard Integration:** The main dashboard features two quick-glance cards for Monthly and Yearly best sellers, each with a "View All" button that redirects to the full paginated report with the corresponding filter pre-applied.
+- **Implementation Details:**
+  - **`DashboardService::getBestSellingProductsPaged()`:** Centralizes the logic using optimized joins and `SUM()` aggregates.
+  - **AJAX-Driven:** The report supports instant filtering and pagination without full page reloads, maintaining URL state via `history.pushState`.
 
 ### 3.25 Global Wishlist Logic
 - **What:** Centralized implementation of wishlist functionality to ensure consistent behavior across all storefront pages.

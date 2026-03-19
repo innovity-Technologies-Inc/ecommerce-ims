@@ -173,16 +173,17 @@
     </div>
 
     <div class="row">
-        <div class="col-xl-4">
+        <div class="col-xl-6">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Best Selling Products</h4>
+                    <h4 class="card-title">Monthly Best Sellers ({{ date('M') }})</h4>
+                    <a href="{{ route('admin.products.best-selling', ['period' => 'monthly']) }}" class="btn btn-sm btn-soft-primary">View All</a>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover table-centered mb-0">
                             <tbody>
-                                @foreach($bestSellingProducts as $product)
+                                @forelse($monthlyBestSellingProducts as $product)
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center">
@@ -194,11 +195,15 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <h5 class="fs-14 my-1 fw-normal text-end">{{ number_format($product->sales_count) }}</h5>
+                                        <h5 class="fs-14 my-1 fw-normal text-end">{{ number_format($product->period_sales_count) }}</h5>
                                         <p class="text-muted fs-12 mb-0 text-end">Sales</p>
                                     </td>
                                 </tr>
-                                @endforeach
+                                @empty
+                                <tr>
+                                    <td colspan="2" class="text-center py-3 text-muted">No sales this month yet.</td>
+                                </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -206,7 +211,47 @@
             </div>
         </div>
 
-        <div class="col-xl-8">
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="card-title">Yearly Best Sellers ({{ date('Y') }})</h4>
+                    <a href="{{ route('admin.products.best-selling', ['period' => 'yearly']) }}" class="btn btn-sm btn-soft-primary">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-centered mb-0">
+                            <tbody>
+                                @forelse($yearlyBestSellingProducts as $product)
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ asset('storage/' . ($product->primaryImage?->image_path ?? '')) }}" alt="" class="avatar-sm rounded me-2">
+                                            <div>
+                                                <h5 class="fs-14 my-1"><a href="{{ route('admin.products.show', $product->id) }}" class="text-reset">{{ $product->name }}</a></h5>
+                                                <span class="text-muted fs-12">{{ $product->category?->name ?? 'N/A' }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <h5 class="fs-14 my-1 fw-normal text-end">{{ number_format($product->period_sales_count) }}</h5>
+                                        <p class="text-muted fs-12 mb-0 text-end">Sales</p>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="2" class="text-center py-3 text-muted">No sales this year yet.</td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="card-title">Low Stock Products</h4>

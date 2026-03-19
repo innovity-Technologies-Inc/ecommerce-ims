@@ -130,14 +130,65 @@ class DashboardService
     }
 
     /**
-     * Get best selling products.
+     * Get monthly best selling products.
      */
-    public function getBestSellingProducts(int $limit = 5)
+    public function getMonthlyBestSellingProducts(int $limit = 5)
     {
+        $startOfMonth = Carbon::now()->startOfMonth();
+
         return Product::with(['primaryImage', 'category'])
-            ->orderBy('sales_count', 'desc')
+            ->select('products.*', DB::raw('SUM(order_items.quantity) as period_sales_count'))
+            ->join('order_items', 'products.id', '=', 'order_items.product_id')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->where('orders.order_status', 'Delivered')
+            ->where('orders.created_at', '>=', $startOfMonth)
+            ->groupBy('products.id')
+            ->orderBy('period_sales_count', 'desc')
             ->limit($limit)
             ->get();
+    }
+
+    /**
+     * Get yearly best selling products.
+     */
+    public function getYearlyBestSellingProducts(int $limit = 5)
+    {
+        $startOfYear = Carbon::now()->startOfYear();
+
+        return Product::with(['primaryImage', 'category'])
+            ->select('products.*', DB::raw('SUM(order_items.quantity) as period_sales_count'))
+            ->join('order_items', 'products.id', '=', 'order_items.product_id')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->where('orders.order_status', 'Delivered')
+            ->where('orders.created_at', '>=', $startOfYear)
+            ->groupBy('products.id')
+            ->orderBy('period_sales_count', 'desc')
+            ->limit($limit)
+            ->get();
+    }
+
+    /**
+     * Get best selling products with pagination and time-based filtering.
+     */
+    public function getBestSellingProductsPaged(array $params = [], int $perPage = 15): \Illuminate\Pagination\LengthAwarePaginator
+    {
+        $query = Product::with(['primaryImage', 'category'])
+            ->select('products.*', DB::raw('SUM(order_items.quantity) as period_sales_count'))
+            ->join('order_items', 'products.id', '=', 'order_items.product_id')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->where('orders.order_status', 'Delivered');
+
+        // Time Filtering
+        $period = $params['period'] ?? 'all_time';
+        if ($period === 'monthly') {
+            $query->where('orders.created_at', '>=', Carbon::now()->startOfMonth());
+        } elseif ($period === 'yearly') {
+            $query->where('orders.created_at', '>=', Carbon::now()->startOfYear());
+        }
+
+        return $query->groupBy('products.id')
+            ->orderBy('period_sales_count', 'desc')
+            ->paginate($perPage);
     }
 
     /**
