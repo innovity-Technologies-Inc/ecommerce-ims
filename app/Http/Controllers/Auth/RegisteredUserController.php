@@ -47,7 +47,16 @@ class RegisteredUserController extends Controller
         app(\App\Services\CartService::class)->syncCartOnLogin($oldSessionId);
 
         // 🔥 Send email verification ONLY for user
-        event(new Registered($user));
+        try {
+            event(new Registered($user));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Registration Email Error: '.$e->getMessage());
+
+            return redirect()->route('verification.notice')->with([
+                'message' => 'Registration successful, but we could not send the verification email right now. Please try again later from your profile.',
+                'alert-type' => 'warning',
+            ]);
+        }
 
         return redirect()->route('verification.notice');
 
