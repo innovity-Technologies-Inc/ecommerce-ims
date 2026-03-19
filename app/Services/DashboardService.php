@@ -173,10 +173,11 @@ class DashboardService
      */
     public function getBestSellingProductsPaged(array $params = [], int $perPage = 15): \Illuminate\Pagination\LengthAwarePaginator
     {
+        // Use a simplified join to avoid column name collisions (like 'name') with FlexSearch
         $query = Product::with(['primaryImage', 'category', 'brand'])
             ->select('products.*', DB::raw('SUM(order_items.quantity) as period_sales_count'))
             ->join('order_items', 'products.id', '=', 'order_items.product_id')
-            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->join(DB::raw('(SELECT id, order_status, created_at FROM orders) as orders'), 'order_items.order_id', '=', 'orders.id')
             ->where('orders.order_status', 'Delivered');
 
         // Advanced Product Filters
@@ -206,24 +207,12 @@ class DashboardService
             }
         }
 
-        // Search and Relationship Filters
-        $searchTerm = $params['search'] ?? null;
-        if ($searchTerm) {
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('products.name', 'like', '%'.$searchTerm.'%')
-                    ->orWhere('products.slug', 'like', '%'.$searchTerm.'%')
-                    ->orWhereHas('category', function ($cq) use ($searchTerm) {
-                        $cq->where('name', 'like', '%'.$searchTerm.'%');
-                    })
-                    ->orWhereHas('brand', function ($bq) use ($searchTerm) {
-                        $bq->where('name', 'like', '%'.$searchTerm.'%');
-                    });
-            });
-        }
-
-        // Apply other filters using FlexSearch (passing null for search to avoid the ambiguity issue)
+        // FlexSearch Integration (Now possible because joins are simplified)
         $flexSearch = app(FlexSearch::class);
-        $query = $flexSearch->apply($query, $filters, null, []);
+        $searchTerm = $params['search'] ?? null;
+        $searchableColumns = ['name', 'slug', 'category.name', 'brand.name'];
+
+        $query = $flexSearch->apply($query, $filters, $searchTerm, $searchableColumns);
 
         return $query->groupBy('products.id')
             ->orderBy('period_sales_count', 'desc')
