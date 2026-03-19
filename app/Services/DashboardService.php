@@ -209,7 +209,7 @@ class DashboardService
         // FlexSearch Integration
         $flexSearch = app(FlexSearch::class);
         $searchTerm = $params['search'] ?? null;
-        $searchableColumns = ['products.name', 'products.slug', 'category.name', 'brand.name'];
+        $searchableColumns = ['name', 'slug', 'category.name', 'brand.name'];
 
         $query = $flexSearch->apply($query, $filters, $searchTerm, $searchableColumns);
 
