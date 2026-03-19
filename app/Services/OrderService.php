@@ -46,11 +46,11 @@ class OrderService
         }
 
         if (! empty($params['date_from'])) {
-            $filters['created_at>='] = $params['date_from'];
+            $filters['created_at>='] = $params['date_from'].' 00:00:00';
         }
 
         if (! empty($params['date_to'])) {
-            $filters['created_at<='] = $params['date_to'];
+            $filters['created_at<='] = $params['date_to'].' 23:59:59';
         }
 
         $flexSearch = app(FlexSearch::class);
