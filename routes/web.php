@@ -78,7 +78,6 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/{id}', 'show')->name('show');
         Route::post('/{id}/toggle-status', 'toggleStatus')->name('toggle-status');
-        Route::delete('/{id}/destroy', 'destroy')->name('destroy');
     });
 
     Route::prefix('contact-messages')->name('admin.contact_messages.')->controller(AdminContactMessageController::class)->group(function () {

@@ -48,17 +48,4 @@ class CustomerController extends Controller
             'message' => 'Customer status updated successfully',
         ]);
     }
-
-    /**
-     * Remove the specified customer from storage.
-     */
-    public function destroy(int $id): RedirectResponse
-    {
-        $this->customerService->deleteCustomer($id);
-
-        return redirect()->route('admin.customers.index')->with([
-            'message' => 'Customer deleted successfully',
-            'alert-type' => 'success',
-        ]);
-    }
 }
