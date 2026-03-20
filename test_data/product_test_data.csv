@@ -1,0 +1,14 @@
+product_name,category,subcategory,brand,short_description,description,regular_price,discount_price,stock,is_new_arrival,is_hot_deal,is_featured,is_top_pick,status,variant_name,variant_sku,variant_size,variant_color,variant_regular_price,variant_discount_price,variant_stock
+Mens Polo Shirt,Men's Fashion,Polo,Adidas,High quality polo shirt,Long description here,1200,1000,100,1,1,1,0,active,Size M - Red,POLO-M-RED,M,Red,1200,1000,50
+Mens Polo Shirt,,,,,,,,,,,,,,Size L - Blue,POLO-L-BLUE,L,Blue,1250,1100,50
+Formal Cotton Shirt,Men's Fashion,Shirt,US Polo,Premium cotton shirt,Detailed description,1500,1350,80,1,0,0,1,active,XL - White,SHIRT-XL-WHITE,XL,White,1500,1350,80
+Designer Kamiz,Female Fashion,Kamiz,Adidas,Stylish kamiz,Description,2500,2200,40,0,1,1,0,active,,,
+Luxury Watch,Female Fashion,Watch,Adidas,Elegant female watch,Long description,5000,4500,20,1,1,0,1,active,Silver Edition,WATCH-SILVER,One Size,Silver,5000,4500,10
+Luxury Watch,,,,,,,,,,,,,,Gold Edition,WATCH-GOLD,One Size,Gold,5500,5000,10
+Fragrance No 5,Perfume,,Adidas,Fresh scent perfume,Description,3000,2700,60,0,0,0,0,active,,,
+Mens Denim,Men's Fashion,Test,US Polo,Classic denim,Description,1800,1600,100,1,0,1,0,active,Size 32,DENIM-32,32,Blue,1800,1600,50
+Mens Denim,,,,,,,,,,,,,,Size 34,DENIM-34,34,Blue,1800,1600,50
+Summer Polo,Men's Fashion,Polo,Adidas,Lightweight polo,Description,900,800,150,0,0,0,0,active,,,
+Old Stock Punjabi,Men's Fashion,Punjabi,US Polo,Discounted punjabi,Description,1100,900,10,0,0,0,0,inactive,,,
+Casual Kamiz,Female Fashion,Kamiz,Adidas,Daily wear kamiz,Description,1200,1100,90,1,0,0,0,active,,,
+Sport Perfume,Perfume,,Adidas,Active lifestyle scent,Description,1500,1300,45,0,1,0,0,active,,,

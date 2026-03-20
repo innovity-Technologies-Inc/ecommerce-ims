@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Admin\Product\BulkProductUploadRequest;
 use App\Http\Requests\ProductRequest;
 use App\Models\Brand;
 use App\Models\Product;
 use App\Services\ProductService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends Controller
 {
@@ -27,6 +31,53 @@ class ProductController extends Controller
         }
 
         return view('admin.products.index', compact('products', 'categories', 'brands'));
+    }
+
+    /**
+     * Show the product import form.
+     */
+    public function importForm(): View
+    {
+        return view('admin.products.import');
+    }
+
+    /**
+     * Handle the product import.
+     */
+    public function import(BulkProductUploadRequest $request): RedirectResponse
+    {
+        try {
+            Log::info('Product Import Started', ['filename' => $request->file('file')?->getClientOriginalName()]);
+
+            $this->productService->importProducts($request->file('file'));
+
+            Log::info('Product Import Completed Successfully');
+
+            return redirect()->route('admin.products.index')->with([
+                'message' => 'Products imported successfully.',
+                'alert-type' => 'success',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Product Import Error: '.$e->getMessage(), [
+                'exception' => $e,
+                'file' => $request->file('file')?->getClientOriginalName(),
+            ]);
+
+            return back()->with([
+                'message' => 'Import failed: '.$e->getMessage(),
+                'alert-type' => 'error',
+            ]);
+        }
+    }
+
+    /**
+     * Download the product import template.
+     */
+    public function downloadTemplate(Request $request): Response
+    {
+        $format = $request->get('format', 'csv');
+
+        return $this->productService->generateImportTemplate($format);
     }
 
     /**

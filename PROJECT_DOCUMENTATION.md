@@ -369,6 +369,21 @@ Every module or architectural change must be documented in this file before a ta
   - **JS Orchestration:** `addToWishlist(productId)` dynamically populates a hidden input and submits the form to the `user.wishlist.store` route.
   - **Smart Actions:** The wishlist table's action button dynamically switches between "Add to Cart" (AJAX-powered), "Select Options" (Redirects to details), and "View Details" based on the product's live status and configuration.
 
+### 3.26 Bulk Product Upload Module
+- **What:** A high-performance administrative tool to import products and their variants in bulk from Excel or CSV files.
+- **How it Works:**
+  - **Template-Based Import:** Admins can download both CSV and XLSX pre-formatted templates to ensure data compatibility.
+  - **Hierarchical Resolution:** The system automatically maps Category, Subcategory, and Brand names from the file to their corresponding database IDs.
+  - **Variant Support:** Supports complex product structures. If multiple rows share the same Product Name, the system treats the first row as the product definition and subsequent rows as variants, grouping them logically.
+  - **Auto-Calculation:** Automatically calculates the `discount_percentage` based on the provided `regular_price` and `discount_price` for both products and variants.
+  - **Validation:** Implements file-level validation (format, size) and row-level validation (required fields, numeric types). It also includes fallback support for common MIME types on different operating systems.
+- **Implementation Details:**
+  - **Laravel Excel (`maatwebsite/excel`):** Utilizes `ToCollection` and `WithHeadingRow` for efficient dataset handling.
+  - **Atomic Transactions:** The `importProducts` method is wrapped in a `DB::transaction` to ensure all-or-nothing data integrity during the import process.
+  - **`ProductsImport` Service:** Uses a stateful `lastProductName` tracker to identify when to update a product versus when to append a variant, preventing redundant database calls.
+  - **Slug & SKU Generation:** Automatically generates unique URL slugs for products and unique SKUs (with a random suffix) for variants during the import process.
+  - **Test Data:** A dedicated `test_data/` directory is maintained with pre-filled CSV and XLSX files for rapid verification of import logic.
+
 ---
 
 ## 4. Frontend & UI Standardization Refinements

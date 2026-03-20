@@ -45,6 +45,9 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::get('/low-stock', [DashboardController::class, 'lowStockProducts'])->name('admin.products.low-stock');
         Route::get('/best-selling', [DashboardController::class, 'bestSellingProducts'])->name('admin.products.best-selling');
         Route::get('/create', [ProductController::class, 'create'])->name('admin.products.create');
+        Route::get('/import', [ProductController::class, 'importForm'])->name('admin.products.import');
+        Route::post('/import', [ProductController::class, 'import'])->name('admin.products.import.store');
+        Route::get('/import-template', [ProductController::class, 'downloadTemplate'])->name('admin.products.import.template');
         Route::post('/store', [ProductController::class, 'store'])->name('admin.products.store');
         Route::get('/{product}', [ProductController::class, 'show'])->name('admin.products.show');
         Route::post('/{id}/toggle-status', [ProductController::class, 'toggleStatus'])->name('admin.products.toggle-status');

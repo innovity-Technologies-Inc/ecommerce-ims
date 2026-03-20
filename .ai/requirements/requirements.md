@@ -77,6 +77,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [ ] **REQ-73:** Flash Sale Refinement (Add dedicated `flash_discount_price` and `flash_discount_percentage` fields to products and variants. Implement a homepage Flash Sale section with a countdown timer and "View All" button).
 - [ ] **REQ-74:** Homepage Section Refinement (Add 'Top Picks' section and ensure all homepage sections have independent visibility and content controls in the Admin Panel).
 - [ ] **REQ-75:** Registration & Checkout Refinement (Simplify registration to only Email, Mobile, and Password. Update user profile automatically with checkout details if authenticated).
+- [x] **REQ-76:** Bulk Product Upload (Import products and variants from Excel/CSV using Laravel Excel. Support for categories, brands, and base data excluding images).
 
 ## 10. Flash Sale Module
 - [x] **REQ-52:** Flash Sale Management (Single edit form for managing active/inactive status and global configuration).

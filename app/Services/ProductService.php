@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Exports\Admin\Product\ProductTemplateExport;
 use App\HelperClass;
+use App\Imports\Admin\Product\ProductsImport;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductVariant;
@@ -10,6 +12,7 @@ use DaiyanMozumder\LaravelFlexSearch\FlexSearch;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductService
 {
@@ -60,6 +63,31 @@ class ProductService
         }
 
         return $query->paginate($perPage);
+    }
+
+    /**
+     * Import products from Excel/CSV.
+     */
+    public function importProducts($file): void
+    {
+        DB::transaction(function () use ($file) {
+            Excel::import(new ProductsImport, $file);
+        });
+    }
+
+    /**
+     * Generate template for product import.
+     */
+    public function generateImportTemplate(string $format = 'csv'): \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\Response|\Symfony\Component\HttpFoundation\StreamedResponse
+    {
+        $fileName = 'product_import_template.'.$format;
+
+        if ($format === 'xlsx') {
+            return Excel::download(new ProductTemplateExport, $fileName);
+        }
+
+        // Default to CSV
+        return Excel::download(new ProductTemplateExport, $fileName, \Maatwebsite\Excel\Excel::CSV);
     }
 
     /**
