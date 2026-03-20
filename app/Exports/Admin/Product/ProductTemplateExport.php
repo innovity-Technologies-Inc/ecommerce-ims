@@ -8,6 +8,9 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class ProductTemplateExport implements FromCollection, WithHeadings
 {
+    /**
+     * @return Collection
+     */
     public function collection(): Collection
     {
         return collect([
@@ -19,7 +22,7 @@ class ProductTemplateExport implements FromCollection, WithHeadings
                 'Short desc',
                 'Long description',
                 1000,
-                900,
+                10, // 10% discount
                 50,
                 1,
                 1,
@@ -31,7 +34,7 @@ class ProductTemplateExport implements FromCollection, WithHeadings
                 '8/128',
                 'Black',
                 1000,
-                900,
+                10, // 10% discount for variant
                 20,
             ],
             [
@@ -54,7 +57,7 @@ class ProductTemplateExport implements FromCollection, WithHeadings
                 '12/256',
                 'Silver',
                 1100,
-                1000,
+                5, // 5% discount for variant
                 30,
             ],
         ]);
@@ -70,7 +73,7 @@ class ProductTemplateExport implements FromCollection, WithHeadings
             'short_description',
             'description',
             'regular_price',
-            'discount_price',
+            'discount_percentage',
             'stock',
             'is_new_arrival',
             'is_hot_deal',
@@ -82,7 +85,7 @@ class ProductTemplateExport implements FromCollection, WithHeadings
             'variant_size',
             'variant_color',
             'variant_regular_price',
-            'variant_discount_price',
+            'variant_discount_percentage',
             'variant_stock',
         ];
     }

@@ -375,7 +375,7 @@ Every module or architectural change must be documented in this file before a ta
   - **Template-Based Import:** Admins can download both CSV and XLSX pre-formatted templates to ensure data compatibility.
   - **Hierarchical Resolution:** The system automatically maps Category, Subcategory, and Brand names from the file to their corresponding database IDs.
   - **Variant Support:** Supports complex product structures. If multiple rows share the same Product Name, the system treats the first row as the product definition and subsequent rows as variants, grouping them logically.
-  - **Auto-Calculation:** Automatically calculates the `discount_percentage` based on the provided `regular_price` and `discount_price` for both products and variants.
+  - **Auto-Calculation:** Automatically calculates the `discount_price` based on the provided `regular_price` and `discount_percentage` for both products and variants.
   - **Validation:** Implements file-level validation (format, size) and row-level validation (required fields, numeric types). It also includes fallback support for common MIME types on different operating systems.
 - **Implementation Details:**
   - **Laravel Excel (`maatwebsite/excel`):** Utilizes `ToCollection` and `WithHeadingRow` for efficient dataset handling.

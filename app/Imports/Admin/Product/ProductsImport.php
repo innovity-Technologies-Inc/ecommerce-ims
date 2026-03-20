@@ -36,6 +36,10 @@ class ProductsImport implements ToCollection, WithHeadingRow, WithValidation
                 }
                 $brand = Brand::where('name', $brandName)->first();
 
+                $regularPrice = $row['regular_price'] ?? 0;
+                $discountPercentage = $row['discount_percentage'] ?? 0;
+                $discountPrice = $this->calculateDiscountPrice($regularPrice, $discountPercentage);
+
                 $productData = [
                     'category_id' => $category?->id,
                     'sub_category_id' => $subCategory?->id,
@@ -44,9 +48,9 @@ class ProductsImport implements ToCollection, WithHeadingRow, WithValidation
                     'slug' => Str::slug($productName),
                     'short_description' => $row['short_description'] ?? null,
                     'description' => $row['description'] ?? null,
-                    'regular_price' => $row['regular_price'] ?? 0,
-                    'discount_price' => $row['discount_price'] ?? 0,
-                    'discount_percentage' => $this->calculateDiscountPercentage($row['regular_price'] ?? 0, $row['discount_price'] ?? 0),
+                    'regular_price' => $regularPrice,
+                    'discount_price' => $discountPrice,
+                    'discount_percentage' => $discountPercentage,
                     'stock' => $row['stock'] ?? 0,
                     'is_new_arrival' => (bool) ($row['is_new_arrival'] ?? false),
                     'is_hot_deal' => (bool) ($row['is_hot_deal'] ?? false),
@@ -65,17 +69,18 @@ class ProductsImport implements ToCollection, WithHeadingRow, WithValidation
             // If we have a variant for the current product
             $variantName = trim($row['variant_name'] ?? '');
             if ($this->lastProduct && ! empty($variantName)) {
+                $vRegularPrice = $row['variant_regular_price'] ?? $this->lastProduct->regular_price;
+                $vDiscountPercentage = $row['variant_discount_percentage'] ?? 0;
+                $vDiscountPrice = $this->calculateDiscountPrice($vRegularPrice, $vDiscountPercentage);
+
                 $variantData = [
                     'variant_name' => $variantName,
                     'size' => $row['variant_size'] ?? null,
                     'color' => $row['variant_color'] ?? null,
                     'sku' => $row['variant_sku'] ?? (Str::slug($this->lastProduct->name).'-'.Str::slug($variantName).'-'.rand(1000, 9999)),
-                    'regular_price' => $row['variant_regular_price'] ?? $this->lastProduct->regular_price,
-                    'discount_price' => $row['variant_discount_price'] ?? $this->lastProduct->discount_price,
-                    'discount_percentage' => $this->calculateDiscountPercentage(
-                        $row['variant_regular_price'] ?? $this->lastProduct->regular_price,
-                        $row['variant_discount_price'] ?? $this->lastProduct->discount_price
-                    ),
+                    'regular_price' => $vRegularPrice,
+                    'discount_price' => $vDiscountPrice,
+                    'discount_percentage' => $vDiscountPercentage,
                     'stock' => $row['variant_stock'] ?? 0,
                 ];
 
@@ -87,10 +92,10 @@ class ProductsImport implements ToCollection, WithHeadingRow, WithValidation
         }
     }
 
-    protected function calculateDiscountPercentage($regularPrice, $discountPrice): int
+    protected function calculateDiscountPrice($regularPrice, $percentage): float
     {
-        if ($regularPrice > 0 && $discountPrice > 0 && $regularPrice > $discountPrice) {
-            return (int) round((($regularPrice - $discountPrice) / $regularPrice) * 100);
+        if ($regularPrice > 0 && $percentage > 0) {
+            return $regularPrice - ($regularPrice * ($percentage / 100));
         }
 
         return 0;
@@ -103,7 +108,7 @@ class ProductsImport implements ToCollection, WithHeadingRow, WithValidation
             '*.category' => ['nullable', 'string'],
             '*.brand' => ['nullable', 'string'],
             '*.regular_price' => ['nullable', 'numeric'],
-            '*.discount_price' => ['nullable', 'numeric'],
+            '*.discount_percentage' => ['nullable', 'numeric', 'min:0', 'max:100'],
             '*.stock' => ['nullable', 'integer'],
         ];
     }
