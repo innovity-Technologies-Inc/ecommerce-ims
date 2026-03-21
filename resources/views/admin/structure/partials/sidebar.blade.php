@@ -95,6 +95,28 @@
             </li>
 
             <li class="nav-item">
+                <a class="nav-link menu-arrow" href="#sidebarReturns" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarReturns">
+                                   <span class="nav-icon">
+                                        <iconify-icon icon="solar:back-bold-duotone"></iconify-icon>
+                                   </span>
+                    <span class="nav-text"> Returns </span>
+                </a>
+                <div class="collapse" id="sidebarReturns">
+                    <ul class="nav sub-navbar-nav">
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="{{ route('admin.returns.requests') }}">Return Requests</a>
+                        </li>
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="{{ route('admin.returns.returned_products') }}">Returned Products</a>
+                        </li>
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="{{ route('admin.returns.wastages') }}">Wastages</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.shipping_methods.index') }}">
                                    <span class="nav-icon">
                                         <iconify-icon icon="solar:delivery-bold-duotone"></iconify-icon>

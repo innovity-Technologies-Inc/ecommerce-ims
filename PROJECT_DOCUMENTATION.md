@@ -384,6 +384,28 @@ Every module or architectural change must be documented in this file before a ta
   - **Slug & SKU Generation:** Automatically generates unique URL slugs for products and unique SKUs (with a random suffix) for variants during the import process.
   - **Test Data:** A dedicated `test_data/` directory is maintained with pre-filled CSV and XLSX files for rapid verification of import logic.
 
+### 3.27 Return Module
+- **What:** A comprehensive return management system allowing both guests and authenticated users to request returns for delivered items, with a full administrative workflow for approval, receiving, and stock/sales adjustment.
+- **How it Works:**
+  - **Guest Returns:** Unauthenticated users can access a dedicated "/returns" page, enter their Order ID, and fetch order details via AJAX. They can then select specific items, specify quantities (validated against the original order), upload proof images, and provide a reason.
+  - **Authenticated Returns:** Logged-in users see a "Request Return" button directly within their Order Details page if the order is marked as "Delivered".
+  - **Admin Approval Workflow:** Admins review requests in the "Return Requests" submenu. They can:
+    - **Approve:** Must specify the condition for each item (Intact or Damage).
+    - **Reject:** Must provide a rejection reason.
+  - **Receiving Workflow:** Once approved, the request moves to a "Processing" state. After physically receiving the items, the admin marks the return as "Received".
+  - **Stock & Sales Adjustment:** 
+    - **Intact Items:** Automatically restocked (incremented) in the `products` or `product_variants` table. The product's `sales_count` is decremented.
+    - **Damaged Items:** Automatically added to the `wastages` table for loss tracking. They are NOT restocked.
+  - **Status Tracking:** Customers can track their return status (Pending, Approved, Rejected, Received) by entering their Order ID on the return page.
+- **Implementation Details:**
+  - **`ReturnService`:** Orchestrates the entire lifecycle, including multi-item return logic, image handling via `HelperClass`, and the complex database transactions for receiving.
+  - **Database Architecture:**
+    - `returns`: Stores the main request metadata, status, and proof image.
+    - `return_items`: Stores granular data for each item being returned, including its condition and received status.
+    - `wastages`: A dedicated table to track products lost due to damage.
+  - **FlexSearch Integration:** Admin index pages for Requests, Returned Products, and Wastages all utilize `FlexSearch` for high-performance filtering and searching.
+  - **UI/UX:** Uses AJAX for real-time order fetching on the client-side and a clean "Receiving Workflow" panel in the admin details view.
+
 ---
 
 ## 4. Frontend & UI Standardization Refinements

@@ -78,6 +78,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [ ] **REQ-74:** Homepage Section Refinement (Add 'Top Picks' section and ensure all homepage sections have independent visibility and content controls in the Admin Panel).
 - [ ] **REQ-75:** Registration & Checkout Refinement (Simplify registration to only Email, Mobile, and Password. Update user profile automatically with checkout details if authenticated).
 - [x] **REQ-76:** Bulk Product Upload (Import products and variants from Excel/CSV using Laravel Excel. Support for categories, brands, and base data excluding images).
+- [ ] **REQ-77:** Return Module (Guest/Authenticated return requests, Admin approval/rejection with damage/intact selection, receiving workflow, stock restoration for intact items, and wastage tracking for damaged items).
 
 ## 10. Flash Sale Module
 - [x] **REQ-52:** Flash Sale Management (Single edit form for managing active/inactive status and global configuration).

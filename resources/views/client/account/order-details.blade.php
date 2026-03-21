@@ -194,6 +194,11 @@
                                                 <a href="{{ route('client.track_order', ['order_id' => $order->order_id]) }}" class="btn btn-primary px-4 py-2 text-white" style="background-color: #7AAACE; border-color: #7AAACE; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; border-radius: 0;">
                                                     <i class="fa fa-map-marker-alt me-2"></i> Track Order
                                                 </a>
+                                                @if($order->order_status === 'Delivered')
+                                                    <a href="{{ route('client.returns.index', ['order_id' => $order->order_id]) }}" class="btn btn-danger px-4 py-2 text-white" style="background-color: #d9534f; border-color: #d43f3a; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; border-radius: 0;">
+                                                        <i class="fa fa-undo me-2"></i> Request Return
+                                                    </a>
+                                                @endif
                                             </div>
                                             <div>
                                                 <a href="{{ route('user.view_invoice', $order->order_id) }}" target="_blank" class="btn btn-dark px-5 py-2 text-white" style="background-color: #333; border-color: #333; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; height: 45px; border-radius: 0; line-height: 28px; display: inline-block;">

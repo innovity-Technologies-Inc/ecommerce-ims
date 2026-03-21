@@ -112,6 +112,15 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::get('/{order}/view-invoice', 'viewInvoice')->name('view-invoice');
     });
 
+    Route::prefix('returns')->name('admin.returns.')->controller(\App\Http\Controllers\Admin\ReturnController::class)->group(function () {
+        Route::get('/requests', 'requests')->name('requests');
+        Route::get('/requests/{id}', 'showRequest')->name('show_request');
+        Route::put('/requests/{id}/update-status', 'updateStatus')->name('update_status');
+        Route::post('/requests/{id}/receive', 'receive')->name('receive');
+        Route::get('/returned-products', 'returnedProducts')->name('returned_products');
+        Route::get('/wastages', 'wastages')->name('wastages');
+    });
+
     Route::prefix('sections')->group(function () {
         Route::get('/bestsellers', [\App\Http\Controllers\Admin\HomepageSectionController::class, 'bestsellers'])->name('admin.sections.bestsellers');
         Route::get('/{sectionName}', [\App\Http\Controllers\Admin\HomepageSectionController::class, 'editSection'])->name('admin.sections.edit');
@@ -133,6 +142,12 @@ Route::controller(FrontendController::class)->group(function () {
     Route::get('/order/{order_id}/invoice', 'publicInvoice')->name('client.public_invoice');
     Route::get('/contact', 'contact')->name('client.contact');
     Route::post('/contact/send', 'storeContactMessage')->name('client.contact.send');
+    Route::prefix('returns')->name('client.returns.')->controller(\App\Http\Controllers\Client\ReturnController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/order-details', 'getOrderDetails')->name('order_details');
+        Route::post('/store', 'store')->name('store');
+        Route::get('/track', 'track')->name('track');
+    });
 });
 
 // Cart Routes
