@@ -18,7 +18,7 @@ class ReturnService
 {
     public function getOrderDetails(string $orderId): ?Order
     {
-        return Order::with(['orderItems.product', 'orderItems.productVariant'])
+        return Order::with(['orderItems.product.primaryImage', 'orderItems.productVariant'])
             ->where('order_id', $orderId)
             ->first();
     }
@@ -80,7 +80,7 @@ class ReturnService
 
     public function getReturnRequestDetails(int $id): ReturnRequest
     {
-        return ReturnRequest::with(['order', 'user', 'returnItems.product', 'returnItems.productVariant'])->findOrFail($id);
+        return ReturnRequest::with(['order', 'user', 'returnItems.product.primaryImage', 'returnItems.productVariant'])->findOrFail($id);
     }
 
     public function updateStatus(int $id, array $data): ReturnRequest
@@ -152,7 +152,7 @@ class ReturnService
 
     public function getReturnedProducts(array $params = []): LengthAwarePaginator
     {
-        $query = ReturnItem::with(['returnRequest.order', 'product', 'productVariant'])
+        $query = ReturnItem::with(['returnRequest.order', 'product.primaryImage', 'productVariant'])
             ->where('is_received', true);
 
         $flexSearch = app(FlexSearch::class);
@@ -167,7 +167,7 @@ class ReturnService
 
     public function getWastages(array $params = []): LengthAwarePaginator
     {
-        $query = Wastage::with(['product', 'productVariant', 'returnRequest']);
+        $query = Wastage::with(['product.primaryImage', 'productVariant', 'returnRequest']);
 
         $flexSearch = app(FlexSearch::class);
         $searchTerm = $params['search'] ?? null;

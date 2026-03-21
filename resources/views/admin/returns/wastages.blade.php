@@ -39,7 +39,7 @@
                                 <td class="ps-3">{{ HelperClass::indexNumberSerialization($wastages)[$loop->index] }}</td>
                                 <td>
                                     <div class="d-flex align-items-center gap-3">
-                                        <img src="{{ $wastage->product->primary_image ? asset($wastage->product->primary_image) : asset('admin_assets/images/no-image.png') }}" class="rounded-pill" style="width: 35px; height: 35px; object-fit: cover;">
+                                        <img src="{{ $wastage->product->primaryImage ? asset('storage/'.$wastage->product->primaryImage->image_path) : asset('admin_assets/images/no-image.png') }}" class="rounded-pill" style="width: 35px; height: 35px; object-fit: cover;">
                                         <div>
                                             <h6 class="mb-0 fs-13">{{ $wastage->product->name }}</h6>
                                             @if($wastage->productVariant)

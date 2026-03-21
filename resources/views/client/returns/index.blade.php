@@ -17,11 +17,11 @@
                                             <div class="col-md-8">
                                                 <div class="billing-info mb-4">
                                                     <label class="fw-bold text-dark">Order ID</label>
-                                                    <div class="d-flex flex-column flex-sm-row gap-3 align-items-center">
+                                                    <div class="d-flex gap-2 align-items-center">
                                                         <input type="text" id="order_id_input" placeholder="e.g. ORD-1234567890" class="flex-grow-1 m-0">
-                                                        <div class="d-flex gap-2">
-                                                            <button type="button" id="btn_fetch_order" class="btn btn-primary px-4 text-white" style="background-color: #7AAACE; border-color: #7AAACE; height: 45px; font-weight: 700; text-transform: uppercase; font-size: 13px; border-radius: 0;">Get Details</button>
-                                                            <button type="button" id="btn_track_return" class="btn btn-secondary px-4 text-white" style="height: 45px; font-weight: 700; text-transform: uppercase; font-size: 13px; border-radius: 0;">Track Status</button>
+                                                        <div class="d-flex gap-2 flex-shrink-0">
+                                                            <button type="button" id="btn_fetch_order" class="btn btn-primary px-3 text-white" style="background-color: #7AAACE; border-color: #7AAACE; height: 45px; font-weight: 700; text-transform: uppercase; font-size: 11px; border-radius: 0; white-space: nowrap;">Get Details</button>
+                                                            <button type="button" id="btn_track_return" class="btn btn-secondary px-3 text-white" style="height: 45px; font-weight: 700; text-transform: uppercase; font-size: 11px; border-radius: 0; white-space: nowrap;">Track Status</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -56,12 +56,12 @@
                                                     <div class="col-md-12">
                                                         <div class="billing-info">
                                                             <label class="fw-bold">Why are you returning? <span class="text-danger">*</span></label>
-                                                            <textarea name="reason" rows="4" placeholder="Damage, wrong product, etc." required></textarea>
+                                                            <input type="text" name="reason" placeholder="Damage, wrong product, etc." required style="width: 100%; height: 50px;">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-12 mt-3">
                                                         <div class="billing-info">
-                                                            <label class="fw-bold">Upload Product Photo (Optional)</label>
+                                                            <label class="fw-bold mb-2">Upload Product Photo (Optional)</label>
                                                             <input type="file" name="image" class="form-control rounded-0">
                                                             <small class="text-muted">JPG, PNG, WEBP (Max 2MB)</small>
                                                         </div>

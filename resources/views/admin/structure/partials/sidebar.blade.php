@@ -97,7 +97,7 @@
             <li class="nav-item">
                 <a class="nav-link menu-arrow" href="#sidebarReturns" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarReturns">
                                    <span class="nav-icon">
-                                        <iconify-icon icon="solar:back-bold-duotone"></iconify-icon>
+                                        <iconify-icon icon="solar:restart-bold-duotone"></iconify-icon>
                                    </span>
                     <span class="nav-text"> Returns </span>
                 </a>

@@ -31,7 +31,7 @@
                                     <tr>
                                         <td class="ps-3">
                                             <div class="d-flex align-items-center gap-3">
-                                                <img src="{{ $item->product->primary_image ? asset($item->product->primary_image) : asset('admin_assets/images/no-image.png') }}" class="rounded-pill" style="width: 40px; height: 40px; object-fit: cover;">
+                                                <img src="{{ $item->product->primaryImage ? asset('storage/'.$item->product->primaryImage->image_path) : asset('admin_assets/images/no-image.png') }}" class="rounded-pill" style="width: 40px; height: 40px; object-fit: cover;">
                                                 <div>
                                                     <h6 class="mb-0 fs-14">{{ $item->product->name }}</h6>
                                                     @if($item->productVariant)
