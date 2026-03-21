@@ -9,15 +9,13 @@ use App\Models\ProductVariant;
 use App\Models\ReturnItem;
 use App\Models\ReturnRequest;
 use App\Models\Wastage;
-use DaiyanMozumder\FlexSearch\FlexSearch;
+use DaiyanMozumder\LaravelFlexSearch\FlexSearch;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ReturnService
 {
-    public function __construct(protected FlexSearch $flexSearch) {}
-
     public function getOrderDetails(string $orderId): ?Order
     {
         return Order::with(['orderItems.product', 'orderItems.productVariant'])
@@ -61,15 +59,23 @@ class ReturnService
         });
     }
 
-    public function getReturnRequests(array $filters): LengthAwarePaginator
+    public function getReturnRequests(array $params = []): LengthAwarePaginator
     {
         $query = ReturnRequest::with(['order', 'user']);
 
-        return $this->flexSearch->apply($query, $filters, [
-            'return_id' => 'like',
-            'status' => '=',
-            'order.order_id' => 'like',
-        ], 'id', 'desc');
+        $filters = [];
+        if (isset($params['status']) && $params['status'] !== '') {
+            $filters['status'] = $params['status'];
+        }
+
+        $flexSearch = app(FlexSearch::class);
+        $searchTerm = $params['search'] ?? null;
+        $searchableColumns = ['return_id', 'order.order_id'];
+
+        // Apply Search and Filtering using FlexSearch
+        $query = $flexSearch->apply($query, $filters, $searchTerm, $searchableColumns);
+
+        return $query->latest('id')->paginate(15);
     }
 
     public function getReturnRequestDetails(int $id): ReturnRequest
@@ -144,25 +150,33 @@ class ReturnService
         });
     }
 
-    public function getReturnedProducts(array $filters): LengthAwarePaginator
+    public function getReturnedProducts(array $params = []): LengthAwarePaginator
     {
         $query = ReturnItem::with(['returnRequest.order', 'product', 'productVariant'])
             ->where('is_received', true);
 
-        return $this->flexSearch->apply($query, $filters, [
-            'returnRequest.return_id' => 'like',
-            'product.name' => 'like',
-        ], 'id', 'desc');
+        $flexSearch = app(FlexSearch::class);
+        $searchTerm = $params['search'] ?? null;
+        $searchableColumns = ['returnRequest.return_id', 'product.name'];
+
+        // Apply Search and Filtering using FlexSearch
+        $query = $flexSearch->apply($query, [], $searchTerm, $searchableColumns);
+
+        return $query->latest('id')->paginate(15);
     }
 
-    public function getWastages(array $filters): LengthAwarePaginator
+    public function getWastages(array $params = []): LengthAwarePaginator
     {
         $query = Wastage::with(['product', 'productVariant', 'returnRequest']);
 
-        return $this->flexSearch->apply($query, $filters, [
-            'product.name' => 'like',
-            'reason' => 'like',
-        ], 'id', 'desc');
+        $flexSearch = app(FlexSearch::class);
+        $searchTerm = $params['search'] ?? null;
+        $searchableColumns = ['product.name', 'reason'];
+
+        // Apply Search and Filtering using FlexSearch
+        $query = $flexSearch->apply($query, [], $searchTerm, $searchableColumns);
+
+        return $query->latest('id')->paginate(15);
     }
 
     public function trackReturn(string $orderId): ?ReturnRequest
