@@ -81,9 +81,9 @@
                                 <li><a href="#">Delivery</a></li>
                                 <li><a href="#">About Us</a></li>
                                 <li><a href="#">Secure Payment</a></li>
+                                <li><a href="{{ route('client.returns.index') }}">Returns</a></li>
                                 <li><a href="{{ route('client.contact') }}">Contact Us</a></li>
                                 <li><a href="#">Sitemap</a></li>
-                                <li><a href="#">Stores</a></li>
                             </ul>
                         </div>
                     </div>
@@ -98,8 +98,8 @@
                                 <li><a href="#">Prices Drop</a></li>
                                 <li><a href="#">New Products</a></li>
                                 <li><a href="#">Best Sales</a></li>
-                                <li><a href="login.html">Login</a></li>
-                                <li><a href="my-account.html">My Account</a></li>
+                                <li><a href="{{ route('client.returns.index') }}">Returns</a></li>
+                                <li><a href="{{ route('client.track_order') }}">Track Order</a></li>
                             </ul>
                         </div>
                     </div>

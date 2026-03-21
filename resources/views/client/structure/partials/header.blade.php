@@ -30,6 +30,9 @@
                                 <a href="{{ route('client.track_order') }}"><i class="ion-ios-location-outline"></i>Track Order</a>
                             </li>
                             <li class="border-color-white">
+                                <a href="{{ route('client.returns.index') }}"><i class="ion-ios-undo-outline"></i>Returns</a>
+                            </li>
+                            <li class="border-color-white">
                                 <a href="{{ route('user.wishlist.index') }}"><i class="ion-android-favorite-outline"></i>Wishlist ({{ \App\HelperClass::wishlistCount() }})</a>
                             </li>
                         </ul>
@@ -42,6 +45,7 @@
                                     @if(Auth::guard('web')->check())
                                     <li><a class="dropdown-item" href="{{route('user.account')}}">My account</a></li>
                                     <li><a class="dropdown-item" href="{{route('user.orders')}}">My orders</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('client.returns.index') }}">Returns</a></li>
                                     @endif
                                         @if(Auth::guard('web')->check())
                                             <form action="{{route('logout')}}" method="post">
@@ -145,16 +149,21 @@
                                     @if(Auth::guard('web')->check())
                                         <li><a href="{{ route('user.account') }}">My Account</a></li>
                                         <li><a href="{{ route('user.orders') }}">My Orders</a></li>
+                                        <li><a href="{{ route('client.returns.index') }}">Returns</a></li>
                                         <li><a href="{{ route('user.wishlist.index') }}">Wishlist</a></li>
                                     @else
                                         <li><a href="{{ route('login') }}">Login</a></li>
                                         <li><a href="{{ route('register') }}">Register</a></li>
                                         <li><a href="{{ route('client.track_order') }}">Track Order</a></li>
+                                        <li><a href="{{ route('client.returns.index') }}">Returns</a></li>
                                     @endif
                                 </ul>
                             </li>
                             <li>
                                 <a href="{{ route('client.track_order') }}">Track Order</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('client.returns.index') }}">Returns</a>
                             </li>
                             <li><a href="{{ route('client.contact') }}">Contact Us</a></li>
                         </ul>
@@ -218,6 +227,7 @@
                                 @if(Auth::guard('web')->check())
                                     <li><a class="dropdown-item" href="{{route('user.account')}}">My account</a></li>
                                     <li><a class="dropdown-item" href="{{route('user.orders')}}">My orders</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('client.returns.index') }}">Returns</a></li>
                                     <li><a class="dropdown-item" href="{{ route('user.wishlist.index') }}">Wishlist</a></li>
                                     <form action="{{route('logout')}}" method="post">
                                         @csrf
@@ -226,6 +236,7 @@
                                     </form>
                                 @else
                                     <li><a class="dropdown-item" href="{{ route('client.track_order') }}">Track Order</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('client.returns.index') }}">Returns</a></li>
                                     <li><a class="dropdown-item" href="{{ route('login') }}">Sign in</a></li>
                                     <li><a class="dropdown-item" href="{{ route('register') }}">Register</a></li>
                                 @endif
@@ -299,6 +310,7 @@
             <ul>
                 <li><a href="{{ route('home') }}"><span class="menu-text">Home</span></a></li>
                 <li><a href="{{ route('client.track_order') }}"><span class="menu-text">Track Order</span></a></li>
+                <li><a href="{{ route('client.returns.index') }}"><span class="menu-text">Returns</span></a></li>
                 <li><a href="{{ route('client.products.index') }}"><span class="menu-text">Products</span></a></li>
                 <li><a href="{{ route('client.products.index') }}"><span class="menu-text">Shop</span></a>
                     <ul class="sub-menu">
@@ -334,11 +346,13 @@
                         @if(Auth::guard('web')->check())
                             <li><a href="{{ route('user.account') }}">My Account</a></li>
                             <li><a href="{{ route('user.orders') }}">My Orders</a></li>
+                            <li><a href="{{ route('client.returns.index') }}">Returns</a></li>
                             <li><a href="{{ route('user.wishlist.index') }}">Wishlist</a></li>
                         @else
                             <li><a href="{{ route('login') }}">Login</a></li>
                             <li><a href="{{ route('register') }}">Register</a></li>
                             <li><a href="{{ route('client.track_order') }}">Track Order</a></li>
+                            <li><a href="{{ route('client.returns.index') }}">Returns</a></li>
                         @endif
                     </ul>
                 </li>
