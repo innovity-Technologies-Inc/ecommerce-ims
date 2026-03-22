@@ -39,4 +39,16 @@ class SliderRequest extends FormRequest
 
         return $rules;
     }
+
+    public function messages(): array
+    {
+        return [
+            'title.required' => 'Please enter a title for the slider.',
+            'button_url.url' => 'The button link must be a valid URL.',
+            'image.required' => 'A slider image is required.',
+            'image.image' => 'The uploaded file must be an image.',
+            'image.mimes' => 'Supported image formats: jpeg, png, jpg, gif, svg, webp.',
+            'image.max' => 'The slider image size should not exceed 2MB.',
+        ];
+    }
 }

@@ -35,4 +35,15 @@ class ProductFilterRequest extends FormRequest
             'sort' => 'nullable|string|in:newness,price-low,price-high,a-z,z-a,in-stock',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'category.*.exists' => 'One or more selected categories are invalid.',
+            'brand.*.exists' => 'One or more selected brands are invalid.',
+            'min_price.numeric' => 'Minimum price must be a valid number.',
+            'max_price.numeric' => 'Maximum price must be a valid number.',
+            'sort.in' => 'The selected sorting option is invalid.',
+        ];
+    }
 }

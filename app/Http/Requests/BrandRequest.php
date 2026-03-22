@@ -27,4 +27,15 @@ class BrandRequest extends FormRequest
             'status' => ['nullable'],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Please provide a brand name.',
+            'name.max' => 'The brand name should not exceed 255 characters.',
+            'icon.image' => 'The file uploaded must be an image.',
+            'icon.mimes' => 'The icon must be a file of type: png, jpg, jpeg, svg, webp.',
+            'icon.max' => 'The icon size should not exceed 2MB.',
+        ];
+    }
 }

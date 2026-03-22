@@ -27,4 +27,19 @@ class StoreAdminRequest extends FormRequest
             'role' => ['required', 'exists:roles,name'],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'The administrator name is required.',
+            'email.required' => 'An email address is required for login.',
+            'email.email' => 'Please provide a valid email address.',
+            'email.unique' => 'This email address is already registered.',
+            'password.required' => 'A password is required.',
+            'password.confirmed' => 'The password confirmation does not match.',
+            'password.min' => 'The password must be at least 8 characters.',
+            'role.required' => 'Please assign a role to the administrator.',
+            'role.exists' => 'The selected role is invalid.',
+        ];
+    }
 }

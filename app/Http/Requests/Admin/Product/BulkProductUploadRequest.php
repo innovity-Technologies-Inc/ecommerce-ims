@@ -36,9 +36,9 @@ class BulkProductUploadRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'file.required' => 'Please select a file to upload.',
-            'file.file' => 'The uploaded file is not valid.',
-            'file.max' => 'The file size must not exceed 5MB.',
+            'file.required' => 'Please select an Excel or CSV file to upload.',
+            'file.file' => 'The uploaded file is invalid.',
+            'file.max' => 'The file size is too large. Maximum allowed size is 5MB.',
         ];
     }
 }

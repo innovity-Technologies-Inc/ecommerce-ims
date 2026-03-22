@@ -32,6 +32,15 @@ class LoginRequest extends FormRequest
         ];
     }
 
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'Please enter your email address.',
+            'email.email' => 'The email format is invalid.',
+            'password.required' => 'Please enter your password.',
+        ];
+    }
+
     /**
      * Attempt to authenticate the request's credentials.
      *

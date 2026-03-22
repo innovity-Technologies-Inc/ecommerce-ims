@@ -31,7 +31,8 @@ class UpdateOrderStatusRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'rejection_reason.required_if' => 'The reason/remarks field is required when the order is Cancelled or Rejected.',
+            'order_status.required' => 'Please select an order status.',
+            'rejection_reason.required_if' => 'A reason/remarks is required when the order is being Cancelled or Rejected.',
         ];
     }
 }

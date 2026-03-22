@@ -34,4 +34,18 @@ class CheckoutRequest extends FormRequest
             'notes' => 'nullable|string',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Please enter your full name for the delivery.',
+            'email.required' => 'An email address is required for order updates.',
+            'email.email' => 'Please provide a valid email address.',
+            'mobile.required' => 'A contact number is necessary for delivery coordination.',
+            'address.required' => 'Please provide your detailed shipping address.',
+            'city.required' => 'Please specify your city.',
+            'payment_method.required' => 'Please select a payment method to proceed.',
+            'payment_method.in' => 'The selected payment method is not supported.',
+        ];
+    }
 }

@@ -66,4 +66,21 @@ class ProductRequest extends FormRequest
             'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:600'],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'category_id.required' => 'Please select a category for the product.',
+            'category_id.exists' => 'The selected category is invalid.',
+            'name.required' => 'The product name is required.',
+            'regular_price.numeric' => 'Regular price must be a valid number.',
+            'discount_percentage.integer' => 'Discount must be a whole number percentage.',
+            'discount_percentage.max' => 'Discount percentage cannot exceed 100%.',
+            'stock.integer' => 'Stock quantity must be a whole number.',
+            'variants.*.variant_name.required_with' => 'Each variant must have a name.',
+            'variants.*.sku.unique' => 'The SKU has already been taken by another product or variant.',
+            'images.*.image' => 'One or more files uploaded are not valid images.',
+            'images.*.max' => 'Each product image must be smaller than 600 KB.',
+        ];
+    }
 }

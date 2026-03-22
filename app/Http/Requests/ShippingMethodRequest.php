@@ -28,4 +28,14 @@ class ShippingMethodRequest extends FormRequest
             'status' => 'required|boolean',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Please provide a name for the shipping method.',
+            'price.required' => 'Please specify the shipping charge.',
+            'price.numeric' => 'The shipping charge must be a valid number.',
+            'status.required' => 'Please specify if the method is active or inactive.',
+        ];
+    }
 }

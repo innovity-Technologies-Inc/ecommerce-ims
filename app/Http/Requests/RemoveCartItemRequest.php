@@ -23,4 +23,12 @@ class RemoveCartItemRequest extends FormRequest
             'cart_id' => 'required|exists:carts,id',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'cart_id.required' => 'Invalid cart item.',
+            'cart_id.exists' => 'The selected cart item was not found.',
+        ];
+    }
 }

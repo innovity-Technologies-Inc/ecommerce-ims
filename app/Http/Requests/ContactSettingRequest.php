@@ -70,4 +70,19 @@ class ContactSettingRequest extends FormRequest
             'youtube_status' => $this->has('youtube_status'),
         ]);
     }
+
+    public function messages(): array
+    {
+        return [
+            'company_email.email' => 'Please provide a valid company email address.',
+            'facebook_url.url' => 'The Facebook link must be a valid URL.',
+            'instagram_url.url' => 'The Instagram link must be a valid URL.',
+            'tiktok_url.url' => 'The TikTok link must be a valid URL.',
+            'x_url.url' => 'The X (Twitter) link must be a valid URL.',
+            'thread_url.url' => 'The Threads link must be a valid URL.',
+            'linkedin_url.url' => 'The LinkedIn link must be a valid URL.',
+            'whatsapp_url.url' => 'The WhatsApp link must be a valid URL.',
+            'youtube_url.url' => 'The YouTube link must be a valid URL.',
+        ];
+    }
 }

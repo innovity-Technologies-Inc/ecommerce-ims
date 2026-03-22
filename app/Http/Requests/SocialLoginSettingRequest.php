@@ -23,4 +23,12 @@ class SocialLoginSettingRequest extends FormRequest
             'google_status' => ['nullable', 'boolean'],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'google_client_id.max' => 'The Google Client ID should not exceed 255 characters.',
+            'google_client_secret.max' => 'The Google Client Secret should not exceed 255 characters.',
+        ];
+    }
 }

@@ -31,4 +31,15 @@ class FlashSaleRequest extends FormRequest
             'products.*.discount_type' => 'required|in:percentage,fixed',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'status.required' => 'Please specify the flash sale status.',
+            'products.*.product_id.required' => 'Please select a valid product.',
+            'products.*.product_id.exists' => 'One of the selected products is invalid.',
+            'products.*.discount_amount.required' => 'Discount amount is required for all flash sale products.',
+            'products.*.discount_type.required' => 'Discount type must be selected for all products.',
+        ];
+    }
 }

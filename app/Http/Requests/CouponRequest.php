@@ -36,4 +36,20 @@ class CouponRequest extends FormRequest
             'status' => 'nullable|boolean',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'code.required' => 'Please provide a coupon code.',
+            'code.unique' => 'This coupon code already exists.',
+            'apply_for.required' => 'Please select where the coupon should be applied.',
+            'min_spend.required' => 'Please specify the minimum spend required.',
+            'discount_type.required' => 'Please select a discount type.',
+            'discount_amount.required' => 'Please specify the discount amount.',
+            'max_discount_amount.required_if' => 'Maximum discount amount is required for percentage discounts.',
+            'active_on.required' => 'Please select an activation date.',
+            'expired_on.required' => 'Please select an expiry date.',
+            'expired_on.after_or_equal' => 'The expiry date must be after or equal to the activation date.',
+        ];
+    }
 }

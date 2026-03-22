@@ -33,4 +33,16 @@ class ReturnRequestStoreRequest extends FormRequest
             'items.*.unit_price' => 'required|numeric',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'order_id.required' => 'Invalid Order ID.',
+            'reason.required' => 'Please provide a reason for the return.',
+            'image.image' => 'The proof must be an image file.',
+            'image.max' => 'The image size should not exceed 2MB.',
+            'items.required' => 'Please select at least one item to return.',
+            'items.*.quantity.required' => 'Please specify the return quantity.',
+        ];
+    }
 }

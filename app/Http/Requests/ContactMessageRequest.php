@@ -28,4 +28,15 @@ class ContactMessageRequest extends FormRequest
             'message' => 'required|string',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Please enter your name.',
+            'email.required' => 'Please provide your email address.',
+            'email.email' => 'The email address provided is invalid.',
+            'subject.required' => 'Please specify a subject for your message.',
+            'message.required' => 'The message field cannot be empty.',
+        ];
+    }
 }

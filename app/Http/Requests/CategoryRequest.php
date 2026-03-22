@@ -28,4 +28,16 @@ class CategoryRequest extends FormRequest
             'status' => ['nullable'],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Please enter a category name.',
+            'name.max' => 'The category name should not exceed 255 characters.',
+            'parent_id.exists' => 'The selected parent category is invalid.',
+            'icon.image' => 'The uploaded file must be an image.',
+            'icon.mimes' => 'Allowed icon formats are: png, jpg, jpeg, svg, webp.',
+            'icon.max' => 'The icon size should not exceed 2MB.',
+        ];
+    }
 }

@@ -25,4 +25,12 @@ class UpdateShippingRequest extends FormRequest
             'shipping_method_id' => 'required|exists:shipping_methods,id,status,1',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'shipping_method_id.required' => 'Please select a shipping method.',
+            'shipping_method_id.exists' => 'The selected shipping method is invalid or inactive.',
+        ];
+    }
 }

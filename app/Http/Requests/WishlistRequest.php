@@ -17,4 +17,12 @@ class WishlistRequest extends FormRequest
             'product_id' => ['required', 'exists:products,id'],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'product_id.required' => 'Please select a product to add to your wishlist.',
+            'product_id.exists' => 'The selected product does not exist.',
+        ];
+    }
 }

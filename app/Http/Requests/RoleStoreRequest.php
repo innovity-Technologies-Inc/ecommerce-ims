@@ -25,4 +25,13 @@ class RoleStoreRequest extends FormRequest
             'permissions.*' => ['string', 'exists:permissions,name'],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Please provide a role name.',
+            'name.unique' => 'A role with this name already exists.',
+            'permissions.*.exists' => 'One or more selected permissions are invalid.',
+        ];
+    }
 }

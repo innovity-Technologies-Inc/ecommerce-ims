@@ -33,7 +33,7 @@ class TrackOrderRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'order_id.exists' => 'This order ID does not exist in our records.',
+            'order_id.exists' => 'We couldn\'t find any order matching this ID.',
         ];
     }
 }

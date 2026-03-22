@@ -28,4 +28,14 @@ class ReturnRequestStatusUpdateRequest extends FormRequest
             'items.*.condition' => 'required_with:items|in:damage,intact',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'status.required' => 'Please select a status for the return request.',
+            'rejection_reason.required_if' => 'A rejection reason is mandatory when rejecting a request.',
+            'items.required_if' => 'Please set the condition for the items to be returned.',
+            'items.*.condition.required_with' => 'Every selected item must have a condition specified.',
+        ];
+    }
 }
