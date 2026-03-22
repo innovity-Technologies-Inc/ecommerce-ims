@@ -114,12 +114,15 @@
                         </div>
                     </div>
                     <div class="card-footer">
+                        @can('flash_sale.edit')
                         <button type="submit" class="btn btn-primary w-100">Save Flash Sale Changes</button>
+                        @endcan
                     </div>
                 </div>
             </div>
 
-            <!-- Right Column: Product Search & Filter -->
+            @can('flash_sale.edit')
+            <!-- Right Column: Product Selector -->
             <div class="col-lg-6">
                 <div class="card h-100">
                     <div class="card-header">
@@ -178,6 +181,13 @@
                     </div>
                 </div>
             </div>
+            @else
+            <div class="col-lg-6">
+                <div class="alert alert-info">
+                    You do not have permission to modify flash sale products.
+                </div>
+            </div>
+            @endcan
         </div>
     </form>
 </div>

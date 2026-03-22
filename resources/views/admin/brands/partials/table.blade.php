@@ -29,14 +29,17 @@
             <td>
                 <div class="form-check form-switch">
                     <input class="form-check-input status-toggle" type="checkbox" role="switch" 
-                        data-id="{{ $data->id }}" {{ $data->status ? 'checked' : '' }}>
+                        data-id="{{ $data->id }}" {{ $data->status ? 'checked' : '' }} {{ auth('admin')->user()->can('brand.edit') ? '' : 'disabled' }}>
                 </div>
             </td>
             <td>
                 <div class="d-flex gap-2">
+                    @can('brand.edit')
                     <a href="{{ route('admin.brands.edit', $data->id) }}" class="btn btn-soft-primary btn-sm">
                         <iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon>
                     </a>
+                    @endcan
+                    @can('brand.delete')
                     <form method="post" action="{{ route('admin.brands.destroy', $data->id) }}">
                         @csrf
                         @method('delete')
@@ -44,6 +47,7 @@
                             <iconify-icon icon="solar:trash-bin-minimalistic-2-broken" class="align-middle fs-18"></iconify-icon>
                         </button>
                     </form>
+                    @endcan
                 </div>
             </td>
         </tr>

@@ -4,7 +4,9 @@
     <div class="container-xxl">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h4 class="mb-0">Shipping Methods</h4>
+            @can('shipping_methods.create')
             <a href="{{ route('admin.shipping_methods.create') }}" class="btn btn-primary btn-sm">Add Shipping Method</a>
+            @endcan
         </div>
 
         <div class="card overflow-hidden">

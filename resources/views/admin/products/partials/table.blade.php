@@ -48,7 +48,7 @@
                     <form action="{{ route('admin.products.toggle-status', $data->id) }}" method="POST">
                         @csrf
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" role="switch" id="status_{{ $data->id }}" onChange="this.form.submit()" {{ $data->status ? 'checked' : '' }}>
+                            <input class="form-check-input" type="checkbox" role="switch" id="status_{{ $data->id }}" onChange="this.form.submit()" {{ $data->status ? 'checked' : '' }} {{ auth('admin')->user()->can('products.edit') ? '' : 'disabled' }}>
                         </div>
                     </form>
                 </td>
@@ -57,9 +57,12 @@
                         <a href="{{ route('admin.products.show', $data->id) }}" class="btn btn-soft-info btn-sm">
                             <iconify-icon icon="solar:eye-broken" class="align-middle fs-18"></iconify-icon>
                         </a>
+                        @can('products.edit')
                         <a href="{{ route('admin.products.edit', $data->id) }}" class="btn btn-soft-primary btn-sm">
                             <iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon>
                         </a>
+                        @endcan
+                        @can('products.delete')
                         <form action="{{ route('admin.products.destroy', $data->id) }}" method="post" class="d-inline">
                             @csrf
                             @method('delete')
@@ -67,6 +70,7 @@
                                 <iconify-icon icon="solar:trash-bin-trash-broken" class="align-middle fs-18"></iconify-icon>
                             </button>
                         </form>
+                        @endcan
                     </div>
                 </td>
             </tr>

@@ -4,7 +4,9 @@
     <div class="container-xxl">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h4 class="mb-0">Coupons</h4>
+            @can('coupons.create')
             <a href="{{ route('admin.coupons.create') }}" class="btn btn-primary btn-sm">Add Coupon</a>
+            @endcan
         </div>
 
         <div class="card overflow-hidden">

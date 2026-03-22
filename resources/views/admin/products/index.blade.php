@@ -5,12 +5,14 @@
     <div class="d-flex align-items-center justify-content-between mb-3">
         <h4 class="mb-0">Product List</h4>
         <div>
+            @can('products.create')
             <a href="{{ route('admin.products.import') }}" class="btn btn-outline-info btn-sm me-1">
                 <i class="bx bx-import me-1"></i>Import
             </a>
             <a href="{{ route('admin.products.create') }}" class="btn btn-primary btn-sm">
                 <i class="bx bx-plus me-1"></i>Add
             </a>
+            @endcan
         </div>
     </div>
 

@@ -102,6 +102,7 @@
             </div>
 
             @if($request->status === 'pending')
+                @can('returns.edit')
                 <div class="card mb-3">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Action</h5>
@@ -141,7 +142,13 @@
                         </form>
                     </div>
                 </div>
+                @else
+                <div class="alert alert-info border-0 mb-0" role="alert">
+                    <i class="bx bx-info-circle me-1"></i> You do not have permission to approve/reject returns.
+                </div>
+                @endcan
             @elseif($request->status === 'approved')
+                @can('returns.edit')
                 <div class="card border-primary mb-3">
                     <div class="card-header bg-primary text-white">
                         <h5 class="card-title mb-0 text-white">Receiving Workflow</h5>
@@ -156,6 +163,11 @@
                         </form>
                     </div>
                 </div>
+                @else
+                <div class="alert alert-info border-0 mb-0" role="alert">
+                    <i class="bx bx-info-circle me-1"></i> You do not have permission to receive returns.
+                </div>
+                @endcan
             @elseif($request->status === 'rejected')
                 <div class="card border-danger mb-3">
                     <div class="card-header bg-danger text-white">

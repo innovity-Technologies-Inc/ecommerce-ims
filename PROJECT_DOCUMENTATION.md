@@ -407,16 +407,19 @@ Every module or architectural change must be documented in this file before a ta
   - **UI/UX:** Uses AJAX for real-time order fetching on the client-side and a clean "Receiving Workflow" panel in the admin details view.
 
 ### 3.28 Role-Based Access Control (RBAC) Module
-- **What:** A comprehensive system for managing administrative roles and permissions using the `spatie/laravel-permission` package.
+- **What:** A comprehensive security layer for managing administrative access using the `spatie/laravel-permission` package. It ensures that administrators can only perform operations explicitly granted to their roles.
 - **How it Works:**
-  - **Role Management:** Admins can create, edit, and delete roles specifically for the `admin` guard.
-  - **Role Assignment:** Roles can be assigned to Admin users during creation or while editing their profiles via a dedicated dropdown.
-  - **Profile Images:** Admin users support profile image uploads, which are displayed in the user list and sidebar.
-  - **Seeder Integration:** A `RolePermissionSeeder` is provided to initialize default roles like "Super Admin".
+  - **Permission Seeding:** All system permissions (e.g., `products.view`, `orders.edit`, `admins.delete`) are defined in a central `PermissionSeeder`. Permissions follow a strict `module.operation` naming convention.
+  - **Role Management:** Admins can create and edit roles. The Role form provides a grouped interface where permissions are categorized by menu (e.g., Category, Brand, Products) with "Check All" functionality for rapid assignment.
+  - **Security Enforcement:**
+    - **Middleware:** Routes are protected using the `permission` middleware (e.g., `->middleware('permission:products.create')`), ensuring backend security.
+    - **Dynamic UI:** The Sidebar and Action Buttons (Add, Edit, Delete, Status Toggles) are wrapped in `@can` directives, automatically hiding restricted operations from the UI.
+    - **Graceful Handling:** A custom `403 Access Denied` page provides clear feedback when an unauthorized operation is attempted.
+  - **Profile Management:** Admin users can be assigned a single role and support profile image uploads for identification in the user list and sidebar.
 - **Implementation Details:**
-  - **`RoleService` & `AdminService`:** Centralized logic for role CRUD and association with admin users.
-  - **Middleware & Guards:** The module is strictly applied to the `admin` guard to ensure isolation from the client-side user system.
-  - **Future Extensibility:** The architecture is designed to support granular permissions for every module operation, which can be seeded and enforced using standard Spatie middleware.
+  - **`RoleService` & `AdminService`:** Handle the business logic for role synchronization, permission grouping, and user associations.
+  - **Seeder Strategy:** `PermissionSeeder` ensures all granular permissions exist, while `RolePermissionSeeder` initializes the "Super Admin" role with full access.
+  - **System-Wide Integration:** Enforcement is applied across all core modules: Products, Categories, Brands, Shipping, Orders, Returns, Promotions, Homepage, and Settings.
 
 ---
 

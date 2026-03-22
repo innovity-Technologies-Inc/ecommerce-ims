@@ -12,7 +12,9 @@ use Illuminate\View\View;
 
 class RoleController extends Controller
 {
-    public function __construct(protected RoleService $roleService) {}
+    public function __construct(
+        protected RoleService $roleService
+    ) {}
 
     /**
      * Display a listing of the roles.
@@ -34,8 +36,9 @@ class RoleController extends Controller
     public function create(): View
     {
         $title = 'Create Role';
+        $groupedPermissions = $this->roleService->getAllGroupedPermissions();
 
-        return view('admin.roles.form', compact('title'));
+        return view('admin.roles.form', compact('title', 'groupedPermissions'));
     }
 
     /**
@@ -43,7 +46,11 @@ class RoleController extends Controller
      */
     public function store(RoleStoreRequest $request): RedirectResponse
     {
-        $this->roleService->storeRole($request->validated());
+        $role = $this->roleService->storeRole($request->validated());
+
+        if ($request->has('permissions')) {
+            $role->syncPermissions($request->permissions);
+        }
 
         return redirect()->route('admin.roles.index')->with([
             'message' => 'Role created successfully',
@@ -58,8 +65,9 @@ class RoleController extends Controller
     {
         $title = 'Edit Role';
         $role = $this->roleService->findRole($id);
+        $groupedPermissions = $this->roleService->getAllGroupedPermissions();
 
-        return view('admin.roles.form', compact('title', 'role'));
+        return view('admin.roles.form', compact('title', 'role', 'groupedPermissions'));
     }
 
     /**
@@ -67,7 +75,13 @@ class RoleController extends Controller
      */
     public function update(int $id, RoleUpdateRequest $request): RedirectResponse
     {
-        $this->roleService->updateRole($id, $request->validated());
+        $role = $this->roleService->updateRole($id, $request->validated());
+
+        if ($request->has('permissions')) {
+            $role->syncPermissions($request->permissions);
+        } else {
+            $role->syncPermissions([]);
+        }
 
         return redirect()->route('admin.roles.index')->with([
             'message' => 'Role updated successfully',

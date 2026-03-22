@@ -15,9 +15,12 @@
                     <td>{{ $role->name }}</td>
                     <td class="text-end pe-3">
                         <div class="d-flex justify-content-end gap-2">
+                            @can('roles.edit')
                             <a href="{{ route('admin.roles.edit', $role->id) }}" class="btn btn-soft-primary btn-sm" title="Edit">
                                 <iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon>
                             </a>
+                            @endcan
+                            @can('roles.delete')
                             <form action="{{ route('admin.roles.destroy', $role->id) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')
@@ -25,6 +28,7 @@
                                     <iconify-icon icon="solar:trash-bin-trash-broken" class="align-middle fs-18"></iconify-icon>
                                 </button>
                             </form>
+                            @endcan
                         </div>
                     </td>
                 </tr>

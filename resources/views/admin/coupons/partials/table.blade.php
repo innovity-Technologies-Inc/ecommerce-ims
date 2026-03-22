@@ -46,7 +46,7 @@
                     <td>
                         <div class="form-check form-switch">
                             <input class="form-check-input status-toggle" type="checkbox" role="switch" 
-                                data-id="{{ $coupon->id }}" {{ $coupon->status ? 'checked' : '' }}>
+                                data-id="{{ $coupon->id }}" {{ $coupon->status ? 'checked' : '' }} {{ auth('admin')->user()->can('coupons.edit') ? '' : 'disabled' }}>
                         </div>
                     </td>
                     <td>
@@ -54,9 +54,12 @@
                             <a href="{{ route('admin.coupons.history', $coupon->id) }}" class="btn btn-soft-info btn-sm" title="Usage History">
                                 <iconify-icon icon="solar:history-bold-duotone" class="fs-16"></iconify-icon>
                             </a>
+                            @can('coupons.edit')
                             <a href="{{ route('admin.coupons.edit', $coupon->id) }}" class="btn btn-soft-primary btn-sm">
                                 <iconify-icon icon="solar:pen-bold-duotone" class="fs-16"></iconify-icon>
                             </a>
+                            @endcan
+                            @can('coupons.delete')
                             <form action="{{ route('admin.coupons.destroy', $coupon->id) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
@@ -64,6 +67,7 @@
                                     <iconify-icon icon="solar:trash-bin-trash-bold-duotone" class="fs-16"></iconify-icon>
                                 </button>
                             </form>
+                            @endcan
                         </div>
                     </td>
                 </tr>

@@ -4,7 +4,9 @@
     <div class="container-xxl">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h4 class="mb-0">Roles</h4>
+            @can('roles.create')
             <a href="{{ route('admin.roles.create') }}" class="btn btn-primary btn-sm">Add Role</a>
+            @endcan
         </div>
 
         <div class="card overflow-hidden">

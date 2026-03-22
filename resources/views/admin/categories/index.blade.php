@@ -4,7 +4,9 @@
     <div class="container-xxl">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h4 class="mb-0">Categories</h4>
+            @can('category.create')
             <a href="{{ route('admin.categories.create') }}" class="btn btn-primary btn-sm">Add Category</a>
+            @endcan
         </div>
 
         <div class="card overflow-hidden">

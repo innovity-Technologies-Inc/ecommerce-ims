@@ -32,7 +32,7 @@
                         <input class="form-check-input status-toggle" type="checkbox" role="switch" 
                             id="statusSwitch{{ $customer->id }}" 
                             data-id="{{ $customer->id }}"
-                            {{ $customer->status ? 'checked' : '' }}>
+                            {{ $customer->status ? 'checked' : '' }} {{ auth('admin')->user()->can('customers.edit') ? '' : 'disabled' }}>
                     </div>
                 </td>
                 <td>

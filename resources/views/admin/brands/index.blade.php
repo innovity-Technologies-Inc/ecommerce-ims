@@ -4,7 +4,9 @@
     <div class="container-xxl">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h4 class="mb-0">Brands</h4>
+            @can('brand.create')
             <a href="{{ route('admin.brands.create') }}" class="btn btn-primary btn-sm">Add Brand</a>
+            @endcan
         </div>
 
         <div class="card overflow-hidden">

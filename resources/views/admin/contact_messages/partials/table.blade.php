@@ -45,6 +45,7 @@
                                 <i class="bx bx-check-double fs-16"></i>
                             </button>
                         @endif
+                        @can('contact_messages.delete')
                         <form action="{{ route('admin.contact_messages.destroy', $message->id) }}" method="POST">
                             @csrf
                             @method('DELETE')
@@ -52,6 +53,7 @@
                                 <i class="bx bx-trash fs-16"></i>
                             </button>
                         </form>
+                        @endcan
                     </div>
                 </td>
             </tr>

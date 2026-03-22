@@ -36,9 +36,12 @@
             </td>
             <td>
                 <div class="d-flex gap-2">
+                    @can('sliders.edit')
                     <a href="{{ route('admin.sliders.edit', $data->id) }}" class="btn btn-soft-primary btn-sm">
                         <iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon>
                     </a>
+                    @endcan
+                    @can('sliders.delete')
                     <form method="post" action="{{ route('admin.sliders.destroy', $data->id) }}">
                         @csrf
                         @method('delete')
@@ -46,6 +49,7 @@
                             <iconify-icon icon="solar:trash-bin-minimalistic-2-broken" class="align-middle fs-18"></iconify-icon>
                         </button>
                     </form>
+                    @endcan
                 </div>
             </td>
         </tr>

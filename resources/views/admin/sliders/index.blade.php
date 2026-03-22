@@ -4,7 +4,9 @@
     <div class="container-xxl">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h4 class="mb-0">Sliders</h4>
+            @can('sliders.create')
             <a href="{{ route('admin.sliders.create') }}" class="btn btn-primary btn-sm">Add Slider</a>
+            @endcan
         </div>
 
         <div class="card overflow-hidden">

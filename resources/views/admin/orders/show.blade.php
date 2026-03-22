@@ -135,6 +135,7 @@
                                 <i class="bx {{ $iconClass }} me-1"></i> This order is <strong>{{ $order->order_status }}</strong>. The status cannot be changed further.
                             </div>
                         @else
+                            @can('orders.edit')
                             <form action="{{ route('admin.orders.update-status', $order->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
@@ -155,6 +156,11 @@
                                 </div>
                                 <button type="submit" class="btn btn-primary w-100 py-2">Update Status</button>
                             </form>
+                            @else
+                            <div class="alert alert-info border-0 mb-0" role="alert">
+                                <i class="bx bx-info-circle me-1"></i> You do not have permission to update order status.
+                            </div>
+                            @endcan
                         @endif
                     </div>
                 </div>
@@ -217,22 +223,26 @@
                                 <a href="{{ route('admin.orders.view-invoice', $order->id) }}" target="_blank" class="btn btn-outline-primary">
                                     <i class="bx bx-show me-1"></i> View / Print Invoice
                                 </a>
+                                @can('orders.edit')
                                 <form action="{{ route('admin.orders.regenerate-invoice', $order->id) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="btn btn-soft-secondary w-100">
                                         <i class="bx bx-refresh me-1"></i> Generate
                                     </button>
                                 </form>
+                                @endcan
                             </div>
                         @else
                             <div class="text-center py-2">
                                 <p class="text-muted mb-3">No invoice has been generated for this order yet.</p>
+                                @can('orders.edit')
                                 <form action="{{ route('admin.orders.generate-invoice', $order->id) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="btn btn-primary w-100">
                                         <i class="bx bx-receipt me-1"></i> Generate Invoice
                                     </button>
                                 </form>
+                                @endcan
                             </div>
                         @endif
                     </div>

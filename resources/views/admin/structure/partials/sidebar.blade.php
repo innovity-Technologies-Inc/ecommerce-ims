@@ -19,6 +19,7 @@
 
             <li class="menu-title">General</li>
 
+            @can('dashboard.view')
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.dashboard') }}">
                                    <span class="nav-icon">
@@ -27,7 +28,9 @@
                     <span class="nav-text"> Dashboard </span>
                 </a>
             </li>
+            @endcan
 
+            @can('category.view')
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.categories.index') }}">
                                    <span class="nav-icon">
@@ -36,7 +39,9 @@
                     <span class="nav-text"> Category </span>
                 </a>
             </li>
+            @endcan
 
+            @can('brand.view')
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.brands.index') }}">
                                    <span class="nav-icon">
@@ -45,7 +50,9 @@
                     <span class="nav-text"> Brands </span>
                 </a>
             </li>
+            @endcan
 
+            @can('products.view')
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.products.index') }}">
                                    <span class="nav-icon">
@@ -54,7 +61,9 @@
                     <span class="nav-text"> Products </span>
                 </a>
             </li>
+            @endcan
 
+            @can('shipping_methods.view')
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.shipping_methods.index') }}">
                                    <span class="nav-icon">
@@ -63,7 +72,9 @@
                     <span class="nav-text"> Shipping Methods </span>
                 </a>
             </li>
+            @endcan
 
+            @can('orders.view')
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.orders.index') }}">
                                    <span class="nav-icon">
@@ -72,7 +83,9 @@
                     <span class="nav-text"> Orders </span>
                 </a>
             </li>
+            @endcan
 
+            @can('returns.view')
             <li class="nav-item">
                 <a class="nav-link menu-arrow" href="#sidebarReturns" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarReturns">
                                    <span class="nav-icon">
@@ -94,7 +107,9 @@
                     </ul>
                 </div>
             </li>
+            @endcan
 
+            @if(auth('admin')->user()->can('coupons.view') || auth('admin')->user()->can('flash_sale.view'))
             <li class="nav-item">
                 <a class="nav-link menu-arrow" href="#sidebarPromotions" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarPromotions">
                                    <span class="nav-icon">
@@ -104,16 +119,22 @@
                 </a>
                 <div class="collapse" id="sidebarPromotions">
                     <ul class="nav sub-navbar-nav">
+                        @can('coupons.view')
                         <li class="sub-nav-item">
                             <a class="sub-nav-link" href="{{ route('admin.coupons.index') }}">Coupons</a>
                         </li>
+                        @endcan
+                        @can('flash_sale.view')
                         <li class="sub-nav-item">
                             <a class="sub-nav-link" href="{{ route('admin.flash_sale.edit') }}">Flash Sale</a>
                         </li>
+                        @endcan
                     </ul>
                 </div>
             </li>
+            @endif
 
+            @if(auth('admin')->user()->can('sliders.view') || auth('admin')->user()->can('homepage_sections.view'))
             <li class="nav-item">
                 <a class="nav-link menu-arrow" href="#sidebarHomepage" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarHomepage">
                                    <span class="nav-icon">
@@ -123,9 +144,12 @@
                 </a>
                 <div class="collapse" id="sidebarHomepage">
                     <ul class="nav sub-navbar-nav">
+                        @can('sliders.view')
                         <li class="sub-nav-item">
                             <a class="sub-nav-link" href="{{ route('admin.sliders.index') }}">Sliders</a>
                         </li>
+                        @endcan
+                        @can('homepage_sections.view')
                         <li class="sub-nav-item">
                             <a class="sub-nav-link" href="{{ route('admin.sections.bestsellers') }}">Bestsellers</a>
                         </li>
@@ -141,12 +165,15 @@
                         <li class="sub-nav-item">
                             <a class="sub-nav-link" href="{{ route('admin.sections.edit', 'top_picks') }}">Top Picks</a>
                         </li>
+                        @endcan
                     </ul>
                 </div>
             </li>
+            @endif
 
             <li class="menu-title mt-2">Management</li>
 
+            @if(auth('admin')->user()->can('admins.view') || auth('admin')->user()->can('roles.view'))
             <li class="nav-item">
                 <a class="nav-link menu-arrow" href="#sidebarUsers" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarUsers">
                                    <span class="nav-icon">
@@ -156,16 +183,22 @@
                 </a>
                 <div class="collapse" id="sidebarUsers">
                     <ul class="nav sub-navbar-nav">
+                        @can('admins.view')
                         <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.index') }}">Admin Users</a>
+                            <a class="sub-nav-link" href="{{ route('admin.index') }}">Users</a>
                         </li>
+                        @endcan
+                        @can('roles.view')
                         <li class="sub-nav-item">
                             <a class="sub-nav-link" href="{{ route('admin.roles.index') }}">Roles</a>
                         </li>
+                        @endcan
                     </ul>
                 </div>
             </li>
+            @endif
 
+            @can('customers.view')
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.customers.index') }}">
                                    <span class="nav-icon">
@@ -174,7 +207,9 @@
                     <span class="nav-text"> Customers </span>
                 </a>
             </li>
+            @endcan
 
+            @can('contact_messages.view')
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.contact_messages.index') }}">
                                    <span class="nav-icon">
@@ -183,9 +218,11 @@
                     <span class="nav-text"> Contact Messages </span>
                 </a>
             </li>
+            @endcan
 
             <li class="menu-title mt-2">Settings</li>
 
+            @can('settings.view')
             <li class="nav-item">
                 <a class="nav-link menu-arrow" href="#sidebarSettings" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarSettings">
                                    <span class="nav-icon">
@@ -210,6 +247,7 @@
                     </ul>
                 </div>
             </li>
+            @endcan
 
         </ul>
     </div>

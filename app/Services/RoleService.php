@@ -92,4 +92,16 @@ class RoleService
     {
         return Role::where('guard_name', 'admin')->orderBy('name', 'asc')->get();
     }
+
+    /**
+     * Get all permissions grouped by menu name.
+     */
+    public function getAllGroupedPermissions(): \Illuminate\Support\Collection
+    {
+        $permissions = \Spatie\Permission\Models\Permission::where('guard_name', 'admin')->get();
+
+        return $permissions->groupBy(function ($permission) {
+            return explode('.', $permission->name)[0];
+        });
+    }
 }

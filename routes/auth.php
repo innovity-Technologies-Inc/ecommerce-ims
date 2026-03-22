@@ -97,19 +97,22 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('auth:admin')->group(function () {
 
         Route::get('users', [AdminController::class, 'index'])
-            ->name('index');
+            ->name('index')->middleware('permission:admins.view');
 
         Route::get('users/create', [AdminController::class, 'AdminCreate'])
-            ->name('create');
+            ->name('create')->middleware('permission:admins.create');
 
         Route::get('users/edit/{id}', [AdminController::class, 'edit'])
-            ->name('edit');
+            ->name('edit')->middleware('permission:admins.edit');
 
-        Route::post('register', [AdminController::class, 'store'])->name('register');
+        Route::post('register', [AdminController::class, 'store'])
+            ->name('register')->middleware('permission:admins.create');
 
-        Route::put('update/{id}', [AdminController::class, 'update'])->name('update');
+        Route::put('update/{id}', [AdminController::class, 'update'])
+            ->name('update')->middleware('permission:admins.edit');
 
-        Route::delete('delete/{id}', [AdminController::class, 'destroy'])->name('delete');
+        Route::delete('delete/{id}', [AdminController::class, 'destroy'])
+            ->name('delete')->middleware('permission:admins.delete');
 
         Route::post('logout', [AdminController::class, 'logout'])
             ->name('logout');
