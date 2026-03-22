@@ -187,16 +187,19 @@
                                         @endif
 
                                         <div class="border-top pt-4 mt-5 d-flex flex-column flex-sm-row justify-content-between gap-3 align-items-center">
-                                            <div class="d-flex gap-3">
-                                                <a href="{{ route('user.orders') }}" class="btn btn-dark px-4 py-2 text-white" style="background-color: #333; border-color: #333; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; border-radius: 0;">
-                                                    <i class="fa fa-arrow-left me-2"></i> Back to Orders
+                                            <div class="d-flex gap-2 flex-nowrap overflow-x-auto pb-2" style="scrollbar-width: none; -ms-overflow-style: none;">
+                                                <style>
+                                                    .d-flex.gap-2::-webkit-scrollbar { display: none; }
+                                                </style>
+                                                <a href="{{ route('user.orders') }}" class="btn btn-dark px-3 py-2 text-white flex-shrink-0" style="background-color: #333; border-color: #333; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; border-radius: 0; white-space: nowrap;">
+                                                    <i class="fa fa-arrow-left me-1"></i> Back
                                                 </a>
-                                                <a href="{{ route('client.track_order', ['order_id' => $order->order_id]) }}" class="btn btn-primary px-4 py-2 text-white" style="background-color: #7AAACE; border-color: #7AAACE; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; border-radius: 0;">
-                                                    <i class="fa fa-map-marker-alt me-2"></i> Track Order
+                                                <a href="{{ route('client.track_order', ['order_id' => $order->order_id]) }}" class="btn btn-primary px-3 py-2 text-white flex-shrink-0" style="background-color: #7AAACE; border-color: #7AAACE; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; border-radius: 0; white-space: nowrap;">
+                                                    <i class="fa fa-map-marker-alt me-1"></i> Track
                                                 </a>
                                                 @if($order->order_status === 'Delivered')
-                                                    <a href="{{ route('client.returns.index', ['order_id' => $order->order_id]) }}" class="btn btn-danger px-4 py-2 text-white" style="background-color: #d9534f; border-color: #d43f3a; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; border-radius: 0;">
-                                                        <i class="fa fa-undo me-2"></i> Request Return
+                                                    <a href="{{ route('client.returns.index', ['order_id' => $order->order_id]) }}" class="btn btn-danger px-3 py-2 text-white flex-shrink-0" style="background-color: #d9534f; border-color: #d43f3a; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; font-weight: 700; border-radius: 0; white-space: nowrap;">
+                                                        <i class="fa fa-undo me-1"></i> Return
                                                     </a>
                                                 @endif
                                             </div>

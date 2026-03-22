@@ -1,5 +1,66 @@
 @extends('client.structure.app')
 @section('content')
+    <style>
+        @media (max-width: 767px) {
+            .cart-table-content table thead {
+                display: none;
+            }
+            .cart-table-content table tbody tr {
+                display: grid !important;
+                grid-template-columns: 35% 65%;
+                grid-template-areas: 
+                    "thumb name"
+                    "thumb qty"
+                    "thumb price";
+                padding: 15px 0;
+                border-bottom: 1px solid #ebebeb;
+            }
+            .cart-table-content table tbody tr td {
+                border: none;
+                padding: 4px 10px;
+                width: 100% !important;
+                text-align: left !important;
+            }
+            .cart-table-content table tbody tr td.product-thumbnail {
+                grid-area: thumb;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .cart-table-content table tbody tr td.product-thumbnail img {
+                max-width: 80px !important;
+                height: auto;
+            }
+            .cart-table-content table tbody tr td.product-name {
+                grid-area: name;
+                padding-left: 10px !important;
+            }
+            .cart-table-content table tbody tr td.product-quantity {
+                grid-area: qty;
+                display: flex;
+                align-items: center;
+                padding-left: 10px !important;
+            }
+            .cart-table-content table tbody tr td.product-quantity::before {
+                content: "Return Qty: ";
+                font-weight: bold;
+                margin-right: 10px;
+                font-size: 13px;
+            }
+            .cart-table-content table tbody tr td.product-subtotal {
+                grid-area: price;
+                display: flex;
+                align-items: center;
+                padding-left: 10px !important;
+            }
+            .cart-table-content table tbody tr td.product-subtotal::before {
+                content: "Unit Price: ";
+                font-weight: bold;
+                margin-right: 10px;
+                font-size: 13px;
+            }
+        }
+    </style>
     <div class="checkout-area mtb-60px">
         <div class="container">
             <div class="row">
@@ -17,14 +78,25 @@
                                             <div class="col-md-8">
                                                 <div class="billing-info mb-4">
                                                     <label class="fw-bold text-dark">Order ID</label>
-                                                    <div class="d-flex gap-2 align-items-center">
-                                                        <input type="text" id="order_id_input" placeholder="e.g. ORD-1234567890" class="flex-grow-1 m-0">
-                                                        <div class="d-flex gap-2 flex-shrink-0">
-                                                            <button type="button" id="btn_fetch_order" class="btn btn-primary px-3 text-white" style="background-color: #7AAACE; border-color: #7AAACE; height: 45px; font-weight: 700; text-transform: uppercase; font-size: 11px; border-radius: 0; white-space: nowrap;">Get Details</button>
-                                                            <button type="button" id="btn_track_return" class="btn btn-secondary px-3 text-white" style="height: 45px; font-weight: 700; text-transform: uppercase; font-size: 11px; border-radius: 0; white-space: nowrap;">Track Status</button>
+                                                    <div class="row g-2 align-items-center">
+                                                        <div class="col-12 col-sm-7 col-md-8">
+                                                            <input type="text" id="order_id_input" placeholder="e.g. ORD-1234567890" class="w-100 m-0">
+                                                        </div>
+                                                        <div class="col-12 col-sm-5 col-md-4">
+                                                            <div class="d-flex gap-2">
+                                                                <button type="button" id="btn_fetch_order" class="btn btn-primary px-2 text-white flex-grow-1" style="background-color: #7AAACE; border-color: #7AAACE; height: 45px; font-weight: 700; text-transform: uppercase; font-size: 11px; border-radius: 0; white-space: nowrap;">Get Details</button>
+                                                                <button type="button" id="btn_track_return" class="btn btn-secondary px-2 text-white flex-grow-1" style="height: 45px; font-weight: 700; text-transform: uppercase; font-size: 11px; border-radius: 0; white-space: nowrap;">Track Status</button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="return_error_result" class="mb-5 d-none">
+                                            <div class="alert alert-danger border-0 rounded-0 shadow-sm p-4">
+                                                <h5 class="fw-bold mb-2">Error</h5>
+                                                <p class="mb-0" id="return_error_message"></p>
                                             </div>
                                         </div>
 
@@ -113,13 +185,18 @@
                 success: function(response) {
                     $('#order_details_container').removeClass('d-none');
                     $('#return_tracking_result').addClass('d-none');
+                    $('#return_error_result').addClass('d-none');
                     $('#order_items_html').html(response.html);
                     $('#hidden_order_id').val(response.order.order_id);
                     $('#hidden_order_id_pk').val(response.order.id);
                 },
                 error: function(xhr) {
-                    toastr.error(xhr.responseJSON.message || 'Error fetching order details');
+                    const msg = xhr.responseJSON.message || 'Error fetching order details';
+                    toastr.error(msg);
+                    $('#return_error_result').removeClass('d-none');
+                    $('#return_error_message').text(msg);
                     $('#order_details_container').addClass('d-none');
+                    $('#return_tracking_result').addClass('d-none');
                 },
                 complete: function() {
                     $('#btn_fetch_order').prop('disabled', false).text('Get Details');
@@ -144,6 +221,7 @@
                 success: function(response) {
                     $('#return_tracking_result').removeClass('d-none');
                     $('#order_details_container').addClass('d-none');
+                    $('#return_error_result').addClass('d-none');
                     
                     $('#track_order_id').text(orderId);
                     $('#track_return_id').text(response.return_id);
@@ -202,9 +280,11 @@
                 },
                 success: function(response) {
                     toastr.success(response.message);
+                    $('#order_details_container').addClass('d-none');
+                    $('#order_id_input').val(response.order_id);
                     setTimeout(() => {
-                        window.location.reload();
-                    }, 2000);
+                        $('#btn_track_return').click();
+                    }, 1000);
                 },
                 error: function(xhr) {
                     if (xhr.status === 422) {
