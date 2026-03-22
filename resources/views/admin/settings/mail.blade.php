@@ -52,7 +52,8 @@
                             <div class="col-lg-6">
                                 <div class="mb-3">
                                     <label for="mail_password" class="form-label">Mail Password</label>
-                                    <input type="password" name="mail_password" id="mail_password" class="form-control" value="{{ old('mail_password', $setting->mail_password ?? '') }}">
+                                    <input type="password" name="mail_password" id="mail_password" class="form-control" value="">
+                                    <small class="text-muted">Leave empty to keep the current password.</small>
                                     @error('mail_password') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
                             </div>

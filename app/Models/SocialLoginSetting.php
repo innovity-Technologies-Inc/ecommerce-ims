@@ -17,6 +17,7 @@ class SocialLoginSetting extends Model
     {
         return [
             'google_status' => 'boolean',
+            'google_client_secret' => 'encrypted',
         ];
     }
 }

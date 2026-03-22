@@ -34,7 +34,8 @@
                             <div class="col-lg-6">
                                 <div class="mb-3">
                                     <label for="google_client_secret" class="form-label">Google Client Secret</label>
-                                    <input type="text" name="google_client_secret" id="google_client_secret" class="form-control" value="{{ old('google_client_secret', $setting->google_client_secret ?? '') }}">
+                                    <input type="password" name="google_client_secret" id="google_client_secret" class="form-control" value="">
+                                    <small class="text-muted">Leave empty to keep the current client secret.</small>
                                     @error('google_client_secret') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
                             </div>

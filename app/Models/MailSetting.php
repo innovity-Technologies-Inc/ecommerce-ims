@@ -16,4 +16,11 @@ class MailSetting extends Model
         'mail_from_address',
         'mail_from_name',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'mail_password' => 'encrypted',
+        ];
+    }
 }

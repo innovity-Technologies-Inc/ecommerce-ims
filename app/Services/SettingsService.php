@@ -63,6 +63,12 @@ class SettingsService
     public function updateMailSettings(array $data): MailSetting
     {
         $setting = MailSetting::first() ?? new MailSetting;
+
+        // Don't overwrite password if it's not provided in the request
+        if (empty($data['mail_password'])) {
+            unset($data['mail_password']);
+        }
+
         $setting->fill($data);
         $setting->save();
 
@@ -88,6 +94,12 @@ class SettingsService
     {
         $setting = \App\Models\SocialLoginSetting::first() ?? new \App\Models\SocialLoginSetting;
         $data['google_status'] = isset($data['google_status']);
+
+        // Don't overwrite client secret if it's not provided in the request
+        if (empty($data['google_client_secret'])) {
+            unset($data['google_client_secret']);
+        }
+
         $setting->fill($data);
         $setting->save();
 
