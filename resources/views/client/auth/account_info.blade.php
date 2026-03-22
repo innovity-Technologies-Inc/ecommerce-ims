@@ -10,6 +10,8 @@
         } elseif ($errors->hasAny(['address', 'city', 'state', 'country', 'zip'])) {
             $activeTab = 'address';
         }
+        $panelIndex = 1;
+        $user = Auth::guard('web')->user();
     @endphp
 
     <!-- account area start -->
@@ -21,7 +23,7 @@
                         <div id="faq" class="panel-group">
                             <div class="panel panel-default single-my-account">
                                 <div class="panel-heading my-account-title">
-                                    <h3 class="panel-title"><span>1 .</span> <a data-bs-toggle="collapse"
+                                    <h3 class="panel-title"><span>{{ $panelIndex++ }} .</span> <a data-bs-toggle="collapse"
                                                                                 data-parent="#faq" href="#my-account-1"
                                                                                 class="{{ $activeTab !== 'profile' ? 'collapsed' : '' }}"
                                                                                 aria-expanded="{{ $activeTab === 'profile' ? 'true' : 'false' }}">Edit
@@ -81,9 +83,11 @@
                                     </form>
                                 </div>
                             </div>
+                            
+                            @if(!$user->google_id)
                             <div class="panel panel-default single-my-account">
                                 <div class="panel-heading my-account-title">
-                                    <h3 class="panel-title"><span>2 .</span> <a data-bs-toggle="collapse"
+                                    <h3 class="panel-title"><span>{{ $panelIndex++ }} .</span> <a data-bs-toggle="collapse"
                                                                                 data-parent="#faq" href="#my-account-2"
                                                                                 class="{{ $activeTab !== 'password' ? 'collapsed' : '' }}"
                                                                                 aria-expanded="{{ $activeTab === 'password' ? 'true' : 'false' }}">Change
@@ -138,9 +142,11 @@
                                     </form>
                                 </div>
                             </div>
+                            @endif
+
                             <div class="panel panel-default single-my-account">
                                 <div class="panel-heading my-account-title">
-                                    <h3 class="panel-title"><span>3 .</span> <a data-bs-toggle="collapse"
+                                    <h3 class="panel-title"><span>{{ $panelIndex++ }} .</span> <a data-bs-toggle="collapse"
                                                                                 data-parent="#faq" href="#my-account-3"
                                                                                 class="{{ $activeTab !== 'address' ? 'collapsed' : '' }}"
                                                                                 aria-expanded="{{ $activeTab === 'address' ? 'true' : 'false' }}">Modify

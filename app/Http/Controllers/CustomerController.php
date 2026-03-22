@@ -79,12 +79,19 @@ class CustomerController extends Controller
 
     public function changePassword(Request $request)
     {
+        $user = Auth::guard('web')->user();
+
+        if ($user->google_id) {
+            return back()->with([
+                'message' => 'Social login users cannot change their password.',
+                'alert-type' => 'error',
+            ]);
+        }
+
         $request->validate([
             'current_password' => ['required'],
             'password' => ['required', 'confirmed', 'min:8'],
         ]);
-
-        $user = Auth::guard('web')->user();
 
         // Check old password
         if (! Hash::check($request->current_password, $user->password)) {
