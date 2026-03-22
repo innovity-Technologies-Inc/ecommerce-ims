@@ -23,18 +23,26 @@ class ReturnController extends Controller
         $orderId = $request->query('order_id');
         $order = $this->returnService->getOrderDetails($orderId);
 
-        if (! $order) {
+        if (!$order) {
             return response()->json(['message' => 'Order not found.'], 404);
+        }
+
+        if ($this->returnService->checkExistingReturn($order->id)) {
+            return response()->json(['message' => 'A return request has already been submitted for this order.'], 400);
         }
 
         return response()->json([
             'order' => $order,
-            'html' => view('client.returns.partials.order_items', compact('order'))->render(),
+            'html' => view('client.returns.partials.order_items', compact('order'))->render()
         ]);
     }
 
     public function store(ReturnRequestStoreRequest $request): JsonResponse
     {
+        if ($this->returnService->checkExistingReturn($request->order_id_pk)) {
+            return response()->json(['message' => 'A return request has already been submitted for this order.'], 400);
+        }
+
         $this->returnService->storeReturnRequest($request->validated());
 
         return response()->json(['message' => 'Return request submitted successfully.']);

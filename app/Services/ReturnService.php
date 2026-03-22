@@ -22,6 +22,11 @@ class ReturnService
             ->first();
     }
 
+    public function checkExistingReturn(int $orderIdPk): bool
+    {
+        return ReturnRequest::where('order_id', $orderIdPk)->exists();
+    }
+
     public function storeReturnRequest(array $data): ReturnRequest
     {
         return DB::transaction(function () use ($data) {
