@@ -29,6 +29,14 @@
 
                                             <input type="text" name="email" placeholder="Email Address">
                                             <input type="password" name="password" placeholder="Password">
+                                            
+                                            <div class="mb-3">
+                                                {!! NoCaptcha::display() !!}
+                                                @error('g-recaptcha-response')
+                                                    <span class="text-danger small">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+
                                             <div class="button-box">
                                                 <div class="login-toggle-btn">
                                                     <!-- Remember Me -->

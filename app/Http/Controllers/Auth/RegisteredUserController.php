@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
@@ -24,16 +24,9 @@ class RegisteredUserController extends Controller
         return view('client.auth.register', compact('title', 'section'));
     }
 
-    public function store(Request $request)
+    public function store(RegisterRequest $request)
     {
-        // Base validation (for both)
-        $rules = [
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'mobile' => ['required', 'string', 'max:20'],
-        ];
-
-        $validated = $request->validate($rules);
+        $validated = $request->validated();
 
         $user = User::create([
             'email' => $validated['email'],
@@ -59,6 +52,5 @@ class RegisteredUserController extends Controller
         }
 
         return redirect()->route('verification.notice');
-
     }
 }

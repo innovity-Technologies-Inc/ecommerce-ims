@@ -12,6 +12,9 @@
     <meta name="title" content="{{ $gs->meta_title ?? '' }}">
     <meta name="description" content="{{ $gs->meta_description ?? '' }}">
     <meta name="author" content="{{ $gs->business_name ?? '' }}">
+    
+    {!! NoCaptcha::renderJs() !!}
+
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="{{ $gs->favicon ? asset('storage/'.$gs->favicon) : asset('client/assets/images/favicon/favicon.png') }}">
 

@@ -81,7 +81,8 @@ This document lists the high-level requirements for the modules implemented in t
 - [ ] **REQ-77:** Return Module (Guest/Authenticated return requests, Admin approval/rejection with damage/intact selection, receiving workflow, stock restoration for intact items, and wastage tracking for damaged items).
 - [x] **REQ-78:** Role-Based Access Control (RBAC) Module (Implement spatie/laravel-permission, Role CRUD management, assign roles to admin users, and profile image support for admins).
 - [x] **REQ-79:** Permission Management (UI to create permissions grouped by Menu Name and Operations, stored as menu.operation. Role form integration with grouped checkboxes and "Check All" logic).
-- [ ] **REQ-80:** Order Cancellation/Rejection Remarks (Add reason/remarks field for cancelled or rejected orders. Remarks visible in tracking and included in status update emails).
+- [x] **REQ-80:** Order Cancellation/Rejection Remarks (Add reason/remarks field for cancelled or rejected orders. Remarks visible in tracking and included in status update emails).
+- [x] **REQ-81:** Google reCAPTCHA Integration (Implement reCAPTCHA v2 for login and registration pages on the client side to prevent automated submissions).
 
 ## 10. Flash Sale Module
 - [x] **REQ-52:** Flash Sale Management (Single edit form for managing active/inactive status and global configuration).

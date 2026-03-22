@@ -435,6 +435,20 @@ Every module or architectural change must be documented in this file before a ta
   - **Service Logic:** `OrderService::updateOrderStatus()` manages the persistence of the reason and ensures it is cleared if the status is moved to a non-restorative state (though status finality usually prevents this).
   - **Email Template:** The `status_update.blade.php` markdown template conditionally displays the reason using a Blade `@if` directive.
 
+### 3.30 Google reCAPTCHA Integration
+- **What:** Enhanced security layer for client-side authentication forms (Login and Registration) to prevent automated bot submissions and credential stuffing attacks.
+- **How it Works:**
+  - **Visual Challenge:** A reCAPTCHA v2 "I'm not a robot" widget is displayed on both the Login and Registration pages.
+  - **Validation:** Form submission is blocked until the user successfully completes the reCAPTCHA challenge.
+  - **User Feedback:** Clear, field-specific error messages (e.g., "Please complete the reCAPTCHA challenge") are displayed if validation fails.
+- **Implementation Details:**
+  - **Package:** Integrated `anhskohbo/no-captcha` for seamless reCAPTCHA v2 support in Laravel 12.
+  - **Configuration:** Keys are managed via environment variables (`NOCAPTCHA_SITEKEY`, `NOCAPTCHA_SECRET`) and the `config/captcha.php` file.
+  - **Global Assets:** The reCAPTCHA JavaScript is globally loaded via the master layout (`master.blade.php`) using `{!! NoCaptcha::renderJs() !!}` to ensure availability on all auth-related pages.
+  - **Strict Validation:** 
+    - **Login:** `LoginRequest` includes the `g-recaptcha-response` rule.
+    - **Registration:** Refactored `RegisteredUserController` to use a dedicated `RegisterRequest` class which enforces reCAPTCHA validation, adhering to the project's strict Form Request mandate.
+
 ---
 
 ## 4. Frontend & UI Standardization Refinements

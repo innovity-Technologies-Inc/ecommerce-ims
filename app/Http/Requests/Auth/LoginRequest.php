@@ -29,6 +29,7 @@ class LoginRequest extends FormRequest
         return [
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
+            'g-recaptcha-response' => ['required', 'captcha'],
         ];
     }
 
@@ -38,6 +39,8 @@ class LoginRequest extends FormRequest
             'email.required' => 'Please enter your email address.',
             'email.email' => 'The email format is invalid.',
             'password.required' => 'Please enter your password.',
+            'g-recaptcha-response.required' => 'Please complete the reCAPTCHA challenge.',
+            'g-recaptcha-response.captcha' => 'reCAPTCHA validation failed. Please try again.',
         ];
     }
 

@@ -35,6 +35,13 @@
 
                                             <input type="password" name="password_confirmation" placeholder="Confirm Password" required>
 
+                                            <div class="mb-3">
+                                                {!! NoCaptcha::display() !!}
+                                                @error('g-recaptcha-response')
+                                                    <span class="text-danger small">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+
                                             <div class="button-box">
                                                 <button type="submit"><span>Register</span></button>
                                             </div>
