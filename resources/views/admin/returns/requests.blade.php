@@ -46,9 +46,10 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php $sl = \App\HelperClass::indexNumberSerialization($requests); @endphp
                         @forelse($requests as $request)
                             <tr>
-                                <td class="ps-3">{{ \App\HelperClass::indexNumberSerialization($requests)[$loop->index] }}</td>
+                                <td class="ps-3">{{ $sl++ }}</td>
                                 <td><span class="fw-bold">{{ $request->return_id }}</span></td>
                                 <td>{{ $request->order->order_id }}</td>
                                 <td>
