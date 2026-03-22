@@ -421,6 +421,20 @@ Every module or architectural change must be documented in this file before a ta
   - **Seeder Strategy:** `PermissionSeeder` ensures all granular permissions exist, while `RolePermissionSeeder` initializes the "Super Admin" role with full access.
   - **System-Wide Integration:** Enforcement is applied across all core modules: Products, Categories, Brands, Shipping, Orders, Returns, Promotions, Homepage, and Settings.
 
+### 3.29 Order Cancellation/Rejection Remarks
+- **What:** A feature to capture and display the reason when an order is cancelled or rejected by an administrator. This provides transparency to the customer about why their order was not fulfilled.
+- **How it Works:**
+  - **Admin Action:** When updating an order status to "Cancelled" or "Rejected", a mandatory "Reason/Remarks" field appears in the status update form.
+  - **Data Storage:** The reason is stored in the `rejection_reason` column of the `orders` table.
+  - **Customer Visibility:**
+    - **Order Tracking:** The reason is displayed on the public order tracking page.
+    - **Order Details:** The reason is visible in the customer's account under order details.
+    - **Email Notification:** If "Email Notify" is enabled during the status update, the reason is included in the automated status update email.
+- **Implementation Details:**
+  - **Validation:** `UpdateOrderStatusRequest` enforces that the reason is provided only for restorative statuses.
+  - **Service Logic:** `OrderService::updateOrderStatus()` manages the persistence of the reason and ensures it is cleared if the status is moved to a non-restorative state (though status finality usually prevents this).
+  - **Email Template:** The `status_update.blade.php` markdown template conditionally displays the reason using a Blade `@if` directive.
+
 ---
 
 ## 4. Frontend & UI Standardization Refinements

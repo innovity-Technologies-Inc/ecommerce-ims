@@ -149,6 +149,12 @@
                                                     <div class="alert alert-danger text-center py-4 mb-5 border-0 shadow-sm rounded-0">
                                                         <i class="fa fa-times-circle fs-4 mb-2 d-block"></i>
                                                         This order has been <strong>{{ $order->order_status }}</strong> and cannot be tracked further.
+                                                        @if($order->rejection_reason)
+                                                            <hr>
+                                                            <div class="mt-2 small">
+                                                                <strong>Reason:</strong> {{ $order->rejection_reason }}
+                                                            </div>
+                                                        @endif
                                                     </div>
                                                 @endif
 

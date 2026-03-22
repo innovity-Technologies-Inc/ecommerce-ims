@@ -7,6 +7,10 @@ The status of your order **{{ $order->order_id }}** has been updated.
 
 **Current Status:** {{ $order->order_status }}
 
+@if($order->rejection_reason)
+**Reason/Remarks:** {{ $order->rejection_reason }}
+@endif
+
 **Order Details:**
 **Order ID:** {{ $order->order_id }}
 **Order Date:** {{ $order->created_at->format('M d, Y') }}

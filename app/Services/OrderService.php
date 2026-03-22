@@ -82,11 +82,11 @@ class OrderService
     /**
      * Update order status and send notification if requested.
      */
-    public function updateOrderStatus(Order $order, string $status, bool $notify = false): bool
+    public function updateOrderStatus(Order $order, string $status, bool $notify = false, ?string $reason = null): bool
     {
         $status = trim($status);
 
-        return DB::transaction(function () use ($order, $status, $notify) {
+        return DB::transaction(function () use ($order, $status, $notify, $reason) {
             $oldStatus = $order->order_status;
 
             // Finality check: If current status is Delivered, Cancelled or Rejected, do not allow changes
@@ -115,6 +115,12 @@ class OrderService
             }
 
             $order->order_status = $status;
+
+            if (in_array($status, ['Cancelled', 'Rejected'])) {
+                $order->rejection_reason = $reason;
+            } else {
+                $order->rejection_reason = null;
+            }
 
             // Automatically set payment status to Paid if delivered
             if ($status === 'Delivered') {

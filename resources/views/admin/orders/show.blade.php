@@ -131,9 +131,17 @@
                                 $alertClass = $order->order_status === 'Delivered' ? 'alert-soft-success' : 'alert-soft-danger';
                                 $iconClass = $order->order_status === 'Delivered' ? 'bx-check-circle' : 'bx-info-circle';
                             @endphp
-                            <div class="alert {{ $alertClass }} border-0 mb-0" role="alert">
+                            <div class="alert {{ $alertClass }} border-0 mb-3" role="alert">
                                 <i class="bx {{ $iconClass }} me-1"></i> This order is <strong>{{ $order->order_status }}</strong>. The status cannot be changed further.
                             </div>
+                            @if($order->rejection_reason)
+                                <div class="mb-3">
+                                    <label class="form-label d-block text-muted small text-uppercase fw-bold">Reason/Remarks</label>
+                                    <div class="p-2 bg-light rounded border">
+                                        {{ $order->rejection_reason }}
+                                    </div>
+                                </div>
+                            @endif
                         @else
                             @can('orders.edit')
                             <form action="{{ route('admin.orders.update-status', $order->id) }}" method="POST">
@@ -141,12 +149,18 @@
                                 @method('PUT')
                                 <div class="mb-3">
                                     <label for="order_status" class="form-label">Update Status</label>
-                                    <select name="order_status" id="order_status" class="form-select">
+                                    <select name="order_status" id="order_status_select" class="form-select">
                                         @foreach($statuses as $key => $value)
                                             <option value="{{ $key }}" {{ $order->order_status === $key ? 'selected' : '' }}>{{ $value }}</option>
                                         @endforeach
                                     </select>
                                 </div>
+
+                                <div class="mb-3 d-none" id="rejection_reason_wrapper">
+                                    <label for="rejection_reason" class="form-label">Reason/Remarks <span class="text-danger">*</span></label>
+                                    <textarea name="rejection_reason" id="rejection_reason" class="form-control" rows="3" placeholder="Enter reason for cancellation or rejection..."></textarea>
+                                </div>
+
                                 <div class="mb-4">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" name="email_notify" id="email_notify" value="1">
@@ -263,4 +277,30 @@
         </div>
     </div>
 
+@endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        const statusSelect = $('#order_status_select');
+        const reasonWrapper = $('#rejection_reason_wrapper');
+        const reasonInput = $('#rejection_reason');
+
+        function toggleReasonField() {
+            const status = statusSelect.val();
+            if (status === 'Cancelled' || status === 'Rejected') {
+                reasonWrapper.removeClass('d-none');
+                reasonInput.attr('required', 'required');
+            } else {
+                reasonWrapper.addClass('d-none');
+                reasonInput.removeAttr('required');
+            }
+        }
+
+        statusSelect.on('change', toggleReasonField);
+        
+        // Initial check
+        toggleReasonField();
+    });
+</script>
 @endsection

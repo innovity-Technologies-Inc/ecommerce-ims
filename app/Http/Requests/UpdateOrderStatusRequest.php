@@ -23,7 +23,15 @@ class UpdateOrderStatusRequest extends FormRequest
     {
         return [
             'order_status' => 'required|string',
+            'rejection_reason' => 'required_if:order_status,Cancelled,Rejected|nullable|string',
             'email_notify' => 'nullable|boolean',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'rejection_reason.required_if' => 'The reason/remarks field is required when the order is Cancelled or Rejected.',
         ];
     }
 }

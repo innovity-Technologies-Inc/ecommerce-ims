@@ -186,6 +186,13 @@
                                             </div>
                                         @endif
 
+                                        @if($order->rejection_reason)
+                                            <div class="mt-3 p-3 bg-danger-subtle rounded border border-danger-subtle">
+                                                <h6 class="fw-bold mb-2 text-danger-emphasis">Cancellation/Rejection Reason:</h6>
+                                                <p class="mb-0 text-muted">{{ $order->rejection_reason }}</p>
+                                            </div>
+                                        @endif
+
                                         <div class="border-top pt-4 mt-5 d-flex flex-column flex-sm-row justify-content-between gap-3 align-items-center">
                                             <div class="d-flex gap-2 flex-nowrap overflow-x-auto pb-2" style="scrollbar-width: none; -ms-overflow-style: none;">
                                                 <style>

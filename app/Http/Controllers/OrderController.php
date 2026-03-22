@@ -51,7 +51,8 @@ class OrderController extends Controller
             $this->orderService->updateOrderStatus(
                 $order,
                 $request->order_status,
-                $request->has('email_notify')
+                $request->has('email_notify'),
+                $request->rejection_reason
             );
 
             return redirect()->back()->with([

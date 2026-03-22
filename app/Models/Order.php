@@ -33,6 +33,7 @@ class Order extends Model
         'payment_method',
         'payment_status',
         'order_status',
+        'rejection_reason',
         'notes',
     ];
 
