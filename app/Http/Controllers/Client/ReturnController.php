@@ -15,7 +15,10 @@ class ReturnController extends Controller
 
     public function index(): View
     {
-        return view('client.returns.index');
+        $title = 'Return Request';
+        $section = 'Return Request';
+
+        return view('client.returns.index', compact('title', 'section'));
     }
 
     public function getOrderDetails(Request $request): JsonResponse
@@ -23,7 +26,7 @@ class ReturnController extends Controller
         $orderId = $request->query('order_id');
         $order = $this->returnService->getOrderDetails($orderId);
 
-        if (!$order) {
+        if (! $order) {
             return response()->json(['message' => 'Order not found.'], 404);
         }
 
@@ -33,7 +36,7 @@ class ReturnController extends Controller
 
         return response()->json([
             'order' => $order,
-            'html' => view('client.returns.partials.order_items', compact('order'))->render()
+            'html' => view('client.returns.partials.order_items', compact('order'))->render(),
         ]);
     }
 
@@ -45,7 +48,10 @@ class ReturnController extends Controller
 
         $this->returnService->storeReturnRequest($request->validated());
 
-        return response()->json(['message' => 'Return request submitted successfully.']);
+        return response()->json([
+            'message' => 'Return request submitted successfully.',
+            'order_id' => $request->order_id,
+        ]);
     }
 
     public function track(Request $request): JsonResponse
