@@ -212,7 +212,7 @@ Route::prefix('cart')->name('cart.')->group(function () {
 });
 
 // Checkout Routes
-Route::prefix('checkout')->middleware(['auth', 'verified'])->name('checkout.')->group(function () {
+Route::prefix('checkout')->name('checkout.')->group(function () {
     Route::get('/', [CheckoutController::class, 'index'])->name('index');
     Route::post('/store', [CheckoutController::class, 'store'])->name('store');
     Route::get('/success/{order_id}', [CheckoutController::class, 'success'])->name('success');
