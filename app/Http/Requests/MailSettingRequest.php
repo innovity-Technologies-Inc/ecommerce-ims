@@ -13,12 +13,14 @@ class MailSettingRequest extends FormRequest
 
     public function rules(): array
     {
+        $hasPassword = \App\Models\MailSetting::first()?->mail_password !== null;
+
         return [
             'mail_mailer' => ['required', 'string', 'max:255'],
             'mail_host' => ['required', 'string', 'max:255'],
             'mail_port' => ['required', 'string', 'max:255'],
             'mail_username' => ['required', 'string', 'max:255'],
-            'mail_password' => ['required', 'string', 'max:255'],
+            'mail_password' => [$hasPassword ? 'nullable' : 'required', 'string', 'max:255'],
             'mail_encryption' => ['nullable', 'string', 'max:255'],
             'mail_from_address' => ['required', 'email', 'max:255'],
             'mail_from_name' => ['required', 'string', 'max:255'],
