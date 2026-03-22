@@ -13,9 +13,13 @@ class ReturnController extends Controller
 {
     public function __construct(protected ReturnService $returnService) {}
 
-    public function requests(Request $request): View
+    public function requests(Request $request): View|\Illuminate\Http\Response
     {
         $requests = $this->returnService->getReturnRequests($request->all());
+
+        if ($request->ajax()) {
+            return response()->view('admin.returns.partials.requests_table', compact('requests'));
+        }
 
         return view('admin.returns.requests', compact('requests'));
     }
@@ -41,16 +45,24 @@ class ReturnController extends Controller
         return redirect()->back()->with('success', 'Return received and processed successfully.');
     }
 
-    public function returnedProducts(Request $request): View
+    public function returnedProducts(Request $request): View|\Illuminate\Http\Response
     {
         $items = $this->returnService->getReturnedProducts($request->all());
+
+        if ($request->ajax()) {
+            return response()->view('admin.returns.partials.returned_products_table', compact('items'));
+        }
 
         return view('admin.returns.returned_products', compact('items'));
     }
 
-    public function wastages(Request $request): View
+    public function wastages(Request $request): View|\Illuminate\Http\Response
     {
         $wastages = $this->returnService->getWastages($request->all());
+
+        if ($request->ajax()) {
+            return response()->view('admin.returns.partials.wastages_table', compact('wastages'));
+        }
 
         return view('admin.returns.wastages', compact('wastages'));
     }
