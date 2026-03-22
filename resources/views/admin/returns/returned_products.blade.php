@@ -36,7 +36,7 @@
                     <tbody>
                         @forelse($items as $item)
                             <tr>
-                                <td class="ps-3">{{ HelperClass::indexNumberSerialization($items)[$loop->index] }}</td>
+                                <td class="ps-3">{{ \App\HelperClass::indexNumberSerialization($items)[$loop->index] }}</td>
                                 <td><span class="fw-bold">{{ $item->returnRequest->return_id }}</span></td>
                                 <td>
                                     <div class="d-flex align-items-center gap-3">
