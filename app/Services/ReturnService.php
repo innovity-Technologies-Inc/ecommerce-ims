@@ -5,7 +5,6 @@ namespace App\Services;
 use App\HelperClass;
 use App\Models\Order;
 use App\Models\Product;
-use App\Models\ProductVariant;
 use App\Models\ReturnItem;
 use App\Models\ReturnRequest;
 use App\Models\Wastage;
@@ -108,8 +107,10 @@ class ReturnService
     public function receiveReturn(int $id): ReturnRequest
     {
         return DB::transaction(function () use ($id) {
-            $returnRequest = ReturnRequest::with('returnItems')->findOrFail($id);
+            $returnRequest = ReturnRequest::with(['returnItems', 'order'])->findOrFail($id);
             $returnRequest->update(['status' => 'received']);
+
+            $order = $returnRequest->order;
 
             foreach ($returnRequest->returnItems as $item) {
                 $item->update(['is_received' => true]);
@@ -117,23 +118,35 @@ class ReturnService
                 if ($item->condition === 'intact') {
                     // Restock
                     if ($item->product_variant_id) {
-                        $variant = ProductVariant::find($item->product_variant_id);
+                        $variant = \App\Models\ProductVariant::find($item->product_variant_id);
                         if ($variant) {
                             $variant->increment('stock', $item->quantity);
                         }
                     } else {
-                        $product = Product::find($item->product_id);
+                        $product = \App\Models\Product::find($item->product_id);
                         if ($product) {
                             $product->increment('stock', $item->quantity);
                         }
                     }
 
-                    // Decrease sales value and count
-                    $product = Product::find($item->product_id);
+                    // Decrease product sales count
+                    $product = \App\Models\Product::find($item->product_id);
                     if ($product) {
                         $product->decrement('sales_count', $item->quantity);
-                        // sales_value logic depends on how it's tracked.
-                        // Assuming total_sales is not directly on product but we might need to adjust something.
+                    }
+
+                    // Adjust Order and OrderItem for Dashboard
+                    $order->subtotal -= $item->total_price;
+                    $order->total_amount -= $item->total_price;
+
+                    $orderItem = \App\Models\OrderItem::where('order_id', $order->id)
+                        ->where('product_id', $item->product_id)
+                        ->where('product_variant_id', $item->product_variant_id)
+                        ->first();
+
+                    if ($orderItem) {
+                        $orderItem->decrement('quantity', $item->quantity);
+                        $orderItem->decrement('total_price', $item->total_price);
                     }
                 } elseif ($item->condition === 'damage') {
                     Wastage::create([
@@ -145,6 +158,8 @@ class ReturnService
                     ]);
                 }
             }
+
+            $order->save();
 
             return $returnRequest;
         });
