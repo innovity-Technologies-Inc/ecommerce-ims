@@ -6,6 +6,7 @@
             <th>Image</th>
             <th>Name</th>
             <th>Email</th>
+            <th>Role</th>
             <th>Action</th>
         </tr>
         </thead>
@@ -21,6 +22,11 @@
             </td>
            <td>{{$data->name}}</td>
             <td>{{$data->email}}</td>
+            <td>
+                @foreach($data->roles as $role)
+                    <span class="badge bg-soft-info text-info">{{ $role->name }}</span>
+                @endforeach
+            </td>
             <td>
                 <div class="d-flex gap-2">
                     <a href="{{route('admin.edit', $data->id)}}" class="btn btn-soft-primary btn-sm"><iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon></a>

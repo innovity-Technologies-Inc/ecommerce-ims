@@ -60,12 +60,18 @@ class AdminService
             $imagePath = HelperClass::file_upload($data['image'], 'admins');
         }
 
-        return Admin::create([
+        $admin = Admin::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'image' => $imagePath,
         ]);
+
+        if (isset($data['role'])) {
+            $admin->assignRole($data['role']);
+        }
+
+        return $admin;
     }
 
     /**
@@ -73,7 +79,7 @@ class AdminService
      */
     public function findAdmin(int $id): ?Admin
     {
-        return Admin::find($id);
+        return Admin::with('roles')->find($id);
     }
 
     /**
@@ -100,6 +106,10 @@ class AdminService
         }
 
         $admin->update($updateData);
+
+        if (isset($data['role'])) {
+            $admin->syncRoles([$data['role']]);
+        }
 
         return $admin;
     }

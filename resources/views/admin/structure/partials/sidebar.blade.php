@@ -192,6 +192,9 @@
                         <li class="sub-nav-item">
                             <a class="sub-nav-link" href="{{ route('admin.create') }}">Create</a>
                         </li>
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="{{ route('admin.roles.index') }}">Roles</a>
+                        </li>
                     </ul>
                 </div>
             </li>

@@ -406,6 +406,18 @@ Every module or architectural change must be documented in this file before a ta
   - **FlexSearch Integration:** Admin index pages for Requests, Returned Products, and Wastages all utilize `FlexSearch` for high-performance filtering and searching.
   - **UI/UX:** Uses AJAX for real-time order fetching on the client-side and a clean "Receiving Workflow" panel in the admin details view.
 
+### 3.28 Role-Based Access Control (RBAC) Module
+- **What:** A comprehensive system for managing administrative roles and permissions using the `spatie/laravel-permission` package.
+- **How it Works:**
+  - **Role Management:** Admins can create, edit, and delete roles specifically for the `admin` guard.
+  - **Role Assignment:** Roles can be assigned to Admin users during creation or while editing their profiles via a dedicated dropdown.
+  - **Profile Images:** Admin users support profile image uploads, which are displayed in the user list and sidebar.
+  - **Seeder Integration:** A `RolePermissionSeeder` is provided to initialize default roles like "Super Admin".
+- **Implementation Details:**
+  - **`RoleService` & `AdminService`:** Centralized logic for role CRUD and association with admin users.
+  - **Middleware & Guards:** The module is strictly applied to the `admin` guard to ensure isolation from the client-side user system.
+  - **Future Extensibility:** The architecture is designed to support granular permissions for every module operation, which can be seeded and enforced using standard Spatie middleware.
+
 ---
 
 ## 4. Frontend & UI Standardization Refinements

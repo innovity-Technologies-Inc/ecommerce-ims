@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreAdminRequest;
 use App\Http\Requests\UpdateAdminRequest;
 use App\Services\AdminService;
+use App\Services\RoleService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +16,10 @@ class AdminController extends Controller
     /**
      * Create a new controller instance.
      */
-    public function __construct(protected AdminService $adminService) {}
+    public function __construct(
+        protected AdminService $adminService,
+        protected RoleService $roleService
+    ) {}
 
     /**
      * Display a listing of the admins.
@@ -37,8 +41,9 @@ class AdminController extends Controller
     public function AdminCreate(): View
     {
         $title = 'User Registration';
+        $roles = $this->roleService->getRolesForDropdown();
 
-        return view('admin.users.forms', compact('title'));
+        return view('admin.users.forms', compact('title', 'roles'));
     }
 
     /**
@@ -48,8 +53,9 @@ class AdminController extends Controller
     {
         $title = 'User Edit';
         $user = $this->adminService->findAdmin($id);
+        $roles = $this->roleService->getRolesForDropdown();
 
-        return view('admin.users.forms', compact('title', 'user'));
+        return view('admin.users.forms', compact('title', 'user', 'roles'));
     }
 
     /**

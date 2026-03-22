@@ -56,6 +56,23 @@
 
                                 <div class="col-lg-6">
                                     <div class="mb-3">
+                                        <label for="role" class="form-label">Assign Role <span class="text-danger">*</span></label>
+                                        <select name="role" id="role" class="form-control" required>
+                                            <option value="">Select Role</option>
+                                            @foreach($roles as $role)
+                                                <option value="{{ $role->name }}" {{ (isset($user) && $user->hasRole($role->name)) || old('role') == $role->name ? 'selected' : '' }}>
+                                                    {{ $role->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('role')
+                                        <span class="small text-danger">{{$message}}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
                                         <label for="image" class="form-label">Profile Image</label>
                                         <input type="file" id="image" name="image" class="form-control">
                                         @error('image')

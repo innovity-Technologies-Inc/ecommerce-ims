@@ -91,6 +91,8 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::delete('/{id}', 'destroy')->name('destroy');
     });
 
+    Route::resource('roles', \App\Http\Controllers\Admin\RoleController::class)->names('admin.roles');
+
     Route::prefix('promotions')->group(function () {
         Route::resource('coupons', \App\Http\Controllers\CouponController::class)->names('admin.coupons');
         Route::post('coupons/{coupon}/toggle-status', [\App\Http\Controllers\CouponController::class, 'toggleStatus'])->name('admin.coupons.toggle-status');
