@@ -17,7 +17,7 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="title" class="form-label">Title</label>
+                                        <label for="title" class="form-label">Title <span class="text-danger">*</span></label>
                                         <input type="text" name="title" id="title" class="form-control" placeholder="Enter Slider Title" value="{{ old('title', isset($slider) ? $slider->title : '') }}" required>
                                         @error('title')
                                         <span class="small text-danger">{{$message}}</span>
@@ -86,7 +86,7 @@
 
                                 <div class="col-lg-12">
                                     <div class="mb-3">
-                                        <label for="image" class="form-label">Slider Image</label>
+                                        <label for="image" class="form-label">Slider Image <span class="text-danger">*</span></label>
                                         <input type="file" name="image" id="image" class="filepond">
 
                                         @if(isset($slider) && $slider->image)

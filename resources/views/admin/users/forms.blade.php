@@ -19,7 +19,7 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="name" class="form-label">Name</label>
+                                        <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
                                         <input type="text" name="name" id="name" class="form-control" placeholder="name" value="{{isset($user) ? $user->name : old('name')}}" required>
                                         @error('name')
                                         <span class="small text-danger">{{$message}}</span>
@@ -29,7 +29,7 @@
 
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="email" class="form-label">Email Address</label>
+                                        <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
                                         <input type="text" id="email" name="email" class="form-control" placeholder="Enter email" value="{{isset($user) ? $user->email : old('email')}}" required>
                                         @error('email')
                                         <span class="small text-danger">{{$message}}</span>
@@ -39,7 +39,7 @@
 
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="password" class="form-label">Password</label>
+                                        <label for="password" class="form-label">Password @if(!isset($user)) <span class="text-danger">*</span> @endif</label>
                                         <input type="password" id="password" name="password" class="form-control" placeholder="Enter password">
                                         @error('password')
                                         <span class="small text-danger">{{$message}}</span>
@@ -49,7 +49,7 @@
 
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="confirm_password" class="form-label">Confirm Password</label>
+                                        <label for="confirm_password" class="form-label">Confirm Password @if(!isset($user)) <span class="text-danger">*</span> @endif</label>
                                         <input type="password" id="confirm_password" name="password_confirmation" class="form-control" placeholder="Enter password">
                                     </div>
                                 </div>

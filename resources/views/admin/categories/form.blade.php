@@ -17,7 +17,7 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="name" class="form-label">Category Name</label>
+                                        <label for="name" class="form-label">Category Name <span class="text-danger">*</span></label>
                                         <input type="text" name="name" id="name" class="form-control" placeholder="Enter Category Name" value="{{ old('name', isset($category) ? $category->name : '') }}" required>
                                         @error('name')
                                         <span class="small text-danger">{{$message}}</span>

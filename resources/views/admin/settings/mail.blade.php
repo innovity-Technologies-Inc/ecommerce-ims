@@ -14,14 +14,14 @@
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="mail_mailer" class="form-label">Mail Mailer</label>
+                                    <label for="mail_mailer" class="form-label">Mail Mailer <span class="text-danger">*</span></label>
                                     <input type="text" name="mail_mailer" id="mail_mailer" class="form-control" value="{{ old('mail_mailer', $setting->mail_mailer ?? 'smtp') }}" placeholder="smtp">
                                     @error('mail_mailer') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="mail_host" class="form-label">Mail Host</label>
+                                    <label for="mail_host" class="form-label">Mail Host <span class="text-danger">*</span></label>
                                     <input type="text" name="mail_host" id="mail_host" class="form-control" value="{{ old('mail_host', $setting->mail_host ?? '') }}" placeholder="smtp.mailtrap.io">
                                     @error('mail_host') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
@@ -29,7 +29,7 @@
 
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="mail_port" class="form-label">Mail Port</label>
+                                    <label for="mail_port" class="form-label">Mail Port <span class="text-danger">*</span></label>
                                     <input type="text" name="mail_port" id="mail_port" class="form-control" value="{{ old('mail_port', $setting->mail_port ?? '') }}" placeholder="2525">
                                     @error('mail_port') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
@@ -44,14 +44,14 @@
 
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="mail_username" class="form-label">Mail Username</label>
+                                    <label for="mail_username" class="form-label">Mail Username <span class="text-danger">*</span></label>
                                     <input type="text" name="mail_username" id="mail_username" class="form-control" value="{{ old('mail_username', $setting->mail_username ?? '') }}">
                                     @error('mail_username') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="mail_password" class="form-label">Mail Password</label>
+                                    <label for="mail_password" class="form-label">Mail Password @if(!isset($setting->mail_password)) <span class="text-danger">*</span> @endif</label>
                                     <input type="password" name="mail_password" id="mail_password" class="form-control" value="">
                                     <small class="text-muted">Leave empty to keep the current password.</small>
                                     @error('mail_password') <span class="text-danger small">{{ $message }}</span> @enderror
@@ -60,14 +60,14 @@
 
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="mail_from_address" class="form-label">Mail From Address</label>
+                                    <label for="mail_from_address" class="form-label">Mail From Address <span class="text-danger">*</span></label>
                                     <input type="email" name="mail_from_address" id="mail_from_address" class="form-control" value="{{ old('mail_from_address', $setting->mail_from_address ?? '') }}" placeholder="hello@example.com">
                                     @error('mail_from_address') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="mail_from_name" class="form-label">Mail From Name</label>
+                                    <label for="mail_from_name" class="form-label">Mail From Name <span class="text-danger">*</span></label>
                                     <input type="text" name="mail_from_name" id="mail_from_name" class="form-control" value="{{ old('mail_from_name', $setting->mail_from_name ?? '') }}" placeholder="Example App">
                                     @error('mail_from_name') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>

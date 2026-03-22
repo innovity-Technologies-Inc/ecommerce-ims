@@ -14,28 +14,28 @@
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="company_name" class="form-label">Company Name</label>
+                                    <label for="company_name" class="form-label">Company Name <span class="text-danger">*</span></label>
                                     <input type="text" name="company_name" id="company_name" class="form-control" value="{{ old('company_name', $setting->company_name ?? '') }}">
                                     @error('company_name') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="company_email" class="form-label">Company Email</label>
+                                    <label for="company_email" class="form-label">Company Email <span class="text-danger">*</span></label>
                                     <input type="email" name="company_email" id="company_email" class="form-control" value="{{ old('company_email', $setting->company_email ?? '') }}">
                                     @error('company_email') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label for="phone_number" class="form-label">Phone Number</label>
+                                    <label for="phone_number" class="form-label">Phone Number <span class="text-danger">*</span></label>
                                     <input type="text" name="phone_number" id="phone_number" class="form-control" value="{{ old('phone_number', $setting->phone_number ?? '') }}">
                                     @error('phone_number') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                             <div class="col-lg-12">
                                 <div class="mb-3">
-                                    <label for="address" class="form-label">Address</label>
+                                    <label for="address" class="form-label">Address <span class="text-danger">*</span></label>
                                     <textarea name="address" id="address" class="form-control" rows="4">{{ old('address', $setting->address ?? '') }}</textarea>
                                     @error('address') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>

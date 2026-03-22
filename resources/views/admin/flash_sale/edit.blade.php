@@ -22,14 +22,14 @@
                                 <input type="text" name="name" class="form-control" value="{{ old('name', $flashSale->name) }}" placeholder="e.g. Summer Flash Sale">
                             </div>
                             <div class="col-md-3">
-                                <label class="form-label">Status</label>
+                                <label class="form-label">Status <span class="text-danger">*</span></label>
                                 <select name="status" class="form-select">
                                     <option value="1" {{ old('status', $flashSale->status) == 1 ? 'selected' : '' }}>Active</option>
                                     <option value="0" {{ old('status', $flashSale->status) == 0 ? 'selected' : '' }}>Inactive</option>
                                 </select>
                             </div>
                             <div class="col-md-5">
-                                <label class="form-label">End Date</label>
+                                <label class="form-label">End Date <span class="text-danger">*</span></label>
                                 @php
                                     $endDateValue = old('end_date');
                                     if ($endDateValue) {
@@ -61,8 +61,8 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th>Product</th>
-                                        <th style="width: 120px;">Discount</th>
-                                        <th style="width: 100px;">Type</th>
+                                        <th style="width: 120px;">Discount <span class="text-danger">*</span></th>
+                                        <th style="width: 100px;">Type <span class="text-danger">*</span></th>
                                         <th style="width: 40px;"></th>
                                     </tr>
                                 </thead>

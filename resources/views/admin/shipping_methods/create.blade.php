@@ -14,14 +14,14 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="name" class="form-label">Name</label>
+                                        <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
                                         <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Standard Shipping" value="{{ old('name') }}" required>
                                         @error('name') <span class="text-danger">{{ $message }}</span> @enderror
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="price" class="form-label">Price</label>
+                                        <label for="price" class="form-label">Price <span class="text-danger">*</span></label>
                                         <input type="number" step="0.01" id="price" name="price" class="form-control" placeholder="0.00" value="{{ old('price') }}" required>
                                         @error('price') <span class="text-danger">{{ $message }}</span> @enderror
                                     </div>
