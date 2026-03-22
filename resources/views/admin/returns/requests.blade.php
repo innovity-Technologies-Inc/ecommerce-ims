@@ -52,13 +52,7 @@
                                 <td class="ps-3">{{ $sl++ }}</td>
                                 <td><span class="fw-bold">{{ $request->return_id }}</span></td>
                                 <td>{{ $request->order->order_id }}</td>
-                                <td>
-                                    @if($request->user)
-                                        {{ $request->user->name }}
-                                    @else
-                                        <span class="text-muted">Guest</span>
-                                    @endif
-                                </td>
+                                <td>{{ $request->order->name }}</td>
                                 <td><span class="text-truncate d-inline-block" style="max-width: 150px;">{{ $request->reason }}</span></td>
                                 <td>
                                     <span class="badge {{ match($request->status) {

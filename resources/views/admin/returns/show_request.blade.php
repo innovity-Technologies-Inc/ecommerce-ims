@@ -67,7 +67,7 @@
                     <p class="mb-4"><strong>Reason:</strong><br>{{ $request->reason }}</p>
                     @if($request->image)
                         <h6 class="mb-3">Uploaded Image:</h6>
-                        <img src="{{ asset($request->image) }}" class="img-fluid rounded border shadow-sm" style="max-width: 300px;">
+                        <img src="{{ asset('storage/' . $request->image) }}" class="img-fluid rounded border shadow-sm" style="max-width: 300px;">
                     @else
                         <div class="alert alert-secondary py-2">No image uploaded.</div>
                     @endif
