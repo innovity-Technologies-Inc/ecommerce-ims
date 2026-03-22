@@ -4,7 +4,6 @@
             <tr>
                 <th class="ps-3">#</th>
                 <th>Role Name</th>
-                <th>Guard Name</th>
                 <th class="text-end pe-3">Action</th>
             </tr>
         </thead>
@@ -14,7 +13,6 @@
                 <tr>
                     <td class="ps-3">{{ $sl++ }}</td>
                     <td>{{ $role->name }}</td>
-                    <td>{{ $role->guard_name }}</td>
                     <td class="text-end pe-3">
                         <div class="d-flex justify-content-end gap-2">
                             <a href="{{ route('admin.roles.edit', $role->id) }}" class="btn btn-soft-primary btn-sm" title="Edit">

@@ -3,7 +3,7 @@
 
     <div class="container-xxl">
         <div class="row">
-            <div class="col-lg-6 mx-auto">
+            <div class="col-lg-12">
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">{{ $title }}</h4>

@@ -29,60 +29,39 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link menu-arrow" href="#sidebarProducts" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarProducts">
-                                   <span class="nav-icon">
-                                        <iconify-icon icon="solar:t-shirt-bold-duotone"></iconify-icon>
-                                   </span>
-                    <span class="nav-text"> Products </span>
-                </a>
-                <div class="collapse" id="sidebarProducts">
-                    <ul class="nav sub-navbar-nav">
-                        <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.products.index') }}">List</a>
-                        </li>
-                        <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.products.create') }}">Create</a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link menu-arrow" href="#sidebarCategory" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarCategory">
+                <a class="nav-link" href="{{ route('admin.categories.index') }}">
                                    <span class="nav-icon">
                                         <iconify-icon icon="solar:clipboard-list-bold-duotone"></iconify-icon>
                                    </span>
                     <span class="nav-text"> Category </span>
                 </a>
-                <div class="collapse" id="sidebarCategory">
-                    <ul class="nav sub-navbar-nav">
-                        <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.categories.index') }}">List</a>
-                        </li>
-                        <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.categories.create') }}">Create</a>
-                        </li>
-                    </ul>
-                </div>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link menu-arrow" href="#sidebarBrand" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarBrand">
+                <a class="nav-link" href="{{ route('admin.brands.index') }}">
                                    <span class="nav-icon">
                                         <iconify-icon icon="solar:tag-bold-duotone"></iconify-icon>
                                    </span>
                     <span class="nav-text"> Brands </span>
                 </a>
-                <div class="collapse" id="sidebarBrand">
-                    <ul class="nav sub-navbar-nav">
-                        <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.brands.index') }}">List</a>
-                        </li>
-                        <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.brands.create') }}">Create</a>
-                        </li>
-                    </ul>
-                </div>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.products.index') }}">
+                                   <span class="nav-icon">
+                                        <iconify-icon icon="solar:t-shirt-bold-duotone"></iconify-icon>
+                                   </span>
+                    <span class="nav-text"> Products </span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.shipping_methods.index') }}">
+                                   <span class="nav-icon">
+                                        <iconify-icon icon="solar:delivery-bold-duotone"></iconify-icon>
+                                   </span>
+                    <span class="nav-text"> Shipping Methods </span>
+                </a>
             </li>
 
             <li class="nav-item">
@@ -117,12 +96,22 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.shipping_methods.index') }}">
+                <a class="nav-link menu-arrow" href="#sidebarPromotions" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarPromotions">
                                    <span class="nav-icon">
-                                        <iconify-icon icon="solar:delivery-bold-duotone"></iconify-icon>
+                                        <iconify-icon icon="solar:ticket-sale-bold-duotone"></iconify-icon>
                                    </span>
-                    <span class="nav-text"> Shipping Methods </span>
+                    <span class="nav-text"> Promotions </span>
                 </a>
+                <div class="collapse" id="sidebarPromotions">
+                    <ul class="nav sub-navbar-nav">
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="{{ route('admin.coupons.index') }}">Coupons</a>
+                        </li>
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="{{ route('admin.flash_sale.edit') }}">Flash Sale</a>
+                        </li>
+                    </ul>
+                </div>
             </li>
 
             <li class="nav-item">
@@ -156,25 +145,6 @@
                 </div>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link menu-arrow" href="#sidebarPromotions" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarPromotions">
-                                   <span class="nav-icon">
-                                        <iconify-icon icon="solar:ticket-sale-bold-duotone"></iconify-icon>
-                                   </span>
-                    <span class="nav-text"> Promotions </span>
-                </a>
-                <div class="collapse" id="sidebarPromotions">
-                    <ul class="nav sub-navbar-nav">
-                        <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.coupons.index') }}">Coupons</a>
-                        </li>
-                        <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.flash_sale.edit') }}">Flash Sale</a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-
             <li class="menu-title mt-2">Management</li>
 
             <li class="nav-item">
@@ -187,10 +157,7 @@
                 <div class="collapse" id="sidebarUsers">
                     <ul class="nav sub-navbar-nav">
                         <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.index') }}">List</a>
-                        </li>
-                        <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.create') }}">Create</a>
+                            <a class="sub-nav-link" href="{{ route('admin.index') }}">Admin Users</a>
                         </li>
                         <li class="sub-nav-item">
                             <a class="sub-nav-link" href="{{ route('admin.roles.index') }}">Roles</a>
