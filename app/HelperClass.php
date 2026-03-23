@@ -21,11 +21,6 @@ class HelperClass
         return ContactSetting::first() ?? new ContactSetting;
     }
 
-    public static function socialLoginSettings()
-    {
-        return \App\Models\SocialLoginSetting::first() ?? new \App\Models\SocialLoginSetting;
-    }
-
     public static function getCategories()
     {
         return Category::whereNull('parent_id')->active()->with('subcategories')->get();

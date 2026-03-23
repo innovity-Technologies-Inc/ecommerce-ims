@@ -127,7 +127,7 @@
                 <div class="dropdown topbar-item">
                     <a type="button" class="topbar-button" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <span class="d-flex align-items-center">
-                                             <img class="rounded-circle" width="32" src="{{ Auth::guard('admin')->user()->image ? asset('storage/' . Auth::guard('admin')->user()->image) : asset('admin_assets/images/users/avatar-1.jpg') }}" alt="avatar">
+                                             <img class="rounded-circle avatar-sm" src="{{ Auth::guard('admin')->user()->image ? asset('storage/' . Auth::guard('admin')->user()->image) : asset('admin_assets/images/users/avatar-1.jpg') }}" alt="avatar">
                                         </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end">

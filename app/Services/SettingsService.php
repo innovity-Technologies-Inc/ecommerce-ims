@@ -5,7 +5,6 @@ namespace App\Services;
 use App\HelperClass;
 use App\Models\ContactSetting;
 use App\Models\GeneralSetting;
-use App\Models\MailSetting;
 
 class SettingsService
 {
@@ -58,48 +57,11 @@ class SettingsService
     }
 
     /**
-     * Update mail settings.
-     */
-    public function updateMailSettings(array $data): MailSetting
-    {
-        $setting = MailSetting::first() ?? new MailSetting;
-
-        // Don't overwrite password if it's not provided in the request
-        if (empty($data['mail_password'])) {
-            unset($data['mail_password']);
-        }
-
-        $setting->fill($data);
-        $setting->save();
-
-        return $setting;
-    }
-
-    /**
      * Update contact settings.
      */
     public function updateContactSettings(array $data): ContactSetting
     {
         $setting = ContactSetting::first() ?? new ContactSetting;
-        $setting->fill($data);
-        $setting->save();
-
-        return $setting;
-    }
-
-    /**
-     * Update social login settings.
-     */
-    public function updateSocialLoginSettings(array $data): \App\Models\SocialLoginSetting
-    {
-        $setting = \App\Models\SocialLoginSetting::first() ?? new \App\Models\SocialLoginSetting;
-        $data['google_status'] = isset($data['google_status']);
-
-        // Don't overwrite client secret if it's not provided in the request
-        if (empty($data['google_client_secret'])) {
-            unset($data['google_client_secret']);
-        }
-
         $setting->fill($data);
         $setting->save();
 

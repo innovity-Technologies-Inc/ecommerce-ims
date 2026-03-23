@@ -15,8 +15,7 @@ class SocialLoginController extends Controller
      */
     public function redirectToGoogle()
     {
-        $setting = \App\Models\SocialLoginSetting::first();
-        if (! $setting || ! $setting->google_status) {
+        if (! config('services.google.client_id')) {
             return redirect()->route('login')->withErrors(['error' => 'Google Login is currently disabled.']);
         }
 

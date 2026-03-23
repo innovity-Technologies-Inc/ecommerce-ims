@@ -182,6 +182,62 @@
             padding-top: 0;
             margin-top: 0;
         }
+
+        /* Theme Overrides */
+        html[data-bs-theme=dark], 
+        [data-bs-theme=dark] {
+            --bs-body-bg: #0F212E !important;
+            --bs-secondary-bg: #162d3d !important; /* Slightly lighter for cards/containers */
+            --bs-tertiary-bg: #1d394d !important;
+        }
+
+        html[data-menu-color=dark],
+        html[data-bs-theme=dark][data-menu-color=light] {
+            --bs-main-nav-bg: #0F212E !important;
+        }
+
+        html[data-topbar-color=dark] {
+            --bs-topbar-bg: #0F212E !important;
+        }
+
+        /* Only apply to main-nav if it's explicitly dark */
+        html[data-menu-color=dark] .main-nav {
+            background-color: #0F212E !important;
+        }
+
+        /* Only apply to topbar if it's explicitly dark or theme is dark */
+        html[data-topbar-color=dark] .topbar,
+        html[data-bs-theme=dark][data-topbar-color=light] .topbar {
+            background-color: #0F212E !important;
+        }
+
+        /* Avatar styles */
+        .avatar-xs, .avatar-sm, .avatar-md, .avatar-lg, .avatar-xl {
+            object-fit: cover !important;
+        }
+        .avatar-xs.rounded-circle, .avatar-sm.rounded-circle, .avatar-md.rounded-circle, .avatar-lg.rounded-circle, .avatar-xl.rounded-circle {
+            aspect-ratio: 1 / 1 !important;
+        }
+        .avatar-xs {
+            width: 24px !important;
+            height: 24px !important;
+        }
+        .avatar-sm {
+            width: 32px !important;
+            height: 32px !important;
+        }
+        .avatar-md {
+            width: 48px !important;
+            height: 48px !important;
+        }
+        .avatar-lg {
+            width: 64px !important;
+            height: 64px !important;
+        }
+        .avatar-xl {
+            width: 80px !important;
+            height: 80px !important;
+        }
     </style>
 
     <!-- Theme Config js (Require in all Page) -->

@@ -92,12 +92,8 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     Route::controller(SettingsController::class)->prefix('settings')->middleware('permission:settings.view')->group(function () {
         Route::get('/general', 'generalSettings')->name('admin.settings.general');
         Route::post('/general/update', 'updateGeneralSettings')->name('admin.settings.general.update')->middleware('permission:settings.edit');
-        Route::get('/mail', 'mailSettings')->name('admin.settings.mail');
-        Route::post('/mail/update', 'updateMailSettings')->name('admin.settings.mail.update')->middleware('permission:settings.edit');
         Route::get('/contact', 'contactSettings')->name('admin.settings.contact');
         Route::post('/contact/update', 'updateContactSettings')->name('admin.settings.contact.update')->middleware('permission:settings.edit');
-        Route::get('/social-login', 'socialLoginSettings')->name('admin.settings.social_login');
-        Route::post('/social-login/update', 'updateSocialLoginSettings')->name('admin.settings.social_login.update')->middleware('permission:settings.edit');
     });
 
     Route::prefix('sliders')->middleware('permission:sliders.view')->group(function () {

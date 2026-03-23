@@ -39,12 +39,12 @@ Every module or architectural change must be documented in this file before a ta
 ## 3. Comprehensive Module Breakdowns
 
 ### 3.1 Authentication & Security
-- **What:** Separate login systems for Administrators and Customers, including modern social authentication options.
+- **What:** Separate login systems for Administrators and Customers, including modern social authentication options and bot protection.
 - **How it Works:** 
   - **Multi-Guard Auth:** Implemented using Laravel Breeze with multiple authentication guards (`web` for customers, `admin` for administrators). 
-  - **Social Login (Google):** Customers can log in or register instantly using their Google account via Laravel Socialite.
+  - **Social Login (Google):** Customers can log in or register instantly using their Google account via Laravel Socialite. Configuration is managed via `.env` (Client ID, Secret, Redirect URI).
+  - **Google reCAPTCHA v2:** Enhanced security for Login and Registration pages via the "I'm not a robot" widget. Configuration is managed via `.env` (`NOCAPTCHA_SITEKEY`, `NOCAPTCHA_SECRET`).
 - **Implementation Details (Social Login):** 
-  - **Dynamic Configuration:** Credentials (Client ID, Secret, Redirect URI) are stored in the database and dynamically injected into Laravel's `services.google` config via `AppServiceProvider::boot()`.
   - **Social Login UI (REQ-68):** The traditional full-width "Google" text button has been replaced with a modern, multi-colored Google "G" SVG logo on both the **Login** and **Registration** pages. The design is borderless with a transparent background and features a smooth scaling hover effect.
   - **Registration Email Guardrail:** The `RegisteredUserController::store` method wraps the `Registered` event (which triggers email verification) in a `try-catch` block. If the system fails to send the email (e.g., SMTP connection issues), the user is still logged in but redirected with a Toastr `error` message: "We cant send email right now, Please try again.", instead of a Laravel debug error page.
   - **Database Integrity:**
@@ -61,15 +61,17 @@ Every module or architectural change must be documented in this file before a ta
   - **Product Form UX:** Mandatory fields in the Product Create/Edit form are clearly marked with a red asterisk (`*`). The image upload section includes explicit instructions regarding file size (max 600 KB per image) and allowed formats (JPEG, PNG, JPG, GIF, SVG, WEBP).
   - **Strict Validation:** `ProductRequest` enforces these UI constraints server-side, ensuring data integrity and preventing oversized media from impacting system performance.
 
-### 3.2 Social Login Settings Module (Admin)
-- **What:** Administrative interface to manage Google Social Authentication credentials and status.
+### 3.2 Site Settings & Configuration
+- **What:** Global settings for SEO, Branding, and Contact Information.
 - **How it Works:** 
-  - **Credential Management:** Admins can securely store their Google Client ID and Client Secret.
-  - **Redirect URI Auto-Generation:** The system automatically generates and displays the required "Authorized Redirect URI" (e.g., `https://smart-ecom.com/auth/google/callback`) in a read-only field for easy copying to the Google Cloud Console.
-  - **Global Toggle:** A master switch allows for instant activation/deactivation of the social login feature across the entire storefront.
+  - **General Settings:** Stores business name, logos (dark/light), favicons, and currency in the database.
+  - **SMTP Mail & Social Login:** Credentials for these services are managed securely via the `.env` file to ensure system stability and security.
 - **Implementation Details:** 
-  - **Helper Integration:** `App\HelperClass::socialLoginSettings()` provides high-performance access to these settings in both Admin and Client views.
-  - **Security:** The Redirect URL field is marked `readonly` to prevent accidental misconfiguration that would break the OAuth flow.
+  - **Homepage Sections:** `SectionSetting` records control the visibility (True/False) and logic (e.g., Organic bestsellers vs Custom selected) of homepage UI blocks. 
+    - **Dynamic Sections:** All homepage sections (Bestsellers, Hot Deals, Featured, Recently Added, Top Picks) can be independently enabled or disabled from the Admin Panel.
+    - **Top Picks Section:** A curated section (Organic mode targets `is_new_arrival` products, or Custom mode) renamed from a redundant new arrivals section to provide more marketing flexibility.
+    - **Dynamic Backgrounds:** The "Featured" section on the homepage dynamically loads its background image from the `background_image` field in `SectionSetting`.
+ This is applied as an inline CSS style to the section container, allowing admins to fully customize the section's visual theme from the Admin Panel.
 
 ### 3.3 Catalog Management (Brands & Categories)
 - **What:** Management of the foundational hierarchical data (Brands and Categories) that products belong to.
@@ -107,19 +109,13 @@ Every module or architectural change must be documented in this file before a ta
   - The wishlist view dynamically calculates the "Net Price" of items, automatically resolving whether the product should display its base price or its lowest available variant price.
 
 ### 3.7 Site Settings & Dynamic Configuration
-- **What:** Admin-controlled global settings for SEO, Branding, SMTP, and Contact Information.
+- **What:** Admin-controlled global settings for SEO, Branding, and Contact Information.
 - **How it Works:** 
   - **General Settings:** Stores business name, logos (dark/light), favicons, and currency in the database.
-  - **Mail Settings:** Stores SMTP credentials.
   - **Contact Settings:** Stores company name, email, phone number, physical address, a Google Maps integration link (`map_link`), and dynamic social media URLs (Facebook, Instagram, TikTok, X, Threads, LinkedIn, WhatsApp, YouTube) with visibility toggles.
 - **Implementation Details:** 
-  - **Dynamic Boot Overrides:** In `AppServiceProvider::boot()`, the system queries the `general_settings` and `mail_settings` tables. If records exist, it dynamically overrides Laravel's config (`config(['app.name' => $gs->business_name])` and `config(['mail.mailers.smtp...'])`). This allows the admin to change email servers and site names without touching `.env` files.
   - **Contact & Social Data Integration:** The `ContactSetting` model is accessible globally via `App\HelperClass::contactSettings()`. This data is dynamically injected into printable templates (Invoices), the client-side **Contact Page**, the **Footer**, and both **Desktop/Mobile Headers**. Icons for social media only render if their specific status is toggled "On" in the Admin Panel and a URL is provided.
-  - **Homepage Sections:** `SectionSetting` records control the visibility (True/False) and logic (e.g., Organic bestsellers vs Custom selected) of homepage UI blocks. 
-    - **Dynamic Sections:** All homepage sections (Bestsellers, Hot Deals, Featured, Recently Added, Top Picks) can be independently enabled or disabled from the Admin Panel.
-    - **Top Picks Section:** A curated section (Organic mode targets `is_new_arrival` products, or Custom mode) renamed from a redundant new arrivals section to provide more marketing flexibility.
-    - **Dynamic Backgrounds:** The "Featured" section on the homepage dynamically loads its background image from the `background_image` field in `SectionSetting`.
- This is applied as an inline CSS style to the section container, allowing admins to fully customize the section's visual theme from the Admin Panel.
+  - **App & SMTP Security:** System-critical credentials (SMTP, Social OAuth, reCAPTCHA) are strictly managed via the `.env` file to prevent unauthorized administrative changes and ensure development-to-production environment integrity.
 
 ### 3.8 Hybrid Shopping Cart System
 - **What:** A persistent shopping cart that works for both guests (visitors) and authenticated users.
@@ -435,19 +431,16 @@ Every module or architectural change must be documented in this file before a ta
   - **Service Logic:** `OrderService::updateOrderStatus()` manages the persistence of the reason and ensures it is cleared if the status is moved to a non-restorative state (though status finality usually prevents this).
   - **Email Template:** The `status_update.blade.php` markdown template conditionally displays the reason using a Blade `@if` directive.
 
-### 3.30 Google reCAPTCHA Integration
-- **What:** Enhanced security layer for client-side authentication forms (Login and Registration) to prevent automated bot submissions and credential stuffing attacks.
+### 3.30 Google reCAPTCHA v2 Integration
+- **What:** A static security layer for client-side authentication forms (Login and Registration) to prevent automated bot submissions.
 - **How it Works:**
+  - **Environment Configuration:** Site and Secret keys are managed via the `.env` file (`NOCAPTCHA_SITEKEY`, `NOCAPTCHA_SECRET`).
   - **Visual Challenge:** A reCAPTCHA v2 "I'm not a robot" widget is displayed on both the Login and Registration pages.
   - **Validation:** Form submission is blocked until the user successfully completes the reCAPTCHA challenge.
-  - **User Feedback:** Clear, field-specific error messages (e.g., "Please complete the reCAPTCHA challenge") are displayed if validation fails.
 - **Implementation Details:**
+  - **Validation:** `LoginRequest` and `RegisterRequest` enforce the `captcha` validation rule.
+  - **Global Assets:** The reCAPTCHA JavaScript is loaded via the master layout (`master.blade.php`) using `{!! NoCaptcha::renderJs() !!}`.
   - **Package:** Integrated `anhskohbo/no-captcha` for seamless reCAPTCHA v2 support in Laravel 12.
-  - **Configuration:** Keys are managed via environment variables (`NOCAPTCHA_SITEKEY`, `NOCAPTCHA_SECRET`) and the `config/captcha.php` file.
-  - **Global Assets:** The reCAPTCHA JavaScript is globally loaded via the master layout (`master.blade.php`) using `{!! NoCaptcha::renderJs() !!}` to ensure availability on all auth-related pages.
-  - **Strict Validation:** 
-    - **Login:** `LoginRequest` includes the `g-recaptcha-response` rule.
-    - **Registration:** Refactored `RegisteredUserController` to use a dedicated `RegisterRequest` class which enforces reCAPTCHA validation, adhering to the project's strict Form Request mandate.
 
 ---
 
@@ -458,6 +451,8 @@ Every module or architectural change must be documented in this file before a ta
 - **Search UI:** Streamlined to a pure text-input with FlexSearch autocomplete, omitting clunky category dropdowns for a cleaner aesthetic.
 - **Navbar Simplification:** Removed redundant "Pages" and "Blog" menus from the main navigation. Replaced them with a consolidated "Account" dropdown menu that provides direct access to User Profile, Order History, Wishlist, and Authentication links (Login/Register/Logout) for both desktop and mobile views.
 - **Button Standardization:** All action elements (Add to Cart, Track, Details, Start Shopping) strictly utilize core theme classes (e.g., Bootstrap `.btn` overrides combined with theme colors `#7AAACE` and `#333`, specific uppercase typography, and zero border-radius) ensuring 1:1 visual continuity.
+- **Admin Avatar Standardization:** All admin profile images across the navbar, index tables, and forms are standardized to a fixed circular shape. This is achieved through a global CSS definition in `master.blade.php` that enforces `aspect-ratio: 1/1` and `object-fit: cover` for all `avatar-*` classes when used with the `rounded-circle` utility class.
+- **Admin Theme Customization:** The sidebar (`main-nav`) and dark theme background colors have been updated to a custom deep blue shade (`#001F3D`). These overrides are applied globally in `master.blade.php` to maintain brand consistency across the administrative interface.
 - **Admin Assets:** Public admin CSS/JS directories renamed from `public/admin` to `public/admin_assets` to permanently resolve routing conflicts with the `Route::prefix('admin')` backend architecture.
 - **Pagination UI Standardization:** All paginated index pages (both Admin and Client) are standardized to include "Showing X to Y of Z Results" text next to the pagination links. In the Admin panel, this is placed within a `card-footer` using a `d-flex justify-content-between` layout. On the Client side, it is centered above the pagination links to maintain visual balance.
 

@@ -46,11 +46,7 @@
                                                 <button type="submit"><span>Register</span></button>
                                             </div>
 
-                                            @php
-                                                $socialSetting = \App\HelperClass::socialLoginSettings();
-                                            @endphp
-
-                                            @if($socialSetting && $socialSetting->google_status)
+                                            @if(config('services.google.client_id'))
                                                 <div class="login-social mt-4 text-center">
                                                     <p class="mb-2 text-muted">Or Register with</p>
                                                     <div class="d-flex justify-content-center">

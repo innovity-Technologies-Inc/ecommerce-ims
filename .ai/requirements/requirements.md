@@ -8,6 +8,9 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-03:** Multi-Guard Session Management (Admin vs. User).
 - [x] **REQ-04:** Profile Management for both Admins and Customers.
 - [x] **REQ-68:** Social Login Icon Update (Replace text-heavy Google login button with a modern icon-only or icon-dominant layout on the client login page).
+- [x] **REQ-81:** Google reCAPTCHA Integration (Implement reCAPTCHA v2 for login and registration pages managed via .env).
+- [x] **REQ-83:** Admin Avatar UI Standardization (Ensure all admin avatars in navbar, index tables, and forms have a fixed circular shape and size using CSS).
+- [x] **REQ-84:** Admin Theme Color Customization (Update sidebar and dark theme colors to #001F3D).
 
 ## 2. Catalog Management
 - [x] **REQ-05:** Brand CRUD (Logo, Slug, Status).
@@ -32,7 +35,7 @@ This document lists the high-level requirements for the modules implemented in t
 
 ## 6. Site Settings & Configuration
 - [x] **REQ-18:** General Settings (Logo, SEO, Currency, visual assets).
-- [x] **REQ-19:** Dynamic SMTP Mail Configuration (DB-driven).
+- [x] **REQ-19:** SMTP Mail Configuration (Managed via .env).
 - [x] **REQ-20:** Homepage Section Management (Visibility & Content Source for Bestsellers/Featured).
 
 ## 7. Shopping Cart System
@@ -50,7 +53,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-31:** Admin Route Conflict Resolution (Rename public/admin to public/admin_assets to avoid 403 Forbidden errors).
 - [x] **REQ-32:** Checkout System & Order Management (Checkout form, guest/user support, COD payment, Order status tracking, Admin order management, and Email notifications).
 - [x] **REQ-33:** Shipping Method Module & UI Integration (Admin CRUD, Cart selection with dynamic price update, and Checkout display).
-- [x] **REQ-34:** Dynamic App Configuration (App Name and Mail From Name loaded from General Settings).
+- [x] **REQ-34:** App Configuration (App Name and Mail From Name managed via .env).
 - [x] **REQ-35:** Order History & Tracking (Authenticated user history and guest order tracking by ID).
 - [x] **REQ-36:** Invoice Management Module (Admin invoice generation, regeneration, and client-side download via JS Print).
 - [x] **REQ-37:** Contact Settings Module (Admin settings for company name, email, address, phone number, integrated into invoices).
@@ -82,7 +85,6 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-78:** Role-Based Access Control (RBAC) Module (Implement spatie/laravel-permission, Role CRUD management, assign roles to admin users, and profile image support for admins).
 - [x] **REQ-79:** Permission Management (UI to create permissions grouped by Menu Name and Operations, stored as menu.operation. Role form integration with grouped checkboxes and "Check All" logic).
 - [x] **REQ-80:** Order Cancellation/Rejection Remarks (Add reason/remarks field for cancelled or rejected orders. Remarks visible in tracking and included in status update emails).
-- [x] **REQ-81:** Google reCAPTCHA Integration (Implement reCAPTCHA v2 for login and registration pages on the client side to prevent automated submissions).
 
 ## 10. Flash Sale Module
 - [x] **REQ-52:** Flash Sale Management (Single edit form for managing active/inactive status and global configuration).
@@ -101,11 +103,3 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-65:** Order Status Finality (Prevent further status changes once an order is set to 'Delivered', 'Cancelled' or 'Rejected').
 - [x] **REQ-66:** Status Reuse Restriction (Prevent an order from being moved to any status it has previously held in its lifecycle).
 - [x] **REQ-67:** Coupon Usage History (Dedicated administrative page to track detailed audit trails of specific coupon applications, including user and order data).
-
-
-
-
-
-
-
-

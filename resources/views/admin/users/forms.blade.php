@@ -81,7 +81,7 @@
                                     </div>
                                     @if(isset($user) && $user->image)
                                         <div class="mb-3">
-                                            <img src="{{ asset('storage/' . $user->image) }}" alt="Profile Image" class="img-thumbnail" width="100">
+                                            <img src="{{ asset('storage/' . $user->image) }}" alt="Profile Image" class="img-thumbnail rounded-circle avatar-xl">
                                         </div>
                                     @endif
                                 </div>
