@@ -51,6 +51,7 @@ Implement a comprehensive return management system for both guests and authentic
 ### Step 3: Client-Side Implementation
 - [x] Create a "Return Request" page for guests (Route: `/returns`).
 - [x] Implement AJAX to fetch order details by Order ID.
+- [x] **Restricted Return Access:** Only allow fetching product details for returns if the order status is 'Delivered'.
 - [x] Build the return form: select items, quantity, upload photo, reason.
 - [x] Add "Return" button in authenticated user's order details page.
 - [x] Implement return status tracking by Order ID.

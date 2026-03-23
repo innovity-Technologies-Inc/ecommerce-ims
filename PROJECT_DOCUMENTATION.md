@@ -383,7 +383,7 @@ Every module or architectural change must be documented in this file before a ta
 ### 3.27 Return Module
 - **What:** A comprehensive return management system allowing both guests and authenticated users to request returns for delivered items, with a full administrative workflow for approval, receiving, and stock/sales adjustment.
 - **How it Works:**
-  - **Guest Returns:** Unauthenticated users can access a dedicated "/returns" page, enter their Order ID, and fetch order details via AJAX. They can then select specific items, specify quantities (validated against the original order), upload proof images, and provide a reason.
+  - **Guest Returns:** Unauthenticated users can access a dedicated "/returns" page, enter their Order ID, and fetch order details via AJAX. **Validation:** The system only allows fetching product details if the order status is 'Delivered'; otherwise, an error message is returned.
   - **Authenticated Returns:** Logged-in users see a "Request Return" button directly within their Order Details page if the order is marked as "Delivered".
   - **Admin Approval Workflow:** Admins review requests in the "Return Requests" submenu. They can:
     - **Approve:** Must specify the condition for each item (Intact or Damage).

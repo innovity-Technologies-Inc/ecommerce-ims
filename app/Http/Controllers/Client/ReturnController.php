@@ -30,6 +30,10 @@ class ReturnController extends Controller
             return response()->json(['message' => 'Order not found.'], 404);
         }
 
+        if ($order->order_status !== 'Delivered') {
+            return response()->json(['message' => 'Returns are only allowed for delivered orders. Current status: ' . $order->order_status], 400);
+        }
+
         if ($this->returnService->checkExistingReturn($order->id)) {
             return response()->json(['message' => 'A return request has already been submitted for this order.'], 400);
         }
