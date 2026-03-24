@@ -171,6 +171,31 @@
             </li>
             @endif
 
+            @if(auth('admin')->user()->can('inventory.warehouse.view') || auth('admin')->user()->can('inventory.supplier.view'))
+            <li class="nav-item">
+                <a class="nav-link menu-arrow" href="#sidebarInventory" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarInventory">
+                                   <span class="nav-icon">
+                                        <iconify-icon icon="solar:box-bold-duotone"></iconify-icon>
+                                   </span>
+                    <span class="nav-text"> Inventory </span>
+                </a>
+                <div class="collapse" id="sidebarInventory">
+                    <ul class="nav sub-navbar-nav">
+                        @can('inventory.warehouse.view')
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="{{ route('admin.warehouses.index') }}">Warehouses</a>
+                        </li>
+                        @endcan
+                        @can('inventory.supplier.view')
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="{{ route('admin.suppliers.index') }}">Suppliers</a>
+                        </li>
+                        @endcan
+                    </ul>
+                </div>
+            </li>
+            @endif
+
             <li class="menu-title mt-2">Management</li>
 
             @if(auth('admin')->user()->can('admins.view') || auth('admin')->user()->can('roles.view'))

@@ -174,6 +174,26 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::get('/{sectionName}', [\App\Http\Controllers\Admin\HomepageSectionController::class, 'editSection'])->name('admin.sections.edit');
         Route::post('/{sectionName}/update', [\App\Http\Controllers\Admin\HomepageSectionController::class, 'updateSection'])->name('admin.sections.update')->middleware('permission:homepage_sections.edit');
     });
+
+    Route::prefix('inventory')->group(function () {
+        Route::prefix('warehouses')->middleware('permission:inventory.warehouse.view')->controller(\App\Http\Controllers\Admin\WarehouseController::class)->group(function () {
+            Route::get('/', 'index')->name('admin.warehouses.index');
+            Route::get('/create', 'create')->name('admin.warehouses.create')->middleware('permission:inventory.warehouse.create');
+            Route::post('/', 'store')->name('admin.warehouses.store')->middleware('permission:inventory.warehouse.create');
+            Route::get('/{warehouse}/edit', 'edit')->name('admin.warehouses.edit')->middleware('permission:inventory.warehouse.edit');
+            Route::put('/{warehouse}', 'update')->name('admin.warehouses.update')->middleware('permission:inventory.warehouse.edit');
+            Route::delete('/{warehouse}', 'destroy')->name('admin.warehouses.destroy')->middleware('permission:inventory.warehouse.delete');
+        });
+
+        Route::prefix('suppliers')->middleware('permission:inventory.supplier.view')->controller(\App\Http\Controllers\Admin\SupplierController::class)->group(function () {
+            Route::get('/', 'index')->name('admin.suppliers.index');
+            Route::get('/create', 'create')->name('admin.suppliers.create')->middleware('permission:inventory.supplier.create');
+            Route::post('/', 'store')->name('admin.suppliers.store')->middleware('permission:inventory.supplier.create');
+            Route::get('/{supplier}/edit', 'edit')->name('admin.suppliers.edit')->middleware('permission:inventory.supplier.edit');
+            Route::put('/{supplier}', 'update')->name('admin.suppliers.update')->middleware('permission:inventory.supplier.edit');
+            Route::delete('/{supplier}', 'destroy')->name('admin.suppliers.destroy')->middleware('permission:inventory.supplier.delete');
+        });
+    });
 });
 
 Route::middleware('auth')->group(function () {

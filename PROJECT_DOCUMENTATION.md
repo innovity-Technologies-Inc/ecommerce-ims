@@ -456,5 +456,17 @@ Every module or architectural change must be documented in this file before a ta
 - **Admin Assets:** Public admin CSS/JS directories renamed from `public/admin` to `public/admin_assets` to permanently resolve routing conflicts with the `Route::prefix('admin')` backend architecture.
 - **Pagination UI Standardization:** All paginated index pages (both Admin and Client) are standardized to include "Showing X to Y of Z Results" text next to the pagination links. In the Admin panel, this is placed within a `card-footer` using a `d-flex justify-content-between` layout. On the Client side, it is centered above the pagination links to maintain visual balance.
 
+### 3.31 Inventory Management Onboarding (Warehouses & Suppliers)
+- **What:** Foundation for an integrated inventory system, allowing administrators to manage storage locations (Warehouses) and external vendors (Suppliers).
+- **How it Works:**
+  - **Warehouse Management:** Admins create and manage physical storage locations. Each warehouse record stores a unique name and a detailed physical location (address/coordinates).
+  - **Supplier Onboarding:** Admins manage the vendor database. Each supplier record includes the company name, contact email, mobile number, and full physical address.
+- **Implementation Details:**
+  - **Architecture:** Follows the strict Service Layer pattern. `InventoryService` centralizes all CRUD operations for both Warehouses and Suppliers.
+  - **Validation:** `WarehouseRequest` and `SupplierRequest` enforce strict data integrity (e.g., required names, valid email formats, and string length limits) before persistence.
+  - **Search & Filtering:** Both index pages utilize `FlexSearch` for real-time, multi-column searching (Name/Location for Warehouses; Name/Email/Mobile/Address for Suppliers) and AJAX-driven sorting.
+  - **Security:** Access is controlled via granular permissions: `inventory.warehouse.view/create/edit/delete` and `inventory.supplier.view/create/edit/delete`.
+  - **UI/UX:** Integrated into a new "Inventory" sidebar menu with Bootstrap 5 styled forms and tables, maintaining 1:1 visual continuity with the rest of the Admin Panel.
+
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*

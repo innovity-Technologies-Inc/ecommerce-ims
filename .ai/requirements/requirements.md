@@ -12,6 +12,10 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-83:** Admin Avatar UI Standardization (Ensure all admin avatars in navbar, index tables, and forms have a fixed circular shape and size using CSS).
 - [x] **REQ-84:** Admin Theme Color Customization (Update sidebar and dark theme colors to #001F3D).
 
+## 11. Inventory Management
+- [x] **REQ-85:** Create Locations (Warehouses): An admin creates a record in warehouses. warehouse should have name, location.
+- [x] **REQ-86:** Onboard Vendors (Suppliers): An admin creates a record in suppliers. supplier should have name, email, mobile, address.
+
 ## 2. Catalog Management
 - [x] **REQ-05:** Brand CRUD (Logo, Slug, Status).
 - [x] **REQ-06:** Category & Subcategory Management (Parent/Child Hierarchy).

@@ -23,6 +23,8 @@ class DatabaseSeeder extends Seeder
             SliderSeeder::class,
             SectionSettingSeeder::class,
             ContactSettingSeeder::class,
+            WarehouseSeeder::class,
+            SupplierSeeder::class,
         ]);
     }
 }
