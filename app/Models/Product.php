@@ -27,6 +27,7 @@ class Product extends Model
         'flash_discount_price',
         'flash_discount_percentage',
         'stock',
+        'min_stock_global',
     ];
 
     protected function casts(): array
@@ -44,6 +45,7 @@ class Product extends Model
             'status' => 'boolean',
             'sales_count' => 'integer',
             'stock' => 'integer',
+            'min_stock_global' => 'integer',
         ];
     }
 

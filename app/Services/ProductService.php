@@ -121,6 +121,7 @@ class ProductService
                 'status' => isset($data['status']),
                 'sales_count' => 0,
                 'stock' => $data['stock'] ?? 0,
+                'min_stock_global' => $data['min_stock_global'] ?? 0,
             ]);
 
             if (isset($data['variants']) && is_array($data['variants'])) {
@@ -169,6 +170,7 @@ class ProductService
                 'is_featured' => isset($data['is_featured']),
                 'status' => isset($data['status']),
                 'stock' => $data['stock'] ?? 0,
+                'min_stock_global' => $data['min_stock_global'] ?? 0,
             ]);
 
             // Simple strategy for variants: Replace them

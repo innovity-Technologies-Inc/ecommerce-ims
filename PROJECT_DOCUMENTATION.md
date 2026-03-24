@@ -88,6 +88,7 @@ Every module or architectural change must be documented in this file before a ta
   - **Flexible Pricing Engine:** A product can have a `base_price` and multiple `ProductVariant` records. If variants exist, their specific pricing overrides the base price.
   - **Marketing Flags:** Boolean columns in the `products` table (e.g., `is_new`, `is_featured`, `is_hot_deal`) dictate where the product appears on the frontend.
   - **Multi-Image Gallery:** Handled via a dedicated `product_images` table, allowing infinite images per product with one designated as the primary thumbnail.
+  - **Global Minimum Stock:** Each product can have a `min_stock_global` threshold. This is used to trigger "Low Stock" alerts on the dashboard if individual variant stock falls below this number. It acts as a per-product override for the system-wide `low_stock_limit` setting.
 - **Implementation Details:** 
   - `ProductService` orchestrates the creation of the product, uploads the primary image, iterates through variant arrays to create `ProductVariant` rows (handling SKU and stock), and stores secondary images in the `product_images` table.
 

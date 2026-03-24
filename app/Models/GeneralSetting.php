@@ -15,5 +15,6 @@ class GeneralSetting extends Model
         'meta_description',
         'favicon',
         'currency',
+        'low_stock_limit',
     ];
 }

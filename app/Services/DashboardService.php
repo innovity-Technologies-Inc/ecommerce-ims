@@ -50,7 +50,17 @@ class DashboardService
             ->count();
 
         $lowStockLimit = GeneralSetting::first()->low_stock_limit ?? 5;
-        $lowStockCount = ProductVariant::where('stock', '<=', $lowStockLimit)->count();
+
+        // Count products where stock <= min_stock_global (if set > 0) OR stock <= global limit
+        $lowStockCount = ProductVariant::whereHas('product', function ($query) use ($lowStockLimit) {
+            $query->where(function ($q) {
+                $q->where('min_stock_global', '>', 0)
+                    ->whereColumn('product_variants.stock', '<=', 'products.min_stock_global');
+            })->orWhere(function ($q) use ($lowStockLimit) {
+                $q->where('min_stock_global', '<=', 0)
+                    ->where('product_variants.stock', '<=', $lowStockLimit);
+            });
+        })->count();
 
         return [
             'thisMonthSales' => $thisMonthSales,
@@ -227,7 +237,15 @@ class DashboardService
         $lowStockLimit = GeneralSetting::first()->low_stock_limit ?? 5;
 
         return ProductVariant::with(['product.primaryImage', 'product.category'])
-            ->where('stock', '<=', $lowStockLimit)
+            ->whereHas('product', function ($query) use ($lowStockLimit) {
+                $query->where(function ($q) {
+                    $q->where('min_stock_global', '>', 0)
+                        ->whereColumn('product_variants.stock', '<=', 'products.min_stock_global');
+                })->orWhere(function ($q) use ($lowStockLimit) {
+                    $q->where('min_stock_global', '<=', 0)
+                        ->where('product_variants.stock', '<=', $lowStockLimit);
+                });
+            })
             ->paginate($perPage);
     }
 }

@@ -144,6 +144,17 @@
                                 </div>
                             </div>
 
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                    <label for="min_stock_global" class="form-label">Global Minimum Stock (Low Stock Alert Threshold)</label>
+                                    <input type="number" name="min_stock_global" id="min_stock_global" class="form-control" placeholder="e.g. 10" value="{{ old('min_stock_global', $product->min_stock_global ?? 0) }}">
+                                    <p class="small text-muted">A product will be flagged as "Low Stock" if its total inventory falls below this number.</p>
+                                    @error('min_stock_global')
+                                    <span class="small text-danger">{{$message}}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
                             <!-- Product Flags -->
                             <div class="col-lg-12 mb-3">
                                 <label class="form-label d-block">Product Flags</label>

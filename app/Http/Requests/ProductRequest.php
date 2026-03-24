@@ -38,6 +38,7 @@ class ProductRequest extends FormRequest
             'is_top_pick' => ['nullable', 'boolean'],
             'status' => ['nullable', 'boolean'],
             'stock' => ['nullable', 'integer', 'min:0'],
+            'min_stock_global' => ['nullable', 'integer', 'min:0'],
             'variants' => ['nullable', 'array'],
             'variants.*.variant_name' => ['required_with:variants', 'string', 'max:255'],
             'variants.*.sku' => [
@@ -77,6 +78,7 @@ class ProductRequest extends FormRequest
             'discount_percentage.integer' => 'Discount must be a whole number percentage.',
             'discount_percentage.max' => 'Discount percentage cannot exceed 100%.',
             'stock.integer' => 'Stock quantity must be a whole number.',
+            'min_stock_global.integer' => 'Minimum stock must be a whole number.',
             'variants.*.variant_name.required_with' => 'Each variant must have a name.',
             'variants.*.sku.unique' => 'The SKU has already been taken by another product or variant.',
             'images.*.image' => 'One or more files uploaded are not valid images.',
