@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ContactSettingRequest;
-use App\Http\Requests\GeneralSettingRequest;
+use App\Http\Requests\Admin\ContactSettingRequest;
+use App\Http\Requests\Admin\GeneralSettingRequest;
 use App\Models\ContactSetting;
 use App\Models\GeneralSetting;
 use App\Services\SettingsService;

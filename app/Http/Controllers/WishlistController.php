@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\WishlistRequest;
+use App\Http\Requests\Client\WishlistRequest;
 use App\Services\WishlistService;
 
 class WishlistController extends Controller

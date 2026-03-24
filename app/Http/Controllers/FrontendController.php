@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ContactMessageRequest;
-use App\Http\Requests\ProductFilterRequest;
-use App\Http\Requests\TrackOrderRequest;
+use App\Http\Requests\Client\ContactMessageRequest;
+use App\Http\Requests\Client\ProductFilterRequest;
+use App\Http\Requests\Client\TrackOrderRequest;
 use App\Models\FlashSale;
 use App\Models\Product;
 use App\Models\SectionSetting;

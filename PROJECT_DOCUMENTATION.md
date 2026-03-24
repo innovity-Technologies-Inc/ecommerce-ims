@@ -469,5 +469,20 @@ Every module or architectural change must be documented in this file before a ta
   - **Security:** Access is controlled via granular permissions: `inventory.warehouse.view/create/edit/delete` and `inventory.supplier.view/create/edit/delete`.
   - **UI/UX:** Integrated into a new "Inventory" sidebar menu with Bootstrap 5 styled forms and tables, maintaining 1:1 visual continuity with the rest of the Admin Panel.
 
+### 3.32 Purchase Order (PO) Module
+- **What:** A comprehensive procurement system allowing administrators to create and track purchase orders for products and variants from specific suppliers.
+- **How it Works:**
+  - **Creation & Itemization:** Admins can select a supplier and warehouse, then add multiple products or specific variants. The system supports dynamic row addition via jQuery.
+  - **Date Tracking:** Tracks critical timestamps including `order_date`, `expected_delivery_date`, and the actual `received_date`.
+  - **Email Notifications:** Includes a "Notify by Mail" option that automatically sends a professional HTML/Markdown email to the supplier containing the PO details (Items, Quantities, Unit Costs).
+  - **Status Workflow:** Orders progress through `Draft`, `Sent`, and `Delivered` stages.
+  - **Automatic Stock Replenishment:** When a PO status is updated to `Delivered`, the system automatically increments the stock levels for all included products and variants in the database.
+- **Implementation Details:**
+  - **`PurchaseOrderService`:** Orchestrates the complex logic for multi-item creation, total calculations, automated email triggers, and inventory synchronization.
+  - **Data Integrity:** Wrapped in `DB::transaction` to ensure that item records and stock adjustments are atomic.
+  - **Unique Numbering:** Automatically generates sequential PO numbers (e.g., `PO-00000001`).
+  - **Security:** Protected by granular permissions: `inventory.po.view`, `inventory.po.create`, `inventory.po.edit`, and `inventory.po.delete`.
+  - **Advanced Filtering:** Utilizes `FlexSearch` for real-time searching by PO number and provides specialized filters for Status and Supplier on the index page.
+
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*

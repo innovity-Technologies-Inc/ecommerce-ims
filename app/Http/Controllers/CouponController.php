@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CouponRequest;
+use App\Http\Requests\Admin\CouponRequest;
 use App\Models\Coupon;
 use App\Services\CouponService;
 use Illuminate\Http\JsonResponse;

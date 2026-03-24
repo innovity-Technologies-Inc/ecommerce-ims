@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\BrandRequest;
+use App\Http\Requests\Admin\BrandRequest;
 use App\Models\Brand;
 use App\Services\BrandService;
 use Illuminate\Http\JsonResponse;

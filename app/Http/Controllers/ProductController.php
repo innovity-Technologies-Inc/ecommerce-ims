@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Admin\Product\BulkProductUploadRequest;
-use App\Http\Requests\ProductRequest;
+use App\Http\Requests\Admin\ProductRequest;
 use App\Models\Brand;
 use App\Models\Product;
 use App\Services\ProductService;

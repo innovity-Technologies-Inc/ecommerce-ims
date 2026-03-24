@@ -16,6 +16,10 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-85:** Create Locations (Warehouses): An admin creates a record in warehouses. warehouse should have name, location.
 - [x] **REQ-86:** Onboard Vendors (Suppliers): An admin creates a record in suppliers. supplier should have name, email, mobile, address.
 - [x] **REQ-87:** Global Minimum Stock: Add `min_stock_global` field to `products` table with a default value of `0` to track low stock alerts at the product level.
+- [ ] **REQ-88:** Purchase Order (PO) Management: Admin can create POs by selecting multiple products/variants and aligning them with a supplier.
+- [ ] **REQ-89:** PO Email Notification: Option to automatically send the PO details to the supplier's email via a "Notify by Mail" checkbox during creation/update.
+- [ ] **REQ-90:** PO Status Workflow: Support for `Draft`, `Sent`, and `Delivered` statuses with the ability for admins to transition between them.
+- [ ] **REQ-91:** PO Item Tracking: Maintain a detailed record of products, variants, quantities, and unit costs within each Purchase Order.
 
 ## 2. Catalog Management
 - [x] **REQ-05:** Brand CRUD (Logo, Slug, Status).

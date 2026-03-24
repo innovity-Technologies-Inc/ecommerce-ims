@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\FlashSaleRequest;
+use App\Http\Requests\Admin\FlashSaleRequest;
 use App\Services\FlashSaleService;
 use App\Services\ProductService;
 use Illuminate\Http\Request;

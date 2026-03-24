@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CartRequest;
-use App\Http\Requests\RemoveCartItemRequest;
-use App\Http\Requests\UpdateShippingRequest;
-use App\Http\Requests\UpdateCartRequest;
+use App\Http\Requests\Client\CartRequest;
+use App\Http\Requests\Client\RemoveCartItemRequest;
+use App\Http\Requests\Client\UpdateShippingRequest;
+use App\Http\Requests\Client\UpdateCartRequest;
 use App\Models\ShippingMethod;
 use App\Services\CartService;
 use App\Services\ShippingMethodService;

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\SliderRequest;
+use App\Http\Requests\Admin\SliderRequest;
 use App\Models\Slider;
 use App\Services\HomepageService;
 use Illuminate\Http\RedirectResponse;

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ShippingMethodRequest;
+use App\Http\Requests\Admin\ShippingMethodRequest;
 use App\Models\ShippingMethod;
 use App\Services\ShippingMethodService;
 use Illuminate\Http\RedirectResponse;

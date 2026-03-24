@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CheckoutRequest;
+use App\Http\Requests\Client\CheckoutRequest;
 use App\Models\ShippingMethod;
 use App\Services\CartService;
 use App\Services\OrderService;

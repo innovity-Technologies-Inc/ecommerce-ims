@@ -171,7 +171,7 @@
             </li>
             @endif
 
-            @if(auth('admin')->user()->can('inventory.warehouse.view') || auth('admin')->user()->can('inventory.supplier.view'))
+            @if(auth('admin')->user()->can('inventory.warehouse.view') || auth('admin')->user()->can('inventory.supplier.view') || auth('admin')->user()->can('inventory.po.view'))
             <li class="nav-item">
                 <a class="nav-link menu-arrow" href="#sidebarInventory" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarInventory">
                                    <span class="nav-icon">
@@ -189,6 +189,11 @@
                         @can('inventory.supplier.view')
                         <li class="sub-nav-item">
                             <a class="sub-nav-link" href="{{ route('admin.suppliers.index') }}">Suppliers</a>
+                        </li>
+                        @endcan
+                        @can('inventory.po.view')
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="{{ route('admin.inventory.po.index') }}">Purchase Orders</a>
                         </li>
                         @endcan
                     </ul>
