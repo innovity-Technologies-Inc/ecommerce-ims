@@ -145,9 +145,9 @@ class PurchaseOrderService
     /**
      * Update status and handle inventory if Delivered.
      */
-    public function updateStatus(PurchaseOrder $po, string $status, ?string $receivedDate = null): void
+    public function updateStatus(PurchaseOrder $po, string $status, ?string $receivedDate = null, bool $notifySupplier = false): void
     {
-        DB::transaction(function () use ($po, $status, $receivedDate) {
+        DB::transaction(function () use ($po, $status, $receivedDate, $notifySupplier) {
             if ($po->status === 'Delivered') {
                 throw new \Exception('Status cannot be changed once delivered.');
             }
@@ -173,7 +173,7 @@ class PurchaseOrderService
 
             $po->update($updateData);
 
-            if ($status === 'Sent' && $po->notify_supplier) {
+            if ($status === 'Sent' && $notifySupplier) {
                 $this->sendPOMail($po);
             }
         });

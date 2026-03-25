@@ -120,11 +120,16 @@ class PurchaseOrderController extends Controller
         $request->validate([
             'status' => 'required|in:Draft,Sent,Delivered',
             'received_date' => 'nullable|date',
+            'notify_supplier' => 'nullable|boolean',
         ]);
 
         try {
-            $this->poService->updateStatus($po, $request->status, $request->received_date);
-
+            $this->poService->updateStatus(
+                $po, 
+                $request->status, 
+                $request->received_date, 
+                $request->has('notify_supplier')
+            );
             return back()->with([
                 'message' => 'Status updated successfully.',
                 'alert-type' => 'success',

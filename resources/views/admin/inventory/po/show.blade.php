@@ -143,30 +143,45 @@
                                 <input type="date" name="received_date" id="received_date" class="form-control" value="{{ date('Y-m-d') }}">
                             </div>
 
+                            <div id="notifySupplierContainer" class="mb-3" style="display: none;">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="notify_supplier" id="notifyUpdate" value="1" {{ $po->notify_supplier ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="notifyUpdate">Notify Supplier by Email</label>
+                                </div>
+                            </div>
+
                             <button type="submit" class="btn btn-soft-success w-100 mt-2">Update Status</button>
-                        </form>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
+                            </form>
+                            @endif
+                            </div>
+                            </div>
+                            </div>
+                            </div>
+                            </div>
+                            </div>
+                            @endsection
 
-@push('scripts')
-<script>
-    $(document).ready(function() {
-        $('#statusUpdate').change(function() {
-            if ($(this).val() === 'Delivered') {
-                $('#receivedDateContainer').show();
-            } else {
-                $('#receivedDateContainer').hide();
-            }
-        });
+                            @section('scripts')
+                            <script>
+                            $(document).ready(function() {
+                            $('#statusUpdate').change(function() {
+                            const status = $(this).val();
 
-        // Trigger on load
-        $('#statusUpdate').trigger('change');
-    });
-</script>
-@endpush
+                            if (status === 'Delivered') {
+                            $('#receivedDateContainer').show();
+                            } else {
+                            $('#receivedDateContainer').hide();
+                            }
+
+                            if (status === 'Sent') {
+                            $('#notifySupplierContainer').show();
+                            } else {
+                            $('#notifySupplierContainer').hide();
+                            }
+                            });
+
+                            // Trigger on load
+                            $('#statusUpdate').trigger('change');
+                            });
+                            </script>
+                            @endsection
