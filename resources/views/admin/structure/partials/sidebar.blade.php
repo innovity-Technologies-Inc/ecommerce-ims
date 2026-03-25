@@ -171,35 +171,40 @@
             </li>
             @endif
 
-            @if(auth('admin')->user()->can('warehouse.view') || auth('admin')->user()->can('supplier.view') || auth('admin')->user()->can('po.view'))
+            <li class="menu-title">Inventory Management</li>
+
+            @can('warehouse.view')
             <li class="nav-item">
-                <a class="nav-link menu-arrow" href="#sidebarInventory" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarInventory">
-                                   <span class="nav-icon">
-                                        <iconify-icon icon="solar:box-bold-duotone"></iconify-icon>
-                                   </span>
-                    <span class="nav-text"> Inventory </span>
+                <a class="nav-link" href="{{ route('admin.warehouses.index') }}">
+                    <span class="nav-icon">
+                        <iconify-icon icon="solar:home-2-bold-duotone"></iconify-icon>
+                    </span>
+                    <span class="nav-text"> Warehouses </span>
                 </a>
-                <div class="collapse" id="sidebarInventory">
-                    <ul class="nav sub-navbar-nav">
-                        @can('warehouse.view')
-                        <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.warehouses.index') }}">Warehouses</a>
-                        </li>
-                        @endcan
-                        @can('supplier.view')
-                        <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.suppliers.index') }}">Suppliers</a>
-                        </li>
-                        @endcan
-                        @can('po.view')
-                        <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.inventory.po.index') }}">Purchase Orders</a>
-                        </li>
-                        @endcan
-                    </ul>
-                </div>
             </li>
-            @endif
+            @endcan
+
+            @can('supplier.view')
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.suppliers.index') }}">
+                    <span class="nav-icon">
+                        <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon>
+                    </span>
+                    <span class="nav-text"> Suppliers </span>
+                </a>
+            </li>
+            @endcan
+
+            @can('po.view')
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.inventory.po.index') }}">
+                    <span class="nav-icon">
+                        <iconify-icon icon="solar:clipboard-list-bold-duotone"></iconify-icon>
+                    </span>
+                    <span class="nav-text"> Purchase Orders </span>
+                </a>
+            </li>
+            @endcan
 
             <li class="menu-title mt-2">Management</li>
 

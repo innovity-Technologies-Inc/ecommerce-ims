@@ -152,6 +152,10 @@ class PurchaseOrderService
                 throw new \Exception('Status cannot be changed once delivered.');
             }
 
+            if ($status === 'Sent' && $po->status !== 'Draft') {
+                throw new \Exception('Purchase Order can only be marked as Sent if it is currently in Draft status.');
+            }
+
             $updateData = ['status' => $status];
             if ($status === 'Delivered') {
                 $updateData['received_date'] = $receivedDate ?? now();

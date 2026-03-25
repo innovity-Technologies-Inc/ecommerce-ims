@@ -24,10 +24,10 @@
                     <td>
                         @php
                             $badgeClass = match($po->status) {
-                                'Draft' => 'bg-secondary',
-                                'Sent' => 'bg-info',
-                                'Delivered' => 'bg-success',
-                                default => 'bg-dark'
+                                'Draft' => 'badge-soft-secondary',
+                                'Sent' => 'badge-soft-info',
+                                'Delivered' => 'badge-soft-success',
+                                default => 'badge-soft-dark'
                             };
                         @endphp
                         <span class="badge {{ $badgeClass }}">{{ $po->status }}</span>

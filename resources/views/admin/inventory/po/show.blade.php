@@ -85,10 +85,10 @@
                             <div>
                                 @php
                                     $badgeClass = match($po->status) {
-                                        'Draft' => 'bg-secondary',
-                                        'Sent' => 'bg-info',
-                                        'Delivered' => 'bg-success',
-                                        default => 'bg-dark'
+                                        'Draft' => 'badge-soft-secondary',
+                                        'Sent' => 'badge-soft-info',
+                                        'Delivered' => 'badge-soft-success',
+                                        default => 'badge-soft-dark'
                                     };
                                 @endphp
                                 <span class="badge {{ $badgeClass }} fs-14">{{ $po->status }}</span>
@@ -132,9 +132,14 @@
                             <div class="mb-3">
                                 <label for="statusUpdate" class="form-label">Update Status</label>
                                 <select name="status" id="statusUpdate" class="form-select">
-                                    <option value="Draft" {{ $po->status == 'Draft' ? 'selected' : '' }}>Draft</option>
-                                    <option value="Sent" {{ $po->status == 'Sent' ? 'selected' : '' }}>Sent</option>
-                                    <option value="Delivered" {{ $po->status == 'Delivered' ? 'selected' : '' }}>Delivered</option>
+                                    @if($po->status === 'Draft')
+                                        <option value="Draft" selected>Draft</option>
+                                        <option value="Sent">Sent</option>
+                                        <option value="Delivered">Delivered</option>
+                                    @elseif($po->status === 'Sent')
+                                        <option value="Sent" selected>Sent</option>
+                                        <option value="Delivered">Delivered</option>
+                                    @endif
                                 </select>
                             </div>
 
