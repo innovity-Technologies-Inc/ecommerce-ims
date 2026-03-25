@@ -4,7 +4,7 @@
     <div class="container-xxl">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h4 class="mb-0">Suppliers</h4>
-            @can('inventory.supplier.create')
+            @can('supplier.create')
             <a href="{{ route('admin.suppliers.create') }}" class="btn btn-primary btn-sm">Add Supplier</a>
             @endcan
         </div>

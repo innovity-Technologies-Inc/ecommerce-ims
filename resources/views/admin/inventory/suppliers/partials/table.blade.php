@@ -23,12 +23,12 @@
             <td>{{$data->address}}</td>
             <td>
                 <div class="d-flex gap-2">
-                    @can('inventory.supplier.edit')
+                    @can('supplier.edit')
                     <a href="{{ route('admin.suppliers.edit', $data->id) }}" class="btn btn-soft-primary btn-sm">
                         <iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon>
                     </a>
                     @endcan
-                    @can('inventory.supplier.delete')
+                    @can('supplier.delete')
                     <form method="post" action="{{ route('admin.suppliers.destroy', $data->id) }}">
                         @csrf
                         @method('delete')

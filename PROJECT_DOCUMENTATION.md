@@ -466,7 +466,7 @@ Every module or architectural change must be documented in this file before a ta
   - **Architecture:** Follows the strict Service Layer pattern. `InventoryService` centralizes all CRUD operations for both Warehouses and Suppliers.
   - **Validation:** `WarehouseRequest` and `SupplierRequest` enforce strict data integrity (e.g., required names, valid email formats, and string length limits) before persistence.
   - **Search & Filtering:** Both index pages utilize `FlexSearch` for real-time, multi-column searching (Name/Location for Warehouses; Name/Email/Mobile/Address for Suppliers) and AJAX-driven sorting.
-  - **Security:** Access is controlled via granular permissions: `inventory.warehouse.view/create/edit/delete` and `inventory.supplier.view/create/edit/delete`.
+  - **Security:** Access is controlled via granular permissions: `warehouse.view/create/edit/delete` and `supplier.view/create/edit/delete`.
   - **UI/UX:** Integrated into a new "Inventory" sidebar menu with Bootstrap 5 styled forms and tables, maintaining 1:1 visual continuity with the rest of the Admin Panel.
 
 ### 3.32 Purchase Order (PO) Module
@@ -481,7 +481,7 @@ Every module or architectural change must be documented in this file before a ta
   - **`PurchaseOrderService`:** Orchestrates the complex logic for multi-item creation, total calculations, automated email triggers, and inventory synchronization.
   - **Data Integrity:** Wrapped in `DB::transaction` to ensure that item records and stock adjustments are atomic.
   - **Unique Numbering:** Automatically generates sequential PO numbers (e.g., `PO-00000001`).
-  - **Security:** Protected by granular permissions: `inventory.po.view`, `inventory.po.create`, `inventory.po.edit`, and `inventory.po.delete`.
+  - **Security:** Protected by granular permissions: `po.view`, `po.create`, `po.edit`, and `po.delete`.
   - **Advanced Filtering:** Utilizes `FlexSearch` for real-time searching by PO number and provides specialized filters for Status and Supplier on the index page.
 
 ---

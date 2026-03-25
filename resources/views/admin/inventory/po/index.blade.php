@@ -1,24 +1,23 @@
-@extends('admin.structure.master')
+@extends('admin.structure.app')
 
 @section('title', 'Purchase Orders')
 
 @section('content')
-<div class="page-content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0">Purchase Orders</h4>
-                    @can('inventory.po.create')
-                    <div class="page-title-right">
-                        <a href="{{ route('admin.inventory.po.create') }}" class="btn btn-primary btn-sm">
-                            <i class="bx bx-plus me-1"></i> Create Purchase Order
-                        </a>
-                    </div>
-                    @endcan
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                <h4 class="mb-sm-0">Purchase Orders</h4>
+                @can('po.create')
+                <div class="page-title-right">
+                    <a href="{{ route('admin.inventory.po.create') }}" class="btn btn-primary btn-sm">
+                        <i class="bx bx-plus me-1"></i> Create Purchase Order
+                    </a>
                 </div>
+                @endcan
             </div>
         </div>
+    </div>
 
         <div class="row">
             <div class="col-12">

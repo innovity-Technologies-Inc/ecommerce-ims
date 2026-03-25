@@ -176,33 +176,33 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     });
 
     Route::prefix('inventory')->group(function () {
-        Route::prefix('warehouses')->middleware('permission:inventory.warehouse.view')->controller(\App\Http\Controllers\Admin\WarehouseController::class)->group(function () {
+        Route::prefix('warehouses')->middleware('permission:warehouse.view')->controller(\App\Http\Controllers\Admin\WarehouseController::class)->group(function () {
             Route::get('/', 'index')->name('admin.warehouses.index');
-            Route::get('/create', 'create')->name('admin.warehouses.create')->middleware('permission:inventory.warehouse.create');
-            Route::post('/', 'store')->name('admin.warehouses.store')->middleware('permission:inventory.warehouse.create');
-            Route::get('/{warehouse}/edit', 'edit')->name('admin.warehouses.edit')->middleware('permission:inventory.warehouse.edit');
-            Route::put('/{warehouse}', 'update')->name('admin.warehouses.update')->middleware('permission:inventory.warehouse.edit');
-            Route::delete('/{warehouse}', 'destroy')->name('admin.warehouses.destroy')->middleware('permission:inventory.warehouse.delete');
+            Route::get('/create', 'create')->name('admin.warehouses.create')->middleware('permission:warehouse.create');
+            Route::post('/', 'store')->name('admin.warehouses.store')->middleware('permission:warehouse.create');
+            Route::get('/{warehouse}/edit', 'edit')->name('admin.warehouses.edit')->middleware('permission:warehouse.edit');
+            Route::put('/{warehouse}', 'update')->name('admin.warehouses.update')->middleware('permission:warehouse.edit');
+            Route::delete('/{warehouse}', 'destroy')->name('admin.warehouses.destroy')->middleware('permission:warehouse.delete');
         });
 
-        Route::prefix('suppliers')->middleware('permission:inventory.supplier.view')->controller(\App\Http\Controllers\Admin\SupplierController::class)->group(function () {
+        Route::prefix('suppliers')->middleware('permission:supplier.view')->controller(\App\Http\Controllers\Admin\SupplierController::class)->group(function () {
             Route::get('/', 'index')->name('admin.suppliers.index');
-            Route::get('/create', 'create')->name('admin.suppliers.create')->middleware('permission:inventory.supplier.create');
-            Route::post('/', 'store')->name('admin.suppliers.store')->middleware('permission:inventory.supplier.create');
-            Route::get('/{supplier}/edit', 'edit')->name('admin.suppliers.edit')->middleware('permission:inventory.supplier.edit');
-            Route::put('/{supplier}', 'update')->name('admin.suppliers.update')->middleware('permission:inventory.supplier.edit');
-            Route::delete('/{supplier}', 'destroy')->name('admin.suppliers.destroy')->middleware('permission:inventory.supplier.delete');
+            Route::get('/create', 'create')->name('admin.suppliers.create')->middleware('permission:supplier.create');
+            Route::post('/', 'store')->name('admin.suppliers.store')->middleware('permission:supplier.create');
+            Route::get('/{supplier}/edit', 'edit')->name('admin.suppliers.edit')->middleware('permission:supplier.edit');
+            Route::put('/{supplier}', 'update')->name('admin.suppliers.update')->middleware('permission:supplier.edit');
+            Route::delete('/{supplier}', 'destroy')->name('admin.suppliers.destroy')->middleware('permission:supplier.delete');
         });
 
-        Route::prefix('purchase-orders')->middleware('permission:inventory.po.view')->controller(\App\Http\Controllers\Admin\PurchaseOrderController::class)->group(function () {
+        Route::prefix('purchase-orders')->middleware('permission:po.view')->controller(\App\Http\Controllers\Admin\PurchaseOrderController::class)->group(function () {
             Route::get('/', 'index')->name('admin.inventory.po.index');
-            Route::get('/create', 'create')->name('admin.inventory.po.create')->middleware('permission:inventory.po.create');
-            Route::post('/', 'store')->name('admin.inventory.po.store')->middleware('permission:inventory.po.create');
+            Route::get('/create', 'create')->name('admin.inventory.po.create')->middleware('permission:po.create');
+            Route::post('/', 'store')->name('admin.inventory.po.store')->middleware('permission:po.create');
             Route::get('/{po}', 'show')->name('admin.inventory.po.show');
-            Route::get('/{po}/edit', 'edit')->name('admin.inventory.po.edit')->middleware('permission:inventory.po.edit');
-            Route::put('/{po}', 'update')->name('admin.inventory.po.update')->middleware('permission:inventory.po.edit');
-            Route::put('/{po}/status', 'updateStatus')->name('admin.inventory.po.update-status')->middleware('permission:inventory.po.edit');
-            Route::delete('/{po}', 'destroy')->name('admin.inventory.po.destroy')->middleware('permission:inventory.po.delete');
+            Route::get('/{po}/edit', 'edit')->name('admin.inventory.po.edit')->middleware('permission:po.edit');
+            Route::put('/{po}', 'update')->name('admin.inventory.po.update')->middleware('permission:po.edit');
+            Route::put('/{po}/status', 'updateStatus')->name('admin.inventory.po.update-status')->middleware('permission:po.edit');
+            Route::delete('/{po}', 'destroy')->name('admin.inventory.po.destroy')->middleware('permission:po.delete');
         });
     });
 });

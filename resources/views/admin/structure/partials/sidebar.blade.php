@@ -171,7 +171,7 @@
             </li>
             @endif
 
-            @if(auth('admin')->user()->can('inventory.warehouse.view') || auth('admin')->user()->can('inventory.supplier.view') || auth('admin')->user()->can('inventory.po.view'))
+            @if(auth('admin')->user()->can('warehouse.view') || auth('admin')->user()->can('supplier.view') || auth('admin')->user()->can('po.view'))
             <li class="nav-item">
                 <a class="nav-link menu-arrow" href="#sidebarInventory" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarInventory">
                                    <span class="nav-icon">
@@ -181,17 +181,17 @@
                 </a>
                 <div class="collapse" id="sidebarInventory">
                     <ul class="nav sub-navbar-nav">
-                        @can('inventory.warehouse.view')
+                        @can('warehouse.view')
                         <li class="sub-nav-item">
                             <a class="sub-nav-link" href="{{ route('admin.warehouses.index') }}">Warehouses</a>
                         </li>
                         @endcan
-                        @can('inventory.supplier.view')
+                        @can('supplier.view')
                         <li class="sub-nav-item">
                             <a class="sub-nav-link" href="{{ route('admin.suppliers.index') }}">Suppliers</a>
                         </li>
                         @endcan
-                        @can('inventory.po.view')
+                        @can('po.view')
                         <li class="sub-nav-item">
                             <a class="sub-nav-link" href="{{ route('admin.inventory.po.index') }}">Purchase Orders</a>
                         </li>

@@ -101,7 +101,11 @@ class RoleService
         $permissions = \Spatie\Permission\Models\Permission::where('guard_name', 'admin')->get();
 
         return $permissions->groupBy(function ($permission) {
-            return explode('.', $permission->name)[0];
+            $parts = explode('.', $permission->name);
+            
+            // Group by the first part (e.g., 'warehouse', 'supplier', 'po', 'products', 'orders')
+            // Special mapping for 'po' to 'purchase_order' for better display
+            return $parts[0] === 'po' ? 'purchase_order' : $parts[0];
         });
     }
 }

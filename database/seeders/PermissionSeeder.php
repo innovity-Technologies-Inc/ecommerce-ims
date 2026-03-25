@@ -94,15 +94,20 @@ class PermissionSeeder extends Seeder
             'settings.edit',
 
             // Inventory
-            'inventory.warehouse.view',
-            'inventory.warehouse.create',
-            'inventory.warehouse.edit',
-            'inventory.warehouse.delete',
+            'warehouse.view',
+            'warehouse.create',
+            'warehouse.edit',
+            'warehouse.delete',
 
-            'inventory.supplier.view',
-            'inventory.supplier.create',
-            'inventory.supplier.edit',
-            'inventory.supplier.delete',
+            'supplier.view',
+            'supplier.create',
+            'supplier.edit',
+            'supplier.delete',
+
+            'po.view',
+            'po.create',
+            'po.edit',
+            'po.delete',
         ];
 
         foreach ($permissions as $permission) {

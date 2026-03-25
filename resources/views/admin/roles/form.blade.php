@@ -48,7 +48,10 @@
                                                 <div class="card-body py-2">
                                                     @foreach($permissions as $permission)
                                                         @php
-                                                            $op = explode('.', $permission->name)[1];
+                                                            $parts = explode('.', $permission->name);
+                                                            // Now that it's separate cards, just show the operation (last part)
+                                                            // e.g., 'View', 'Create'
+                                                            $label = ucfirst(end($parts));
                                                             $isChecked = isset($role) && $role->hasPermissionTo($permission->name);
                                                         @endphp
                                                         <div class="form-check mb-1">
@@ -59,7 +62,7 @@
                                                                    id="perm_{{ $permission->id }}"
                                                                    {{ $isChecked ? 'checked' : '' }}>
                                                             <label class="form-check-label small" for="perm_{{ $permission->id }}">
-                                                                {{ ucfirst($op) }}
+                                                                {{ $label }}
                                                             </label>
                                                         </div>
                                                     @endforeach

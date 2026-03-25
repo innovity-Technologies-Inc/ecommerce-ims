@@ -1,11 +1,10 @@
-@extends('admin.structure.master')
+@extends('admin.structure.app')
 
 @section('title', 'Purchase Order Details')
 
 @section('content')
-<div class="page-content">
-    <div class="container-fluid">
-        <div class="row">
+<div class="container-fluid">
+    <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                     <h4 class="mb-sm-0">Purchase Order: {{ $po->po_number }}</h4>
@@ -14,7 +13,7 @@
                             <i class="bx bx-arrow-back me-1"></i> Back
                         </a>
                         @if($po->status !== 'Delivered')
-                            @can('inventory.po.edit')
+                            @can('po.edit')
                             <a href="{{ route('admin.inventory.po.edit', $po->id) }}" class="btn btn-primary btn-sm">
                                 <i class="bx bx-edit me-1"></i> Edit PO
                             </a>

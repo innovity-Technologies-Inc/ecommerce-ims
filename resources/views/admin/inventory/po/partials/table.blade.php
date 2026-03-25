@@ -34,13 +34,13 @@
                     </td>
                     <td>
                         <div class="d-flex gap-1">
-                            @can('inventory.po.view')
+                            @can('po.view')
                             <a href="{{ route('admin.inventory.po.show', $po->id) }}" class="btn btn-soft-info btn-sm" title="View">
                                 <i class="bx bx-show"></i>
                             </a>
                             @endcan
 
-                            @can('inventory.po.edit')
+                            @can('po.edit')
                                 @if($po->status !== 'Delivered')
                                 <a href="{{ route('admin.inventory.po.edit', $po->id) }}" class="btn btn-soft-primary btn-sm" title="Edit">
                                     <i class="bx bx-edit"></i>
@@ -48,7 +48,7 @@
                                 @endif
                             @endcan
 
-                            @can('inventory.po.delete')
+                            @can('po.delete')
                                 @if($po->status !== 'Delivered')
                                 <form action="{{ route('admin.inventory.po.destroy', $po->id) }}" method="POST" class="d-inline">
                                     @csrf
