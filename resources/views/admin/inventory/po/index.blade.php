@@ -3,94 +3,101 @@
 @section('title', 'Purchase Orders')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 class="mb-sm-0">Purchase Orders</h4>
-                @can('po.create')
-                <div class="page-title-right">
-                    <a href="{{ route('admin.inventory.po.create') }}" class="btn btn-primary btn-sm">
-                        <i class="bx bx-plus me-1"></i> Create Purchase Order
-                    </a>
-                </div>
-                @endcan
-            </div>
-        </div>
+<div class="container-xxl">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h4 class="mb-0">Purchase Orders</h4>
+        @can('po.create')
+        <a href="{{ route('admin.inventory.po.create') }}" class="btn btn-primary btn-sm">
+            Add Purchase Order
+        </a>
+        @endcan
     </div>
 
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row mb-3">
-                            <div class="col-md-3">
-                                <input type="text" id="poSearch" class="form-control" placeholder="Search PO Number...">
-                            </div>
-                            <div class="col-md-2">
-                                <select id="statusFilter" class="form-select">
-                                    <option value="all">All Status</option>
-                                    <option value="Draft">Draft</option>
-                                    <option value="Sent">Sent</option>
-                                    <option value="Delivered">Delivered</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <select id="supplierFilter" class="form-select select2">
-                                    <option value="">All Suppliers</option>
-                                    @foreach($suppliers as $supplier)
-                                        <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <select id="sortFilter" class="form-select">
-                                    <option value="latest">Latest</option>
-                                    <option value="oldest">Oldest</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3 text-end">
-                                <button type="button" id="resetFilters" class="btn btn-soft-secondary">Reset</button>
-                            </div>
-                        </div>
-
-                        <div id="poTableContainer">
-                            @include('admin.inventory.po.partials.table')
-                        </div>
+    <div class="card overflow-hidden">
+        <div class="card-header">
+            <div class="row align-items-center g-2">
+                <div class="col-lg-3">
+                    <div class="search-box">
+                        <input type="text" id="poSearch" class="form-control" placeholder="Search PO Number..." value="{{ request('search') }}">
                     </div>
                 </div>
+                <div class="col-lg-2">
+                    <select id="statusFilter" class="form-select">
+                        <option value="all">All Status</option>
+                        <option value="Draft" {{ request('status') == 'Draft' ? 'selected' : '' }}>Draft</option>
+                        <option value="Sent" {{ request('status') == 'Sent' ? 'selected' : '' }}>Sent</option>
+                        <option value="Delivered" {{ request('status') == 'Delivered' ? 'selected' : '' }}>Delivered</option>
+                    </select>
+                </div>
+                <div class="col-lg-2">
+                    <select id="supplierFilter" class="form-select select2">
+                        <option value="">All Suppliers</option>
+                        @foreach($suppliers as $supplier)
+                            <option value="{{ $supplier->id }}" {{ request('supplier_id') == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-lg-auto ms-auto">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-muted text-nowrap">Sort By:</span>
+                        <select id="sortFilter" class="form-select">
+                            <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Latest</option>
+                            <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-auto">
+                    <button type="button" id="resetFilters" class="btn btn-soft-secondary">Reset</button>
+                </div>
             </div>
+        </div>
+
+        <div class="card-body p-0" id="table-container">
+            @include('admin.inventory.po.partials.table')
         </div>
     </div>
 </div>
 @endsection
 
-@push('scripts')
+@section('scripts')
 <script>
     $(document).ready(function() {
         $('.select2').select2({
             theme: 'bootstrap-5'
         });
 
-        function fetchPOs() {
-            let search = $('#poSearch').val();
-            let status = $('#statusFilter').val();
-            let supplier_id = $('#supplierFilter').val();
-            let sort = $('#sortFilter').val();
+        const tableContainer = $('#table-container');
+        let searchTimer;
 
-            $('#poTableContainer').css('opacity', 0.5);
+        function fetchPOs() {
+            const search = $('#poSearch').val();
+            const status = $('#statusFilter').val();
+            const supplier_id = $('#supplierFilter').val();
+            const sort = $('#sortFilter').val();
+            const url = new URL(window.location.href);
+
+            if (search) url.searchParams.set('search', search); else url.searchParams.delete('search');
+            if (status !== 'all') url.searchParams.set('status', status); else url.searchParams.delete('status');
+            if (supplier_id) url.searchParams.set('supplier_id', supplier_id); else url.searchParams.delete('supplier_id');
+            if (sort !== 'latest') url.searchParams.set('sort', sort); else url.searchParams.delete('sort');
+
+            window.history.pushState({}, '', url);
+            tableContainer.css('opacity', 0.5);
 
             $.ajax({
-                url: "{{ route('admin.inventory.po.index') }}",
-                data: { search, status, supplier_id, sort },
+                url: url.href,
+                type: 'GET',
                 success: function(response) {
-                    $('#poTableContainer').html(response).css('opacity', 1);
-                    window.history.pushState(null, null, `?search=${search}&status=${status}&supplier_id=${supplier_id}&sort=${sort}`);
+                    tableContainer.html(response).css('opacity', 1);
                 }
             });
         }
 
-        $('#poSearch').on('keyup', debounce(fetchPOs, 500));
+        $('#poSearch').on('keyup', function() {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(fetchPOs, 500);
+        });
+
         $('#statusFilter, #supplierFilter, #sortFilter').on('change', fetchPOs);
 
         $('#resetFilters').click(function() {
@@ -103,23 +110,17 @@
 
         $(document).on('click', '.pagination a', function(e) {
             e.preventDefault();
-            let url = $(this).attr('href');
-            $('#poTableContainer').css('opacity', 0.5);
+            const url = $(this).attr('href');
+            tableContainer.css('opacity', 0.5);
             $.ajax({
                 url: url,
+                type: 'GET',
                 success: function(response) {
-                    $('#poTableContainer').html(response).css('opacity', 1);
+                    tableContainer.html(response).css('opacity', 1);
+                    window.history.pushState({}, '', url);
                 }
             });
         });
-
-        function debounce(func, wait) {
-            let timeout;
-            return function() {
-                clearTimeout(timeout);
-                timeout = setTimeout(func, wait);
-            };
-        }
     });
 </script>
-@endpush
+@endsection

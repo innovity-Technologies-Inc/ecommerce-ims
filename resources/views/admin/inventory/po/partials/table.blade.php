@@ -1,6 +1,6 @@
 <div class="table-responsive">
-    <table class="table table-bordered table-striped align-middle">
-        <thead class="table-light">
+    <table class="table align-middle mb-0 table-hover table-centered">
+        <thead class="bg-light-subtle">
             <tr>
                 <th style="width: 50px;">#</th>
                 <th>PO Number</th>
@@ -36,14 +36,14 @@
                         <div class="d-flex gap-1">
                             @can('po.view')
                             <a href="{{ route('admin.inventory.po.show', $po->id) }}" class="btn btn-soft-info btn-sm" title="View">
-                                <i class="bx bx-show"></i>
+                                <iconify-icon icon="solar:eye-broken" class="align-middle fs-18"></iconify-icon>
                             </a>
                             @endcan
 
                             @can('po.edit')
                                 @if($po->status !== 'Delivered')
                                 <a href="{{ route('admin.inventory.po.edit', $po->id) }}" class="btn btn-soft-primary btn-sm" title="Edit">
-                                    <i class="bx bx-edit"></i>
+                                    <iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon>
                                 </a>
                                 @endif
                             @endcan
@@ -54,7 +54,7 @@
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-soft-danger btn-sm confirmDelete" title="Delete">
-                                        <i class="bx bx-trash"></i>
+                                        <iconify-icon icon="solar:trash-bin-trash-broken" class="align-middle fs-18"></iconify-icon>
                                     </button>
                                 </form>
                                 @endif
@@ -71,13 +71,13 @@
     </table>
 </div>
 
-<div class="mt-3 d-flex justify-content-between align-items-center">
-    <div>
-        <p class="text-muted mb-0">
-            Showing {{ $pos->firstItem() ?? 0 }} to {{ $pos->lastItem() ?? 0 }} of {{ $pos->total() }} Results
-        </p>
-    </div>
-    <div>
-        {{ $pos->links() }}
+<div class="card-footer border-top">
+    <div class="d-flex align-items-center justify-content-between">
+        <div>
+            Showing <span class="fw-semibold">{{ $pos->firstItem() ?? 0 }}</span> to <span class="fw-semibold">{{ $pos->lastItem() ?? 0 }}</span> of <span class="fw-semibold">{{ $pos->total() }}</span> Results
+        </div>
+        <div>
+            {{ $pos->appends(request()->all())->links() }}
+        </div>
     </div>
 </div>

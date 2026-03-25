@@ -38,10 +38,9 @@ class PurchaseOrderController extends Controller
     public function create(): View
     {
         $suppliers = Supplier::all();
-        $warehouses = Warehouse::all();
         $products = Product::with('variants')->where('status', 1)->get();
 
-        return view('admin.inventory.po.create', compact('suppliers', 'warehouses', 'products'));
+        return view('admin.inventory.po.create', compact('suppliers', 'products'));
     }
 
     /**
@@ -69,7 +68,7 @@ class PurchaseOrderController extends Controller
      */
     public function show(PurchaseOrder $po): View
     {
-        $po->load(['supplier', 'warehouse', 'items.product', 'items.variant', 'creator']);
+        $po->load(['supplier', 'items.product', 'items.variant', 'creator']);
 
         return view('admin.inventory.po.show', compact('po'));
     }
@@ -87,11 +86,10 @@ class PurchaseOrderController extends Controller
         }
 
         $suppliers = Supplier::all();
-        $warehouses = Warehouse::all();
         $products = Product::with('variants')->where('status', 1)->get();
         $po->load('items');
 
-        return view('admin.inventory.po.edit', compact('po', 'suppliers', 'warehouses', 'products'));
+        return view('admin.inventory.po.edit', compact('po', 'suppliers', 'products'));
     }
 
     /**

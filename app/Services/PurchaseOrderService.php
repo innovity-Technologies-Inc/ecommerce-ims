@@ -20,7 +20,7 @@ class PurchaseOrderService
      */
     public function getAllPurchaseOrders(array $params = [], int $perPage = 10): LengthAwarePaginator
     {
-        $query = PurchaseOrder::with(['supplier', 'warehouse', 'creator']);
+        $query = PurchaseOrder::with(['supplier', 'creator']);
 
         $flexSearch = app(FlexSearch::class);
         $searchTerm = $params['search'] ?? null;
@@ -61,7 +61,6 @@ class PurchaseOrderService
             $po = PurchaseOrder::create([
                 'po_number' => $this->generatePONumber(),
                 'supplier_id' => $data['supplier_id'],
-                'warehouse_id' => $data['warehouse_id'] ?? null,
                 'order_date' => $data['order_date'],
                 'expected_delivery_date' => $data['expected_delivery_date'] ?? null,
                 'status' => $data['status'] ?? 'Draft',
@@ -108,7 +107,6 @@ class PurchaseOrderService
 
             $po->update([
                 'supplier_id' => $data['supplier_id'],
-                'warehouse_id' => $data['warehouse_id'] ?? null,
                 'order_date' => $data['order_date'],
                 'expected_delivery_date' => $data['expected_delivery_date'] ?? null,
                 'status' => $data['status'],

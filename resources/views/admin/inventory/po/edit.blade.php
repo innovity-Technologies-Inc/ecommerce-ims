@@ -3,102 +3,33 @@
 @section('title', 'Edit Purchase Order')
 
 @section('content')
-<div class="container-fluid">
+<div class="container-xxl">
     <div class="row">
-            <div class="col-12">
-                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0">Edit Purchase Order: {{ $po->po_number }}</h4>
-                    <div class="page-title-right">
-                        <a href="{{ route('admin.inventory.po.index') }}" class="btn btn-secondary btn-sm">
-                            <i class="bx bx-arrow-back me-1"></i> Back
-                        </a>
-                    </div>
+        <div class="col-12">
+            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                <h4 class="mb-sm-0">Edit Purchase Order: {{ $po->po_number }}</h4>
+                <div class="page-title-right">
+                    <a href="{{ route('admin.inventory.po.index') }}" class="btn btn-secondary btn-sm">
+                        <i class="bx bx-arrow-back me-1"></i> Back
+                    </a>
                 </div>
             </div>
         </div>
+    </div>
 
-        <form action="{{ route('admin.inventory.po.update', $po->id) }}" method="POST" id="poForm">
-            @csrf
-            @method('PUT')
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title mb-4">Product Details</h5>
-                            <div class="table-responsive">
-                                <table class="table table-bordered align-middle" id="itemsTable">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Product / Variant</th>
-                                            <th style="width: 150px;">Quantity</th>
-                                            <th style="width: 150px;">Unit Cost</th>
-                                            <th style="width: 150px;">Subtotal</th>
-                                            <th style="width: 50px;"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="itemsBody">
-                                        @foreach($po->items as $index => $item)
-                                        <tr class="item-row">
-                                            <td>
-                                                <select name="items[{{ $index }}][product_key]" class="form-select product-select select2" required>
-                                                    <option value="">Select Product</option>
-                                                    @foreach($products as $product)
-                                                        @if($product->variants->count() > 0)
-                                                            @foreach($product->variants as $variant)
-                                                                <option value="v-{{ $variant->id }}" data-price="{{ $variant->regular_price }}" {{ $item->product_variant_id == $variant->id ? 'selected' : '' }}>
-                                                                    {{ $product->name }} ({{ $variant->variant_name }})
-                                                                </option>
-                                                            @endforeach
-                                                        @else
-                                                            <option value="p-{{ $product->id }}" data-price="{{ $product->regular_price }}" {{ ($item->product_id == $product->id && !$item->product_variant_id) ? 'selected' : '' }}>
-                                                                {{ $product->name }}
-                                                            </option>
-                                                        @endif
-                                                    @endforeach
-                                                </select>
-                                                <input type="hidden" name="items[{{ $index }}][product_id]" class="product-id" value="{{ $item->product_id }}">
-                                                <input type="hidden" name="items[{{ $index }}][product_variant_id]" class="variant-id" value="{{ $item->product_variant_id }}">
-                                            </td>
-                                            <td>
-                                                <input type="number" name="items[{{ $index }}][order_quantity]" class="form-control quantity" min="1" value="{{ $item->order_quantity }}" required>
-                                            </td>
-                                            <td>
-                                                <input type="number" name="items[{{ $index }}][unit_cost]" class="form-control unit-cost" step="0.01" min="0" value="{{ $item->unit_cost }}" required>
-                                            </td>
-                                            <td>
-                                                <input type="text" class="form-control subtotal" readonly value="{{ number_format($item->subtotal, 2, '.', '') }}">
-                                            </td>
-                                            <td>
-                                                <button type="button" class="btn btn-soft-danger btn-sm removeItem">
-                                                    <i class="bx bx-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td colspan="3" class="text-end font-weight-bold">Total Amount:</td>
-                                            <td colspan="2">
-                                                <input type="text" id="displayTotal" class="form-control" readonly value="{{ number_format($po->total_amount, 2, '.', '') }}">
-                                            </td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                            <button type="button" class="btn btn-soft-primary btn-sm mt-2" id="addItem">
-                                <i class="bx bx-plus me-1"></i> Add Product
-                            </button>
-                        </div>
+    <form action="{{ route('admin.inventory.po.update', $po->id) }}" method="POST" id="poForm">
+        @csrf
+        @method('PUT')
+        <div class="row">
+            <!-- Order Information - Full Width Row -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Order Information</h5>
                     </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title mb-4">Order Information</h5>
-                            
-                            <div class="mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
                                 <label for="supplier_id" class="form-label">Supplier <span class="text-danger">*</span></label>
                                 <select name="supplier_id" id="supplier_id" class="form-select select2 @error('supplier_id') is-invalid @enderror" required>
                                     <option value="">Select Supplier</option>
@@ -111,20 +42,7 @@
                                 @enderror
                             </div>
 
-                            <div class="mb-3">
-                                <label for="warehouse_id" class="form-label">Warehouse</label>
-                                <select name="warehouse_id" id="warehouse_id" class="form-select select2 @error('warehouse_id') is-invalid @enderror">
-                                    <option value="">Select Warehouse</option>
-                                    @foreach($warehouses as $warehouse)
-                                        <option value="{{ $warehouse->id }}" {{ old('warehouse_id', $po->warehouse_id) == $warehouse->id ? 'selected' : '' }}>{{ $warehouse->name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('warehouse_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <div class="mb-3">
+                            <div class="col-md-3 mb-3">
                                 <label for="order_date" class="form-label">Order Date <span class="text-danger">*</span></label>
                                 <input type="date" name="order_date" id="order_date" class="form-control @error('order_date') is-invalid @enderror" value="{{ old('order_date', $po->order_date->format('Y-m-d')) }}" required>
                                 @error('order_date')
@@ -132,7 +50,7 @@
                                 @enderror
                             </div>
 
-                            <div class="mb-3">
+                            <div class="col-md-3 mb-3">
                                 <label for="expected_delivery_date" class="form-label">Expected Delivery</label>
                                 <input type="date" name="expected_delivery_date" id="expected_delivery_date" class="form-control @error('expected_delivery_date') is-invalid @enderror" value="{{ old('expected_delivery_date', $po->expected_delivery_date ? $po->expected_delivery_date->format('Y-m-d') : '') }}">
                                 @error('expected_delivery_date')
@@ -140,7 +58,7 @@
                                 @enderror
                             </div>
 
-                            <div class="mb-3">
+                            <div class="col-md-3 mb-3">
                                 <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
                                 <select name="status" id="status" class="form-select @error('status') is-invalid @enderror" required>
                                     <option value="Draft" {{ old('status', $po->status) == 'Draft' ? 'selected' : '' }}>Draft</option>
@@ -152,30 +70,106 @@
                                 @enderror
                             </div>
 
-                            <div class="mb-3">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" name="notify_supplier" id="notify_supplier" value="1" {{ old('notify_supplier', $po->notify_supplier) ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="notify_supplier">Notify Supplier by Email</label>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
+                            <div class="col-md-12 mb-3">
                                 <label for="notes" class="form-label">Notes</label>
-                                <textarea name="notes" id="notes" rows="3" class="form-control @error('notes') is-invalid @enderror">{{ old('notes', $po->notes) }}</textarea>
+                                <textarea name="notes" id="notes" rows="2" class="form-control @error('notes') is-invalid @enderror">{{ old('notes', $po->notes) }}</textarea>
                                 @error('notes')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <div class="text-end">
-                                <button type="submit" class="btn btn-primary w-100">Update Purchase Order</button>
+                            <div class="col-md-12">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="notify_supplier" id="notify_supplier" value="1" {{ old('notify_supplier', $po->notify_supplier) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="notify_supplier">Notify Supplier by Email</label>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </form>
-    </div>
+
+            <!-- Product Details - Full Width Row -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Product Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered align-middle" id="itemsTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Product / Variant</th>
+                                        <th style="width: 150px;">Quantity</th>
+                                        <th style="width: 150px;">Unit Cost</th>
+                                        <th style="width: 150px;">Subtotal</th>
+                                        <th style="width: 50px;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="itemsBody">
+                                    @foreach($po->items as $index => $item)
+                                    <tr class="item-row">
+                                        <td>
+                                            <select name="items[{{ $index }}][product_key]" class="form-select product-select select2" required>
+                                                <option value="">Select Product</option>
+                                                @foreach($products as $product)
+                                                    @if($product->variants->count() > 0)
+                                                        @foreach($product->variants as $variant)
+                                                            <option value="v-{{ $variant->id }}" data-price="{{ $variant->regular_price }}" data-product-id="{{ $product->id }}" {{ $item->product_variant_id == $variant->id ? 'selected' : '' }}>
+                                                                {{ $product->name }} ({{ $variant->variant_name }})
+                                                            </option>
+                                                        @endforeach
+                                                    @else
+                                                        <option value="p-{{ $product->id }}" data-price="{{ $product->regular_price }}" data-product-id="{{ $product->id }}" {{ ($item->product_id == $product->id && !$item->product_variant_id) ? 'selected' : '' }}>
+                                                            {{ $product->name }}
+                                                        </option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                            <input type="hidden" name="items[{{ $index }}][product_id]" class="product-id" value="{{ $item->product_id }}">
+                                            <input type="hidden" name="items[{{ $index }}][product_variant_id]" class="variant-id" value="{{ $item->product_variant_id }}">
+                                        </td>
+                                        <td>
+                                            <input type="number" name="items[{{ $index }}][order_quantity]" class="form-control quantity" min="1" value="{{ $item->order_quantity }}" required>
+                                        </td>
+                                        <td>
+                                            <input type="number" name="items[{{ $index }}][unit_cost]" class="form-control unit-cost" step="0.01" min="0" value="{{ $item->unit_cost }}" required>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control subtotal" readonly value="{{ number_format($item->subtotal, 2, '.', '') }}">
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-soft-danger btn-sm removeItem">
+                                                <iconify-icon icon="solar:trash-bin-trash-broken" class="align-middle fs-18"></iconify-icon>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="2" class="text-start fw-bold">
+                                            <button type="button" class="btn btn-soft-primary btn-sm" id="addItem">
+                                                <i class="bx bx-plus me-1"></i> Add Product
+                                            </button>
+                                        </td>
+                                        <td class="text-end fw-bold">Total Amount:</td>
+                                        <td colspan="2">
+                                            <input type="text" id="displayTotal" class="form-control fw-bold" readonly value="{{ number_format($po->total_amount, 2, '.', '') }}">
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer text-end">
+                        <button type="submit" class="btn btn-primary px-5">Update Purchase Order</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 
 <template id="rowTemplate">
@@ -186,12 +180,12 @@
                 @foreach($products as $product)
                     @if($product->variants->count() > 0)
                         @foreach($product->variants as $variant)
-                            <option value="v-{{ $variant->id }}" data-price="{{ $variant->regular_price }}">
+                            <option value="v-{{ $variant->id }}" data-price="{{ $variant->regular_price }}" data-product-id="{{ $product->id }}">
                                 {{ $product->name }} ({{ $variant->variant_name }})
                             </option>
                         @endforeach
                     @else
-                        <option value="p-{{ $product->id }}" data-price="{{ $product->regular_price }}">
+                        <option value="p-{{ $product->id }}" data-price="{{ $product->regular_price }}" data-product-id="{{ $product->id }}">
                             {{ $product->name }}
                         </option>
                     @endif
@@ -211,14 +205,14 @@
         </td>
         <td>
             <button type="button" class="btn btn-soft-danger btn-sm removeItem">
-                <i class="bx bx-trash"></i>
+                <iconify-icon icon="solar:trash-bin-trash-broken" class="align-middle fs-18"></iconify-icon>
             </button>
         </td>
     </tr>
 </template>
 @endsection
 
-@push('scripts')
+@section('scripts')
 <script>
     $(document).ready(function() {
         $('.select2').select2({ theme: 'bootstrap-5' });
@@ -230,12 +224,15 @@
             template = template.replace(/INDEX/g, rowIndex);
             $('#itemsBody').append(template);
             
-            // Re-initialize select2 for the new row
-            $('#itemsBody .select2').last().select2({ theme: 'bootstrap-5' });
+            // Re-initialize select2 for the new row only
+            $('#itemsBody tr').last().find('.select2').select2({ theme: 'bootstrap-5' });
             rowIndex++;
         }
 
-        $('#addItem').click(addRow);
+        $('#addItem').on('click', function(e) {
+            e.preventDefault();
+            addRow();
+        });
 
         $(document).on('click', '.removeItem', function() {
             if ($('.item-row').length > 1) {
@@ -247,22 +244,18 @@
         });
 
         $(document).on('change', '.product-select', function() {
-            let selected = $(this).val();
+            let selectedOption = $(this).find(':selected');
+            let selectedValue = $(this).val();
             let row = $(this).closest('tr');
-            let price = $(this).find(':selected').data('price') || 0;
             
-            if (selected.startsWith('v-')) {
-                row.find('.product-id').val(''); 
-                row.find('.variant-id').val(selected.replace('v-', ''));
-                @foreach($products as $product)
-                    @foreach($product->variants as $variant)
-                        if ("{{ $variant->id }}" == selected.replace('v-', '')) {
-                            row.find('.product-id').val("{{ $product->id }}");
-                        }
-                    @endforeach
-                @endforeach
+            let price = selectedOption.data('price') || 0;
+            let productId = selectedOption.data('product-id') || '';
+            
+            row.find('.product-id').val(productId);
+            
+            if (selectedValue.startsWith('v-')) {
+                row.find('.variant-id').val(selectedValue.replace('v-', ''));
             } else {
-                row.find('.product-id').val(selected.replace('p-', ''));
                 row.find('.variant-id').val('');
             }
 
@@ -291,4 +284,4 @@
         }
     });
 </script>
-@endpush
+@endsection

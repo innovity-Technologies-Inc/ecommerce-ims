@@ -3,7 +3,7 @@
 @section('title', 'Purchase Order Details')
 
 @section('content')
-<div class="container-fluid">
+<div class="container-xxl">
     <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
@@ -100,11 +100,6 @@
                             <div class="fw-bold">{{ $po->supplier->name }}</div>
                             <div class="text-muted small">{{ $po->supplier->email }}</div>
                             <div class="text-muted small">{{ $po->supplier->mobile }}</div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="text-muted mb-1">Warehouse:</label>
-                            <div class="fw-bold">{{ $po->warehouse->name ?? 'N/A' }}</div>
                         </div>
 
                         <div class="mb-3">

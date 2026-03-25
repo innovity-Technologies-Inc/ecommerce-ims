@@ -54,6 +54,17 @@ You MUST strictly follow this sequence for **EVERY** request:
 - The system uses a global SweetAlert2 handler for all elements with the `confirmDelete` class to provide a consistent deletion experience.
 - Example: `<button type="submit" class="btn btn-soft-danger btn-sm confirmDelete">...</button>`
 
+### **Frontend JavaScript & Scripts (STRICT)**
+- **Script Sections:** Always use `@section('scripts')` for including JavaScript in Blade views. Do NOT use `@push('scripts')` as the master layout utilizes `@yield('scripts')`.
+- **Dynamic Metadata:** When passing metadata from PHP/Eloquent to dynamic JavaScript (e.g., product IDs, prices), always use `data-*` attributes on HTML elements.
+- **PROHIBITED:** Never generate nested PHP loops (`@foreach`) inside `<script>` tags to handle lookups. Use data attributes or JSON-encoded objects instead.
+- **Event Binding:** For dynamic elements or standard buttons, prefer robust event delegation or direct binding: `$(document).on('click', '#id', ...)` or `$('#id').on('click', ...)`.
+
+### **Security & Permissions (STRICT)**
+- **Naming Convention:** Use simplified, two-part granular permissions: `module.operation` (e.g., `warehouse.view`, `supplier.create`, `po.edit`).
+- **Middleware:** Every route must be protected by its specific granular permission middleware.
+- **UI Protection:** All action buttons (Add, Edit, Delete) must be wrapped in `@can('permission.name')` directives.
+
 ## 2. PHP 8.3 Standards
 - **Constructor Property Promotion:** Use `public function __construct(protected Service $service) {}`.
 - **Explicit Typing:** Every method MUST have a defined return type hint (e.g., `: bool`, `: View`, `: RedirectResponse`).
