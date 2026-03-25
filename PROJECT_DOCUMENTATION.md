@@ -467,22 +467,29 @@ Every module or architectural change must be documented in this file before a ta
   - **Validation:** `WarehouseRequest` and `SupplierRequest` enforce strict data integrity (e.g., required names, valid email formats, and string length limits) before persistence.
   - **Search & Filtering:** Both index pages utilize `FlexSearch` for real-time, multi-column searching (Name/Location for Warehouses; Name/Email/Mobile/Address for Suppliers) and AJAX-driven sorting.
   - **Security:** Access is controlled via granular permissions: `warehouse.view/create/edit/delete` and `supplier.view/create/edit/delete`.
-  - **UI/UX:** Integrated into a new "Inventory" sidebar menu with Bootstrap 5 styled forms and tables, maintaining 1:1 visual continuity with the rest of the Admin Panel.
+  - **UI/UX:** Integrated into a dedicated "Inventory Management" sidebar section with top-level links for improved navigation.
 
 ### 3.32 Purchase Order (PO) Module
-- **What:** A comprehensive procurement system allowing administrators to create and track purchase orders for products and variants from specific suppliers.
+- **What:** A comprehensive procurement system allowing administrators to create, track, and receive purchase orders for products and variants from specific suppliers.
 - **How it Works:**
-  - **Creation & Itemization:** Admins can select a supplier and warehouse, then add multiple products or specific variants. The system supports dynamic row addition via jQuery.
-  - **Date Tracking:** Tracks critical timestamps including `order_date`, `expected_delivery_date`, and the actual `received_date`.
-  - **Email Notifications:** Includes a "Notify by Mail" option that automatically sends a professional HTML/Markdown email to the supplier containing the PO details (Items, Quantities, Unit Costs).
-  - **Status Workflow:** Orders progress through `Draft`, `Sent`, and `Delivered` stages.
-  - **Automatic Stock Replenishment:** When a PO status is updated to `Delivered`, the system automatically increments the stock levels for all included products and variants in the database.
+  - **Creation & Itemization:** Admins select a supplier and add multiple products or variants using a dynamic row-wise layout. The system supports optional `expected_delivery_date` tracking.
+  - **Status Workflow:** Orders follow a strict progression: `Draft` -> `Sent` -> `Delivered`.
+    - **Draft:** Fully editable and deletable.
+    - **Sent:** The order is locked for editing. An option to notify the supplier via email is available during the transition.
+    - **Delivered:** Automatically set upon completing the "Receive PO" process. Manual status updates to "Delivered" are prohibited.
+  - **Advanced Receiving Workflow:** When an order is "Sent", a "Receive PO" button appears. This opens a specialized form to track the physical delivery:
+    - **Batch Tracking:** Supports assigning a unique `batch_number` to the received shipment.
+    - **Fulfillment Accuracy:** Admins track `Received`, `Damaged`, and `Missing` quantities for every item in the order.
+    - **Serial Number Parsing:** A robust system allows entry of serial number ranges (e.g., `SN001 - SN100`) and individual values. The system automatically parses these into a structured JSON array.
+  - **Automated Inventory Synchronization:**
+    - **Stock Update:** Upon receiving, the stock for each product/variant is automatically incremented by the *Received Quantity*.
+    - **Unit Cost Sync:** The system automatically updates the `unit_cost` field in the `products` and `product_variants` tables with the latest purchase price from the PO.
 - **Implementation Details:**
-  - **`PurchaseOrderService`:** Orchestrates the complex logic for multi-item creation, total calculations, automated email triggers, and inventory synchronization.
-  - **Data Integrity:** Wrapped in `DB::transaction` to ensure that item records and stock adjustments are atomic.
-  - **Unique Numbering:** Automatically generates sequential PO numbers (e.g., `PO-00000001`).
-  - **Security:** Protected by granular permissions: `po.view`, `po.create`, `po.edit`, and `po.delete`.
-  - **Advanced Filtering:** Utilizes `FlexSearch` for real-time searching by PO number and provides specialized filters for Status and Supplier on the index page.
+  - **`PurchaseOrderService`:** Centralizes complex logic for serial range parsing (using regex and padding), inventory adjustments, and status transitions.
+  - **Data Integrity:** All receiving operations are wrapped in `DB::transaction`. Validates that the count of parsed serial numbers matches the received quantity.
+  - **Security:** Access is governed by granular permissions: `po.view`, `po.create`, `po.edit`, and `po.delete`.
+  - **UI/UX:** Uses `container-xxl` layout, `badge-soft` status indicators, and specialized Iconify icons. Integrated into a dedicated "Inventory Management" sidebar section.
+  - **Validation:** Uses `PurchaseOrderRequest` for creation/updates and `PurchaseOrderReceiveRequest` for the receiving workflow.
 
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*

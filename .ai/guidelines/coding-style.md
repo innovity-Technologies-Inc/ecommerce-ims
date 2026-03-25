@@ -32,6 +32,10 @@ You MUST strictly follow this sequence for **EVERY** request:
 - **ALL** business logic, data calculations, and database operations (queries, updates, deletions) **MUST** reside in Service classes (`app/Services`).
 - **NO** logic is allowed in Controllers. They are strictly for receiving validated data and returning responses.
 
+### **Error Handling (MANDATORY)**
+
+- **MANDATORY:** Every `catch` block **MUST** log the error using `Log::error($e->getMessage())` (or a more descriptive message) before returning a response or re-throwing. This is critical for debugging SQL and system errors that are otherwise hidden from the user.
+
 ### **Thin Controllers (Routing Only)**
 - Controllers **MUST** be thin. Their sole responsibility is to:
     1. Receive a **Form Request** (automatically validated).

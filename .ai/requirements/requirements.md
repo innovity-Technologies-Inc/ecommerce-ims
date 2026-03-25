@@ -19,7 +19,8 @@ This document lists the high-level requirements for the modules implemented in t
 - [ ] **REQ-88:** Purchase Order (PO) Management: Admin can create POs by selecting multiple products/variants and aligning them with a supplier.
 - [ ] **REQ-89:** PO Email Notification: Option to automatically send the PO details to the supplier's email via a "Notify by Mail" checkbox during creation/update.
 - [ ] **REQ-90:** PO Status Workflow: Support for `Draft`, `Sent`, and `Delivered` statuses with the ability for admins to transition between them.
-- [ ] **REQ-91:** PO Item Tracking: Maintain a detailed record of products, variants, quantities, and unit costs within each Purchase Order.
+- [x] **REQ-91:** PO Item Tracking: Maintain a detailed record of products, variants, quantities, and unit costs within each Purchase Order.
+- [x] **REQ-92:** Mandatory Error Logging & SQL Fix: Implement mandatory logging for all `catch` blocks across the system to prevent hidden SQL/system errors. Fix the "Column not found" error in PO receiving by executing pending migrations.
 
 ## 2. Catalog Management
 - [x] **REQ-05:** Brand CRUD (Logo, Slug, Status).

@@ -11,6 +11,7 @@ use App\Models\Supplier;
 use App\Services\PurchaseOrderService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class PurchaseOrderController extends Controller
@@ -56,6 +57,7 @@ class PurchaseOrderController extends Controller
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $e) {
+            Log::error('PO Store Error: ' . $e->getMessage());
             return back()->withInput()->with([
                 'message' => 'Error: '.$e->getMessage(),
                 'alert-type' => 'error',
@@ -105,6 +107,7 @@ class PurchaseOrderController extends Controller
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $e) {
+            Log::error('PO Update Error: ' . $e->getMessage());
             return back()->withInput()->with([
                 'message' => 'Error: '.$e->getMessage(),
                 'alert-type' => 'error',
@@ -136,6 +139,7 @@ class PurchaseOrderController extends Controller
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $e) {
+            Log::error('PO Update Status Error: ' . $e->getMessage());
             return back()->with([
                 'message' => 'Error: '.$e->getMessage(),
                 'alert-type' => 'error',
@@ -170,6 +174,7 @@ class PurchaseOrderController extends Controller
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $e) {
+            Log::error('PO Receive Process Error: ' . $e->getMessage());
             return back()->withInput()->with([
                 'message' => 'Error: '.$e->getMessage(),
                 'alert-type' => 'error',
@@ -190,6 +195,7 @@ class PurchaseOrderController extends Controller
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $e) {
+            Log::error('PO Delete Error: ' . $e->getMessage());
             return back()->with([
                 'message' => 'Error: '.$e->getMessage(),
                 'alert-type' => 'error',
