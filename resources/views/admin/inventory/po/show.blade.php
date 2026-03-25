@@ -12,6 +12,13 @@
                         <a href="{{ route('admin.inventory.po.index') }}" class="btn btn-secondary btn-sm">
                             <i class="bx bx-arrow-back me-1"></i> Back
                         </a>
+                        @if($po->status === 'Sent')
+                            @can('po.edit')
+                            <a href="{{ route('admin.inventory.po.receive', $po->id) }}" class="btn btn-success btn-sm">
+                                <iconify-icon icon="solar:box-minimalistic-bold-duotone" class="align-middle fs-18 me-1"></iconify-icon> Receive PO
+                            </a>
+                            @endcan
+                        @endif
                         @if($po->status !== 'Delivered')
                             @can('po.edit')
                             <a href="{{ route('admin.inventory.po.edit', $po->id) }}" class="btn btn-primary btn-sm">
@@ -124,7 +131,7 @@
                             <div class="fw-bold">{{ $po->creator->name ?? 'System' }}</div>
                         </div>
 
-                        @if($po->status !== 'Delivered')
+                        @if($po->status === 'Draft')
                         <hr>
                         <form action="{{ route('admin.inventory.po.update-status', $po->id) }}" method="POST">
                             @csrf
@@ -132,20 +139,9 @@
                             <div class="mb-3">
                                 <label for="statusUpdate" class="form-label">Update Status</label>
                                 <select name="status" id="statusUpdate" class="form-select">
-                                    @if($po->status === 'Draft')
-                                        <option value="Draft" selected>Draft</option>
-                                        <option value="Sent">Sent</option>
-                                        <option value="Delivered">Delivered</option>
-                                    @elseif($po->status === 'Sent')
-                                        <option value="Sent" selected>Sent</option>
-                                        <option value="Delivered">Delivered</option>
-                                    @endif
+                                    <option value="Draft" selected>Draft</option>
+                                    <option value="Sent">Sent</option>
                                 </select>
-                            </div>
-
-                            <div id="receivedDateContainer" class="mb-3" style="display: none;">
-                                <label for="received_date" class="form-label">Received Date</label>
-                                <input type="date" name="received_date" id="received_date" class="form-control" value="{{ date('Y-m-d') }}">
                             </div>
 
                             <div id="notifySupplierContainer" class="mb-3" style="display: none;">
@@ -156,8 +152,8 @@
                             </div>
 
                             <button type="submit" class="btn btn-soft-success w-100 mt-2">Update Status</button>
-                            </form>
-                            @endif
+                        </form>
+                        @endif
                             </div>
                             </div>
                             </div>

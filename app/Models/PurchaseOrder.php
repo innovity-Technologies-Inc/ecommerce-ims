@@ -10,6 +10,7 @@ class PurchaseOrder extends Model
 {
     protected $fillable = [
         'po_number',
+        'batch_number',
         'supplier_id',
         'order_date',
         'expected_delivery_date',

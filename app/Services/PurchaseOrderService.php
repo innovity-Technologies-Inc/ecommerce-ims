@@ -152,29 +152,15 @@ class PurchaseOrderService
                 throw new \Exception('Status cannot be changed once delivered.');
             }
 
+            if ($status === 'Delivered') {
+                throw new \Exception('Delivered status can only be set via the "Receive PO" form.');
+            }
+
             if ($status === 'Sent' && $po->status !== 'Draft') {
                 throw new \Exception('Purchase Order can only be marked as Sent if it is currently in Draft status.');
             }
 
             $updateData = ['status' => $status];
-            if ($status === 'Delivered') {
-                $updateData['received_date'] = $receivedDate ?? now();
-
-                // Increase Stock
-                foreach ($po->items as $item) {
-                    if ($item->product_variant_id) {
-                        $variant = ProductVariant::find($item->product_variant_id);
-                        $variant->increment('stock', $item->order_quantity);
-                    } else {
-                        $product = Product::find($item->product_id);
-                        $product->increment('stock', $item->order_quantity);
-                    }
-
-                    // Mark as received (full quantity for now)
-                    $item->update(['received_quantity' => $item->order_quantity]);
-                }
-            }
-
             $po->update($updateData);
 
             if ($status === 'Sent' && $notifySupplier) {
@@ -192,6 +178,98 @@ class PurchaseOrderService
             throw new \Exception('Delivered Purchase Orders cannot be deleted.');
         }
         $po->delete();
+    }
+
+    /**
+     * Receive a purchase order.
+     */
+    public function receivePurchaseOrder(PurchaseOrder $po, array $data): void
+    {
+        DB::transaction(function () use ($po, $data) {
+            if ($po->status !== 'Sent') {
+                throw new \Exception('Only Sent Purchase Orders can be received.');
+            }
+
+            $po->update([
+                'status' => 'Delivered',
+                'batch_number' => $data['batch_number'] ?? null,
+                'received_date' => $data['received_date'] ?? now(),
+            ]);
+
+            foreach ($data['items'] as $itemId => $itemData) {
+                $item = $po->items()->find($itemId);
+                if (!$item) continue;
+
+                $receivedQty = (int) ($itemData['received_quantity'] ?? 0);
+                $serialInput = $itemData['serial_numbers'] ?? '';
+                $parsedSerials = $this->parseSerialNumbers($serialInput);
+
+                // Validation: If serial numbers provided, count must match received quantity
+                if (!empty($parsedSerials) && count($parsedSerials) !== $receivedQty) {
+                    throw new \Exception("Serial number count (" . count($parsedSerials) . ") for product {$item->product->name} does not match received quantity ($receivedQty).");
+                }
+
+                $item->update([
+                    'received_quantity' => $receivedQty,
+                    'serial_numbers' => $parsedSerials,
+                ]);
+
+                // Increase Stock
+                if ($item->product_variant_id) {
+                    $variant = ProductVariant::find($item->product_variant_id);
+                    $variant->increment('stock', $receivedQty);
+                } else {
+                    $product = Product::find($item->product_id);
+                    $product->increment('stock', $receivedQty);
+                }
+            }
+        });
+    }
+
+    /**
+     * Parse serial numbers from input string.
+     * Supports formats: SN001 - SN300, SN302, SN305-SN310
+     */
+    public function parseSerialNumbers(string $input): array
+    {
+        if (empty(trim($input))) return [];
+
+        $serials = [];
+        $parts = explode(',', $input);
+
+        foreach ($parts as $part) {
+            $part = trim($part);
+            if (empty($part)) continue;
+
+            if (str_contains($part, '-')) {
+                $range = explode('-', $part);
+                $start = trim($range[0]);
+                $end = trim($range[1]);
+
+                // Extract prefix and number using regex
+                preg_match('/^([a-zA-Z]*)([0-9]+)$/', $start, $startMatches);
+                preg_match('/^([a-zA-Z]*)([0-9]+)$/', $end, $endMatches);
+
+                if (count($startMatches) === 3 && count($endMatches) === 3) {
+                    $prefix = $startMatches[1];
+                    $startNum = (int) $startMatches[2];
+                    $endNum = (int) $endMatches[2];
+                    $padding = strlen($startMatches[2]);
+
+                    for ($i = $startNum; $i <= $endNum; $i++) {
+                        $serials[] = $prefix . str_pad((string)$i, $padding, '0', STR_PAD_LEFT);
+                    }
+                } else {
+                    // Fallback if regex fails
+                    $serials[] = $start;
+                    $serials[] = $end;
+                }
+            } else {
+                $serials[] = $part;
+            }
+        }
+
+        return array_unique($serials);
     }
 
     /**

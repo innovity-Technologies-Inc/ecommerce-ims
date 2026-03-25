@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\PurchaseOrderReceiveRequest;
 use App\Http\Requests\Admin\PurchaseOrderRequest;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
 use App\Models\Supplier;
-use App\Models\Warehouse;
 use App\Services\PurchaseOrderService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -125,17 +125,52 @@ class PurchaseOrderController extends Controller
 
         try {
             $this->poService->updateStatus(
-                $po, 
-                $request->status, 
-                $request->received_date, 
+                $po,
+                $request->status,
+                $request->received_date,
                 $request->has('notify_supplier')
             );
+
             return back()->with([
                 'message' => 'Status updated successfully.',
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $e) {
             return back()->with([
+                'message' => 'Error: '.$e->getMessage(),
+                'alert-type' => 'error',
+            ]);
+        }
+    }
+
+    /**
+     * Show the receiving form.
+     */
+    public function receiveForm(PurchaseOrder $po): View
+    {
+        if ($po->status !== 'Sent') {
+            abort(403, 'Only Sent Purchase Orders can be received.');
+        }
+
+        $po->load(['supplier', 'items.product', 'items.variant']);
+
+        return view('admin.inventory.po.receive', compact('po'));
+    }
+
+    /**
+     * Process receiving of purchase order.
+     */
+    public function processReceive(PurchaseOrderReceiveRequest $request, PurchaseOrder $po): RedirectResponse
+    {
+        try {
+            $this->poService->receivePurchaseOrder($po, $request->validated());
+
+            return redirect()->route('admin.inventory.po.show', $po->id)->with([
+                'message' => 'Purchase Order received and inventory updated successfully.',
+                'alert-type' => 'success',
+            ]);
+        } catch (\Exception $e) {
+            return back()->withInput()->with([
                 'message' => 'Error: '.$e->getMessage(),
                 'alert-type' => 'error',
             ]);

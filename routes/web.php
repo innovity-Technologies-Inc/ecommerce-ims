@@ -199,6 +199,8 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
             Route::get('/create', 'create')->name('admin.inventory.po.create')->middleware('permission:po.create');
             Route::post('/', 'store')->name('admin.inventory.po.store')->middleware('permission:po.create');
             Route::get('/{po}', 'show')->name('admin.inventory.po.show');
+            Route::get('/{po}/receive', 'receiveForm')->name('admin.inventory.po.receive')->middleware('permission:po.edit');
+            Route::post('/{po}/receive', 'processReceive')->name('admin.inventory.po.process-receive')->middleware('permission:po.edit');
             Route::get('/{po}/edit', 'edit')->name('admin.inventory.po.edit')->middleware('permission:po.edit');
             Route::put('/{po}', 'update')->name('admin.inventory.po.update')->middleware('permission:po.edit');
             Route::put('/{po}/status', 'updateStatus')->name('admin.inventory.po.update-status')->middleware('permission:po.edit');
