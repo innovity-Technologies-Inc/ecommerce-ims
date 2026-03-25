@@ -218,13 +218,15 @@ class PurchaseOrderService
                     'serial_numbers' => !empty($parsedSerials) ? $parsedSerials : null,
                 ]);
 
-                // Increase Stock
+                // Increase Stock & Update Unit Cost
                 if ($item->product_variant_id) {
                     $variant = ProductVariant::find($item->product_variant_id);
                     $variant->increment('stock', $receivedQty);
+                    $variant->update(['unit_cost' => $item->unit_cost]);
                 } else {
                     $product = Product::find($item->product_id);
                     $product->increment('stock', $receivedQty);
+                    $product->update(['unit_cost' => $item->unit_cost]);
                 }
             }
         });

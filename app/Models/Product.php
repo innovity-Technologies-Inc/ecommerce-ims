@@ -14,6 +14,7 @@ class Product extends Model
         'slug',
         'short_description',
         'regular_price',
+        'unit_cost',
         'discount_price',
         'discount_percentage',
         'description',
@@ -34,6 +35,7 @@ class Product extends Model
     {
         return [
             'regular_price' => 'decimal:2',
+            'unit_cost' => 'decimal:2',
             'discount_price' => 'decimal:2',
             'discount_percentage' => 'integer',
             'flash_discount_price' => 'decimal:2',
