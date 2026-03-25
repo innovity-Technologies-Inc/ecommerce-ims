@@ -26,6 +26,8 @@ class PurchaseOrderReceiveRequest extends FormRequest
             'received_date' => 'required|date',
             'items' => 'required|array',
             'items.*.received_quantity' => 'required|integer|min:0',
+            'items.*.damaged_quantity' => 'nullable|integer|min:0',
+            'items.*.missing_quantity' => 'nullable|integer|min:0',
             'items.*.serial_numbers' => 'nullable|string',
         ];
     }

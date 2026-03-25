@@ -19,7 +19,7 @@
                             </a>
                             @endcan
                         @endif
-                        @if($po->status !== 'Delivered')
+                        @if($po->status === 'Draft')
                             @can('po.edit')
                             <a href="{{ route('admin.inventory.po.edit', $po->id) }}" class="btn btn-primary btn-sm">
                                 <i class="bx bx-edit me-1"></i> Edit PO
@@ -41,8 +41,10 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th>Product / Variant</th>
-                                        <th class="text-center">Order Qty</th>
-                                        <th class="text-center">Received Qty</th>
+                                        <th class="text-center">Ordered</th>
+                                        <th class="text-center">Received</th>
+                                        <th class="text-center">Damaged</th>
+                                        <th class="text-center">Missing</th>
                                         <th class="text-end">Unit Cost</th>
                                         <th class="text-end">Subtotal</th>
                                     </tr>
@@ -55,9 +57,14 @@
                                                 @if($item->variant)
                                                     <br><small class="text-muted">Variant: {{ $item->variant->variant_name }}</small>
                                                 @endif
+                                                @if($item->serial_numbers)
+                                                    <br><small class="text-primary">Serials: {{ implode(', ', $item->serial_numbers) }}</small>
+                                                @endif
                                             </td>
-                                            <td class="text-center">{{ $item->order_quantity }}</td>
-                                            <td class="text-center">{{ $item->received_quantity }}</td>
+                                            <td class="text-center"><span class="badge badge-soft-primary">{{ $item->order_quantity }}</span></td>
+                                            <td class="text-center"><span class="badge badge-soft-success">{{ $item->received_quantity }}</span></td>
+                                            <td class="text-center"><span class="badge badge-soft-danger">{{ $item->damaged_quantity }}</span></td>
+                                            <td class="text-center"><span class="badge badge-soft-warning">{{ $item->missing_quantity }}</span></td>
                                             <td class="text-end">{{ number_format($item->unit_cost, 2) }}</td>
                                             <td class="text-end">{{ number_format($item->subtotal, 2) }}</td>
                                         </tr>
@@ -65,7 +72,7 @@
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <th colspan="4" class="text-end">Grand Total:</th>
+                                        <th colspan="6" class="text-end">Grand Total:</th>
                                         <th class="text-end">{{ number_format($po->total_amount, 2) }}</th>
                                     </tr>
                                 </tfoot>

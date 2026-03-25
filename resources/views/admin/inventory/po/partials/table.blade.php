@@ -40,8 +40,16 @@
                             </a>
                             @endcan
 
+                            @if($po->status === 'Sent')
+                                @can('po.edit')
+                                <a href="{{ route('admin.inventory.po.receive', $po->id) }}" class="btn btn-soft-success btn-sm" title="Receive PO">
+                                    <iconify-icon icon="solar:box-minimalistic-bold-duotone" class="align-middle fs-18"></iconify-icon>
+                                </a>
+                                @endcan
+                            @endif
+
                             @can('po.edit')
-                                @if($po->status !== 'Delivered')
+                                @if($po->status === 'Draft')
                                 <a href="{{ route('admin.inventory.po.edit', $po->id) }}" class="btn btn-soft-primary btn-sm" title="Edit">
                                     <iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon>
                                 </a>
@@ -49,7 +57,7 @@
                             @endcan
 
                             @can('po.delete')
-                                @if($po->status !== 'Delivered')
+                                @if($po->status === 'Draft')
                                 <form action="{{ route('admin.inventory.po.destroy', $po->id) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')

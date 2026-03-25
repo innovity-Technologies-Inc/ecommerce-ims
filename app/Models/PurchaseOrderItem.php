@@ -13,6 +13,8 @@ class PurchaseOrderItem extends Model
         'product_variant_id',
         'order_quantity',
         'received_quantity',
+        'damaged_quantity',
+        'missing_quantity',
         'serial_numbers',
         'unit_cost',
         'subtotal',
@@ -23,6 +25,8 @@ class PurchaseOrderItem extends Model
         return [
             'order_quantity' => 'integer',
             'received_quantity' => 'integer',
+            'damaged_quantity' => 'integer',
+            'missing_quantity' => 'integer',
             'serial_numbers' => 'json',
             'unit_cost' => 'decimal:2',
             'subtotal' => 'decimal:2',

@@ -58,9 +58,11 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th>Product / Variant</th>
-                                        <th class="text-center" style="width: 120px;">Ordered Qty</th>
-                                        <th class="text-center" style="width: 150px;">Received Qty</th>
-                                        <th>Serial Numbers (JSON Format)</th>
+                                        <th class="text-center" style="width: 100px;">Ordered</th>
+                                        <th class="text-center" style="width: 120px;">Received</th>
+                                        <th class="text-center" style="width: 120px;">Damaged</th>
+                                        <th class="text-center" style="width: 120px;">Missing</th>
+                                        <th>Serial Numbers</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -82,10 +84,20 @@
                                                        value="{{ $item->order_quantity }}" required>
                                             </td>
                                             <td>
+                                                <input type="number" name="items[{{ $item->id }}][damaged_quantity]" 
+                                                       class="form-control text-danger" 
+                                                       min="0" value="0">
+                                            </td>
+                                            <td>
+                                                <input type="number" name="items[{{ $item->id }}][missing_quantity]" 
+                                                       class="form-control text-warning" 
+                                                       min="0" value="0">
+                                            </td>
+                                            <td>
                                                 <textarea name="items[{{ $item->id }}][serial_numbers]" 
                                                           class="form-control serial-input" 
                                                           rows="2" 
-                                                          placeholder="SN001 - SN100, SN102"></textarea>
+                                                          placeholder="SN001 - SN100"></textarea>
                                                 <div class="small text-muted mt-1 parsed-count"></div>
                                             </td>
                                         </tr>

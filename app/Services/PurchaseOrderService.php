@@ -201,6 +201,8 @@ class PurchaseOrderService
                 if (!$item) continue;
 
                 $receivedQty = (int) ($itemData['received_quantity'] ?? 0);
+                $damagedQty = (int) ($itemData['damaged_quantity'] ?? 0);
+                $missingQty = (int) ($itemData['missing_quantity'] ?? 0);
                 $serialInput = $itemData['serial_numbers'] ?? '';
                 $parsedSerials = $this->parseSerialNumbers($serialInput);
 
@@ -211,6 +213,8 @@ class PurchaseOrderService
 
                 $item->update([
                     'received_quantity' => $receivedQty,
+                    'damaged_quantity' => $damagedQty,
+                    'missing_quantity' => $missingQty,
                     'serial_numbers' => $parsedSerials,
                 ]);
 
