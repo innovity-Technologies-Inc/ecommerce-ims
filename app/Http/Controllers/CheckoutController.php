@@ -70,6 +70,7 @@ class CheckoutController extends Controller
                     'alert-type' => 'success'
                 ]);
         } catch (\Exception $e) {
+            Log::error('Checkout Error: ' . $e->getMessage());
             return back()->withInput()->with([
                 'message' => $e->getMessage(),
                 'alert-type' => 'error'

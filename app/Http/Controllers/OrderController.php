@@ -60,6 +60,7 @@ class OrderController extends Controller
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $e) {
+            Log::error('Order Update Status Error: ' . $e->getMessage());
             return redirect()->back()->with([
                 'message' => $e->getMessage(),
                 'alert-type' => 'error',

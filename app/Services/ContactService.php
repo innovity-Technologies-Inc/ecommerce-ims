@@ -6,6 +6,7 @@ use App\Mail\ContactConfirmationMail;
 use App\Models\ContactMessage;
 use DaiyanMozumder\LaravelFlexSearch\FlexSearch;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class ContactService
@@ -20,6 +21,7 @@ class ContactService
         try {
             Mail::to($message->email)->send(new ContactConfirmationMail($message));
         } catch (\Exception $e) {
+            Log::error('Contact Confirmation Email Error: ' . $e->getMessage());
             // Log or ignore to ensure the user's experience isn't interrupted by SMTP connection issues
         }
 

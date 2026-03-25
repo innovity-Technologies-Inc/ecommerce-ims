@@ -146,6 +146,7 @@ class ProductController extends Controller
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $e) {
+            Log::error('Product Update Error: ' . $e->getMessage());
             return back()->withInput()->with([
                 'message' => $e->getMessage(),
                 'alert-type' => 'error',

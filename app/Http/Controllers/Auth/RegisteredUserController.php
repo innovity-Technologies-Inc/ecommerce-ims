@@ -43,7 +43,7 @@ class RegisteredUserController extends Controller
         try {
             event(new Registered($user));
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Registration Email Error: '.$e->getMessage());
+            Log::error('Registration Email Error: '.$e->getMessage());
 
             return redirect()->route('verification.notice')->with([
                 'message' => 'We cant send email right now, Please try again.',
