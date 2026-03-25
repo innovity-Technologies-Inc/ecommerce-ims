@@ -215,7 +215,7 @@ class PurchaseOrderService
                     'received_quantity' => $receivedQty,
                     'damaged_quantity' => $damagedQty,
                     'missing_quantity' => $missingQty,
-                    'serial_numbers' => $parsedSerials,
+                    'serial_numbers' => !empty($parsedSerials) ? $parsedSerials : null,
                 ]);
 
                 // Increase Stock
