@@ -39,9 +39,10 @@ class PurchaseOrderController extends Controller
     public function create(): View
     {
         $suppliers = Supplier::all();
+        $warehouses = Warehouse::where('is_quarantine', false)->get();
         $products = Product::with('variants')->where('status', 1)->get();
 
-        return view('admin.inventory.po.create', compact('suppliers', 'products'));
+        return view('admin.inventory.po.create', compact('suppliers', 'warehouses', 'products'));
     }
 
     /**
@@ -57,7 +58,8 @@ class PurchaseOrderController extends Controller
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $e) {
-            Log::error('PO Store Error: ' . $e->getMessage());
+            Log::error('PO Store Error: '.$e->getMessage());
+
             return back()->withInput()->with([
                 'message' => 'Error: '.$e->getMessage(),
                 'alert-type' => 'error',
@@ -70,7 +72,7 @@ class PurchaseOrderController extends Controller
      */
     public function show(PurchaseOrder $po): View
     {
-        $po->load(['supplier', 'items.product', 'items.variant', 'creator']);
+        $po->load(['supplier', 'warehouse', 'items.product', 'items.variant', 'creator']);
 
         return view('admin.inventory.po.show', compact('po'));
     }
@@ -88,10 +90,11 @@ class PurchaseOrderController extends Controller
         }
 
         $suppliers = Supplier::all();
+        $warehouses = Warehouse::where('is_quarantine', false)->get();
         $products = Product::with('variants')->where('status', 1)->get();
         $po->load('items');
 
-        return view('admin.inventory.po.edit', compact('po', 'suppliers', 'products'));
+        return view('admin.inventory.po.edit', compact('po', 'suppliers', 'warehouses', 'products'));
     }
 
     /**
@@ -107,7 +110,8 @@ class PurchaseOrderController extends Controller
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $e) {
-            Log::error('PO Update Error: ' . $e->getMessage());
+            Log::error('PO Update Error: '.$e->getMessage());
+
             return back()->withInput()->with([
                 'message' => 'Error: '.$e->getMessage(),
                 'alert-type' => 'error',
@@ -139,7 +143,8 @@ class PurchaseOrderController extends Controller
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $e) {
-            Log::error('PO Update Status Error: ' . $e->getMessage());
+            Log::error('PO Update Status Error: '.$e->getMessage());
+
             return back()->with([
                 'message' => 'Error: '.$e->getMessage(),
                 'alert-type' => 'error',
@@ -174,7 +179,8 @@ class PurchaseOrderController extends Controller
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $e) {
-            Log::error('PO Receive Process Error: ' . $e->getMessage());
+            Log::error('PO Receive Process Error: '.$e->getMessage());
+
             return back()->withInput()->with([
                 'message' => 'Error: '.$e->getMessage(),
                 'alert-type' => 'error',
@@ -195,7 +201,8 @@ class PurchaseOrderController extends Controller
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $e) {
-            Log::error('PO Delete Error: ' . $e->getMessage());
+            Log::error('PO Delete Error: '.$e->getMessage());
+
             return back()->with([
                 'message' => 'Error: '.$e->getMessage(),
                 'alert-type' => 'error',

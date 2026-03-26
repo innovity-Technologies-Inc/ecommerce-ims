@@ -2,13 +2,141 @@
 
 namespace App\Services;
 
+use App\Models\InventoryLevel;
+use App\Models\Product;
+use App\Models\ProductVariant;
+use App\Models\StockLedger;
 use App\Models\Supplier;
 use App\Models\Warehouse;
 use DaiyanMozumder\LaravelFlexSearch\FlexSearch;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class InventoryService
 {
+    /**
+     * Get all received products that are not yet allocated to a warehouse.
+     */
+    public function getUnallocatedStock(array $params = [], int $perPage = 10): Collection
+    {
+        $unallocated = collect();
+
+        // Simple Products
+        $products = Product::where('stock', '>', 0)->get();
+        foreach ($products as $product) {
+            $unallocated->push([
+                'id' => $product->id,
+                'variant_id' => null,
+                'name' => $product->name,
+                'variant_name' => 'N/A',
+                'sku' => 'N/A',
+                'stock' => $product->stock,
+                'type' => 'Product',
+            ]);
+        }
+
+        // Product Variants
+        $variants = ProductVariant::with('product')->where('stock', '>', 0)->get();
+        foreach ($variants as $variant) {
+            $unallocated->push([
+                'id' => $variant->product_id,
+                'variant_id' => $variant->id,
+                'name' => $variant->product->name,
+                'variant_name' => $variant->variant_name,
+                'sku' => $variant->sku,
+                'stock' => $variant->stock,
+                'type' => 'Variant',
+            ]);
+        }
+
+        return $unallocated;
+    }
+
+    /**
+     * Allocate stock to a warehouse.
+     */
+    public function allocateStock(array $data): void
+    {
+        DB::transaction(function () use ($data) {
+            $productId = $data['product_id'];
+            $variantId = $data['product_variant_id'] ?? null;
+            $warehouseId = $data['warehouse_id'];
+            $quantity = (int) $data['quantity'];
+
+            if ($variantId) {
+                $variant = ProductVariant::findOrFail($variantId);
+                if ($variant->stock < $quantity) {
+                    throw new \Exception("Insufficient unallocated stock for variant {$variant->variant_name}.");
+                }
+                $variant->decrement('stock', $quantity);
+            } else {
+                $product = Product::findOrFail($productId);
+                if ($product->stock < $quantity) {
+                    throw new \Exception("Insufficient unallocated stock for product {$product->name}.");
+                }
+                $product->decrement('stock', $quantity);
+            }
+
+            // Update or create inventory level in warehouse
+            $inventoryLevel = InventoryLevel::firstOrNew([
+                'warehouse_id' => $warehouseId,
+                'product_id' => $productId,
+                'product_variant_id' => $variantId,
+            ]);
+
+            $inventoryLevel->quantity += $quantity;
+            $inventoryLevel->save();
+
+            // Log Allocation
+            $this->logStockChange(
+                $productId,
+                $variantId,
+                null,
+                -$quantity,
+                'ALLOCATION',
+                'MOVE_TO_WAREHOUSE',
+                'W-'.$warehouseId
+            );
+
+            $this->logStockChange(
+                $productId,
+                $variantId,
+                $warehouseId,
+                $quantity,
+                'ALLOCATION',
+                'RECEIVED_FROM_POOL',
+                null
+            );
+        });
+    }
+
+    /**
+     * Centralized method to log stock ledger changes.
+     */
+    public function logStockChange(
+        int $productId,
+        ?int $variantId,
+        ?int $warehouseId,
+        int $changeQty,
+        string $transactionType,
+        ?string $reasonCode = null,
+        ?string $referenceId = null,
+        ?int $batchId = null
+    ): void {
+        StockLedger::create([
+            'product_id' => $productId,
+            'product_variant_id' => $variantId,
+            'warehouse_id' => $warehouseId,
+            'batch_id' => $batchId,
+            'change_qty' => $changeQty,
+            'transaction_type' => $transactionType,
+            'reason_code' => $reasonCode,
+            'reference_id' => $referenceId,
+        ]);
+    }
+
     /**
      * Get all warehouses with search and sorting.
      */
@@ -20,24 +148,18 @@ class InventoryService
         $searchTerm = $params['search'] ?? null;
         $searchableColumns = ['name', 'location'];
 
-        // Apply Search and Filtering using FlexSearch
         $query = $flexSearch->apply($query, [], $searchTerm, $searchableColumns);
 
-        // Apply Sorting
         $sort = $params['sort'] ?? 'latest';
         switch ($sort) {
-            case 'oldest':
-                $query->oldest();
+            case 'oldest': $query->oldest();
                 break;
-            case 'a-z':
-                $query->orderBy('name', 'asc');
+            case 'a-z': $query->orderBy('name', 'asc');
                 break;
-            case 'z-a':
-                $query->orderBy('name', 'desc');
+            case 'z-a': $query->orderBy('name', 'desc');
                 break;
             case 'latest':
-            default:
-                $query->latest();
+            default: $query->latest();
                 break;
         }
 
@@ -52,6 +174,7 @@ class InventoryService
         return Warehouse::create([
             'name' => $data['name'],
             'location' => $data['location'],
+            'is_quarantine' => $data['is_quarantine'] ?? false,
         ]);
     }
 
@@ -63,6 +186,7 @@ class InventoryService
         $warehouse->update([
             'name' => $data['name'],
             'location' => $data['location'],
+            'is_quarantine' => $data['is_quarantine'] ?? false,
         ]);
 
         return $warehouse;
@@ -87,24 +211,18 @@ class InventoryService
         $searchTerm = $params['search'] ?? null;
         $searchableColumns = ['name', 'email', 'mobile', 'address'];
 
-        // Apply Search and Filtering using FlexSearch
         $query = $flexSearch->apply($query, [], $searchTerm, $searchableColumns);
 
-        // Apply Sorting
         $sort = $params['sort'] ?? 'latest';
         switch ($sort) {
-            case 'oldest':
-                $query->oldest();
+            case 'oldest': $query->oldest();
                 break;
-            case 'a-z':
-                $query->orderBy('name', 'asc');
+            case 'a-z': $query->orderBy('name', 'asc');
                 break;
-            case 'z-a':
-                $query->orderBy('name', 'desc');
+            case 'z-a': $query->orderBy('name', 'desc');
                 break;
             case 'latest':
-            default:
-                $query->latest();
+            default: $query->latest();
                 break;
         }
 

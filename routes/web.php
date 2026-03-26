@@ -206,6 +206,12 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
             Route::put('/{po}/status', 'updateStatus')->name('admin.inventory.po.update-status')->middleware('permission:po.edit');
             Route::delete('/{po}', 'destroy')->name('admin.inventory.po.destroy')->middleware('permission:po.delete');
         });
+
+        Route::prefix('allocation')->middleware('permission:inventory.allocate')->controller(\App\Http\Controllers\Admin\InventoryAllocationController::class)->group(function () {
+            Route::get('/', 'index')->name('admin.inventory.allocation.index');
+            Route::get('/create', 'create')->name('admin.inventory.allocation.create');
+            Route::post('/', 'store')->name('admin.inventory.allocation.store');
+        });
     });
 });
 

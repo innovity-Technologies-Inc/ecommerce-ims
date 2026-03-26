@@ -21,7 +21,8 @@ class OrderService
 {
     public function __construct(
         protected CartService $cartService,
-        protected CouponService $couponService
+        protected CouponService $couponService,
+        protected InventoryService $inventoryService
     ) {}
 
     /**
@@ -165,6 +166,12 @@ class OrderService
         $order->load('orderItems');
 
         foreach ($order->orderItems as $item) {
+            $warehouseId = null;
+
+            // For restoration (increase), we need to find where it was deducted from,
+            // but for now, we'll try to find any existing inventory level or log it to unallocated if unknown.
+            // In a more complex system, we'd track warehouse_id per order_item.
+
             if ($item->product_variant_id) {
                 $variant = ProductVariant::find($item->product_variant_id);
                 if ($variant) {
@@ -184,6 +191,17 @@ class OrderService
                     }
                 }
             }
+
+            // Log the change in ledger
+            $this->inventoryService->logStockChange(
+                $item->product_id,
+                $item->product_variant_id,
+                null, // Tracking unallocated stock pool for now as per project current logic
+                $direction === 'increase' ? $item->quantity : -$item->quantity,
+                $direction === 'increase' ? 'ADJUSTMENT' : 'SALE',
+                $direction === 'increase' ? 'ORDER_RESTORED' : 'ORDER_PLACED',
+                $order->order_id
+            );
         }
     }
 
@@ -300,6 +318,17 @@ class OrderService
                     $product = Product::findOrFail($item->product_id);
                     $product->decrement('stock', $item->quantity);
                 }
+
+                // Log to Stock Ledger
+                $this->inventoryService->logStockChange(
+                    $item->product_id,
+                    $item->variant_id,
+                    null, // Using unallocated pool for now
+                    -$item->quantity,
+                    'SALE',
+                    'ORDER_PLACED',
+                    $order->order_id
+                );
             }
 
             // Record Coupon Usage

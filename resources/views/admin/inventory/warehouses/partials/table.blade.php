@@ -5,6 +5,7 @@
             <th>#</th>
             <th>Name</th>
             <th>Location</th>
+            <th>Quarantine</th>
             <th>Action</th>
         </tr>
         </thead>
@@ -12,11 +13,18 @@
         @php
             $sl = \App\HelperClass::indexNumberSerialization($warehouses);
         @endphp
-        @foreach ($warehouses as $data)
+        @foreach ($warehouses as $index => $data)
         <tr>
-            <td>{{$sl++}}</td>
+            <td>{{$sl[$index]}}</td>
             <td>{{$data->name}}</td>
             <td>{{$data->location}}</td>
+            <td>
+                @if($data->is_quarantine)
+                    <span class="badge bg-danger">Yes</span>
+                @else
+                    <span class="badge bg-success">No</span>
+                @endif
+            </td>
             <td>
                 <div class="d-flex gap-2">
                     @can('warehouse.edit')
@@ -39,7 +47,7 @@
         @endforeach
         @if($warehouses->isEmpty())
             <tr>
-                <td colspan="4" class="text-center">No warehouses found.</td>
+                <td colspan="5" class="text-center">No warehouses found.</td>
             </tr>
         @endif
         </tbody>

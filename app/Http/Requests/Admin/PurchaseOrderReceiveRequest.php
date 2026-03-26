@@ -22,13 +22,13 @@ class PurchaseOrderReceiveRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'batch_number' => 'nullable|string|max:255',
             'received_date' => 'required|date',
+            'batch_number' => 'required|string|max:255',
             'items' => 'required|array',
             'items.*.received_quantity' => 'required|integer|min:0',
             'items.*.damaged_quantity' => 'nullable|integer|min:0',
-            'items.*.missing_quantity' => 'nullable|integer|min:0',
-            'items.*.serial_numbers' => 'nullable|string',
+            'items.*.serial_numbers' => 'nullable|array',
+            'items.*.serial_numbers.*' => 'string',
         ];
     }
 
@@ -38,6 +38,7 @@ class PurchaseOrderReceiveRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'batch_number.required' => 'The batch number is required for the entire receipt.',
             'items.*.received_quantity.required' => 'The received quantity is required for all items.',
             'items.*.received_quantity.integer' => 'The received quantity must be an integer.',
             'items.*.received_quantity.min' => 'The received quantity must be at least 0.',

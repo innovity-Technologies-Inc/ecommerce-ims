@@ -108,6 +108,8 @@ class PermissionSeeder extends Seeder
             'po.create',
             'po.edit',
             'po.delete',
+
+            'inventory.allocate',
         ];
 
         foreach ($permissions as $permission) {

@@ -38,4 +38,9 @@ class ProductVariant extends Model
     {
         return $this->belongsTo(Product::class, 'product_id', 'id');
     }
+
+    public function inventoryLevels()
+    {
+        return $this->hasMany(InventoryLevel::class);
+    }
 }

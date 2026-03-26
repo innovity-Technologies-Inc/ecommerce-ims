@@ -12,5 +12,16 @@ class Warehouse extends Model
     protected $fillable = [
         'name',
         'location',
+        'is_quarantine',
     ];
+
+    public function batches()
+    {
+        return $this->hasMany(Batch::class);
+    }
+
+    public function inventoryLevels()
+    {
+        return $this->hasMany(InventoryLevel::class);
+    }
 }

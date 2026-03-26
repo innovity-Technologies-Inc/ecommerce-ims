@@ -86,6 +86,11 @@ class Product extends Model
         return $this->hasMany(FlashSaleItem::class, 'product_id', 'id');
     }
 
+    public function inventoryLevels()
+    {
+        return $this->hasMany(InventoryLevel::class);
+    }
+
     /**
      * Scope a query to only include active products.
      */

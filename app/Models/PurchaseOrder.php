@@ -10,12 +10,12 @@ class PurchaseOrder extends Model
 {
     protected $fillable = [
         'po_number',
-        'batch_number',
         'supplier_id',
+        'warehouse_id',
         'order_date',
         'expected_delivery_date',
         'received_date',
-        'total_amount',
+        'batch_number',
         'status',
         'notify_supplier',
         'notes',
@@ -29,13 +29,30 @@ class PurchaseOrder extends Model
             'expected_delivery_date' => 'date',
             'received_date' => 'date',
             'notify_supplier' => 'boolean',
-            'total_amount' => 'decimal:2',
         ];
+    }
+
+    /**
+     * Get the dynamic grand total for the Purchase Order.
+     */
+    public function getTotalAmountAttribute(): float
+    {
+        return $this->items->sum('subtotal');
     }
 
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    public function warehouse(): BelongsTo
+    {
+        return $this->belongsTo(Warehouse::class);
+    }
+
+    public function batches(): HasMany
+    {
+        return $this->hasMany(Batch::class);
     }
 
     public function creator(): BelongsTo

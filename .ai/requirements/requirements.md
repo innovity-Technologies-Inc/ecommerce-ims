@@ -21,6 +21,10 @@ This document lists the high-level requirements for the modules implemented in t
 - [ ] **REQ-90:** PO Status Workflow: Support for `Draft`, `Sent`, and `Delivered` statuses with the ability for admins to transition between them.
 - [x] **REQ-91:** PO Item Tracking: Maintain a detailed record of products, variants, quantities, and unit costs within each Purchase Order.
 - [x] **REQ-92:** Mandatory Error Logging & SQL Fix: Implement mandatory logging for all `catch` blocks across the system to prevent hidden SQL/system errors. Fix the "Column not found" error in PO receiving by executing pending migrations.
+- [ ] **REQ-93:** PO Warehouse Selection: Add warehouse selection to PO creation.
+- [ ] **REQ-94:** PO Receiving Refinement: Implement Batch IDs, Serial Numbers, and separate `batches` and `batch_serials` tables for accurate product tracking during receipt.
+- [ ] **REQ-95:** Quarantine Warehouse: Add `is_quarantine` flag to warehouses and create a "Quarantine" warehouse for damaged products.
+- [ ] **REQ-96:** Stock Ledger Integration: Maintain a detailed stock ledger tracking all transactions and ensuring consistency across warehouse, product, and variant stock levels.
 
 ## 2. Catalog Management
 - [x] **REQ-05:** Brand CRUD (Logo, Slug, Status).

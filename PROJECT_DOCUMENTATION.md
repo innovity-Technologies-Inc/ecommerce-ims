@@ -460,36 +460,64 @@ Every module or architectural change must be documented in this file before a ta
 ### 3.31 Inventory Management Onboarding (Warehouses & Suppliers)
 - **What:** Foundation for an integrated inventory system, allowing administrators to manage storage locations (Warehouses) and external vendors (Suppliers).
 - **How it Works:**
-  - **Warehouse Management:** Admins create and manage physical storage locations. Each warehouse record stores a unique name and a detailed physical location (address/coordinates).
+  - **Warehouse Management:** Admins create and manage physical storage locations. Each warehouse record stores a unique name, a detailed physical location, and an `is_quarantine` flag.
+  - **Quarantine Warehouse:** A specialized warehouse (flagged `is_quarantine: true`) is used to automatically store damaged items received during the Purchase Order process.
   - **Supplier Onboarding:** Admins manage the vendor database. Each supplier record includes the company name, contact email, mobile number, and full physical address.
 - **Implementation Details:**
   - **Architecture:** Follows the strict Service Layer pattern. `InventoryService` centralizes all CRUD operations for both Warehouses and Suppliers.
-  - **Validation:** `WarehouseRequest` and `SupplierRequest` enforce strict data integrity (e.g., required names, valid email formats, and string length limits) before persistence.
-  - **Search & Filtering:** Both index pages utilize `FlexSearch` for real-time, multi-column searching (Name/Location for Warehouses; Name/Email/Mobile/Address for Suppliers) and AJAX-driven sorting.
-  - **Security:** Access is controlled via granular permissions: `warehouse.view/create/edit/delete` and `supplier.view/create/edit/delete`.
-  - **UI/UX:** Integrated into a dedicated "Inventory Management" sidebar section with top-level links for improved navigation.
+  - **Validation:** `WarehouseRequest` and `SupplierRequest` enforce strict data integrity.
+  - **Search & Filtering:** Both index pages utilize `FlexSearch` for real-time searching and AJAX-driven sorting.
 
-### 3.32 Purchase Order (PO) Module
-- **What:** A comprehensive procurement system allowing administrators to create, track, and receive purchase orders for products and variants from specific suppliers.
+### 3.32 Purchase Order (PO) Module & Refinement
+- **What:** A comprehensive procurement system for managing product intake, refined with warehouse targeting, batch tracking, and individual serial number management.
 - **How it Works:**
-  - **Creation & Itemization:** Admins select a supplier and add multiple products or variants using a dynamic row-wise layout. The system supports optional `expected_delivery_date` tracking.
-  - **Status Workflow:** Orders follow a strict progression: `Draft` -> `Sent` -> `Delivered`.
-    - **Draft:** Fully editable and deletable.
-    - **Sent:** The order is locked for editing. An option to notify the supplier via email is available during the transition.
-    - **Delivered:** Automatically set upon completing the "Receive PO" process. Manual status updates to "Delivered" are prohibited.
-  - **Advanced Receiving Workflow:** When an order is "Sent", a "Receive PO" button appears. This opens a specialized form to track the physical delivery:
-    - **Batch Tracking:** Supports assigning a unique `batch_number` to the received shipment.
-    - **Fulfillment Accuracy:** Admins track `Received`, `Damaged`, and `Missing` quantities for every item in the order.
-    - **Serial Number Parsing:** A robust system allows entry of serial number ranges (e.g., `SN001 - SN100`) and individual values. The system automatically parses these into a structured JSON array.
+  - **Warehouse Targeting:** Every Purchase Order is assigned a target Warehouse upon creation. This dictates where the inventory will be physically stored once received.
+  - **Itemization:** Admins add products or variants with specific `order_quantity` and `unit_cost`.
+  - **Refined Receiving Workflow:** When an order is "Sent", the receiving process facilitates granular tracking:
+    - **Global Batch Management:** A single `batch_number` is assigned to the entire receipt. This creates a `Batch` header record that groups all items received in that shipment.
+    - **Batch Items:** Individual quantities for each product/variant are stored in the `batch_items` table, linked to the main `Batch` header.
+    - **Serial Number Tagging:** The system uses a "tag-style" UI (Select2) for entering individual product serial numbers. These serials are stored in a dedicated `batch_serials` table and linked to the global `Batch` header.
+    - **Damaged Goods Handling:** Admins specify `Received` and `Damaged` quantities. `Received` items move to the PO's target warehouse, while `Damaged` items are automatically routed to the **Quarantine** warehouse under a separate "Damaged" batch header.
   - **Automated Inventory Synchronization:**
-    - **Stock Update:** Upon receiving, the stock for each product/variant is automatically incremented by the *Received Quantity*.
-    - **Unit Cost Sync:** The system automatically updates the `unit_cost` field in the `products` and `product_variants` tables with the latest purchase price from the PO.
+    - **Batch-Level Tracking:** The system creates unique records in the `inventory_levels` table for each batch received. This allows for precise tracking of exactly how much of a specific batch is remaining in a warehouse.
+    - **Stock & Ledger:** Updates total product stock, warehouse-batch inventory levels (`inventory_levels`), and creates detailed batch item records. Every movement triggers a **Stock Ledger** entry.
 - **Implementation Details:**
-  - **`PurchaseOrderService`:** Centralizes complex logic for serial range parsing (using regex and padding), inventory adjustments, and status transitions.
-  - **Data Integrity:** All receiving operations are wrapped in `DB::transaction`. Validates that the count of parsed serial numbers matches the received quantity.
-  - **Security:** Access is governed by granular permissions: `po.view`, `po.create`, `po.edit`, and `po.delete`.
-  - **UI/UX:** Uses `container-xxl` layout, `badge-soft` status indicators, and specialized Iconify icons. Integrated into a dedicated "Inventory Management" sidebar section.
-  - **Validation:** Uses `PurchaseOrderRequest` for creation/updates and `PurchaseOrderReceiveRequest` for the receiving workflow.
+  - **`PurchaseOrderService`:** Manages the complex multi-table transaction for receiving, which includes creating a `Batch` header, multiple `BatchItem` and `BatchSerial` records, updating `InventoryLevel`, and logging to the `StockLedger`.
+  - **Schema Optimization:** Removed `serial_numbers` from the `purchase_order_items` table to eliminate data redundancy, as serials are now exclusively managed via `batch_serials`.
+  - **Validation:** `PurchaseOrderReceiveRequest` ensures a single global `batch_number` is provided and that serial counts match the total quantities per item.
+
+### 3.33 Stock Ledger & Audit Trail
+- **What:** A centralized, immutable transaction log that tracks every stock movement (increase or decrease) across the entire system.
+- **How it Works:**
+  - **Automated Logging:** Any action that modifies stock (PO Receipt, Sales, Returns, Adjustments) automatically triggers a ledger entry.
+  - **Granular Data:** Each entry records the product, variant, warehouse, batch, change quantity (positive or negative), transaction type (e.g., `PO_RECEIPT`, `SALE`), and a reason code (e.g., `STOCK_IN`, `QUARANTINE_DAMAGED`).
+  - **Consistency:** The ledger acts as the source of truth, ensuring that the current stock levels in the `products` and `inventory_levels` tables can be reconciled against the history of transactions.
+- **Implementation Details:**
+  - **`InventoryService::logStockChange()`:** A centralized method used by all modules to ensure standardized ledger recording.
+  - **Database:** Uses UUIDs for primary keys to support distributed systems or future scalability.
+
+### 3.34 Advanced Inventory Tracking (Inventory Levels)
+- **What:** Granular, batch-aware tracking of products within specific warehouses, including proactive stock management features.
+- **How it Works:**
+  - **Batch Integration:** Stock is no longer just tracked by warehouse; it is tracked by **Warehouse + Batch**. The `inventory_levels` table stores `current_quantity` for every unique batch-warehouse-product combination.
+  - **Customizable Thresholds:** Supports `min_stock_override` per record, allowing for fine-tuned stock alerts that override global product limits.
+  - **Alert Management:** Tracks `last_alert_sent` to prevent notification spam when stock levels fall below thresholds.
+- **Implementation Details:**
+  - **Service Logic:** Inventory lookups now incorporate the `batch_id` to ensure accurate fulfillment (e.g., FIFO/FEFO models can be implemented on top of this).
+  - **Consistency:** The system ensures that the sum of all `current_quantity` records in `inventory_levels` for a product matches the global `stock` in the `products` table.
+
+### 3.34 Inventory Allocation Module
+- **What:** A system to manage the transition of received products from a general unallocated pool to specific physical storage locations (Warehouses).
+- **How it Works:**
+  - **Unallocated Pool Tracking:** When a Purchase Order is received, stock is initially placed in a "virtual" unallocated pool (represented by the `stock` field in `products` or `product_variants`).
+  - **Allocation Process:** Admins view a list of all items with unallocated stock. They can then select a target Warehouse and specify a quantity to move.
+  - **Stock Movement:** The system decrements the unallocated stock and creates or updates a record in the `inventory_levels` table for the specific warehouse.
+  - **Data Integrity:** All movements are handled within a `DB::transaction` to ensure consistency between the unallocated pool and warehouse levels.
+- **Implementation Details:**
+  - **`InventoryService`:** Manages the logic for retrieving unallocated items and executing the allocation transaction.
+  - **`InventoryLevel` Model:** Maps products and variants to specific warehouses with their respective quantities.
+  - **Security:** Access is restricted via the `inventory.allocate` permission.
+  - **UI/UX:** Features a dedicated "Stock Allocation" list view and a streamlined allocation form with real-time stock availability validation.
 
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*

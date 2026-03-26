@@ -42,6 +42,19 @@
                             </div>
 
                             <div class="col-md-3 mb-3">
+                                <label for="warehouse_id" class="form-label">Warehouse <span class="text-danger">*</span></label>
+                                <select name="warehouse_id" id="warehouse_id" class="form-select select2 @error('warehouse_id') is-invalid @enderror" required>
+                                    <option value="">Select Warehouse</option>
+                                    @foreach($warehouses as $warehouse)
+                                        <option value="{{ $warehouse->id }}" {{ old('warehouse_id') == $warehouse->id ? 'selected' : '' }}>{{ $warehouse->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('warehouse_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-3 mb-3">
                                 <label for="order_date" class="form-label">Order Date <span class="text-danger">*</span></label>
                                 <input type="date" name="order_date" id="order_date" class="form-control @error('order_date') is-invalid @enderror" value="{{ old('order_date', date('Y-m-d')) }}" required>
                                 @error('order_date')

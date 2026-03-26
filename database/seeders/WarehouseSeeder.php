@@ -12,8 +12,19 @@ class WarehouseSeeder extends Seeder
      */
     public function run(): void
     {
-        Warehouse::create(['name' => 'Main Warehouse', 'location' => 'Downtown']);
-        Warehouse::create(['name' => 'Secondary Warehouse', 'location' => 'Uptown']);
-        Warehouse::create(['name' => 'North Warehouse', 'location' => 'North Point']);
+        Warehouse::firstOrCreate(
+            ['name' => 'Main Warehouse'],
+            ['location' => 'Central Hub', 'is_quarantine' => false]
+        );
+
+        Warehouse::firstOrCreate(
+            ['name' => 'Secondary Warehouse'],
+            ['location' => 'North Branch', 'is_quarantine' => false]
+        );
+
+        Warehouse::firstOrCreate(
+            ['name' => 'Quarantine'],
+            ['location' => 'Restricted Area', 'is_quarantine' => true]
+        );
     }
 }

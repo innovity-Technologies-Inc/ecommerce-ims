@@ -175,15 +175,25 @@
 
             @can('warehouse.view')
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.warehouses.index') }}">
-                    <span class="nav-icon">
-                        <iconify-icon icon="solar:home-2-bold-duotone"></iconify-icon>
-                    </span>
-                    <span class="nav-text"> Warehouses </span>
-                </a>
+               <a class="nav-link" href="{{ route('admin.warehouses.index') }}">
+                   <span class="nav-icon">
+                       <iconify-icon icon="solar:home-2-bold-duotone"></iconify-icon>
+                   </span>
+                   <span class="nav-text"> Warehouses </span>
+               </a>
             </li>
             @endcan
 
+            @can('inventory.allocate')
+            <li class="nav-item">
+               <a class="nav-link" href="{{ route('admin.inventory.allocation.index') }}">
+                   <span class="nav-icon">
+                       <iconify-icon icon="solar:box-bold-duotone"></iconify-icon>
+                   </span>
+                   <span class="nav-text"> Stock Allocation </span>
+               </a>
+            </li>
+            @endcan
             @can('supplier.view')
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.suppliers.index') }}">

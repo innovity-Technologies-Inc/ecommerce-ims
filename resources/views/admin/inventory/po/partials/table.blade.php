@@ -5,6 +5,7 @@
                 <th style="width: 50px;">#</th>
                 <th>PO Number</th>
                 <th>Supplier</th>
+                <th>Target Warehouse</th>
                 <th>Order Date</th>
                 <th>Expected Delivery</th>
                 <th>Total Amount</th>
@@ -15,9 +16,12 @@
         <tbody>
             @forelse($pos as $po)
                 <tr>
-                    <td>{{ ($pos->currentPage() - 1) * $pos->perPage() + $loop->iteration }}</td>
+                    <td>{{ \App\HelperClass::indexNumberSerialization($pos)[$loop->index] }}</td>
                     <td><strong>{{ $po->po_number }}</strong></td>
                     <td>{{ $po->supplier->name }}</td>
+                    <td>
+                        <span class="badge badge-soft-primary">{{ $po->warehouse->name ?? 'N/A' }}</span>
+                    </td>
                     <td>{{ $po->order_date->format('M d, Y') }}</td>
                     <td>{{ $po->expected_delivery_date ? $po->expected_delivery_date->format('M d, Y') : '-' }}</td>
                     <td>{{ number_format($po->total_amount, 2) }}</td>
@@ -72,7 +76,10 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="8" class="text-center">No Purchase Orders found.</td>
+                    <td colspan="9" class="text-center p-4">
+                        <iconify-icon icon="solar:box-minimalistic-broken" class="fs-48 text-muted mb-2"></iconify-icon>
+                        <p class="text-muted">No Purchase Orders found.</p>
+                    </td>
                 </tr>
             @endforelse
         </tbody>

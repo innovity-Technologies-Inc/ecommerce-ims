@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\DB;
 
 class ReturnService
 {
+    public function __construct(protected InventoryService $inventoryService) {}
+
     public function getOrderDetails(string $orderId): ?Order
     {
         return Order::with(['orderItems.product.primaryImage', 'orderItems.productVariant'])
@@ -153,6 +155,17 @@ class ReturnService
                         $orderItem->decrement('quantity', $item->quantity);
                         $orderItem->decrement('total_price', $item->total_price);
                     }
+
+                    // Log to Stock Ledger (Intact return to pool)
+                    $this->inventoryService->logStockChange(
+                        $item->product_id,
+                        $item->product_variant_id,
+                        null,
+                        $item->quantity,
+                        'RTV_DISPATCH',
+                        'INTACT_RETURN',
+                        $returnRequest->return_id
+                    );
                 } elseif ($item->condition === 'damage') {
                     Wastage::create([
                         'product_id' => $item->product_id,
@@ -161,6 +174,17 @@ class ReturnService
                         'reason' => 'Damaged return',
                         'return_id' => $returnRequest->id,
                     ]);
+
+                    // Log to Stock Ledger (Damaged - not restocked but tracked as adjustment)
+                    $this->inventoryService->logStockChange(
+                        $item->product_id,
+                        $item->product_variant_id,
+                        null,
+                        0, // Stock didn't change (wasn't restocked), but we log the wastage event
+                        'ADJUSTMENT',
+                        'SHRINKAGE_LOST_DAMAGED_RETURN',
+                        $returnRequest->return_id
+                    );
                 }
             }
 

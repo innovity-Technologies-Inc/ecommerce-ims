@@ -23,6 +23,7 @@ class PurchaseOrderRequest extends FormRequest
     {
         return [
             'supplier_id' => 'required|exists:suppliers,id',
+            'warehouse_id' => 'required|exists:warehouses,id',
             'order_date' => 'required|date',
             'expected_delivery_date' => 'nullable|date|after_or_equal:order_date',
             'status' => 'required|in:Draft,Sent,Delivered',

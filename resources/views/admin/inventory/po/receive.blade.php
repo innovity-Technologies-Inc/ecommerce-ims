@@ -28,12 +28,21 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-4 mb-3">
-                                <label for="batch_number" class="form-label">Batch Number</label>
-                                <input type="text" name="batch_number" id="batch_number" class="form-control" placeholder="Enter batch number (e.g. BATCH-2024-001)">
+                                <label for="batch_number" class="form-label">Batch Number <span class="text-danger">*</span></label>
+                                <input type="text" name="batch_number" id="batch_number" class="form-control @error('batch_number') is-invalid @enderror" 
+                                       placeholder="Enter global batch number"
+                                       value="{{ old('batch_number', $po->po_number . '-R' . date('ymd')) }}" required>
+                                @error('batch_number')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="received_date" class="form-label">Received Date <span class="text-danger">*</span></label>
-                                <input type="date" name="received_date" id="received_date" class="form-control" value="{{ date('Y-m-d') }}" required>
+                                <input type="date" name="received_date" id="received_date" class="form-control @error('received_date') is-invalid @enderror" 
+                                       value="{{ old('received_date', date('Y-m-d')) }}" required>
+                                @error('received_date')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label">Supplier</label>
@@ -51,18 +60,17 @@
                     </div>
                     <div class="card-body">
                         <div class="alert alert-info">
-                            <i class="bx bx-info-circle me-1"></i> For serial numbers, use ranges like <strong>SN001 - SN300</strong> or comma-separated values like <strong>SN302, SN305</strong>.
+                            <i class="bx bx-info-circle me-1"></i> Enter quantities for each item. For serial numbers, you can add multiple tags. Damaged items will be moved to the <strong>Quarantine</strong> warehouse automatically.
                         </div>
                         <div class="table-responsive">
                             <table class="table table-bordered align-middle">
                                 <thead class="table-light">
                                     <tr>
                                         <th>Product / Variant</th>
-                                        <th class="text-center" style="width: 100px;">Ordered</th>
-                                        <th class="text-center" style="width: 120px;">Received</th>
-                                        <th class="text-center" style="width: 120px;">Damaged</th>
-                                        <th class="text-center" style="width: 120px;">Missing</th>
-                                        <th>Serial Numbers</th>
+                                        <th class="text-center" style="width: 80px;">Ordered</th>
+                                        <th style="width: 120px;">Received</th>
+                                        <th style="width: 120px;">Damaged</th>
+                                        <th>Serial Numbers (Optional)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -80,25 +88,20 @@
                                             <td>
                                                 <input type="number" name="items[{{ $item->id }}][received_quantity]" 
                                                        class="form-control received-qty" 
-                                                       min="0" max="{{ $item->order_quantity }}" 
-                                                       value="{{ $item->order_quantity }}" required>
+                                                       min="0" 
+                                                       value="{{ old('items.'.$item->id.'.received_quantity', $item->order_quantity) }}" required>
                                             </td>
                                             <td>
                                                 <input type="number" name="items[{{ $item->id }}][damaged_quantity]" 
-                                                       class="form-control text-danger" 
-                                                       min="0" value="0">
+                                                       class="form-control text-danger damaged-qty" 
+                                                       min="0" value="{{ old('items.'.$item->id.'.damaged_quantity', 0) }}">
                                             </td>
                                             <td>
-                                                <input type="number" name="items[{{ $item->id }}][missing_quantity]" 
-                                                       class="form-control text-warning" 
-                                                       min="0" value="0">
-                                            </td>
-                                            <td>
-                                                <textarea name="items[{{ $item->id }}][serial_numbers]" 
-                                                          class="form-control serial-input" 
-                                                          rows="2" 
-                                                          placeholder="SN001 - SN100"></textarea>
-                                                <div class="small text-muted mt-1 parsed-count"></div>
+                                                <select name="items[{{ $item->id }}][serial_numbers][]" 
+                                                        class="form-control serial-tags" 
+                                                        multiple="multiple">
+                                                </select>
+                                                <div class="small text-muted mt-1 serial-count"></div>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -117,29 +120,40 @@
 @endsection
 
 @section('scripts')
+<style>
+    .select2-container--bootstrap-5 .select2-selection--multiple {
+        min-height: 38px;
+    }
+</style>
 <script>
     $(document).ready(function() {
-        // Simple client-side feedback for serial number count (optional but helpful)
-        $('.serial-input').on('input', function() {
-            let input = $(this).val().trim();
-            let count = 0;
-            if (input) {
-                let parts = input.split(',');
-                parts.forEach(part => {
-                    part = part.trim();
-                    if (part.includes('-')) {
-                        let range = part.split('-');
-                        let start = range[0].trim().match(/\d+$/);
-                        let end = range[1].trim().match(/\d+$/);
-                        if (start && end) {
-                            count += (parseInt(end[0]) - parseInt(start[0]) + 1);
-                        }
-                    } else if (part) {
-                        count++;
-                    }
-                });
-            }
-            $(this).siblings('.parsed-count').text(count > 0 ? `Detected: ${count} serial numbers` : '');
+        $('.serial-tags').select2({
+            theme: 'bootstrap-5',
+            tags: true,
+            tokenSeparators: [',', ' '],
+            placeholder: 'Add serial numbers'
+        });
+
+        $('.serial-tags').on('change', function() {
+            let count = $(this).val() ? $(this).val().length : 0;
+            $(this).siblings('.serial-count').text(count > 0 ? `Selected: ${count} serials` : '');
+        });
+
+        $('#receiveForm').on('submit', function(e) {
+            let isValid = true;
+            $('tbody tr').each(function() {
+                let received = parseInt($(this).find('.received-qty').val()) || 0;
+                let damaged = parseInt($(this).find('.damaged-qty').val()) || 0;
+                let total = received + damaged;
+                let serials = $(this).find('.serial-tags').val();
+                
+                if (serials && serials.length > 0 && serials.length !== total) {
+                    toastr.error('Serial number count for ' + $(this).find('strong').text() + ' must match total quantity (' + total + ').');
+                    isValid = false;
+                }
+            });
+            
+            if (!isValid) e.preventDefault();
         });
     });
 </script>
