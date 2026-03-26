@@ -11,12 +11,18 @@ class Batch extends Model
     protected $fillable = [
         'batch_number',
         'purchase_order_id',
+        'supplier_id',
         'warehouse_id',
     ];
 
     public function purchaseOrder(): BelongsTo
     {
         return $this->belongsTo(PurchaseOrder::class);
+    }
+
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
     }
 
     public function warehouse(): BelongsTo

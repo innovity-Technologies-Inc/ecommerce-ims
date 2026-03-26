@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Batch;
 use App\Models\InventoryLevel;
 use App\Models\Product;
 use App\Models\ProductVariant;
@@ -86,7 +87,7 @@ class InventoryService
                 'product_variant_id' => $variantId,
             ]);
 
-            $inventoryLevel->quantity += $quantity;
+            $inventoryLevel->current_quantity += $quantity;
             $inventoryLevel->save();
 
             // Log Allocation
@@ -123,14 +124,20 @@ class InventoryService
         string $transactionType,
         ?string $reasonCode = null,
         ?string $referenceId = null,
-        ?int $batchId = null
+        ?int $batchId = null,
+        ?int $supplierId = null,
+        float $unitCost = 0,
+        float $cost = 0
     ): void {
         StockLedger::create([
             'product_id' => $productId,
             'product_variant_id' => $variantId,
             'warehouse_id' => $warehouseId,
             'batch_id' => $batchId,
+            'supplier_id' => $supplierId,
             'change_qty' => $changeQty,
+            'unit_cost' => $unitCost, // Always the purchase unit cost
+            'cost' => $cost,           // The transaction value (qty * price)
             'transaction_type' => $transactionType,
             'reason_code' => $reasonCode,
             'reference_id' => $referenceId,
@@ -157,6 +164,74 @@ class InventoryService
             case 'a-z': $query->orderBy('name', 'asc');
                 break;
             case 'z-a': $query->orderBy('name', 'desc');
+                break;
+            case 'latest':
+            default: $query->latest();
+                break;
+        }
+
+        return $query->paginate($perPage);
+    }
+
+    /**
+     * Get Stock Report (Inventory Levels).
+     */
+    public function getStockReport(array $params = [], int $perPage = 15): LengthAwarePaginator
+    {
+        $query = InventoryLevel::with(['product', 'variant', 'warehouse', 'batch']);
+
+        $flexSearch = app(FlexSearch::class);
+        $searchTerm = $params['search'] ?? null;
+
+        // Custom search for products/variants within inventory levels
+        if ($searchTerm) {
+            $query->whereHas('product', function ($q) use ($searchTerm) {
+                $q->where('name', 'like', "%{$searchTerm}%");
+            })->orWhereHas('variant', function ($q) use ($searchTerm) {
+                $q->where('variant_name', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        if (isset($params['warehouse_id']) && $params['warehouse_id'] !== 'all') {
+            $query->where('warehouse_id', $params['warehouse_id']);
+        }
+
+        $sort = $params['sort'] ?? 'latest';
+        switch ($sort) {
+            case 'oldest': $query->oldest();
+                break;
+            case 'stock_low': $query->orderBy('current_quantity', 'asc');
+                break;
+            case 'stock_high': $query->orderBy('current_quantity', 'desc');
+                break;
+            case 'latest':
+            default: $query->latest();
+                break;
+        }
+
+        return $query->paginate($perPage);
+    }
+
+    /**
+     * Get Batch Report.
+     */
+    public function getBatchReport(array $params = [], int $perPage = 15): LengthAwarePaginator
+    {
+        $query = Batch::with(['purchaseOrder', 'warehouse', 'items', 'supplier']);
+
+        $flexSearch = app(FlexSearch::class);
+        $searchTerm = $params['search'] ?? null;
+        $searchableColumns = ['batch_number'];
+
+        $query = $flexSearch->apply($query, [], $searchTerm, $searchableColumns);
+
+        if (isset($params['warehouse_id']) && $params['warehouse_id'] !== 'all') {
+            $query->where('warehouse_id', $params['warehouse_id']);
+        }
+
+        $sort = $params['sort'] ?? 'latest';
+        switch ($sort) {
+            case 'oldest': $query->oldest();
                 break;
             case 'latest':
             default: $query->latest();

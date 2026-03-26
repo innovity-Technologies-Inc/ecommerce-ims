@@ -16,11 +16,19 @@ class StockLedger extends Model
         'product_variant_id',
         'warehouse_id',
         'batch_id',
+        'supplier_id',
         'change_qty',
+        'unit_cost',
+        'cost',
         'transaction_type',
         'reason_code',
         'reference_id',
     ];
+
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
+    }
 
     public function batch(): BelongsTo
     {
