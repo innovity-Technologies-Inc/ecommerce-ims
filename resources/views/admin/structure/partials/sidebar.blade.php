@@ -171,16 +171,37 @@
             </li>
             @endif
 
-            <li class="menu-title">Inventory Management</li>
+            <li class="menu-title">Inventory</li>
 
-            @can('warehouse.view')
+            @can('inventory.view')
             <li class="nav-item">
-               <a class="nav-link" href="{{ route('admin.warehouses.index') }}">
-                   <span class="nav-icon">
-                       <iconify-icon icon="solar:home-2-bold-duotone"></iconify-icon>
-                   </span>
-                   <span class="nav-text"> Warehouses </span>
-               </a>
+                <a class="nav-link menu-arrow" href="#sidebarInventoryReports" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarInventoryReports">
+                    <span class="nav-icon">
+                        <iconify-icon icon="solar:graph-bold-duotone"></iconify-icon>
+                    </span>
+                    <span class="nav-text"> Inventory Reports </span>
+                </a>
+                <div class="collapse" id="sidebarInventoryReports">
+                    <ul class="nav sub-navbar-nav">
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="{{ route('admin.inventory.stock.index') }}">Stock Report</a>
+                        </li>
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="{{ route('admin.inventory.batches.index') }}">Batch Tracking</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            @endcan
+
+            @can('po.view')
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.inventory.po.index') }}">
+                    <span class="nav-icon">
+                        <iconify-icon icon="solar:clipboard-list-bold-duotone"></iconify-icon>
+                    </span>
+                    <span class="nav-text"> Purchase Orders </span>
+                </a>
             </li>
             @endcan
 
@@ -194,6 +215,18 @@
                </a>
             </li>
             @endcan
+
+            @can('warehouse.view')
+            <li class="nav-item">
+               <a class="nav-link" href="{{ route('admin.warehouses.index') }}">
+                   <span class="nav-icon">
+                       <iconify-icon icon="solar:home-2-bold-duotone"></iconify-icon>
+                   </span>
+                   <span class="nav-text"> Warehouses </span>
+               </a>
+            </li>
+            @endcan
+
             @can('supplier.view')
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.suppliers.index') }}">
@@ -201,17 +234,6 @@
                         <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon>
                     </span>
                     <span class="nav-text"> Suppliers </span>
-                </a>
-            </li>
-            @endcan
-
-            @can('po.view')
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.inventory.po.index') }}">
-                    <span class="nav-icon">
-                        <iconify-icon icon="solar:clipboard-list-bold-duotone"></iconify-icon>
-                    </span>
-                    <span class="nav-text"> Purchase Orders </span>
                 </a>
             </li>
             @endcan

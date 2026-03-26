@@ -109,6 +109,7 @@ class PermissionSeeder extends Seeder
             'po.edit',
             'po.delete',
 
+            'inventory.view',
             'inventory.allocate',
         ];
 
