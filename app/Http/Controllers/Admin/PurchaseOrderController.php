@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\PurchaseOrderRequest;
 use App\Models\Product;
 use App\Models\PurchaseOrder;
 use App\Models\Supplier;
+use App\Models\Warehouse;
 use App\Services\PurchaseOrderService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
