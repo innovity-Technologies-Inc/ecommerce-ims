@@ -25,6 +25,9 @@ This document lists the high-level requirements for the modules implemented in t
 - [ ] **REQ-94:** PO Receiving Refinement: Implement Batch IDs, Serial Numbers, and separate `batches` and `batch_serials` tables for accurate product tracking during receipt.
 - [ ] **REQ-95:** Quarantine Warehouse: Add `is_quarantine` flag to warehouses and create a "Quarantine" warehouse for damaged products.
 - [ ] **REQ-96:** Stock Ledger Integration: Maintain a detailed stock ledger tracking all transactions and ensuring consistency across warehouse, product, and variant stock levels.
+- [x] **REQ-97:** Inventory Stock Report: Implement a comprehensive stock level view showing product quantities across different warehouses with direct links to product details.
+- [x] **REQ-98:** Batch Tracking Report: Implement a batch-wise inventory view allowing administrators to drill down into batch items and view individual physical serial numbers.
+- [ ] **REQ-99:** Inventory Data Refinement: Add `supplier_id` to batches, update `batch_serials` status to 'in-stock'/'sold', and enhance `stock_ledgers` with `supplier_id`, `unit_cost`, and calculated `cost` (+/-).
 
 ## 2. Catalog Management
 - [x] **REQ-05:** Brand CRUD (Logo, Slug, Status).

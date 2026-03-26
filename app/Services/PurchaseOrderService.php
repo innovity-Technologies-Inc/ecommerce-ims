@@ -195,20 +195,6 @@ class PurchaseOrderService
                 throw new \Exception('Quarantine warehouse not found. Please seed warehouses.');
             }
 
-            // 1. Create a single Batch Header for the PO receipt (Main)
-            $batchHeader = Batch::create([
-                'batch_number' => $data['batch_number'],
-                'purchase_order_id' => $po->id,
-                'warehouse_id' => $po->warehouse_id,
-            ]);
-
-            // 2. Create a separate Batch Header for Damaged items in Quarantine
-            $damagedBatchHeader = Batch::create([
-                'batch_number' => $data['batch_number'] . '-DMG',
-                'purchase_order_id' => $po->id,
-                'warehouse_id' => $quarantineWarehouse->id,
-            ]);
-
             $po->update([
                 'status' => 'Delivered',
                 'received_date' => $data['received_date'] ?? now(),
@@ -220,116 +206,163 @@ class PurchaseOrderService
 
                 $receivedQty = (int) ($itemData['received_quantity'] ?? 0);
                 $damagedQty = (int) ($itemData['damaged_quantity'] ?? 0);
+                $totalQty = $receivedQty + $damagedQty;
+                
+                $globalBatchNumber = $data['batch_number'];
                 $serialInput = $itemData['serial_numbers'] ?? [];
                 $parsedSerials = $this->parseSerialNumbers($serialInput);
 
-                // Validation: If serial numbers provided, count must match received quantity
-                if (!empty($parsedSerials) && count($parsedSerials) !== ($receivedQty + $damagedQty)) {
-                    throw new \Exception("Serial number count (" . count($parsedSerials) . ") for product {$item->product->name} does not match total quantity (" . ($receivedQty + $damagedQty) . ").");
+                // Validation: If serial numbers provided, count must match total quantity
+                if (!empty($parsedSerials) && count($parsedSerials) !== $totalQty) {
+                    throw new \Exception("Serial number count (" . count($parsedSerials) . ") for product {$item->product->name} does not match total quantity ({$totalQty}).");
                 }
 
-                // 3. Update PO Item received quantity
+                // 1. Update PO Item received quantity (good items)
                 $item->update([
                     'received_quantity' => $receivedQty,
                 ]);
 
-                // 4. Handle Received Items (Main Warehouse)
-                if ($receivedQty > 0) {
-                    BatchItem::create([
-                        'batch_id' => $batchHeader->id,
-                        'product_id' => $item->product_id,
-                        'product_variant_id' => $item->product_variant_id,
-                        'quantity' => $receivedQty,
+                if ($totalQty > 0) {
+                    // 2. Create Initial Batch for the TOTAL quantity in the Target Warehouse
+                    // This uses the global batch number
+                    $mainBatch = Batch::create([
+                        'batch_number' => $globalBatchNumber,
+                        'purchase_order_id' => $po->id,
+                        'supplier_id' => $po->supplier_id,
+                        'warehouse_id' => $po->warehouse_id,
                     ]);
 
-                    // Create Serials for Received Items (Take first $receivedQty serials)
-                    $receivedSerials = array_slice($parsedSerials, 0, $receivedQty);
-                    foreach ($receivedSerials as $serial) {
+                    BatchItem::create([
+                        'batch_id' => $mainBatch->id,
+                        'product_id' => $item->product_id,
+                        'product_variant_id' => $item->product_variant_id,
+                        'quantity' => $totalQty,
+                    ]);
+
+                    // 3. Create ALL Serials initially in the Target Warehouse as 'in-stock'
+                    foreach ($parsedSerials as $serial) {
                         BatchSerial::create([
-                            'batch_id' => $batchHeader->id,
+                            'batch_id' => $mainBatch->id,
                             'warehouse_id' => $po->warehouse_id,
                             'product_id' => $item->product_id,
                             'product_variant_id' => $item->product_variant_id,
                             'serial_no' => $serial,
-                            'status' => 'Available',
+                            'status' => 'in-stock',
                         ]);
                     }
 
-                    // Update Inventory Level for Main Warehouse (Linked to this Batch)
+                    // 4. Initial Inventory Level for TOTAL quantity
                     $inventoryLevel = InventoryLevel::create([
                         'warehouse_id' => $po->warehouse_id,
                         'product_id' => $item->product_id,
                         'product_variant_id' => $item->product_variant_id,
-                        'batch_id' => $batchHeader->id,
-                        'current_quantity' => $receivedQty,
+                        'batch_id' => $mainBatch->id,
+                        'current_quantity' => $totalQty,
                     ]);
 
-                    // Update Total Product/Variant Stock (Global pool)
-                    if ($item->product_variant_id) {
-                        $variant = ProductVariant::find($item->product_variant_id);
-                        $variant->increment('stock', $receivedQty);
-                        $variant->update(['unit_cost' => $item->unit_cost]);
-                    } else {
-                        $product = Product::find($item->product_id);
-                        $product->increment('stock', $receivedQty);
-                        $product->update(['unit_cost' => $item->unit_cost]);
-                    }
-
-                    // Log Stock Ledger
+                    // 5. Log gross PO_RECEIPT for TOTAL quantity
                     $this->inventoryService->logStockChange(
                         $item->product_id,
                         $item->product_variant_id,
                         $po->warehouse_id,
-                        $receivedQty,
+                        $totalQty,
                         'PO_RECEIPT',
-                        'STOCK_IN',
+                        'TOTAL_RECEIVED',
                         $po->po_number,
-                        $batchHeader->id
+                        $mainBatch->id,
+                        $po->supplier_id,
+                        $item->unit_cost,
+                        $totalQty * $item->unit_cost
                     );
-                }
 
-                // 5. Handle Damaged Items (Quarantine)
-                if ($damagedQty > 0) {
-                    BatchItem::create([
-                        'batch_id' => $damagedBatchHeader->id,
-                        'product_id' => $item->product_id,
-                        'product_variant_id' => $item->product_variant_id,
-                        'quantity' => $damagedQty,
-                    ]);
+                    // 6. Handle Damaged Items Movement to Quarantine
+                    if ($damagedQty > 0) {
+                        // Create a specific batch record for the quarantine warehouse
+                        // Uses the EXACT SAME global batch number
+                        $qBatch = Batch::create([
+                            'batch_number' => $globalBatchNumber,
+                            'purchase_order_id' => $po->id,
+                            'supplier_id' => $po->supplier_id,
+                            'warehouse_id' => $quarantineWarehouse->id,
+                        ]);
 
-                    // Create Serials for Damaged Items (Take remaining serials)
-                    $damagedSerials = array_slice($parsedSerials, $receivedQty);
-                    foreach ($damagedSerials as $serial) {
-                        BatchSerial::create([
-                            'batch_id' => $damagedBatchHeader->id,
+                        BatchItem::create([
+                            'batch_id' => $qBatch->id,
+                            'product_id' => $item->product_id,
+                            'product_variant_id' => $item->product_variant_id,
+                            'quantity' => $damagedQty,
+                        ]);
+
+                        // Log Move OUT of Main Warehouse
+                        $this->inventoryService->logStockChange(
+                            $item->product_id,
+                            $item->product_variant_id,
+                            $po->warehouse_id,
+                            -$damagedQty,
+                            'QUARANTINE',
+                            'MOVE_TO_QUARANTINE',
+                            $po->po_number,
+                            $mainBatch->id,
+                            $po->supplier_id,
+                            $item->unit_cost,
+                            -($damagedQty * $item->unit_cost)
+                        );
+
+                        // Log Move IN to Quarantine Warehouse
+                        $this->inventoryService->logStockChange(
+                            $item->product_id,
+                            $item->product_variant_id,
+                            $quarantineWarehouse->id,
+                            $damagedQty,
+                            'QUARANTINE',
+                            'DAMAGED_ITEMS',
+                            $po->po_number,
+                            $qBatch->id,
+                            $po->supplier_id,
+                            $item->unit_cost,
+                            $damagedQty * $item->unit_cost
+                        );
+
+                        // Adjust Main Inventory and Batch Quantities
+                        $inventoryLevel->decrement('current_quantity', $damagedQty);
+                        $mainBatch->items()->where('product_id', $item->product_id)->where('product_variant_id', $item->product_variant_id)->decrement('quantity', $damagedQty);
+
+                        // Create Quarantine Inventory Level
+                        InventoryLevel::create([
                             'warehouse_id' => $quarantineWarehouse->id,
                             'product_id' => $item->product_id,
                             'product_variant_id' => $item->product_variant_id,
-                            'serial_no' => $serial,
-                            'status' => 'Damaged',
+                            'batch_id' => $qBatch->id,
+                            'current_quantity' => $damagedQty,
                         ]);
+
+                        // Transfer specific serials to Quarantine and update status to 'damaged'
+                        $damagedSerials = BatchSerial::where('batch_id', $mainBatch->id)
+                            ->where('product_id', $item->product_id)
+                            ->where('product_variant_id', $item->product_variant_id)
+                            ->latest()
+                            ->take($damagedQty)
+                            ->get();
+
+                        foreach ($damagedSerials as $serial) {
+                            $serial->update([
+                                'batch_id' => $qBatch->id,
+                                'warehouse_id' => $quarantineWarehouse->id,
+                                'status' => 'damaged', 
+                            ]);
+                        }
                     }
 
-                    // Update Inventory Level for Quarantine Warehouse (Linked to this Batch)
-                    $qInventoryLevel = InventoryLevel::create([
-                        'warehouse_id' => $quarantineWarehouse->id,
-                        'product_id' => $item->product_id,
-                        'product_variant_id' => $item->product_variant_id,
-                        'batch_id' => $damagedBatchHeader->id,
-                        'current_quantity' => $damagedQty,
-                    ]);
-
-                    // Log Stock Ledger
-                    $this->inventoryService->logStockChange(
-                        $item->product_id,
-                        $item->product_variant_id,
-                        $quarantineWarehouse->id,
-                        $damagedQty,
-                        'PO_RECEIPT',
-                        'QUARANTINE_DAMAGED',
-                        $po->po_number,
-                        $damagedBatchHeader->id
-                    );
+                    // 7. Update Global Product/Variant Stock (Total in system)
+                    if ($item->product_variant_id) {
+                        $variant = ProductVariant::find($item->product_variant_id);
+                        $variant->increment('stock', $totalQty); 
+                        $variant->update(['unit_cost' => $item->unit_cost]);
+                    } else {
+                        $product = Product::find($item->product_id);
+                        $product->increment('stock', $totalQty);
+                        $product->update(['unit_cost' => $item->unit_cost]);
+                    }
                 }
             }
         });
