@@ -506,11 +506,16 @@ Every module or architectural change must be documented in this file before a ta
 - **What:** Granular, batch-aware tracking of products within specific warehouses, including proactive stock management features.
 - **How it Works:**
   - **Batch Integration:** Stock is no longer just tracked by warehouse; it is tracked by **Warehouse + Batch**. The `inventory_levels` table stores `current_quantity` for every unique batch-warehouse-product combination.
+  - **Total Stock Synchronization:** The system maintains a "Saleable Stock" model.
+    - **Global Stock:** The `stock` field in the `products` and `product_variants` tables represents the **Total Saleable System Stock** (the sum of all quantities across non-quarantine warehouses).
+    - **PO Receipt:** When a shipment is received, it increments the global `stock` only by the **Good/Received Quantity**. Damaged items are tracked in `inventory_levels` (Quarantine) and the Stock Ledger but are excluded from the global `stock` availability to prevent them from being sold.
+    - **Sales:** When an item is sold, it decrements the global `stock`.
+    - **Consistency:** This tracking ensures that the customer-facing catalog only shows items available for purchase, while the administrative reporting module provides visibility into both saleable and quarantined physical units.
   - **Customizable Thresholds:** Supports `min_stock_override` per record, allowing for fine-tuned stock alerts that override global product limits.
   - **Alert Management:** Tracks `last_alert_sent` to prevent notification spam when stock levels fall below thresholds.
 - **Implementation Details:**
-  - **Service Logic:** Inventory lookups now incorporate the `batch_id` to ensure accurate fulfillment (e.g., FIFO/FEFO models can be implemented on top of this).
-  - **Consistency:** The system ensures that the sum of all `current_quantity` records in `inventory_levels` for a product matches the global `stock` in the `products` table.
+  - **Service Logic:** Inventory lookups now incorporate the `batch_id` to ensure accurate fulfillment.
+  - **Unallocated Calculation:** In the **Stock Allocation** module, the "available to move" quantity is dynamically calculated as: `Global Stock - Sum(All Warehouse Inventory)`.
 
 ### 3.35 Inventory Reports (Stock & Batches)
 - **What:** A comprehensive suite of analytical views providing real-time visibility into physical stock distribution and procurement history.

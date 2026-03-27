@@ -19,6 +19,7 @@ class InventoryService
 {
     /**
      * Get all received products that are not yet allocated to a warehouse.
+     * Calculated as: Global Stock - Sum(Warehouse Inventories)
      */
     public function getUnallocatedStock(array $params = [], int $perPage = 10): Collection
     {
@@ -27,29 +28,44 @@ class InventoryService
         // Simple Products
         $products = Product::where('stock', '>', 0)->get();
         foreach ($products as $product) {
-            $unallocated->push([
-                'id' => $product->id,
-                'variant_id' => null,
-                'name' => $product->name,
-                'variant_name' => 'N/A',
-                'sku' => 'N/A',
-                'stock' => $product->stock,
-                'type' => 'Product',
-            ]);
+            $allocatedQty = InventoryLevel::where('product_id', $product->id)
+                ->whereNull('product_variant_id')
+                ->sum('current_quantity');
+
+            $diff = $product->stock - $allocatedQty;
+
+            if ($diff > 0) {
+                $unallocated->push([
+                    'id' => $product->id,
+                    'variant_id' => null,
+                    'name' => $product->name,
+                    'variant_name' => 'N/A',
+                    'sku' => 'N/A',
+                    'stock' => $diff,
+                    'type' => 'Product'
+                ]);
+            }
         }
 
         // Product Variants
         $variants = ProductVariant::with('product')->where('stock', '>', 0)->get();
         foreach ($variants as $variant) {
-            $unallocated->push([
-                'id' => $variant->product_id,
-                'variant_id' => $variant->id,
-                'name' => $variant->product->name,
-                'variant_name' => $variant->variant_name,
-                'sku' => $variant->sku,
-                'stock' => $variant->stock,
-                'type' => 'Variant',
-            ]);
+            $allocatedQty = InventoryLevel::where('product_variant_id', $variant->id)
+                ->sum('current_quantity');
+
+            $diff = $variant->stock - $allocatedQty;
+
+            if ($diff > 0) {
+                $unallocated->push([
+                    'id' => $variant->product_id,
+                    'variant_id' => $variant->id,
+                    'name' => $variant->product->name,
+                    'variant_name' => $variant->variant_name,
+                    'sku' => $variant->sku,
+                    'stock' => $diff,
+                    'type' => 'Variant'
+                ]);
+            }
         }
 
         return $unallocated;
@@ -68,16 +84,23 @@ class InventoryService
 
             if ($variantId) {
                 $variant = ProductVariant::findOrFail($variantId);
-                if ($variant->stock < $quantity) {
-                    throw new \Exception("Insufficient unallocated stock for variant {$variant->variant_name}.");
+                // Check if sufficient unallocated stock exists
+                $allocatedQty = InventoryLevel::where('product_variant_id', $variantId)->sum('current_quantity');
+                $unallocated = $variant->stock - $allocatedQty;
+
+                if ($unallocated < $quantity) {
+                    throw new \Exception("Insufficient unallocated stock for variant {$variant->variant_name}. Available: {$unallocated}");
                 }
-                $variant->decrement('stock', $quantity);
+                // No decrement of variant->stock here because it represents the Total System Stock.
             } else {
                 $product = Product::findOrFail($productId);
-                if ($product->stock < $quantity) {
-                    throw new \Exception("Insufficient unallocated stock for product {$product->name}.");
+                $allocatedQty = InventoryLevel::where('product_id', $productId)->whereNull('product_variant_id')->sum('current_quantity');
+                $unallocated = $product->stock - $allocatedQty;
+
+                if ($unallocated < $quantity) {
+                    throw new \Exception("Insufficient unallocated stock for product {$product->name}. Available: {$unallocated}");
                 }
-                $product->decrement('stock', $quantity);
+                // No decrement of product->stock here.
             }
 
             // Update or create inventory level in warehouse
@@ -85,30 +108,21 @@ class InventoryService
                 'warehouse_id' => $warehouseId,
                 'product_id' => $productId,
                 'product_variant_id' => $variantId,
+                'batch_id' => null, // Manual allocations usually don't have a specific PO batch
             ]);
 
             $inventoryLevel->current_quantity += $quantity;
             $inventoryLevel->save();
 
-            // Log Allocation
-            $this->logStockChange(
-                $productId,
-                $variantId,
-                null,
-                -$quantity,
-                'ALLOCATION',
-                'MOVE_TO_WAREHOUSE',
-                'W-'.$warehouseId
-            );
-
+            // Log Allocation (Internal Movement)
             $this->logStockChange(
                 $productId,
                 $variantId,
                 $warehouseId,
                 $quantity,
                 'ALLOCATION',
-                'RECEIVED_FROM_POOL',
-                null
+                'MOVE_TO_WAREHOUSE',
+                'MANUAL'
             );
         });
     }
@@ -159,15 +173,11 @@ class InventoryService
 
         $sort = $params['sort'] ?? 'latest';
         switch ($sort) {
-            case 'oldest': $query->oldest();
-                break;
-            case 'a-z': $query->orderBy('name', 'asc');
-                break;
-            case 'z-a': $query->orderBy('name', 'desc');
-                break;
+            case 'oldest': $query->oldest(); break;
+            case 'a-z': $query->orderBy('name', 'asc'); break;
+            case 'z-a': $query->orderBy('name', 'desc'); break;
             case 'latest':
-            default: $query->latest();
-                break;
+            default: $query->latest(); break;
         }
 
         return $query->paginate($perPage);
@@ -198,15 +208,11 @@ class InventoryService
 
         $sort = $params['sort'] ?? 'latest';
         switch ($sort) {
-            case 'oldest': $query->oldest();
-                break;
-            case 'stock_low': $query->orderBy('current_quantity', 'asc');
-                break;
-            case 'stock_high': $query->orderBy('current_quantity', 'desc');
-                break;
+            case 'oldest': $query->oldest(); break;
+            case 'stock_low': $query->orderBy('current_quantity', 'asc'); break;
+            case 'stock_high': $query->orderBy('current_quantity', 'desc'); break;
             case 'latest':
-            default: $query->latest();
-                break;
+            default: $query->latest(); break;
         }
 
         return $query->paginate($perPage);
@@ -231,11 +237,9 @@ class InventoryService
 
         $sort = $params['sort'] ?? 'latest';
         switch ($sort) {
-            case 'oldest': $query->oldest();
-                break;
+            case 'oldest': $query->oldest(); break;
             case 'latest':
-            default: $query->latest();
-                break;
+            default: $query->latest(); break;
         }
 
         return $query->paginate($perPage);
@@ -290,15 +294,11 @@ class InventoryService
 
         $sort = $params['sort'] ?? 'latest';
         switch ($sort) {
-            case 'oldest': $query->oldest();
-                break;
-            case 'a-z': $query->orderBy('name', 'asc');
-                break;
-            case 'z-a': $query->orderBy('name', 'desc');
-                break;
+            case 'oldest': $query->oldest(); break;
+            case 'a-z': $query->orderBy('name', 'asc'); break;
+            case 'z-a': $query->orderBy('name', 'desc'); break;
             case 'latest':
-            default: $query->latest();
-                break;
+            default: $query->latest(); break;
         }
 
         return $query->paginate($perPage);

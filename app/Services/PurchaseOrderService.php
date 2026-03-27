@@ -224,7 +224,6 @@ class PurchaseOrderService
 
                 if ($totalQty > 0) {
                     // 2. Create Initial Batch for the TOTAL quantity in the Target Warehouse
-                    // This uses the global batch number
                     $mainBatch = Batch::create([
                         'batch_number' => $globalBatchNumber,
                         'purchase_order_id' => $po->id,
@@ -278,7 +277,6 @@ class PurchaseOrderService
                     // 6. Handle Damaged Items Movement to Quarantine
                     if ($damagedQty > 0) {
                         // Create a specific batch record for the quarantine warehouse
-                        // Uses the EXACT SAME global batch number
                         $qBatch = Batch::create([
                             'batch_number' => $globalBatchNumber,
                             'purchase_order_id' => $po->id,
@@ -353,14 +351,15 @@ class PurchaseOrderService
                         }
                     }
 
-                    // 7. Update Global Product/Variant Stock (Total in system)
+                    // 7. Update Global Product/Variant Stock (SALEABLE ONLY)
+                    // We only increment by $receivedQty (good items), excluding damaged/quarantine stock.
                     if ($item->product_variant_id) {
                         $variant = ProductVariant::find($item->product_variant_id);
-                        $variant->increment('stock', $totalQty); 
+                        $variant->increment('stock', $receivedQty); 
                         $variant->update(['unit_cost' => $item->unit_cost]);
                     } else {
                         $product = Product::find($item->product_id);
-                        $product->increment('stock', $totalQty);
+                        $product->increment('stock', $receivedQty);
                         $product->update(['unit_cost' => $item->unit_cost]);
                     }
                 }
