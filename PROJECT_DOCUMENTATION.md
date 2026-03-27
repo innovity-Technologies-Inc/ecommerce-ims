@@ -88,9 +88,10 @@ Every module or architectural change must be documented in this file before a ta
   - **Flexible Pricing Engine:** A product can have a `base_price` and multiple `ProductVariant` records. If variants exist, their specific pricing overrides the base price.
   - **Marketing Flags:** Boolean columns in the `products` table (e.g., `is_new`, `is_featured`, `is_hot_deal`) dictate where the product appears on the frontend.
   - **Multi-Image Gallery:** Handled via a dedicated `product_images` table, allowing infinite images per product with one designated as the primary thumbnail.
-  - **Global Minimum Stock:** Each product can have a `min_stock_global` threshold. This is used to trigger "Low Stock" alerts on the dashboard if individual variant stock falls below this number. It acts as a per-product override for the system-wide `low_stock_limit` setting.
+  - **Global Minimum Stock:** Each product can have a `min_stock_global` threshold. This is used to trigger "Low Stock" alerts on the dashboard if individual variant stock falls below this number.
 - **Implementation Details:** 
   - `ProductService` orchestrates the creation of the product, uploads the primary image, iterates through variant arrays to create `ProductVariant` rows (handling SKU and stock), and stores secondary images in the `product_images` table.
+  - **Low Stock Thresholds:** System-wide default low stock limits have been removed. The system now relies exclusively on `min_stock_global` (at the Product level) and `min_stock_override` (at the Inventory Level). If a threshold is not set, it defaults to 0.
 
 ### 3.5 Customer Shop & Frontend Filtering
 - **What:** The public-facing product catalog with advanced search, filtering, and sorting capabilities.
@@ -339,12 +340,12 @@ Every module or architectural change must be documented in this file before a ta
     - **Inventory Overview:** Real-time counts of total products and low-stock alerts.
     - **Customer & Order Analytics:** Tracks total registered customers, this month's order volume, and pending (unfulfilled) orders.
   - **Visual Data Representation:** Features an interactive **Sales Review Chart** (ApexCharts) that plots monthly sales data for the current year, enabling rapid identification of seasonal trends.
-  - **Proactive Inventory Management:** Automatically identifies and lists products with variants that have fallen below a customizable "Low Stock Limit". This limit can be adjusted in the **General Settings** module.
+  - **Proactive Inventory Management:** Automatically identifies and lists products with variants that have fallen below their specific thresholds (`min_stock_global` for products or `min_stock_override` for warehouse levels).
   - **Business Intelligence:** Displays a "Best Selling Products" leaderboard based on the lifetime `sales_count` attribute, highlighting top-performing inventory.
 - **Implementation Details:**
   - **`DashboardService`:** Centralizes all complex aggregation logic. It utilizes optimized Eloquent queries with `SUM()` and `COUNT()` aggregates to ensure high performance even as the database grows.
   - **Dynamic Charting:** Monthly sales data is retrieved using `DB::raw` with `MONTH()` groupings and passed to an area-style ApexChart via JSON encoding in the Blade view.
-  - **Customizable Alerts:** The "Low Stock" threshold is stored in the `general_settings` table and injected into the service layer, allowing the admin to define what constitutes a stock emergency.
+  - **Customizable Alerts:** Low stock thresholds are managed per-product and per-inventory level, allowing for granular control over what constitutes a stock emergency for different items.
   - **Integrated Navigation:** The dashboard provides direct links to "Restock" low-stock items, filtered order lists, and a dedicated **Best Selling Products** report.
 
 ### 3.25 Best Selling Products Report (Admin)
@@ -357,7 +358,7 @@ Every module or architectural change must be documented in this file before a ta
   - **`DashboardService::getBestSellingProductsPaged()`:** Centralizes the logic using optimized joins and `SUM()` aggregates.
   - **AJAX-Driven:** The report supports instant filtering and pagination without full page reloads, maintaining URL state via `history.pushState`.
 
-### 3.25 Global Wishlist Logic
+### 3.26 Global Wishlist Logic
 - **What:** Centralized implementation of wishlist functionality to ensure consistent behavior across all storefront pages.
 - **How it Works:** 
   - **Global Form & Function:** The hidden form and `addToWishlist` JavaScript function are placed within `master.blade.php`, making them available on the homepage, shop page, and product details pages.

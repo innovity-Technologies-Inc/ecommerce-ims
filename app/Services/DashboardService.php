@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\GeneralSetting;
+use App\Models\InventoryLevel;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
@@ -49,18 +49,17 @@ class DashboardService
         $pendingOrdersCount = Order::where('order_status', 'Pending')
             ->count();
 
-        $lowStockLimit = GeneralSetting::first()->low_stock_limit ?? 5;
-
-        // Count products where stock <= min_stock_global (if set > 0) OR stock <= global limit
-        $lowStockCount = ProductVariant::whereHas('product', function ($query) use ($lowStockLimit) {
-            $query->where(function ($q) {
-                $q->where('min_stock_global', '>', 0)
-                    ->whereColumn('product_variants.stock', '<=', 'products.min_stock_global');
-            })->orWhere(function ($q) use ($lowStockLimit) {
-                $q->where('min_stock_global', '<=', 0)
-                    ->where('product_variants.stock', '<=', $lowStockLimit);
-            });
+        // Count Global Low Stock
+        $globalLowStockCount = ProductVariant::whereHas('product', function ($query) {
+            $query->whereColumn('product_variants.stock', '<=', 'products.min_stock_global');
         })->count();
+
+        // Count Warehouse Low Stock
+        $warehouseLowStockCount = InventoryLevel::whereNotNull('min_stock_override')
+            ->whereColumn('current_quantity', '<=', 'min_stock_override')
+            ->count();
+
+        $lowStockCount = $globalLowStockCount + $warehouseLowStockCount;
 
         return [
             'thisMonthSales' => $thisMonthSales,
@@ -230,22 +229,55 @@ class DashboardService
     }
 
     /**
-     * Get low stock product variants.
+     * Get low stock product variants (Global and Warehouse levels).
      */
     public function getLowStockProducts(int $perPage = 10)
     {
-        $lowStockLimit = GeneralSetting::first()->low_stock_limit ?? 5;
+        $allLowStock = collect();
 
-        return ProductVariant::with(['product.primaryImage', 'product.category'])
-            ->whereHas('product', function ($query) use ($lowStockLimit) {
-                $query->where(function ($q) {
-                    $q->where('min_stock_global', '>', 0)
-                        ->whereColumn('product_variants.stock', '<=', 'products.min_stock_global');
-                })->orWhere(function ($q) use ($lowStockLimit) {
-                    $q->where('min_stock_global', '<=', 0)
-                        ->where('product_variants.stock', '<=', $lowStockLimit);
-                });
-            })
-            ->paginate($perPage);
+        // 1. Check Global Stock Levels (Saleable)
+        $globalLowStockVariants = ProductVariant::with(['product.primaryImage', 'product.category'])
+            ->whereHas('product', function ($query) {
+                $query->whereColumn('product_variants.stock', '<=', 'products.min_stock_global');
+            })->get();
+
+        foreach ($globalLowStockVariants as $variant) {
+            $allLowStock->push([
+                'type' => 'Global',
+                'product_id' => $variant->product_id,
+                'name' => $variant->product?->name ?? 'N/A',
+                'category' => $variant->product?->category?->name ?? 'N/A',
+                'image' => $variant->product?->primaryImage?->image_path ?? '',
+                'variant_name' => $variant->variant_name,
+                'sku' => $variant->sku,
+                'stock' => $variant->stock,
+                'location' => 'All Warehouses',
+            ]);
+        }
+
+        // 2. Check Warehouse-specific Stock Levels (including Overrides)
+        $warehouseLowStock = InventoryLevel::with(['product.primaryImage', 'product.category', 'variant', 'warehouse'])
+            ->whereNotNull('min_stock_override')
+            ->whereColumn('current_quantity', '<=', 'min_stock_override')
+            ->get();
+
+        foreach ($warehouseLowStock as $level) {
+            $allLowStock->push([
+                'type' => 'Warehouse',
+                'product_id' => $level->product_id,
+                'name' => $level->product?->name ?? 'N/A',
+                'category' => $level->product?->category?->name ?? 'N/A',
+                'image' => $level->product?->primaryImage?->image_path ?? '',
+                'variant_name' => $level->variant?->variant_name ?? 'N/A',
+                'sku' => $level->variant?->sku ?? 'N/A',
+                'stock' => $level->current_quantity,
+                'location' => $level->warehouse?->name ?? 'Unknown',
+            ]);
+        }
+
+        // De-duplicate if same variant is low globally and in a specific warehouse?
+        // User asked to add "type warehouse or global", so showing both is fine.
+
+        return $allLowStock->sortBy('stock')->take($perPage);
     }
 }

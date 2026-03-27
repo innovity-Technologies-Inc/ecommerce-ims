@@ -45,7 +45,7 @@ class DashboardController extends Controller
 
     public function lowStockProducts()
     {
-        $lowStockProducts = $this->dashboardService->getLowStockProducts(20);
+        $lowStockProducts = $this->dashboardService->getLowStockProducts(50);
 
         return view('admin.products.low-stock', compact('lowStockProducts'));
     }

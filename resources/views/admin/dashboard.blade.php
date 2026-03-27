@@ -267,30 +267,40 @@
                                 <tr>
                                     <th class="ps-3">Product</th>
                                     <th>Variant</th>
-                                    <th>SKU</th>
+                                    <th>Type</th>
+                                    <th>Location</th>
                                     <th>Stock</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($lowStockProducts as $variant)
+                                @foreach($lowStockProducts as $item)
                                 <tr>
                                     <td class="ps-3">
                                         <div class="d-flex align-items-center">
-                                            <img src="{{ asset('storage/' . ($variant->product?->primaryImage?->image_path ?? '')) }}" alt="" class="avatar-sm rounded me-2">
+                                            <img src="{{ asset('storage/' . ($item['image'] ?? '')) }}" alt="" class="avatar-sm rounded me-2">
                                             <div>
-                                                <h5 class="fs-14 my-1 text-truncate" style="max-width: 150px;">{{ $variant->product?->name ?? 'N/A' }}</h5>
-                                                <span class="text-muted fs-12">{{ $variant->product?->category?->name ?? 'N/A' }}</span>
+                                                <h5 class="fs-14 my-1 text-truncate" style="max-width: 150px;">
+                                                    <a href="{{ route('admin.products.show', $item['product_id']) }}" class="text-reset">{{ $item['name'] }}</a>
+                                                </h5>
+                                                <span class="text-muted fs-12">{{ $item['category'] }}</span>
                                             </div>
                                         </div>
                                     </td>
-                                    <td>{{ $variant->variant_name }}</td>
-                                    <td><small class="text-muted">{{ $variant->sku }}</small></td>
+                                    <td>{{ $item['variant_name'] }}</td>
                                     <td>
-                                        <span class="fw-bold text-danger">{{ $variant->stock }}</span>
+                                        <span class="badge {{ $item['type'] === 'Global' ? 'badge-soft-primary' : 'badge-soft-warning' }}">
+                                            {{ $item['type'] }}
+                                        </span>
                                     </td>
                                     <td>
-                                        <a href="{{ route('admin.products.edit', $variant->product_id) }}" class="btn btn-sm btn-soft-primary">Restock</a>
+                                        <small class="text-muted">{{ $item['location'] }}</small>
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold text-danger">{{ $item['stock'] }}</span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('admin.products.edit', $item['product_id']) }}" class="btn btn-sm btn-soft-primary">Restock</a>
                                     </td>
                                 </tr>
                                 @endforeach

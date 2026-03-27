@@ -52,6 +52,7 @@ This document lists the high-level requirements for the modules implemented in t
 
 ## 6. Site Settings & Configuration
 - [x] **REQ-18:** General Settings (Logo, SEO, Currency, visual assets).
+- [ ] **REQ-100:** Remove Global Low Stock Setting (Remove system-wide `low_stock_limit` from general settings. Thresholds should be managed per-product (`min_stock_global`) and per-inventory-level (`min_stock_override`)).
 - [x] **REQ-19:** SMTP Mail Configuration (Managed via .env).
 - [x] **REQ-20:** Homepage Section Management (Visibility & Content Source for Bestsellers/Featured).
 
