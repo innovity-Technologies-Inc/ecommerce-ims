@@ -216,11 +216,6 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
             Route::get('/batches/{batch}', 'showBatch')->name('admin.inventory.batches.show');
         });
 
-        Route::prefix('allocation')->middleware('permission:inventory.allocate')->controller(\App\Http\Controllers\Admin\InventoryAllocationController::class)->group(function () {
-            Route::get('/', 'index')->name('admin.inventory.allocation.index');
-            Route::get('/create', 'create')->name('admin.inventory.allocation.create');
-            Route::post('/', 'store')->name('admin.inventory.allocation.store');
-        });
     });
 });
 

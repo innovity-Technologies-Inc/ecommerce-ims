@@ -74,12 +74,12 @@
 
                     @if($po->batches->count() > 0)
                         <h5 class="card-title mt-4 mb-3">Received Batches & Inventory</h5>
-                        @foreach($po->batches->load(['warehouse', 'items.product', 'items.variant', 'serials']) as $batch)
+                        @foreach($po->batches->load(['warehouse', 'batchProducts.product', 'batchProducts.variant', 'serials']) as $batch)
                             <div class="card border mb-3">
                                 <div class="card-header bg-light-subtle d-flex justify-content-between align-items-center">
                                     <div>
                                         <span class="fw-bold">Batch: <code>{{ $batch->batch_number }}</code></span>
-                                        <span class="ms-3 badge {{ $batch->warehouse->is_quarantine ? 'bg-danger' : 'bg-success' }}">
+                                        <span class="ms-3 badge badge-soft-info">
                                             Warehouse: {{ $batch->warehouse->name }}
                                         </span>
                                     </div>
@@ -91,12 +91,13 @@
                                             <thead class="table-light">
                                                 <tr>
                                                     <th>Product</th>
-                                                    <th class="text-center" style="width: 80px;">Qty</th>
+                                                    <th class="text-center">Received Qty</th>
+                                                    <th class="text-center text-danger">Damaged Qty</th>
                                                     <th>Serials</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach($batch->items as $item)
+                                                @foreach($batch->batchProducts as $item)
                                                     <tr>
                                                         <td class="ps-3">
                                                             {{ $item->product->name }}
@@ -104,20 +105,18 @@
                                                                 <small class="text-muted">({{ $item->variant->variant_name }})</small>
                                                             @endif
                                                         </td>
-                                                        <td class="text-center fw-bold">{{ $item->quantity }}</td>
+                                                        <td class="text-center fw-bold">{{ $item->received_qty }}</td>
+                                                        <td class="text-center text-danger fw-bold">{{ $item->damaged_qty }}</td>
                                                         <td>
                                                             @php
                                                                 $itemSerials = $batch->serials->where('product_id', $item->product_id)->where('product_variant_id', $item->product_variant_id);
                                                             @endphp
                                                             @if($itemSerials->count() > 0)
-                                                                <div class="d-flex flex-wrap gap-1">
-                                                                    @foreach($itemSerials->take(10) as $serial)
-                                                                        <span class="badge badge-soft-secondary">{{ $serial->serial_no }}</span>
-                                                                    @endforeach
-                                                                    @if($itemSerials->count() > 10)
-                                                                        <span class="badge badge-soft-secondary">+{{ $itemSerials->count() - 10 }} more</span>
-                                                                    @endif
-                                                                </div>
+                                                                <button type="button" class="btn btn-soft-primary btn-sm view-serials-btn" 
+                                                                        data-product="{{ $item->product->name }} {{ $item->variant ? '(' . $item->variant->variant_name . ')' : '' }}"
+                                                                        data-serials='@json($itemSerials->values())'>
+                                                                    <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon> View ({{ $itemSerials->count() }})
+                                                                </button>
                                                             @else
                                                                 <span class="text-muted small italic">No serials</span>
                                                             @endif
@@ -224,11 +223,75 @@
         </div>
     </div>
 </div>
+
+<!-- Serials Modal -->
+<div class="modal fade" id="serialsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tracked Serials</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="text-muted small mb-1">Product:</label>
+                    <div id="modalProductName" class="fw-bold"></div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Serial No.</th>
+                                <th>Status</th>
+                                <th>Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody id="serialsList">
+                            <!-- Serials added via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
 <script>
 $(document).ready(function() {
+    $('.view-serials-btn').on('click', function() {
+        const productName = $(this).data('product');
+        const serials = $(this).data('serials');
+        const listContainer = $('#serialsList');
+        
+        $('#modalProductName').text(productName);
+        listContainer.empty();
+        
+        serials.forEach(serial => {
+            let pBadgeClass = '';
+            switch(serial.product_status) {
+                case 'good': pBadgeClass = 'badge-soft-success'; break;
+                case 'damaged': pBadgeClass = 'badge-soft-danger'; break;
+                case 'damaged_return': pBadgeClass = 'badge-soft-warning'; break;
+                default: pBadgeClass = 'badge-soft-secondary';
+            }
+
+            let sBadgeClass = serial.stock_status === 'in_stock' ? 'badge-soft-info' : 'badge-soft-dark';
+            let sLabel = serial.stock_status === 'in_stock' ? 'In Stock' : 'Sold';
+
+            listContainer.append(`
+                <tr>
+                    <td><code>${serial.serial_no}</code></td>
+                    <td><span class="badge ${pBadgeClass}">${serial.product_status.replace('_', ' ').toUpperCase()}</span></td>
+                    <td><span class="badge ${sBadgeClass}">${sLabel}</span></td>
+                </tr>
+            `);
+        });
+        
+        $('#serialsModal').modal('show');
+    });
+
     $('#statusUpdate').change(function() {
         const status = $(this).val();
 

@@ -75,13 +75,8 @@ class InventoryReportController extends Controller
      */
     public function showBatch(Batch $batch): View
     {
-        // A "batch" in the UI sense is all rows with the same batch_number and PO
-        $allBatchItems = Batch::where('batch_number', $batch->batch_number)
-            ->where('purchase_order_id', $batch->purchase_order_id)
-            ->where('warehouse_id', $batch->warehouse_id)
-            ->with(['product', 'variant', 'serials'])
-            ->get();
+        $batch->load(['purchaseOrder', 'warehouse', 'supplier', 'batchProducts.product', 'batchProducts.variant', 'serials']);
 
-        return view('admin.inventory.batches.show', compact('batch', 'allBatchItems'));
+        return view('admin.inventory.batches.show', compact('batch'));
     }
 }

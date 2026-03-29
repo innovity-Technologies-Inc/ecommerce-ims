@@ -15,10 +15,12 @@ class ProductVariant extends Model
         'regular_price',
         'unit_cost',
         'discount_price',
-        'discount_percentage',
         'flash_discount_price',
+        'discount_percentage',
         'flash_discount_percentage',
         'stock',
+        'min_stock_global',
+        'min_stock_type',
     ];
 
     protected function casts(): array

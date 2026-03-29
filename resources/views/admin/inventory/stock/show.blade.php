@@ -111,11 +111,11 @@
                             ->get();
                     @endphp
                     @if($serials->count() > 0)
-                        <div class="d-flex flex-wrap gap-1">
-                            @foreach($serials as $serial)
-                                <span class="badge {{ $serial->status === 'damaged' ? 'badge-soft-danger' : 'badge-soft-info' }}">{{ $serial->serial_no }}</span>
-                            @endforeach
-                        </div>
+                        <button type="button" class="btn btn-soft-primary btn-sm view-serials-btn" 
+                                data-product="{{ $level->product->name }} {{ $level->variant ? '(' . $level->variant->variant_name . ')' : '' }}"
+                                data-serials='@json($serials->values())'>
+                            <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon> View Serials ({{ $serials->count() }})
+                        </button>
                     @else
                         <p class="text-muted small italic">No serial numbers tracked for this specific inventory record.</p>
                     @endif
@@ -131,4 +131,74 @@
         </div>
     </div>
 </div>
+
+<!-- Serials Modal -->
+<div class="modal fade" id="serialsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tracked Serials</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="text-muted small mb-1">Product:</label>
+                    <div id="modalProductName" class="fw-bold"></div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Serial No.</th>
+                                <th>Status</th>
+                                <th>Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody id="serialsList">
+                            <!-- Serials added via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@section('scripts')
+<script>
+$(document).ready(function() {
+    $('.view-serials-btn').on('click', function() {
+        const productName = $(this).data('product');
+        const serials = $(this).data('serials');
+        const listContainer = $('#serialsList');
+        
+        $('#modalProductName').text(productName);
+        listContainer.empty();
+        
+        serials.forEach(serial => {
+            let pBadgeClass = '';
+            switch(serial.product_status) {
+                case 'good': pBadgeClass = 'badge-soft-success'; break;
+                case 'damaged': pBadgeClass = 'badge-soft-danger'; break;
+                case 'damaged_return': pBadgeClass = 'badge-soft-warning'; break;
+                default: pBadgeClass = 'badge-soft-secondary';
+            }
+
+            let sBadgeClass = serial.stock_status === 'in_stock' ? 'badge-soft-info' : 'badge-soft-dark';
+            let sLabel = serial.stock_status === 'in_stock' ? 'In Stock' : 'Sold';
+
+            listContainer.append(`
+                <tr>
+                    <td><code>${serial.serial_no}</code></td>
+                    <td><span class="badge ${pBadgeClass}">${serial.product_status.replace('_', ' ').toUpperCase()}</span></td>
+                    <td><span class="badge ${sBadgeClass}">${sLabel}</span></td>
+                </tr>
+            `);
+        });
+        
+        $('#serialsModal').modal('show');
+    });
+});
+</script>
 @endsection

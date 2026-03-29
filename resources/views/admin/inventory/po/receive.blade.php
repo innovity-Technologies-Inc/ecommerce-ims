@@ -136,23 +136,57 @@
 
 @section('scripts')
 <style>
+    .select2-container {
+        width: 100% !important;
+    }
     .select2-container--bootstrap-5 .select2-selection--multiple {
         min-height: 38px;
-        max-height: 100px;
-        overflow-y: auto;
+        max-height: 100px; /* Limit height and scroll vertically */
+        overflow-y: auto; 
+        overflow-x: hidden;
         border: 1px solid #dee2e6;
         border-radius: 0;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        scrollbar-width: thin;
+    }
+    /* Webkit scrollbar styling */
+    .select2-container--bootstrap-5 .select2-selection--multiple::-webkit-scrollbar {
+        width: 4px;
+    }
+    .select2-container--bootstrap-5 .select2-selection--multiple::-webkit-scrollbar-thumb {
+        background: #ced4da;
+        border-radius: 10px;
     }
     .select2-container--bootstrap-5.select2-container--focus .select2-selection--multiple {
         border-color: #86b7fe;
         box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
     }
     .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__rendered {
-        padding: 0 0.75rem;
+        padding: 0 0.5rem;
+        display: flex;
+        flex-wrap: wrap; /* Re-enable wrapping for vertical growth */
+        align-items: center;
+        width: 100%;
+        margin: 0;
+    }
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-search {
+        flex-grow: 1;
+        display: flex;
     }
     .select2-container--bootstrap-5 .select2-selection--multiple .select2-search__field {
-        margin-top: 7px;
+        margin: 0;
+        padding-left: 0.25rem;
+        height: 34px;
         font-family: inherit;
+        line-height: 34px;
+        width: 100% !important;
+    }
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice {
+        margin-top: 2px;
+        margin-bottom: 2px;
+        white-space: nowrap;
     }
     .serial-container {
         min-width: 200px;

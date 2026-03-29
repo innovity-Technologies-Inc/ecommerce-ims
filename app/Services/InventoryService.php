@@ -286,25 +286,6 @@ class InventoryService
         return $query->paginate($perPage);
     }
 
-        $searchTerm = $params['search'] ?? null;
-        if ($searchTerm) {
-            $query->where('batch_number', 'like', "%{$searchTerm}%");
-        }
-
-        if (isset($params['warehouse_id']) && $params['warehouse_id'] !== 'all') {
-            $query->where('warehouse_id', $params['warehouse_id']);
-        }
-
-        $sort = $params['sort'] ?? 'latest';
-        switch ($sort) {
-            case 'oldest': $query->oldest(); break;
-            case 'latest':
-            default: $query->latest(); break;
-        }
-
-        return $query->paginate($perPage);
-    }
-
     /**
      * Get details for a specific inventory level record.
      */

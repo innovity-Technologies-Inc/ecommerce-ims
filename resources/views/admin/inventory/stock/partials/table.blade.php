@@ -6,8 +6,8 @@
                 <th>Product / Variant</th>
                 <th>Warehouse</th>
                 <th>Batch No</th>
-                <th class="text-center">Saleable Stock</th>
-                <th class="text-center">Damaged</th>
+                <th class="text-center">Saleable Qty</th>
+                <th class="text-center text-danger">Damaged Qty</th>
                 @if(!Route::is('admin.inventory.damaged.index'))
                     <th class="text-center">Min Override</th>
                 @endif

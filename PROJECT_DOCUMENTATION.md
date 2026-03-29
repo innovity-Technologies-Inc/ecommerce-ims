@@ -526,7 +526,6 @@ Every module or architectural change must be documented in this file before a ta
   - **Alert Management:** Tracks `last_alert_sent` to prevent notification spam when stock levels fall below thresholds.
 - **Implementation Details:**
   - **Service Logic:** Inventory lookups now incorporate the `batch_id` to ensure accurate fulfillment.
-  - **Unallocated Calculation:** In the **Stock Allocation** module, the "available to move" quantity is dynamically calculated as: `Global Stock - Sum(All Warehouse Inventory)`.
 
 ### 3.35 Inventory Reports (Stock & Damaged Products)
 - **What:** A comprehensive suite of analytical views providing real-time visibility into physical stock distribution, batch tracking, and quarantine inventory.
@@ -542,19 +541,6 @@ Every module or architectural change must be documented in this file before a ta
   - **`InventoryReportController`:** Manages the specialized reporting routes for both Stock and Damaged products.
   - **High-Performance Filtering:** Both reports support real-time searching (Product, Variant, or Batch) and filtering by Warehouse.
   - **UI/UX:** Uses AJAX-driven tables with URL synchronization, allowing admins to bookmark specific filtered reports. Both reports utilize a shared `partials/table.blade.php` for consistent data presentation.
-
-### 3.36 Inventory Allocation Module
-- **What:** A system to manage the transition of received products from a general unallocated pool to specific physical storage locations (Warehouses).
-- **How it Works:**
-  - **Unallocated Pool Tracking:** When a Purchase Order is received, stock is initially placed in a "virtual" unallocated pool (represented by the `stock` field in `products` or `product_variants`).
-  - **Allocation Process:** Admins view a list of all items with unallocated stock. They can then select a target Warehouse and specify a quantity to move.
-  - **Stock Movement:** The system decrements the unallocated stock and creates or updates a record in the `inventory_levels` table for the specific warehouse.
-  - **Data Integrity:** All movements are handled within a `DB::transaction` to ensure consistency between the unallocated pool and warehouse levels.
-- **Implementation Details:**
-  - **`InventoryService`:** Manages the logic for retrieving unallocated items and executing the allocation transaction.
-  - **`InventoryLevel` Model:** Maps products and variants to specific warehouses with their respective quantities.
-  - **Security:** Access is restricted via the `inventory.allocate` permission.
-  - **UI/UX:** Features a dedicated "Stock Allocation" list view and a streamlined allocation form with real-time stock availability validation.
 
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*

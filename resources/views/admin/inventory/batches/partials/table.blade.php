@@ -6,9 +6,8 @@
                 <th>Batch Number</th>
                 <th>Supplier</th>
                 <th>Warehouse</th>
-                <th class="text-center">Total Received</th>
-                <th class="text-center">Saleable</th>
-                <th class="text-center">Damaged</th>
+                <th class="text-center">Received Qty</th>
+                <th class="text-center">Damaged Qty</th>
                 <th>Date Received</th>
                 <th class="text-center">Actions</th>
             </tr>
@@ -30,9 +29,6 @@
                     </td>
                     <td class="text-center">
                         <span class="badge badge-soft-dark fs-13">{{ $batch->total_received_qty }}</span>
-                    </td>
-                    <td class="text-center">
-                        <span class="badge badge-soft-success fs-13">{{ $batch->total_saleable_qty }}</span>
                     </td>
                     <td class="text-center">
                         <span class="badge badge-soft-danger fs-13">{{ $batch->total_damaged_qty }}</span>

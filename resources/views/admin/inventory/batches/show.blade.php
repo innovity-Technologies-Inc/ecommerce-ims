@@ -85,9 +85,8 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Product / Variant</th>
-                                    <th class="text-center">Rec.</th>
-                                    <th class="text-center">Good</th>
-                                    <th class="text-center text-danger">Dmg.</th>
+                                    <th class="text-center">Received Qty</th>
+                                    <th class="text-center text-danger">Damaged Qty</th>
                                     <th>Serial Numbers</th>
                                 </tr>
                             </thead>
@@ -106,9 +105,6 @@
                                             <span class="badge badge-soft-dark">{{ $bp->received_qty }}</span>
                                         </td>
                                         <td class="text-center">
-                                            <span class="text-success fw-bold">{{ $bp->saleable_qty }}</span>
-                                        </td>
-                                        <td class="text-center">
                                             <span class="text-danger fw-bold">{{ $bp->damaged_qty }}</span>
                                         </td>
                                         <td>
@@ -116,21 +112,11 @@
                                                 $itemSerials = $batch->serials->where('product_id', $bp->product_id)->where('product_variant_id', $bp->product_variant_id);
                                             @endphp
                                             @if($itemSerials->count() > 0)
-                                                <div class="d-flex flex-wrap gap-1">
-                                                    @foreach($itemSerials as $serial)
-                                                        @php
-                                                            $badgeClass = match($serial->product_status) {
-                                                                'good' => 'badge-soft-success',
-                                                                'damaged' => 'badge-soft-danger',
-                                                                'damaged_return' => 'badge-soft-warning',
-                                                                default => 'badge-soft-secondary'
-                                                            };
-                                                        @endphp
-                                                        <span class="badge {{ $badgeClass }}" title="Status: {{ ucfirst($serial->product_status) }}">
-                                                            {{ $serial->serial_no }}
-                                                        </span>
-                                                    @endforeach
-                                                </div>
+                                                <button type="button" class="btn btn-soft-primary btn-sm view-serials-btn" 
+                                                        data-product="{{ $bp->product->name }} {{ $bp->variant ? '(' . $bp->variant->variant_name . ')' : '' }}"
+                                                        data-serials='@json($itemSerials->values())'>
+                                                    <iconify-icon icon="solar: eye-bold-duotone"></iconify-icon> View ({{ $itemSerials->count() }})
+                                                </button>
                                             @else
                                                 <span class="text-muted small italic">No serials tracked</span>
                                             @endif
@@ -145,4 +131,74 @@
         </div>
     </div>
 </div>
+
+<!-- Serials Modal -->
+<div class="modal fade" id="serialsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tracked Serials</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="text-muted small mb-1">Product:</label>
+                    <div id="modalProductName" class="fw-bold"></div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Serial No.</th>
+                                <th>Status</th>
+                                <th>Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody id="serialsList">
+                            <!-- Serials added via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@section('scripts')
+<script>
+$(document).ready(function() {
+    $('.view-serials-btn').on('click', function() {
+        const productName = $(this).data('product');
+        const serials = $(this).data('serials');
+        const listContainer = $('#serialsList');
+        
+        $('#modalProductName').text(productName);
+        listContainer.empty();
+        
+        serials.forEach(serial => {
+            let pBadgeClass = '';
+            switch(serial.product_status) {
+                case 'good': pBadgeClass = 'badge-soft-success'; break;
+                case 'damaged': pBadgeClass = 'badge-soft-danger'; break;
+                case 'damaged_return': pBadgeClass = 'badge-soft-warning'; break;
+                default: pBadgeClass = 'badge-soft-secondary';
+            }
+
+            let sBadgeClass = serial.stock_status === 'in_stock' ? 'badge-soft-info' : 'badge-soft-dark';
+            let sLabel = serial.stock_status === 'in_stock' ? 'In Stock' : 'Sold';
+
+            listContainer.append(`
+                <tr>
+                    <td><code>${serial.serial_no}</code></td>
+                    <td><span class="badge ${pBadgeClass}">${serial.product_status.replace('_', ' ').toUpperCase()}</span></td>
+                    <td><span class="badge ${sBadgeClass}">${sLabel}</span></td>
+                </tr>
+            `);
+        });
+        
+        $('#serialsModal').modal('show');
+    });
+});
+</script>
 @endsection

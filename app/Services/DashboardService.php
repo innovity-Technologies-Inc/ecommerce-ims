@@ -50,12 +50,24 @@ class DashboardService
             ->count();
 
         // Count Global Low Stock
-        $globalLowStockCount = ProductVariant::whereHas('product', function ($query) {
-            $query->whereColumn('product_variants.stock', '<=', 'products.min_stock_global');
-        })->count();
+        // Products/Variants where type is 'global' and total stock <= min_stock_global
+        $globalLowStockCount = ProductVariant::where('min_stock_type', 'global')
+            ->whereColumn('stock', '<=', 'min_stock_global')
+            ->count();
 
         // Count Warehouse Low Stock
+        // Inventory levels where product/variant type is 'warehouse' and current_quantity <= min_stock_override
         $warehouseLowStockCount = InventoryLevel::whereNotNull('min_stock_override')
+            ->where(function($query) {
+                $query->whereHas('variant', function($q) {
+                    $q->where('min_stock_type', 'warehouse');
+                })->orWhere(function($q) {
+                    $q->whereNull('product_variant_id')
+                      ->whereHas('product', function($pq) {
+                          $pq->where('min_stock_type', 'warehouse');
+                      });
+                });
+            })
             ->whereColumn('current_quantity', '<=', 'min_stock_override')
             ->count();
 
@@ -236,10 +248,11 @@ class DashboardService
         $allLowStock = collect();
 
         // 1. Check Global Stock Levels (Saleable)
+        // Products/Variants where type is 'global' and total stock <= min_stock_global
         $globalLowStockVariants = ProductVariant::with(['product.primaryImage', 'product.category'])
-            ->whereHas('product', function ($query) {
-                $query->whereColumn('product_variants.stock', '<=', 'products.min_stock_global');
-            })->get();
+            ->where('min_stock_type', 'global')
+            ->whereColumn('stock', '<=', 'min_stock_global')
+            ->get();
 
         foreach ($globalLowStockVariants as $variant) {
             $allLowStock->push([
@@ -256,8 +269,19 @@ class DashboardService
         }
 
         // 2. Check Warehouse-specific Stock Levels (including Overrides)
+        // Inventory levels where product/variant type is 'warehouse' and current_quantity <= min_stock_override
         $warehouseLowStock = InventoryLevel::with(['product.primaryImage', 'product.category', 'variant', 'warehouse'])
             ->whereNotNull('min_stock_override')
+            ->where(function($query) {
+                $query->whereHas('variant', function($q) {
+                    $q->where('min_stock_type', 'warehouse');
+                })->orWhere(function($q) {
+                    $q->whereNull('product_variant_id')
+                      ->whereHas('product', function($pq) {
+                          $pq->where('min_stock_type', 'warehouse');
+                      });
+                });
+            })
             ->whereColumn('current_quantity', '<=', 'min_stock_override')
             ->get();
 
@@ -274,9 +298,6 @@ class DashboardService
                 'location' => $level->warehouse?->name ?? 'Unknown',
             ]);
         }
-
-        // De-duplicate if same variant is low globally and in a specific warehouse?
-        // User asked to add "type warehouse or global", so showing both is fine.
 
         return $allLowStock->sortBy('stock')->take($perPage);
     }

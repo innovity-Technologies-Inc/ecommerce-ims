@@ -62,15 +62,6 @@
                             <iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon>
                         </a>
                         @endcan
-                        @can('products.delete')
-                        <form action="{{ route('admin.products.destroy', $data->id) }}" method="post" class="d-inline">
-                            @csrf
-                            @method('delete')
-                            <button type="submit" class="btn btn-soft-danger btn-sm confirmDelete">
-                                <iconify-icon icon="solar:trash-bin-trash-broken" class="align-middle fs-18"></iconify-icon>
-                            </button>
-                        </form>
-                        @endcan
                     </div>
                 </td>
             </tr>

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Mail\PurchaseOrderMail;
 use App\Models\Batch;
+use App\Models\BatchProduct;
 use App\Models\BatchSerial;
 use App\Models\InventoryLevel;
 use App\Models\Product;
@@ -211,9 +212,8 @@ class PurchaseOrderService
                 $item = $po->items()->find($itemId);
                 if (!$item) continue;
 
-                $receivedQty = (int) ($itemData['received_quantity'] ?? 0);
+                $goodQty = (int) ($itemData['received_quantity'] ?? 0);
                 $damagedQty = (int) ($itemData['damaged_quantity'] ?? 0);
-                $saleableQty = $receivedQty - $damagedQty;
                 
                 // Parse separate serials
                 $receivedSerials = $this->parseSerialNumbers($itemData['received_serials'] ?? []);
@@ -224,9 +224,9 @@ class PurchaseOrderService
                     'batch_id' => $batch->id,
                     'product_id' => $item->product_id,
                     'product_variant_id' => $item->product_variant_id,
-                    'received_qty' => $receivedQty,
-                    'saleable_qty' => $saleableQty,
-                    'damaged_qty' => $damagedQty,
+                    'received_qty' => $goodQty,   // Good items received
+                    'saleable_qty' => $goodQty,   // Initial saleable same as good
+                    'damaged_qty' => $damagedQty, // Damaged items received
                 ]);
 
                 // Store Good Serials
@@ -263,28 +263,28 @@ class PurchaseOrderService
                     'batch_id' => $batch->id,
                 ]);
 
-                $inventoryLevel->current_quantity += $saleableQty;
+                $inventoryLevel->current_quantity += $goodQty;
                 $inventoryLevel->damaged_quantity += $damagedQty;
                 $inventoryLevel->save();
 
-                // Log Stock Change (Saleable)
-                if ($saleableQty > 0) {
+                // Log Stock Change (Saleable/Good)
+                if ($goodQty > 0) {
                     $this->inventoryService->logStockChange(
                         $item->product_id,
                         $item->product_variant_id,
                         $po->warehouse_id,
-                        $saleableQty,
+                        $goodQty,
                         'PO_RECEIPT',
                         'RECEIVED_GOOD',
                         $po->po_number,
                         $batch->id,
                         $po->supplier_id,
                         $item->unit_cost,
-                        $saleableQty * $item->unit_cost
+                        $goodQty * $item->unit_cost
                     );
                 }
 
-                // Log Damaged Stock (Separate entry for clarity)
+                // Log Damaged Stock
                 if ($damagedQty > 0) {
                     $this->inventoryService->logStockChange(
                         $item->product_id,
@@ -302,25 +302,25 @@ class PurchaseOrderService
                 }
 
                 // Update Global Saleable Stock
-                if ($saleableQty > 0) {
+                if ($goodQty > 0) {
                     if ($item->product_variant_id) {
                         $variant = ProductVariant::find($item->product_variant_id);
-                        $variant->increment('stock', $saleableQty);
+                        $variant->increment('stock', $goodQty);
                         $variant->update(['unit_cost' => $item->unit_cost]);
                     } else {
                         $product = Product::find($item->product_id);
-                        $product->increment('stock', $saleableQty);
+                        $product->increment('stock', $goodQty);
                         $product->update(['unit_cost' => $item->unit_cost]);
                     }
                 }
 
                 // Accumulate totals for Batch header
-                $totalReceived += $receivedQty;
-                $totalSaleable += $saleableQty;
+                $totalReceived += $goodQty;
+                $totalSaleable += $goodQty;
                 $totalDamaged += $damagedQty;
 
                 // Update PO Item info
-                $item->update(['received_quantity' => $receivedQty]);
+                $item->update(['received_quantity' => $goodQty]);
             }
 
             // Update Batch totals

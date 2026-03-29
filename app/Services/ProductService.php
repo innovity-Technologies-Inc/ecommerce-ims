@@ -120,9 +120,11 @@ class ProductService
                 'is_featured' => isset($data['is_featured']),
                 'status' => isset($data['status']),
                 'sales_count' => 0,
-                'stock' => $data['stock'] ?? 0,
                 'min_stock_global' => $data['min_stock_global'] ?? 0,
+                'min_stock_type' => $data['min_stock_type'] ?? 'global',
             ]);
+
+            $this->updateInventoryOverrides($product->id, null, $data['inventory_overrides'] ?? []);
 
             if (isset($data['variants']) && is_array($data['variants'])) {
                 foreach ($data['variants'] as $variantData) {
@@ -169,16 +171,34 @@ class ProductService
                 'is_hot_deal' => isset($data['is_hot_deal']),
                 'is_featured' => isset($data['is_featured']),
                 'status' => isset($data['status']),
-                'stock' => $data['stock'] ?? 0,
                 'min_stock_global' => $data['min_stock_global'] ?? 0,
+                'min_stock_type' => $data['min_stock_type'] ?? 'global',
             ]);
 
-            // Simple strategy for variants: Replace them
-            $product->variants()->delete();
+            $this->updateInventoryOverrides($product->id, null, $data['inventory_overrides'] ?? []);
+
+            // Handle variants
             if (isset($data['variants']) && is_array($data['variants'])) {
+                // To maintain inventory links, we should probably update existing variants instead of deleting all
+                // but for simplicity in this standard logic, we'll keep the replace strategy but note it's destructive for stock levels.
+                // Better approach: track variant IDs.
+                
+                $keepVariantIds = [];
                 foreach ($data['variants'] as $variantData) {
-                    $this->createVariant($product->id, $variantData);
+                    if (isset($variantData['id'])) {
+                        $variant = ProductVariant::find($variantData['id']);
+                        if ($variant) {
+                            $this->updateVariant($variant, $variantData);
+                            $keepVariantIds[] = $variant->id;
+                            continue;
+                        }
+                    }
+                    $newVariant = $this->createVariant($product->id, $variantData);
+                    $keepVariantIds[] = $newVariant->id;
                 }
+                $product->variants()->whereNotIn('id', $keepVariantIds)->delete();
+            } else {
+                $product->variants()->delete();
             }
 
             if (isset($data['images']) && is_array($data['images'])) {
@@ -228,7 +248,7 @@ class ProductService
             $discountPrice = $regularPrice - ($regularPrice * ($discountPercentage / 100));
         }
 
-        return ProductVariant::create([
+        $variant = ProductVariant::create([
             'product_id' => $productId,
             'variant_name' => $variantData['variant_name'],
             'size' => $variantData['size'] ?? null,
@@ -237,8 +257,52 @@ class ProductService
             'regular_price' => $regularPrice,
             'discount_price' => $discountPrice,
             'discount_percentage' => $discountPercentage,
-            'stock' => $variantData['stock'] ?? null,
+            'min_stock_global' => $variantData['min_stock_global'] ?? 0,
+            'min_stock_type' => $variantData['min_stock_type'] ?? 'global',
         ]);
+
+        $this->updateInventoryOverrides($productId, $variant->id, $variantData['inventory_overrides'] ?? []);
+
+        return $variant;
+    }
+
+    /**
+     * Update an existing product variant.
+     */
+    protected function updateVariant(ProductVariant $variant, array $variantData): void
+    {
+        $regularPrice = isset($variantData['regular_price']) ? (float) $variantData['regular_price'] : null;
+        $discountPercentage = isset($variantData['discount_percentage']) ? (int) $variantData['discount_percentage'] : null;
+        $discountPrice = null;
+
+        if ($regularPrice && $discountPercentage && $discountPercentage > 0) {
+            $discountPrice = $regularPrice - ($regularPrice * ($discountPercentage / 100));
+        }
+
+        $variant->update([
+            'variant_name' => $variantData['variant_name'],
+            'sku' => $variantData['sku'] ?? $variant->sku,
+            'regular_price' => $regularPrice,
+            'discount_price' => $discountPrice,
+            'discount_percentage' => $discountPercentage,
+            'min_stock_global' => $variantData['min_stock_global'] ?? 0,
+            'min_stock_type' => $variantData['min_stock_type'] ?? 'global',
+        ]);
+
+        $this->updateInventoryOverrides($variant->product_id, $variant->id, $variantData['inventory_overrides'] ?? []);
+    }
+
+    /**
+     * Update inventory level overrides for a product/variant.
+     */
+    protected function updateInventoryOverrides(int $productId, ?int $variantId, array $overrides): void
+    {
+        foreach ($overrides as $inventoryLevelId => $minStock) {
+            \App\Models\InventoryLevel::where('id', $inventoryLevelId)
+                ->where('product_id', $productId)
+                ->when($variantId, fn($q) => $q->where('product_variant_id', $variantId))
+                ->update(['min_stock_override' => $minStock]);
+        }
     }
 
     /**
