@@ -16,6 +16,7 @@ class InventoryLevel extends Model
         'product_variant_id',
         'batch_id',
         'current_quantity',
+        'damaged_quantity',
         'min_stock_override',
         'last_alert_sent',
     ];
@@ -24,6 +25,7 @@ class InventoryLevel extends Model
     {
         return [
             'current_quantity' => 'integer',
+            'damaged_quantity' => 'integer',
             'min_stock_override' => 'integer',
             'last_alert_sent' => 'datetime',
         ];

@@ -4,11 +4,10 @@
             <tr>
                 <th style="width: 50px;">#</th>
                 <th>Product / Variant</th>
-                @if(!Route::is('admin.inventory.damaged.index'))
-                    <th>Warehouse</th>
-                @endif
+                <th>Warehouse</th>
                 <th>Batch No</th>
-                <th class="text-center">Current Stock</th>
+                <th class="text-center">Saleable Stock</th>
+                <th class="text-center">Damaged</th>
                 @if(!Route::is('admin.inventory.damaged.index'))
                     <th class="text-center">Min Override</th>
                 @endif
@@ -29,13 +28,11 @@
                             <br><small class="text-muted">Variant: {{ $level->variant->variant_name }}</small>
                         @endif
                     </td>
-                    @if(!Route::is('admin.inventory.damaged.index'))
-                        <td>
-                            <span class="badge {{ $level->warehouse->is_quarantine ? 'bg-danger' : 'badge-soft-info' }}">
-                                {{ $level->warehouse->name }}
-                            </span>
-                        </td>
-                    @endif
+                    <td>
+                        <span class="badge badge-soft-info">
+                            {{ $level->warehouse->name }}
+                        </span>
+                    </td>
                     <td>
                         @if($level->batch)
                             <code>{{ $level->batch->batch_number }}</code>
@@ -44,9 +41,12 @@
                         @endif
                     </td>
                     <td class="text-center">
-                        <span class="fw-bold fs-14 {{ $level->current_quantity <= ($level->min_stock_override ?? 0) ? 'text-danger' : '' }}">
+                        <span class="fw-bold fs-14 {{ $level->current_quantity <= ($level->min_stock_override ?? 0) ? 'text-danger' : 'text-success' }}">
                             {{ $level->current_quantity }}
                         </span>
+                    </td>
+                    <td class="text-center">
+                        <span class="text-danger fw-bold">{{ $level->damaged_quantity }}</span>
                     </td>
                     @if(!Route::is('admin.inventory.damaged.index'))
                         <td class="text-center">
@@ -57,18 +57,14 @@
                         <small class="text-muted">{{ $level->updated_at->format('M d, Y H:i') }}</small>
                     </td>
                     <td class="text-center">
-                        @if($level->batch)
-                            <a href="{{ route('admin.inventory.batches.show', $level->batch_id) }}" class="btn btn-soft-info btn-sm" title="View Batch Details">
-                                <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon> Details
-                            </a>
-                        @else
-                            <span class="text-muted small">No Batch</span>
-                        @endif
+                        <a href="{{ route('admin.inventory.stock.show', $level->id) }}" class="btn btn-soft-info btn-sm" title="View Stock Details">
+                            <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon> Details
+                        </a>
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="{{ Route::is('admin.inventory.damaged.index') ? 5 : 8 }}" class="text-center p-4">
+                    <td colspan="{{ Route::is('admin.inventory.damaged.index') ? 8 : 9 }}" class="text-center p-4">
                         <iconify-icon icon="solar:box-minimalistic-broken" class="fs-48 text-muted mb-2"></iconify-icon>
                         <p class="text-muted">No stock records found matching your criteria.</p>
                     </td>

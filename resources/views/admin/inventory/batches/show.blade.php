@@ -41,19 +41,33 @@
                         </div>
                     </div>
                     <div class="mb-3">
+                        <label class="text-muted mb-1">Supplier:</label>
+                        <div class="fw-bold">{{ $batch->supplier->name ?? 'N/A' }}</div>
+                    </div>
+                    <div class="mb-3">
                         <label class="text-muted mb-1">Warehouse:</label>
                         <div>
-                            <span class="badge {{ $batch->warehouse->is_quarantine ? 'bg-danger' : 'bg-success' }} fs-13">
+                            <span class="badge badge-soft-info fs-13">
                                 {{ $batch->warehouse->name }}
                             </span>
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="text-muted mb-1">Physical Location:</label>
-                        <div class="text-muted">{{ $batch->warehouse->location ?? 'N/A' }}</div>
+                        <label class="text-muted mb-1">Total Received:</label>
+                        <div class="fw-bold fs-16">{{ $batch->total_received_qty }} Units</div>
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="text-muted small mb-1">Saleable:</label>
+                            <div class="text-success fw-bold">{{ $batch->total_saleable_qty }}</div>
+                        </div>
+                        <div class="col-6">
+                            <label class="text-muted small mb-1">Damaged:</label>
+                            <div class="text-danger fw-bold">{{ $batch->total_damaged_qty }}</div>
+                        </div>
                     </div>
                     <div class="mb-0">
-                        <label class="text-muted mb-1">Created At:</label>
+                        <label class="text-muted mb-1">Received At:</label>
                         <div class="fw-bold">{{ $batch->created_at->format('M d, Y H:i:s') }}</div>
                     </div>
                 </div>
@@ -71,32 +85,50 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Product / Variant</th>
-                                    <th class="text-center">Quantity</th>
+                                    <th class="text-center">Rec.</th>
+                                    <th class="text-center">Good</th>
+                                    <th class="text-center text-danger">Dmg.</th>
                                     <th>Serial Numbers</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($batch->items as $item)
+                                @foreach($batch->batchProducts as $bp)
                                     <tr>
                                         <td>
-                                            <a href="{{ route('admin.products.show', $item->product_id) }}" class="fw-bold">
-                                                {{ $item->product->name }}
+                                            <a href="{{ route('admin.products.show', $bp->product_id) }}" class="fw-bold">
+                                                {{ $bp->product->name }}
                                             </a>
-                                            @if($item->variant)
-                                                <br><small class="text-muted">Variant: {{ $item->variant->variant_name }}</small>
+                                            @if($bp->variant)
+                                                <br><small class="text-muted">Variant: {{ $bp->variant->variant_name }}</small>
                                             @endif
                                         </td>
                                         <td class="text-center">
-                                            <span class="badge badge-soft-dark fs-14">{{ $item->quantity }}</span>
+                                            <span class="badge badge-soft-dark">{{ $bp->received_qty }}</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="text-success fw-bold">{{ $bp->saleable_qty }}</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="text-danger fw-bold">{{ $bp->damaged_qty }}</span>
                                         </td>
                                         <td>
                                             @php
-                                                $itemSerials = $batch->serials->where('product_id', $item->product_id)->where('product_variant_id', $item->product_variant_id);
+                                                $itemSerials = $batch->serials->where('product_id', $bp->product_id)->where('product_variant_id', $bp->product_variant_id);
                                             @endphp
                                             @if($itemSerials->count() > 0)
                                                 <div class="d-flex flex-wrap gap-1">
                                                     @foreach($itemSerials as $serial)
-                                                        <span class="badge {{ $serial->status === 'Damaged' ? 'badge-soft-danger' : 'badge-soft-secondary' }}">{{ $serial->serial_no }}</span>
+                                                        @php
+                                                            $badgeClass = match($serial->product_status) {
+                                                                'good' => 'badge-soft-success',
+                                                                'damaged' => 'badge-soft-danger',
+                                                                'damaged_return' => 'badge-soft-warning',
+                                                                default => 'badge-soft-secondary'
+                                                            };
+                                                        @endphp
+                                                        <span class="badge {{ $badgeClass }}" title="Status: {{ ucfirst($serial->product_status) }}">
+                                                            {{ $serial->serial_no }}
+                                                        </span>
                                                     @endforeach
                                                 </div>
                                             @else

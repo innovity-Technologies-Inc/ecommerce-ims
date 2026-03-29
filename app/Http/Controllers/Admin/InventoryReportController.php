@@ -30,6 +30,32 @@ class InventoryReportController extends Controller
     }
 
     /**
+     * Display the granular stock details for a specific product/variant in a warehouse.
+     */
+    public function productStockDetails(int $id): View
+    {
+        $level = $this->inventoryService->getProductStockDetails($id);
+
+        return view('admin.inventory.stock.show', compact('level'));
+    }
+
+    /**
+     * Display the batch report.
+     */
+    public function batches(Request $request): View
+    {
+        $params = $request->all();
+        $batches = $this->inventoryService->getBatchReport($params);
+        $warehouses = Warehouse::where('is_quarantine', false)->get();
+
+        if ($request->ajax()) {
+            return view('admin.inventory.batches.partials.table', compact('batches'));
+        }
+
+        return view('admin.inventory.batches.index', compact('batches', 'warehouses'));
+    }
+
+    /**
      * Display the damaged/quarantine products report.
      */
     public function damaged(Request $request): View
@@ -49,8 +75,13 @@ class InventoryReportController extends Controller
      */
     public function showBatch(Batch $batch): View
     {
-        $batch->load(['purchaseOrder', 'warehouse', 'items.product', 'items.variant', 'serials.product', 'serials.variant']);
+        // A "batch" in the UI sense is all rows with the same batch_number and PO
+        $allBatchItems = Batch::where('batch_number', $batch->batch_number)
+            ->where('purchase_order_id', $batch->purchase_order_id)
+            ->where('warehouse_id', $batch->warehouse_id)
+            ->with(['product', 'variant', 'serials'])
+            ->get();
 
-        return view('admin.inventory.batches.show', compact('batch'));
+        return view('admin.inventory.batches.show', compact('batch', 'allBatchItems'));
     }
 }

@@ -190,14 +190,10 @@ class InventoryService
 
     /**
      * Get Stock Report (Inventory Levels).
-     * Filters out quarantine warehouses by default.
      */
     public function getStockReport(array $params = [], int $perPage = 15): LengthAwarePaginator
     {
-        $query = InventoryLevel::with(['product', 'variant', 'warehouse', 'batch'])
-            ->whereHas('warehouse', function ($q) {
-                $q->where('is_quarantine', false);
-            });
+        $query = InventoryLevel::with(['product', 'variant', 'warehouse', 'batch']);
 
         $searchTerm = $params['search'] ?? null;
 
@@ -234,10 +230,9 @@ class InventoryService
      */
     public function getDamagedReport(array $params = [], int $perPage = 15): LengthAwarePaginator
     {
+        // Focus on items where damaged_quantity > 0
         $query = InventoryLevel::with(['product', 'variant', 'warehouse', 'batch'])
-            ->whereHas('warehouse', function ($q) {
-                $q->where('is_quarantine', true);
-            });
+            ->where('damaged_quantity', '>', 0);
 
         $searchTerm = $params['search'] ?? null;
 
@@ -256,8 +251,8 @@ class InventoryService
         $sort = $params['sort'] ?? 'latest';
         switch ($sort) {
             case 'oldest': $query->oldest(); break;
-            case 'stock_low': $query->orderBy('current_quantity', 'asc'); break;
-            case 'stock_high': $query->orderBy('current_quantity', 'desc'); break;
+            case 'stock_low': $query->orderBy('damaged_quantity', 'asc'); break;
+            case 'stock_high': $query->orderBy('damaged_quantity', 'desc'); break;
             case 'latest':
             default: $query->latest(); break;
         }
@@ -266,17 +261,16 @@ class InventoryService
     }
 
     /**
-     * Get Batch Report (Optional/Legacy).
+     * Get Batch Report.
      */
     public function getBatchReport(array $params = [], int $perPage = 15): LengthAwarePaginator
     {
-        $query = Batch::with(['purchaseOrder', 'warehouse', 'items', 'supplier']);
+        $query = Batch::with(['purchaseOrder', 'warehouse', 'supplier']);
 
-        $flexSearch = app(FlexSearch::class);
         $searchTerm = $params['search'] ?? null;
-        $searchableColumns = ['batch_number'];
-
-        $query = $flexSearch->apply($query, [], $searchTerm, $searchableColumns);
+        if ($searchTerm) {
+            $query->where('batch_number', 'like', "%{$searchTerm}%");
+        }
 
         if (isset($params['warehouse_id']) && $params['warehouse_id'] !== 'all') {
             $query->where('warehouse_id', $params['warehouse_id']);
@@ -290,6 +284,41 @@ class InventoryService
         }
 
         return $query->paginate($perPage);
+    }
+
+        $searchTerm = $params['search'] ?? null;
+        if ($searchTerm) {
+            $query->where('batch_number', 'like', "%{$searchTerm}%");
+        }
+
+        if (isset($params['warehouse_id']) && $params['warehouse_id'] !== 'all') {
+            $query->where('warehouse_id', $params['warehouse_id']);
+        }
+
+        $sort = $params['sort'] ?? 'latest';
+        switch ($sort) {
+            case 'oldest': $query->oldest(); break;
+            case 'latest':
+            default: $query->latest(); break;
+        }
+
+        return $query->paginate($perPage);
+    }
+
+    /**
+     * Get details for a specific inventory level record.
+     */
+    public function getProductStockDetails(int $inventoryLevelId): InventoryLevel
+    {
+        return InventoryLevel::with(['product', 'variant', 'warehouse', 'batch.supplier', 'batch.purchaseOrder'])->findOrFail($inventoryLevelId);
+    }
+
+    /**
+     * Delete the specified warehouse.
+     */
+    public function deleteWarehouse(Warehouse $warehouse): void
+    {
+        $warehouse->delete();
     }
 
     /**
@@ -316,14 +345,6 @@ class InventoryService
         ]);
 
         return $warehouse;
-    }
-
-    /**
-     * Delete the specified warehouse.
-     */
-    public function deleteWarehouse(Warehouse $warehouse): void
-    {
-        $warehouse->delete();
     }
 
     /**

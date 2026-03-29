@@ -13,6 +13,9 @@ class Batch extends Model
         'purchase_order_id',
         'supplier_id',
         'warehouse_id',
+        'total_received_qty',
+        'total_saleable_qty',
+        'total_damaged_qty',
     ];
 
     public function purchaseOrder(): BelongsTo
@@ -30,13 +33,18 @@ class Batch extends Model
         return $this->belongsTo(Warehouse::class);
     }
 
-    public function items(): HasMany
+    public function batchProducts(): HasMany
     {
-        return $this->hasMany(BatchItem::class);
+        return $this->hasMany(BatchProduct::class);
     }
 
     public function serials(): HasMany
     {
         return $this->hasMany(BatchSerial::class);
+    }
+
+    public function inventoryLevels(): HasMany
+    {
+        return $this->hasMany(InventoryLevel::class);
     }
 }

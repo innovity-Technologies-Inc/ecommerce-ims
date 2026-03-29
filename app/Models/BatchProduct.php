@@ -5,13 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class BatchItem extends Model
+class BatchProduct extends Model
 {
     protected $fillable = [
         'batch_id',
         'product_id',
         'product_variant_id',
-        'quantity',
+        'received_qty',
+        'saleable_qty',
+        'damaged_qty',
     ];
 
     public function batch(): BelongsTo
