@@ -528,19 +528,20 @@ Every module or architectural change must be documented in this file before a ta
   - **Service Logic:** Inventory lookups now incorporate the `batch_id` to ensure accurate fulfillment.
   - **Unallocated Calculation:** In the **Stock Allocation** module, the "available to move" quantity is dynamically calculated as: `Global Stock - Sum(All Warehouse Inventory)`.
 
-### 3.35 Inventory Reports (Stock & Batches)
-- **What:** A comprehensive suite of analytical views providing real-time visibility into physical stock distribution and procurement history.
+### 3.35 Inventory Reports (Stock & Damaged Products)
+- **What:** A comprehensive suite of analytical views providing real-time visibility into physical stock distribution, batch tracking, and quarantine inventory.
 - **How it Works:**
-  - **Stock Report:** A centralized view showing exactly where every physical unit is stored. It lists products, variants, warehouses, and batches along with their `current_quantity`.
-    - **Drill-Down:** Product names link directly to the **Admin Product Details** page for rapid editing or analysis.
+  - **Consolidated Stock Report:** A centralized view showing exactly where every physical unit is stored. It lists products, variants, warehouses, and the specific **Batch Number** for each stock record.
+    - **Integrated Batch Tracking:** The report includes batch-level tracking by default. Admins can search for specific batch numbers directly within the main stock search bar.
+    - **Quarantine Filtering:** By default, this report excludes all products stored in quarantine/damaged warehouses to ensure the "Stock" view represents saleable inventory.
     - **Low Stock Highlighting:** Quantities that fall below their specific `min_stock_override` are visually highlighted in red.
-  - **Batch Tracking:** A chronological history of all received shipments (Batches).
-    - **Batch Details:** Clicking a batch reveals its header info (PO, Warehouse, Date) and a detailed table of all products received in that specific receipt.
-    - **Serial Visibility:** If a batch includes serialized products, all individual serial numbers are displayed with their current status (e.g., Available, Damaged).
+  - **Damaged Products Report:** A dedicated report for inventory stored in quarantine warehouses.
+    - **Quarantine Focus:** Specifically filters for records where the warehouse `is_quarantine` flag is true.
+    - **Tracking:** Lists damaged products by batch, allowing admins to trace quarantine stock back to its original Purchase Order.
 - **Implementation Details:**
-  - **`InventoryReportController`:** Manages the specialized reporting routes and AJAX-based filtering.
-  - **High-Performance Filtering:** Both reports support real-time searching by product/batch and filtering by Warehouse, utilizing `FlexSearch` for speed.
-  - **UI/UX:** Uses AJAX-driven tables with URL synchronization, allowing admins to bookmark specific filtered reports.
+  - **`InventoryReportController`:** Manages the specialized reporting routes for both Stock and Damaged products.
+  - **High-Performance Filtering:** Both reports support real-time searching (Product, Variant, or Batch) and filtering by Warehouse.
+  - **UI/UX:** Uses AJAX-driven tables with URL synchronization, allowing admins to bookmark specific filtered reports. Both reports utilize a shared `partials/table.blade.php` for consistent data presentation.
 
 ### 3.36 Inventory Allocation Module
 - **What:** A system to manage the transition of received products from a general unallocated pool to specific physical storage locations (Warehouses).

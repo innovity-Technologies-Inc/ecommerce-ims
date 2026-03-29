@@ -207,10 +207,10 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
             Route::delete('/{po}', 'destroy')->name('admin.inventory.po.destroy')->middleware('permission:po.delete');
         });
 
-        // Inventory Reports (Stock & Batches)
+        // Inventory Reports (Stock & Damaged)
         Route::prefix('inventory-reports')->middleware('permission:inventory.view')->controller(\App\Http\Controllers\Admin\InventoryReportController::class)->group(function () {
             Route::get('/stock', 'stock')->name('admin.inventory.stock.index');
-            Route::get('/batches', 'batches')->name('admin.inventory.batches.index');
+            Route::get('/damaged-products', 'damaged')->name('admin.inventory.damaged.index');
             Route::get('/batches/{batch}', 'showBatch')->name('admin.inventory.batches.show');
         });
 

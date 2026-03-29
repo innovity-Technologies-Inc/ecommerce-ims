@@ -20,7 +20,7 @@ class InventoryReportController extends Controller
     {
         $params = $request->all();
         $inventoryLevels = $this->inventoryService->getStockReport($params);
-        $warehouses = Warehouse::all();
+        $warehouses = Warehouse::where('is_quarantine', false)->get();
 
         if ($request->ajax()) {
             return view('admin.inventory.stock.partials.table', compact('inventoryLevels'));
@@ -30,19 +30,18 @@ class InventoryReportController extends Controller
     }
 
     /**
-     * Display the batch report.
+     * Display the damaged/quarantine products report.
      */
-    public function batches(Request $request): View
+    public function damaged(Request $request): View
     {
         $params = $request->all();
-        $batches = $this->inventoryService->getBatchReport($params);
-        $warehouses = Warehouse::all();
+        $inventoryLevels = $this->inventoryService->getDamagedReport($params);
 
         if ($request->ajax()) {
-            return view('admin.inventory.batches.partials.table', compact('batches'));
+            return view('admin.inventory.stock.partials.table', compact('inventoryLevels'));
         }
 
-        return view('admin.inventory.batches.index', compact('batches', 'warehouses'));
+        return view('admin.inventory.damaged.index', compact('inventoryLevels'));
     }
 
     /**

@@ -190,20 +190,26 @@ class InventoryService
 
     /**
      * Get Stock Report (Inventory Levels).
+     * Filters out quarantine warehouses by default.
      */
     public function getStockReport(array $params = [], int $perPage = 15): LengthAwarePaginator
     {
-        $query = InventoryLevel::with(['product', 'variant', 'warehouse', 'batch']);
+        $query = InventoryLevel::with(['product', 'variant', 'warehouse', 'batch'])
+            ->whereHas('warehouse', function ($q) {
+                $q->where('is_quarantine', false);
+            });
 
-        $flexSearch = app(FlexSearch::class);
         $searchTerm = $params['search'] ?? null;
 
-        // Custom search for products/variants within inventory levels
         if ($searchTerm) {
-            $query->whereHas('product', function ($q) use ($searchTerm) {
-                $q->where('name', 'like', "%{$searchTerm}%");
-            })->orWhereHas('variant', function ($q) use ($searchTerm) {
-                $q->where('variant_name', 'like', "%{$searchTerm}%");
+            $query->where(function($q) use ($searchTerm) {
+                $q->whereHas('product', function ($pq) use ($searchTerm) {
+                    $pq->where('name', 'like', "%{$searchTerm}%");
+                })->orWhereHas('variant', function ($vq) use ($searchTerm) {
+                    $vq->where('variant_name', 'like', "%{$searchTerm}%");
+                })->orWhereHas('batch', function ($bq) use ($searchTerm) {
+                    $bq->where('batch_number', 'like', "%{$searchTerm}%");
+                });
             });
         }
 
@@ -224,7 +230,43 @@ class InventoryService
     }
 
     /**
-     * Get Batch Report.
+     * Get Damaged/Quarantine Products Report.
+     */
+    public function getDamagedReport(array $params = [], int $perPage = 15): LengthAwarePaginator
+    {
+        $query = InventoryLevel::with(['product', 'variant', 'warehouse', 'batch'])
+            ->whereHas('warehouse', function ($q) {
+                $q->where('is_quarantine', true);
+            });
+
+        $searchTerm = $params['search'] ?? null;
+
+        if ($searchTerm) {
+            $query->where(function($q) use ($searchTerm) {
+                $q->whereHas('product', function ($pq) use ($searchTerm) {
+                    $pq->where('name', 'like', "%{$searchTerm}%");
+                })->orWhereHas('variant', function ($vq) use ($searchTerm) {
+                    $vq->where('variant_name', 'like', "%{$searchTerm}%");
+                })->orWhereHas('batch', function ($bq) use ($searchTerm) {
+                    $bq->where('batch_number', 'like', "%{$searchTerm}%");
+                });
+            });
+        }
+
+        $sort = $params['sort'] ?? 'latest';
+        switch ($sort) {
+            case 'oldest': $query->oldest(); break;
+            case 'stock_low': $query->orderBy('current_quantity', 'asc'); break;
+            case 'stock_high': $query->orderBy('current_quantity', 'desc'); break;
+            case 'latest':
+            default: $query->latest(); break;
+        }
+
+        return $query->paginate($perPage);
+    }
+
+    /**
+     * Get Batch Report (Optional/Legacy).
      */
     public function getBatchReport(array $params = [], int $perPage = 15): LengthAwarePaginator
     {

@@ -187,7 +187,7 @@
                             <a class="sub-nav-link" href="{{ route('admin.inventory.stock.index') }}">Stock</a>
                         </li>
                         <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.inventory.batches.index') }}">Batch Tracking</a>
+                            <a class="sub-nav-link" href="{{ route('admin.inventory.damaged.index') }}">Damaged Products</a>
                         </li>
                     </ul>
                 </div>
