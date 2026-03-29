@@ -12,9 +12,10 @@
             </tr>
         </thead>
         <tbody>
+            @php $sl = \App\HelperClass::indexNumberSerialization($inventoryLevels); @endphp
             @forelse($inventoryLevels as $level)
                 <tr>
-                    <td>{{ \App\HelperClass::indexNumberSerialization($inventoryLevels)[$loop->index] }}</td>
+                    <td>{{ $sl++ }}</td>
                     <td>
                         <a href="{{ route('admin.products.show', $level->product_id) }}" class="fw-bold text-primary">
                             {{ $level->product->name }}

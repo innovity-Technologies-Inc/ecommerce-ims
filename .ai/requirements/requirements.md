@@ -23,7 +23,8 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-92:** Mandatory Error Logging & SQL Fix: Implement mandatory logging for all `catch` blocks across the system to prevent hidden SQL/system errors. Fix the "Column not found" error in PO receiving by executing pending migrations.
 - [ ] **REQ-93:** PO Warehouse Selection: Add warehouse selection to PO creation.
 - [ ] **REQ-94:** PO Receiving Refinement: Implement Batch IDs, Serial Numbers, and separate `batches` and `batch_serials` tables for accurate product tracking during receipt.
-- [ ] **REQ-95:** Quarantine Warehouse: Add `is_quarantine` flag to warehouses and create a "Quarantine" warehouse for damaged products.
+- [x] **REQ-95:** Quarantine Warehouse: Add `is_quarantine` flag to warehouses and create a "Quarantine" warehouse for damaged products.
+- [x] **REQ-101:** Warehouse Index Refinement: Explicitly show the Quarantine flag in the warehouse list and add a dedicated filter to toggle between Normal and Quarantine warehouses. (NEW)
 - [ ] **REQ-96:** Stock Ledger Integration: Maintain a detailed stock ledger tracking all transactions and ensuring consistency across warehouse, product, and variant stock levels.
 - [x] **REQ-97:** Inventory Stock Report: Implement a comprehensive stock level view showing product quantities across different warehouses with direct links to product details.
 - [x] **REQ-98:** Batch Tracking Report: Implement a batch-wise inventory view allowing administrators to drill down into batch items and view individual physical serial numbers.

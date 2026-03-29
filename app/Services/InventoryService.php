@@ -169,7 +169,12 @@ class InventoryService
         $searchTerm = $params['search'] ?? null;
         $searchableColumns = ['name', 'location'];
 
-        $query = $flexSearch->apply($query, [], $searchTerm, $searchableColumns);
+        $filters = [];
+        if (isset($params['is_quarantine']) && $params['is_quarantine'] !== 'all') {
+            $filters['is_quarantine'] = $params['is_quarantine'];
+        }
+
+        $query = $flexSearch->apply($query, $filters, $searchTerm, $searchableColumns);
 
         $sort = $params['sort'] ?? 'latest';
         switch ($sort) {

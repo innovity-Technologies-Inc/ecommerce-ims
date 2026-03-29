@@ -87,7 +87,17 @@ You MUST strictly follow this sequence for **EVERY** request:
 - **MANDATORY:** Always use `HelperClass` for retrieving global settings (General, Contact, Brands, etc.) within Blade templates. Global view sharing via Service Providers (`View::share`) is strictly prohibited.
 - **File Uploads:** `HelperClass::file_upload($file, $folder)`.
 - **File Deletions:** `HelperClass::file_delete($path)`.
-- **Table Serialization:** `HelperClass::indexNumberSerialization($paginatedData)`.
+- **Table Row Numbering (MANDATORY):** 
+    - Always use `HelperClass::indexNumberSerialization($paginatedData)` to initialize the starting serial number.
+    - **Pattern:** Initialize a `$sl` variable before the loop and increment it using `{{ $sl++ }}` inside the loop.
+    - **PROHIBITED:** Never use `indexNumberSerialization($data)[$loop->index]` as it causes "Trying to access array offset on int" errors.
+    - **Example:**
+      ```blade
+      @php $sl = \App\HelperClass::indexNumberSerialization($data); @endphp
+      @foreach($data as $item)
+          <td>{{ $sl++ }}</td>
+      @endforeach
+      ```
 - **Global Data Access:** Use `HelperClass::generalSettings()`, `HelperClass::contactSettings()`, `HelperClass::getCategories()`, etc.
 
 ## 6. Database Safety & Data Integrity (CRITICAL)

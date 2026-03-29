@@ -14,9 +14,10 @@
             </tr>
         </thead>
         <tbody>
+            @php $sl = \App\HelperClass::indexNumberSerialization($pos); @endphp
             @forelse($pos as $po)
                 <tr>
-                    <td>{{ \App\HelperClass::indexNumberSerialization($pos)[$loop->index] }}</td>
+                    <td>{{ $sl++ }}</td>
                     <td><strong>{{ $po->po_number }}</strong></td>
                     <td>{{ $po->supplier->name }}</td>
                     <td>

@@ -457,15 +457,18 @@ Every module or architectural change must be documented in this file before a ta
 - **Admin Theme Customization:** The sidebar (`main-nav`) and dark theme background colors have been updated to a custom deep blue shade (`#001F3D`). These overrides are applied globally in `master.blade.php` to maintain brand consistency across the administrative interface.
 - **Admin Assets:** Public admin CSS/JS directories renamed from `public/admin` to `public/admin_assets` to permanently resolve routing conflicts with the `Route::prefix('admin')` backend architecture.
 - **Pagination UI Standardization:** All paginated index pages (both Admin and Client) are standardized to include "Showing X to Y of Z Results" text next to the pagination links. In the Admin panel, this is placed within a `card-footer` using a `d-flex justify-content-between` layout. On the Client side, it is centered above the pagination links to maintain visual balance.
-
+- **Index Number Serialization Fix:** Standardized the row numbering across all administrative tables. To prevent "Trying to access array offset on int" errors, the system utilizes `HelperClass::indexNumberSerialization($data)` to calculate the starting serial for the current page, which is then incremented within the `@foreach` loop using `$sl++`. This approach ensures accurate, consecutive numbering across all paginated modules (Products, Orders, Inventory, etc.).
 ### 3.31 Inventory Management Onboarding (Warehouses & Suppliers)
 - **What:** Foundation for an integrated inventory system, allowing administrators to manage storage locations (Warehouses) and external vendors (Suppliers).
 - **How it Works:**
   - **Warehouse Management:** Admins create and manage physical storage locations. Each warehouse record stores a unique name, a detailed physical location, and an `is_quarantine` flag.
+  - **Warehouse Index Refinement (REQ-101):** The warehouse list explicitly displays the "Quarantine" status for each record using visual badges (Yes/No).
+  - **Dynamic Filtering:** A dedicated "Type" filter on the index page allows administrators to toggle between "All", "Normal", and "Quarantine" warehouses. This filtering is implemented using AJAX and integrated with `FlexSearch` for real-time updates.
   - **Quarantine Warehouse:** A specialized warehouse (flagged `is_quarantine: true`) is used to automatically store damaged items received during the Purchase Order process.
   - **Supplier Onboarding:** Admins manage the vendor database. Each supplier record includes the company name, contact email, mobile number, and full physical address.
 - **Implementation Details:**
   - **Architecture:** Follows the strict Service Layer pattern. `InventoryService` centralizes all CRUD operations for both Warehouses and Suppliers.
+  - **Filtering Logic:** `InventoryService::getAllWarehouses()` accepts an optional `is_quarantine` parameter which is applied to the Eloquent query before pagination.
   - **Validation:** `WarehouseRequest` and `SupplierRequest` enforce strict data integrity.
   - **Search & Filtering:** Both index pages utilize `FlexSearch` for real-time searching and AJAX-driven sorting.
 
@@ -477,8 +480,15 @@ Every module or architectural change must be documented in this file before a ta
   - **Refined Receiving Workflow:** When an order is "Sent", the receiving process facilitates granular tracking:
     - **Global Batch Management:** A single `batch_number` is assigned to the entire receipt. This creates a `Batch` header record (containing the `supplier_id`) that groups all items received in that shipment.
     - **Batch Items:** Individual quantities for each product/variant are stored in the `batch_items` table, linked to the main `Batch` header.
-    - **Serial Number Tagging:** The system uses a "tag-style" UI (Select2) for entering individual product serial numbers. These serials are stored in a dedicated `batch_serials` table with a status of `in-stock` by default (transitioning to `sold` upon sale).
-    - **Damaged Goods Handling:** Admins specify `Received` and `Damaged` quantities. `Received` items move to the PO's target warehouse, while `Damaged` items are automatically routed to the **Quarantine** warehouse under a separate "Damaged" batch header.
+    - **Serial Number Tagging:** The system uses a "tag-style" UI (Select2) for entering individual product serial numbers. 
+      - **Granular Serials:** Administrators can enter separate lists of serial numbers for **Received** (Good) and **Damaged** products. 
+      - **UI Enhancement:** The serial number input area is designed to be compact, becoming scrollable after 4 tags are added to maintain page layout integrity.
+      - **Validation:** The system enforces that the number of entered serials must exactly match the quantity specified for each category (Received or Damaged) if serial tracking is used.
+      - **Storage:** These serials are stored in a dedicated `batch_serials` table. Received serials are marked as `in-stock`, while damaged serials are routed to the Quarantine warehouse and marked as `damaged`.
+    - **Damaged Goods Handling:** Admins specify `Received` and `Damaged` quantities. To ensure accuracy and speed, the interface includes **auto-calculation logic**:      - Entering a `Received` quantity automatically calculates and fills the remaining `Damaged` quantity based on the total ordered amount.
+      - Entering a `Damaged` quantity automatically updates the `Received` quantity.
+      - This logic enforces that the sum of Received and Damaged items never exceeds the total quantity originally ordered.
+      - `Received` items move to the PO's target warehouse, while `Damaged` items are automatically routed to the **Quarantine** warehouse under a separate "Damaged" batch header.
   - **Automated Inventory Synchronization:**
     - **Batch-Level Tracking:** The system creates unique records in the `inventory_levels` table for each batch received. This allows for precise tracking of exactly how much of a specific batch is remaining in a warehouse.
     - **Stock & Ledger:** Updates total product stock, warehouse-batch inventory levels (`inventory_levels`), and creates detailed batch item records. Every movement triggers a **Stock Ledger** entry containing financial data (`supplier_id`, `unit_cost`, and total `cost`).

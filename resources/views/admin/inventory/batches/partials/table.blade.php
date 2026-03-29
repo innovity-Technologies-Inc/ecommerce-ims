@@ -12,9 +12,10 @@
             </tr>
         </thead>
         <tbody>
+            @php $sl = \App\HelperClass::indexNumberSerialization($batches); @endphp
             @forelse($batches as $batch)
                 <tr>
-                    <td>{{ \App\HelperClass::indexNumberSerialization($batches)[$loop->index] }}</td>
+                    <td>{{ $sl++ }}</td>
                     <td><code>{{ $batch->batch_number }}</code></td>
                     <td>
                         @if($batch->purchaseOrder)

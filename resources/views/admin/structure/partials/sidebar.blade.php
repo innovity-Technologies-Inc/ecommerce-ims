@@ -179,12 +179,12 @@
                     <span class="nav-icon">
                         <iconify-icon icon="solar:graph-bold-duotone"></iconify-icon>
                     </span>
-                    <span class="nav-text"> Inventory Reports </span>
+                    <span class="nav-text"> Inventory</span>
                 </a>
                 <div class="collapse" id="sidebarInventoryReports">
                     <ul class="nav sub-navbar-nav">
                         <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.inventory.stock.index') }}">Stock Report</a>
+                            <a class="sub-nav-link" href="{{ route('admin.inventory.stock.index') }}">Stock</a>
                         </li>
                         <li class="sub-nav-item">
                             <a class="sub-nav-link" href="{{ route('admin.inventory.batches.index') }}">Batch Tracking</a>
