@@ -138,11 +138,27 @@
 <style>
     .select2-container--bootstrap-5 .select2-selection--multiple {
         min-height: 38px;
-        max-height: 100px; /* Limit height */
-        overflow-y: auto; /* Enable scrolling */
+        max-height: 100px;
+        overflow-y: auto;
+        border: 1px solid #dee2e6;
+        border-radius: 0;
+    }
+    .select2-container--bootstrap-5.select2-container--focus .select2-selection--multiple {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__rendered {
+        padding: 0 0.75rem;
+    }
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-search__field {
+        margin-top: 7px;
+        font-family: inherit;
     }
     .serial-container {
         min-width: 200px;
+    }
+    .received-qty, .damaged-qty {
+        border-radius: 0;
     }
 </style>
 <script>
@@ -152,6 +168,19 @@
             tags: true,
             tokenSeparators: [',', ' '],
             placeholder: 'Add serial numbers'
+        });
+
+        // Prevent exceeding quantity during selection
+        $('.serial-tags').on('select2:selecting', function(e) {
+            let tr = $(this).closest('tr');
+            let isReceived = $(this).hasClass('received-serials');
+            let qty = parseInt(tr.find(isReceived ? '.received-qty' : '.damaged-qty').val()) || 0;
+            let currentCount = $(this).val() ? $(this).val().length : 0;
+
+            if (currentCount >= qty) {
+                toastr.warning(`Cannot exceed the ${isReceived ? 'Received' : 'Damaged'} quantity (${qty}).`);
+                e.preventDefault();
+            }
         });
 
         $('.serial-tags').on('change', function() {
