@@ -4,11 +4,16 @@
             <tr>
                 <th style="width: 50px;">#</th>
                 <th>Product / Variant</th>
-                <th>Warehouse</th>
+                @if(!Route::is('admin.inventory.damaged.index'))
+                    <th>Warehouse</th>
+                @endif
                 <th>Batch No</th>
                 <th class="text-center">Current Stock</th>
-                <th class="text-center">Min Override</th>
+                @if(!Route::is('admin.inventory.damaged.index'))
+                    <th class="text-center">Min Override</th>
+                @endif
                 <th>Last Update</th>
+                <th class="text-center">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -24,11 +29,13 @@
                             <br><small class="text-muted">Variant: {{ $level->variant->variant_name }}</small>
                         @endif
                     </td>
-                    <td>
-                        <span class="badge {{ $level->warehouse->is_quarantine ? 'bg-danger' : 'badge-soft-info' }}">
-                            {{ $level->warehouse->name }}
-                        </span>
-                    </td>
+                    @if(!Route::is('admin.inventory.damaged.index'))
+                        <td>
+                            <span class="badge {{ $level->warehouse->is_quarantine ? 'bg-danger' : 'badge-soft-info' }}">
+                                {{ $level->warehouse->name }}
+                            </span>
+                        </td>
+                    @endif
                     <td>
                         @if($level->batch)
                             <code>{{ $level->batch->batch_number }}</code>
@@ -41,16 +48,27 @@
                             {{ $level->current_quantity }}
                         </span>
                     </td>
-                    <td class="text-center">
-                        {{ $level->min_stock_override ?? '-' }}
-                    </td>
+                    @if(!Route::is('admin.inventory.damaged.index'))
+                        <td class="text-center">
+                            {{ $level->min_stock_override ?? '-' }}
+                        </td>
+                    @endif
                     <td>
                         <small class="text-muted">{{ $level->updated_at->format('M d, Y H:i') }}</small>
+                    </td>
+                    <td class="text-center">
+                        @if($level->batch)
+                            <a href="{{ route('admin.inventory.batches.show', $level->batch_id) }}" class="btn btn-soft-info btn-sm" title="View Batch Details">
+                                <iconify-icon icon="solar:eye-bold-duotone"></iconify-icon> Details
+                            </a>
+                        @else
+                            <span class="text-muted small">No Batch</span>
+                        @endif
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" class="text-center p-4">
+                    <td colspan="{{ Route::is('admin.inventory.damaged.index') ? 5 : 8 }}" class="text-center p-4">
                         <iconify-icon icon="solar:box-minimalistic-broken" class="fs-48 text-muted mb-2"></iconify-icon>
                         <p class="text-muted">No stock records found matching your criteria.</p>
                     </td>

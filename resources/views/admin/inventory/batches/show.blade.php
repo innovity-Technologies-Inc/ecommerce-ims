@@ -9,8 +9,8 @@
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                 <h4 class="mb-sm-0">Batch Details: {{ $batch->batch_number }}</h4>
                 <div class="page-title-right">
-                    <a href="{{ route('admin.inventory.batches.index') }}" class="btn btn-secondary btn-sm">
-                        <i class="bx bx-arrow-back me-1"></i> Back to Batches
+                    <a href="{{ $batch->warehouse->is_quarantine ? route('admin.inventory.damaged.index') : route('admin.inventory.stock.index') }}" class="btn btn-secondary btn-sm">
+                        <i class="bx bx-arrow-back me-1"></i> Back to Inventory
                     </a>
                 </div>
             </div>
