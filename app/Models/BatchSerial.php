@@ -13,7 +13,8 @@ class BatchSerial extends Model
         'product_id',
         'product_variant_id',
         'serial_no',
-        'status',
+        'product_status',
+        'stock_status',
     ];
 
     public function batch(): BelongsTo
