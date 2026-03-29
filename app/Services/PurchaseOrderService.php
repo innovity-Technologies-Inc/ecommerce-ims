@@ -206,24 +206,26 @@ class PurchaseOrderService
 
                 $receivedQty = (int) ($itemData['received_quantity'] ?? 0);
                 $damagedQty = (int) ($itemData['damaged_quantity'] ?? 0);
-                $totalQty = $receivedQty + $damagedQty;
                 
                 $globalBatchNumber = $data['batch_number'];
-                $serialInput = $itemData['serial_numbers'] ?? [];
-                $parsedSerials = $this->parseSerialNumbers($serialInput);
+                
+                // Parse separate serials
+                $receivedSerials = $this->parseSerialNumbers($itemData['received_serials'] ?? []);
+                $damagedSerials = $this->parseSerialNumbers($itemData['damaged_serials'] ?? []);
 
-                // Validation: If serial numbers provided, count must match total quantity
-                if (!empty($parsedSerials) && count($parsedSerials) !== $totalQty) {
-                    throw new \Exception("Serial number count (" . count($parsedSerials) . ") for product {$item->product->name} does not match total quantity ({$totalQty}).");
+                // Validation: If serial numbers provided, count must match respective quantity
+                if (!empty($receivedSerials) && count($receivedSerials) !== $receivedQty) {
+                    throw new \Exception("Received serial number count (" . count($receivedSerials) . ") for product {$item->product->name} does not match received quantity ({$receivedQty}).");
+                }
+                if (!empty($damagedSerials) && count($damagedSerials) !== $damagedQty) {
+                    throw new \Exception("Damaged serial number count (" . count($damagedSerials) . ") for product {$item->product->name} does not match damaged quantity ({$damagedQty}).");
                 }
 
-                // 1. Update PO Item received quantity (good items)
-                $item->update([
-                    'received_quantity' => $receivedQty,
-                ]);
+                // Update PO Item received quantity (good items)
+                $item->update(['received_quantity' => $receivedQty]);
 
-                if ($totalQty > 0) {
-                    // 2. Create Initial Batch for the TOTAL quantity in the Target Warehouse
+                // 1. Handle RECEIVED (GOOD) Items
+                if ($receivedQty > 0) {
                     $mainBatch = Batch::create([
                         'batch_number' => $globalBatchNumber,
                         'purchase_order_id' => $po->id,
@@ -235,11 +237,10 @@ class PurchaseOrderService
                         'batch_id' => $mainBatch->id,
                         'product_id' => $item->product_id,
                         'product_variant_id' => $item->product_variant_id,
-                        'quantity' => $totalQty,
+                        'quantity' => $receivedQty,
                     ]);
 
-                    // 3. Create ALL Serials initially in the Target Warehouse as 'in-stock'
-                    foreach ($parsedSerials as $serial) {
+                    foreach ($receivedSerials as $serial) {
                         BatchSerial::create([
                             'batch_id' => $mainBatch->id,
                             'warehouse_id' => $po->warehouse_id,
@@ -250,118 +251,88 @@ class PurchaseOrderService
                         ]);
                     }
 
-                    // 4. Initial Inventory Level for TOTAL quantity
-                    $inventoryLevel = InventoryLevel::create([
+                    InventoryLevel::create([
                         'warehouse_id' => $po->warehouse_id,
                         'product_id' => $item->product_id,
                         'product_variant_id' => $item->product_variant_id,
                         'batch_id' => $mainBatch->id,
-                        'current_quantity' => $totalQty,
+                        'current_quantity' => $receivedQty,
                     ]);
 
-                    // 5. Log gross PO_RECEIPT for TOTAL quantity
                     $this->inventoryService->logStockChange(
                         $item->product_id,
                         $item->product_variant_id,
                         $po->warehouse_id,
-                        $totalQty,
+                        $receivedQty,
                         'PO_RECEIPT',
-                        'TOTAL_RECEIVED',
+                        'RECEIVED_GOOD',
                         $po->po_number,
                         $mainBatch->id,
                         $po->supplier_id,
                         $item->unit_cost,
-                        $totalQty * $item->unit_cost
+                        $receivedQty * $item->unit_cost
                     );
 
-                    // 6. Handle Damaged Items Movement to Quarantine
-                    if ($damagedQty > 0) {
-                        // Create a specific batch record for the quarantine warehouse
-                        $qBatch = Batch::create([
-                            'batch_number' => $globalBatchNumber,
-                            'purchase_order_id' => $po->id,
-                            'supplier_id' => $po->supplier_id,
-                            'warehouse_id' => $quarantineWarehouse->id,
-                        ]);
-
-                        BatchItem::create([
-                            'batch_id' => $qBatch->id,
-                            'product_id' => $item->product_id,
-                            'product_variant_id' => $item->product_variant_id,
-                            'quantity' => $damagedQty,
-                        ]);
-
-                        // Log Move OUT of Main Warehouse
-                        $this->inventoryService->logStockChange(
-                            $item->product_id,
-                            $item->product_variant_id,
-                            $po->warehouse_id,
-                            -$damagedQty,
-                            'QUARANTINE',
-                            'MOVE_TO_QUARANTINE',
-                            $po->po_number,
-                            $mainBatch->id,
-                            $po->supplier_id,
-                            $item->unit_cost,
-                            -($damagedQty * $item->unit_cost)
-                        );
-
-                        // Log Move IN to Quarantine Warehouse
-                        $this->inventoryService->logStockChange(
-                            $item->product_id,
-                            $item->product_variant_id,
-                            $quarantineWarehouse->id,
-                            $damagedQty,
-                            'QUARANTINE',
-                            'DAMAGED_ITEMS',
-                            $po->po_number,
-                            $qBatch->id,
-                            $po->supplier_id,
-                            $item->unit_cost,
-                            $damagedQty * $item->unit_cost
-                        );
-
-                        // Adjust Main Inventory and Batch Quantities
-                        $inventoryLevel->decrement('current_quantity', $damagedQty);
-                        $mainBatch->items()->where('product_id', $item->product_id)->where('product_variant_id', $item->product_variant_id)->decrement('quantity', $damagedQty);
-
-                        // Create Quarantine Inventory Level
-                        InventoryLevel::create([
-                            'warehouse_id' => $quarantineWarehouse->id,
-                            'product_id' => $item->product_id,
-                            'product_variant_id' => $item->product_variant_id,
-                            'batch_id' => $qBatch->id,
-                            'current_quantity' => $damagedQty,
-                        ]);
-
-                        // Transfer specific serials to Quarantine and update status to 'damaged'
-                        $damagedSerials = BatchSerial::where('batch_id', $mainBatch->id)
-                            ->where('product_id', $item->product_id)
-                            ->where('product_variant_id', $item->product_variant_id)
-                            ->latest()
-                            ->take($damagedQty)
-                            ->get();
-
-                        foreach ($damagedSerials as $serial) {
-                            $serial->update([
-                                'batch_id' => $qBatch->id,
-                                'warehouse_id' => $quarantineWarehouse->id,
-                                'status' => 'damaged', 
-                            ]);
-                        }
-                    }
-
-                    // 7. Update Global Product/Variant Stock (SALEABLE ONLY)
-                    // We only increment by $receivedQty (good items), excluding damaged/quarantine stock.
+                    // Update Global Stock (Saleable Only)
                     if ($item->product_variant_id) {
                         $variant = ProductVariant::find($item->product_variant_id);
-                        $variant->increment('stock', $receivedQty); 
+                        $variant->increment('stock', $receivedQty);
                         $variant->update(['unit_cost' => $item->unit_cost]);
                     } else {
                         $product = Product::find($item->product_id);
                         $product->increment('stock', $receivedQty);
                         $product->update(['unit_cost' => $item->unit_cost]);
                     }
+                }
+
+                // 2. Handle DAMAGED Items (Quarantine)
+                if ($damagedQty > 0) {
+                    $qBatch = Batch::create([
+                        'batch_number' => $globalBatchNumber,
+                        'purchase_order_id' => $po->id,
+                        'supplier_id' => $po->supplier_id,
+                        'warehouse_id' => $quarantineWarehouse->id,
+                    ]);
+
+                    BatchItem::create([
+                        'batch_id' => $qBatch->id,
+                        'product_id' => $item->product_id,
+                        'product_variant_id' => $item->product_variant_id,
+                        'quantity' => $damagedQty,
+                    ]);
+
+                    foreach ($damagedSerials as $serial) {
+                        BatchSerial::create([
+                            'batch_id' => $qBatch->id,
+                            'warehouse_id' => $quarantineWarehouse->id,
+                            'product_id' => $item->product_id,
+                            'product_variant_id' => $item->product_variant_id,
+                            'serial_no' => $serial,
+                            'status' => 'damaged',
+                        ]);
+                    }
+
+                    InventoryLevel::create([
+                        'warehouse_id' => $quarantineWarehouse->id,
+                        'product_id' => $item->product_id,
+                        'product_variant_id' => $item->product_variant_id,
+                        'batch_id' => $qBatch->id,
+                        'current_quantity' => $damagedQty,
+                    ]);
+
+                    $this->inventoryService->logStockChange(
+                        $item->product_id,
+                        $item->product_variant_id,
+                        $quarantineWarehouse->id,
+                        $damagedQty,
+                        'QUARANTINE',
+                        'RECEIVED_DAMAGED',
+                        $po->po_number,
+                        $qBatch->id,
+                        $po->supplier_id,
+                        $item->unit_cost,
+                        $damagedQty * $item->unit_cost
+                    );
                 }
             }
         });
