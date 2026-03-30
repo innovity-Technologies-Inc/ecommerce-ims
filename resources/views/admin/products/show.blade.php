@@ -87,16 +87,17 @@
                         <div class="col-sm-9 text-muted"><span class="badge badge-soft-dark fs-13">{{ $product->stock ?? 0 }} Units</span></div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-sm-3 fw-bold">Stock Limit:</div>
+                        <div class="col-sm-3 fw-bold">Global Stock Limit:</div>
                         <div class="col-sm-9 text-muted">
-                            <span class="badge {{ $product->min_stock_type == 'global' ? 'bg-info' : 'bg-primary' }} text-uppercase">{{ $product->min_stock_type }}</span>
-                            @if($product->min_stock_type == 'global')
-                                <span class="ms-2">Threshold: <strong>{{ $product->min_stock_global }}</strong></span>
+                            @if($product->min_stock_global > 0)
+                                <span class="badge bg-info">{{ $product->min_stock_global }}</span>
+                            @else
+                                <span class="text-muted small italic">Not set</span>
                             @endif
                         </div>
                     </div>
 
-                    @if($product->min_stock_type == 'warehouse' && $product->warehouseStockLimits->whereNull('product_variant_id')->count() > 0)
+                    @if($product->warehouseStockLimits->whereNull('product_variant_id')->count() > 0)
                         <div class="row mb-3">
                             <div class="col-sm-3 fw-bold">Warehouse Limits:</div>
                             <div class="col-sm-9">
@@ -156,17 +157,22 @@
                                     </td>
                                     <td class="text-center"><span class="badge badge-soft-dark">{{ $variant->stock ?? 0 }}</span></td>
                                     <td>
-                                        <span class="badge {{ $variant->min_stock_type == 'global' ? 'badge-soft-info' : 'badge-soft-primary' }} text-uppercase mb-1">{{ $variant->min_stock_type }}</span>
-                                        @if($variant->min_stock_type == 'global')
-                                            <div class="small">Threshold: <strong>{{ $variant->min_stock_global }}</strong></div>
-                                        @elseif($variant->warehouseStockLimits->count() > 0)
-                                            <div class="mt-1">
+                                        @if($variant->min_stock_global > 0)
+                                            <div class="mb-1">
+                                                <span class="badge badge-soft-info">Global: {{ $variant->min_stock_global }}</span>
+                                            </div>
+                                        @endif
+
+                                        @if($variant->warehouseStockLimits->count() > 0)
+                                            <div class="mt-1 d-flex flex-wrap gap-1">
                                                 @foreach($variant->warehouseStockLimits as $vLimit)
-                                                    <div class="extra-small text-muted text-nowrap">{{ $vLimit->warehouse->name }}: <strong>{{ $vLimit->min_stock }}</strong></div>
+                                                    <div class="extra-small text-muted text-nowrap border rounded px-1">{{ $vLimit->warehouse->name }}: <strong>{{ $vLimit->min_stock }}</strong></div>
                                                 @endforeach
                                             </div>
-                                        @else
-                                            <div class="small text-muted italic">No limits set</div>
+                                        @endif
+
+                                        @if($variant->min_stock_global <= 0 && $variant->warehouseStockLimits->count() == 0)
+                                            <span class="text-muted small italic">Not set</span>
                                         @endif
                                     </td>
                                 </tr>

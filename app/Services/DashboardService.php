@@ -50,14 +50,14 @@ class DashboardService
             ->count();
 
         // Count Global Low Stock
-        // 1. Simple Products (no variants)
-        $simpleGlobalLowCount = Product::where('min_stock_type', 'global')
-            ->whereDoesntHave('variants')
+        // 1. Simple Products (no variants) - only if min_stock_global > 0
+        $simpleGlobalLowCount = Product::whereDoesntHave('variants')
+            ->where('min_stock_global', '>', 0)
             ->whereColumn('stock', '<=', 'min_stock_global')
             ->count();
 
-        // 2. Variants
-        $variantGlobalLowCount = ProductVariant::where('min_stock_type', 'global')
+        // 2. Variants - only if min_stock_global > 0
+        $variantGlobalLowCount = ProductVariant::where('min_stock_global', '>', 0)
             ->whereColumn('stock', '<=', 'min_stock_global')
             ->count();
 
@@ -76,18 +76,6 @@ class DashboardService
                                   ->whereNull('warehouse_stock_limits.product_variant_id');
                            });
                      });
-            })
-            // Only count if the product/variant is set to 'warehouse' type
-            ->join('products', 'inventory_levels.product_id', '=', 'products.id')
-            ->leftJoin('product_variants', 'inventory_levels.product_variant_id', '=', 'product_variants.id')
-            ->where(function($query) {
-                $query->where(function($q) {
-                    $q->whereNull('inventory_levels.product_variant_id')
-                      ->where('products.min_stock_type', 'warehouse');
-                })->orWhere(function($q) {
-                    $q->whereNotNull('inventory_levels.product_variant_id')
-                      ->where('product_variants.min_stock_type', 'warehouse');
-                });
             })
             ->whereColumn('inventory_levels.current_quantity', '<=', 'warehouse_stock_limits.min_stock')
             ->count();
@@ -267,10 +255,10 @@ class DashboardService
 
         // 1. Check Global Stock Levels (Saleable)
         
-        // 1a. Simple Products
+        // 1a. Simple Products - only if min_stock_global > 0
         $globalLowProducts = Product::with(['primaryImage', 'category'])
-            ->where('min_stock_type', 'global')
             ->whereDoesntHave('variants')
+            ->where('min_stock_global', '>', 0)
             ->whereColumn('stock', '<=', 'min_stock_global')
             ->get();
 
@@ -288,9 +276,9 @@ class DashboardService
             ]);
         }
 
-        // 1b. Variants
+        // 1b. Variants - only if min_stock_global > 0
         $globalLowVariants = ProductVariant::with(['product.primaryImage', 'product.category'])
-            ->where('min_stock_type', 'global')
+            ->where('min_stock_global', '>', 0)
             ->whereColumn('stock', '<=', 'min_stock_global')
             ->get();
 
@@ -320,17 +308,6 @@ class DashboardService
                                   ->whereNull('warehouse_stock_limits.product_variant_id');
                            });
                      });
-            })
-            ->join('products', 'inventory_levels.product_id', '=', 'products.id')
-            ->leftJoin('product_variants', 'inventory_levels.product_variant_id', '=', 'product_variants.id')
-            ->where(function($query) {
-                $query->where(function($q) {
-                    $q->whereNull('inventory_levels.product_variant_id')
-                      ->where('products.min_stock_type', 'warehouse');
-                })->orWhere(function($q) {
-                    $q->whereNotNull('inventory_levels.product_variant_id')
-                      ->where('product_variants.min_stock_type', 'warehouse');
-                });
             })
             ->whereColumn('inventory_levels.current_quantity', '<=', 'warehouse_stock_limits.min_stock')
             ->select('inventory_levels.*')

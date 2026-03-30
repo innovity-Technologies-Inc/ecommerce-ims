@@ -136,42 +136,34 @@
 
                             <div class="col-lg-12 base-price-section" style="{{ isset($product) && !$product->regular_price ? 'display:none;' : '' }}">
                                 <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label d-block">Stock Limit Type</label>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input min-stock-type-radio" type="radio" name="min_stock_type" id="min_stock_type_global" value="global" {{ old('min_stock_type', $product->min_stock_type ?? 'global') == 'global' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="min_stock_type_global">Global</label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input min-stock-type-radio" type="radio" name="min_stock_type" id="min_stock_type_warehouse" value="warehouse" {{ old('min_stock_type', $product->min_stock_type ?? 'global') == 'warehouse' ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="min_stock_type_warehouse">Warehouse</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6 mb-3 global-min-stock-section" style="{{ old('min_stock_type', $product->min_stock_type ?? 'global') == 'warehouse' ? 'display:none;' : '' }}">
-                                        <label for="min_stock_global" class="form-label">Global Minimum Stock</label>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="min_stock_global" class="form-label text-info">Global Minimum Stock</label>
                                         <input type="number" name="min_stock_global" id="min_stock_global" class="form-control" placeholder="e.g. 10" value="{{ old('min_stock_global', $product->min_stock_global ?? 0) }}">
+                                        <p class="text-muted extra-small mt-1">Alert when total stock across all warehouses falls below this.</p>
                                     </div>
 
-                                    <div class="col-12 warehouse-min-stock-section" style="{{ old('min_stock_type', $product->min_stock_type ?? 'global') == 'global' ? 'display:none;' : '' }}">
+                                    <div class="col-md-8 mb-3 base-warehouse-limits-section">
                                         <div class="d-flex align-items-center justify-content-between mb-2">
-                                            <label class="form-label mb-0">Warehouse Stock Limits</label>
+                                            <label class="form-label mb-0 text-primary">Warehouse-Specific Limits</label>
                                             <button type="button" class="btn btn-sm btn-soft-primary add-warehouse-limit-btn" data-is-variant="0">
                                                 <i class="bx bx-plus me-1"></i> Add Warehouse
                                             </button>
                                         </div>
-                                        <div class="warehouse-limits-list">
-                                            @if(isset($product))
-                                                @foreach($product->warehouseStockLimits->whereNull('product_variant_id') as $limit)
+                                        <div class="warehouse-limits-list d-flex flex-wrap gap-2">
+                                            @php
+                                                $currentLimits = old('warehouse_limits', isset($product) ? $product->warehouseStockLimits->whereNull('product_variant_id')->pluck('min_stock', 'warehouse_id')->toArray() : []);
+                                            @endphp
+                                            @foreach($currentLimits as $whId => $minStock)
+                                                @php $warehouse = $warehouses->firstWhere('id', $whId); @endphp
+                                                @if($warehouse)
                                                     <div class="warehouse-limit-row badge badge-soft-info d-inline-flex align-items-center gap-2 p-2 me-2 mb-2">
-                                                        <span>{{ $limit->warehouse->name }}: <strong>{{ $limit->min_stock }}</strong></span>
-                                                        <input type="hidden" name="warehouse_limits[{{ $limit->warehouse_id }}]" value="{{ $limit->min_stock }}">
+                                                        <span>{{ $warehouse->name }}: <strong>{{ $minStock }}</strong></span>
+                                                        <input type="hidden" name="warehouse_limits[{{ $whId }}]" value="{{ $minStock }}">
                                                         <i class="bx bx-x cursor-pointer remove-limit" style="font-size: 16px;"></i>
                                                     </div>
-                                                @endforeach
-                                            @endif
+                                                @endif
+                                            @endforeach
                                         </div>
-                                        <p class="text-muted extra-small mt-1">Set specific low-stock thresholds for individual warehouses.</p>
                                     </div>
                                 </div>
                             </div>
@@ -243,10 +235,11 @@
                                         <thead class="bg-light">
                                             <tr>
                                                 <th>Variant Name <span class="text-danger">*</span></th>
-                                                <th>SKU (Optional)</th>
-                                                <th>Regular Price <span class="text-danger">*</span></th>
-                                                <th>Discount %</th>
-                                                <th>Stock Limit</th>
+                                                <th>SKU</th>
+                                                <th>Price <span class="text-danger">*</span></th>
+                                                <th>Disc %</th>
+                                                <th style="width: 120px;">Global Limit</th>
+                                                <th style="width: 180px;">Wh. Limits</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -263,10 +256,9 @@
                                                     $vSku = is_array($variant) ? $variant['sku'] : $variant->sku;
                                                     $vPrice = is_array($variant) ? $variant['regular_price'] : $variant->regular_price;
                                                     $vDisc = is_array($variant) ? $variant['discount_percentage'] : $variant->discount_percentage;
-                                                    $vLimitType = is_array($variant) ? ($variant['min_stock_type'] ?? 'global') : $variant->min_stock_type;
                                                     $vLimitGlobal = is_array($variant) ? ($variant['min_stock_global'] ?? 0) : $variant->min_stock_global;
                                                     
-                                                    $vLevels = !is_array($variant) ? $variant->inventoryLevels : collect();
+                                                    $vLimits = !is_array($variant) ? $variant->warehouseStockLimits : collect();
                                                 @endphp
                                                 <tr class="variant-row">
                                                     @if($vId)
@@ -277,36 +269,22 @@
                                                     <td><input type="number" step="0.01" name="variants[{{ $index }}][regular_price]" class="form-control variant-price-input" placeholder="0.00" value="{{ $vPrice }}"></td>
                                                     <td><input type="number" name="variants[{{ $index }}][discount_percentage]" class="form-control variant-discount-input" placeholder="e.g. 10" value="{{ $vDisc }}"></td>
                                                     <td>
-                                                        <div class="mb-2">
-                                                            <div class="form-check form-check-inline">
-                                                                <input class="form-check-input v-min-stock-type" type="radio" name="variants[{{ $index }}][min_stock_type]" value="global" {{ $vLimitType == 'global' ? 'checked' : '' }}>
-                                                                <label class="form-check-label small">Global</label>
-                                                            </div>
-                                                            <div class="form-check form-check-inline">
-                                                                <input class="form-check-input v-min-stock-type" type="radio" name="variants[{{ $index }}][min_stock_type]" value="warehouse" {{ $vLimitType == 'warehouse' ? 'checked' : '' }}>
-                                                                <label class="form-check-label small">Warehouse</label>
-                                                            </div>
+                                                        <input type="number" name="variants[{{ $index }}][min_stock_global]" class="form-control form-control-sm" placeholder="Global" value="{{ $vLimitGlobal }}">
+                                                    </td>
+                                                    <td class="variant-warehouse-limits-section">
+                                                        <div class="d-flex justify-content-end mb-1">
+                                                            <button type="button" class="btn btn-extra-small btn-soft-primary add-warehouse-limit-btn" data-is-variant="1" data-row-index="{{ $index }}">
+                                                                <i class="bx bx-plus"></i> Add
+                                                            </button>
                                                         </div>
-                                                        <div class="v-global-limit" style="{{ $vLimitType == 'warehouse' ? 'display:none;' : '' }}">
-                                                            <input type="number" name="variants[{{ $index }}][min_stock_global]" class="form-control form-control-sm" placeholder="Global Limit" value="{{ $vLimitGlobal }}">
-                                                        </div>
-                                                        <div class="v-warehouse-limit" style="{{ $vLimitType == 'global' ? 'display:none;' : '' }}">
-                                                            <div class="d-flex justify-content-end mb-1">
-                                                                <button type="button" class="btn btn-extra-small btn-soft-primary add-warehouse-limit-btn" data-is-variant="1" data-row-index="{{ $index }}">
-                                                                    <i class="bx bx-plus"></i> Add
-                                                                </button>
-                                                            </div>
-                                                            <div class="warehouse-limits-list">
-                                                                @if(!is_array($variant))
-                                                                    @foreach($variant->warehouseStockLimits as $limit)
-                                                                        <div class="warehouse-limit-row badge badge-soft-info d-flex align-items-center justify-content-between gap-1 p-1 mb-1">
-                                                                            <span class="extra-small text-truncate" style="max-width: 60px;">{{ $limit->warehouse->name }}: {{ $limit->min_stock }}</span>
-                                                                            <input type="hidden" name="variants[{{ $index }}][warehouse_limits][{{ $limit->warehouse_id }}]" value="{{ $limit->min_stock }}">
-                                                                            <i class="bx bx-x cursor-pointer remove-limit"></i>
-                                                                        </div>
-                                                                    @endforeach
-                                                                @endif
-                                                            </div>
+                                                        <div class="warehouse-limits-list">
+                                                            @foreach($vLimits as $limit)
+                                                                <div class="warehouse-limit-row badge badge-soft-info d-flex align-items-center justify-content-between gap-1 p-1 mb-1">
+                                                                    <span class="extra-small text-truncate" title="{{ $limit->warehouse->name }}">{{ $limit->warehouse->name }}: {{ $limit->min_stock }}</span>
+                                                                    <input type="hidden" name="variants[{{ $index }}][warehouse_limits][{{ $limit->warehouse_id }}]" value="{{ $limit->min_stock }}">
+                                                                    <i class="bx bx-x cursor-pointer remove-limit"></i>
+                                                                </div>
+                                                            @endforeach
                                                         </div>
                                                     </td>
                                                     <td>
@@ -434,30 +412,6 @@
         // Trigger initial state
         $('.pricing-type-radio:checked').trigger('change');
 
-        // Stock Limit Type Toggle (Base Product)
-        $(document).on('change', '.min-stock-type-radio', function() {
-            const tr = $(this).closest('.row');
-            if ($(this).val() === 'global') {
-                tr.find('.global-min-stock-section').show();
-                tr.find('.warehouse-min-stock-section').hide();
-            } else {
-                tr.find('.global-min-stock-section').hide();
-                tr.find('.warehouse-min-stock-section').show();
-            }
-        });
-
-        // Stock Limit Type Toggle (Variants)
-        $(document).on('change', '.v-min-stock-type', function() {
-            const td = $(this).closest('td');
-            if ($(this).val() === 'global') {
-                td.find('.v-global-limit').show();
-                td.find('.v-warehouse-limit').hide();
-            } else {
-                td.find('.v-global-limit').hide();
-                td.find('.v-warehouse-limit').show();
-            }
-        });
-
         // Dynamic Variant UI
         let variantIndex = {{ isset($oldVariants) ? count($oldVariants) : 0 }};
         $('#add-variant-row').on('click', function() {
@@ -469,21 +423,16 @@
                     <td><input type="number" step="0.01" name="variants[${variantIndex}][regular_price]" class="form-control variant-price-input" placeholder="0.00" ${isBasePricing ? 'disabled' : 'required'}></td>
                     <td><input type="number" name="variants[${variantIndex}][discount_percentage]" class="form-control variant-discount-input" placeholder="e.g. 10" ${isBasePricing ? 'disabled' : ''}></td>
                     <td>
-                        <div class="mb-2">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input v-min-stock-type" type="radio" name="variants[${variantIndex}][min_stock_type]" value="global" checked>
-                                <label class="form-check-label small">Global</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input v-min-stock-type" type="radio" name="variants[${variantIndex}][min_stock_type]" value="warehouse">
-                                <label class="form-check-label small">Warehouse</label>
-                            </div>
+                        <input type="number" name="variants[${variantIndex}][min_stock_global]" class="form-control form-control-sm" placeholder="Global" value="0">
+                    </td>
+                    <td class="variant-warehouse-limits-section">
+                        <div class="d-flex justify-content-end mb-1">
+                            <button type="button" class="btn btn-extra-small btn-soft-primary add-warehouse-limit-btn" data-is-variant="1" data-row-index="${variantIndex}">
+                                <i class="bx bx-plus"></i> Add
+                            </button>
                         </div>
-                        <div class="v-global-limit">
-                            <input type="number" name="variants[${variantIndex}][min_stock_global]" class="form-control form-control-sm" placeholder="Global Limit" value="0">
-                        </div>
-                        <div class="v-warehouse-limit" style="display:none;">
-                            <span class="text-muted extra-small">Save to see warehouses</span>
+                        <div class="warehouse-limits-list">
+                            <!-- Dynamic Limits -->
                         </div>
                     </td>
                     <td>
@@ -541,7 +490,7 @@
                 container = $(`.variant-row:eq(${rowIndex})`).find('.warehouse-limits-list');
                 inputName = `variants[${rowIndex}][warehouse_limits][${whId}]`;
             } else {
-                container = $('.warehouse-min-stock-section .warehouse-limits-list');
+                container = $('.base-warehouse-limits-section .warehouse-limits-list');
                 inputName = `warehouse_limits[${whId}]`;
             }
 

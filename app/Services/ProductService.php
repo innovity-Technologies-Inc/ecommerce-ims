@@ -179,22 +179,29 @@ class ProductService
 
             // Handle variants
             if (isset($data['variants']) && is_array($data['variants'])) {
-                // To maintain inventory links, we should probably update existing variants instead of deleting all
-                // but for simplicity in this standard logic, we'll keep the replace strategy but note it's destructive for stock levels.
-                // Better approach: track variant IDs.
-                
                 $keepVariantIds = [];
                 foreach ($data['variants'] as $variantData) {
+                    $variant = null;
+                    
+                    // 1. Try finding by ID
                     if (isset($variantData['id'])) {
                         $variant = ProductVariant::find($variantData['id']);
-                        if ($variant) {
-                            $this->updateVariant($variant, $variantData);
-                            $keepVariantIds[] = $variant->id;
-                            continue;
-                        }
                     }
-                    $newVariant = $this->createVariant($product->id, $variantData);
-                    $keepVariantIds[] = $newVariant->id;
+                    
+                    // 2. Fallback: Try finding by SKU if it belongs to this product
+                    if (!$variant && !empty($variantData['sku'])) {
+                        $variant = ProductVariant::where('product_id', $product->id)
+                            ->where('sku', $variantData['sku'])
+                            ->first();
+                    }
+
+                    if ($variant) {
+                        $this->updateVariant($variant, $variantData);
+                        $keepVariantIds[] = $variant->id;
+                    } else {
+                        $newVariant = $this->createVariant($product->id, $variantData);
+                        $keepVariantIds[] = $newVariant->id;
+                    }
                 }
                 $product->variants()->whereNotIn('id', $keepVariantIds)->delete();
             } else {
@@ -279,9 +286,14 @@ class ProductService
             $discountPrice = $regularPrice - ($regularPrice * ($discountPercentage / 100));
         }
 
+        $sku = $variantData['sku'] ?? $variant->sku;
+        if (empty($sku)) {
+            $sku = $this->generateSku($variant->product_id, $variantData);
+        }
+
         $variant->update([
             'variant_name' => $variantData['variant_name'],
-            'sku' => $variantData['sku'] ?? $variant->sku,
+            'sku' => $sku,
             'regular_price' => $regularPrice,
             'discount_price' => $discountPrice,
             'discount_percentage' => $discountPercentage,
@@ -334,7 +346,11 @@ class ProductService
      */
     protected function generateSku(int $productId, array $variantData): string
     {
-        return 'PROD-'.$productId.'-'.strtoupper(Str::random(5));
+        do {
+            $sku = 'PROD-'.$productId.'-'.strtoupper(Str::random(8));
+        } while (ProductVariant::where('sku', $sku)->exists());
+
+        return $sku;
     }
 
     /**
