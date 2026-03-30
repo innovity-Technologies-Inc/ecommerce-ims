@@ -124,7 +124,7 @@ class ProductService
                 'min_stock_type' => $data['min_stock_type'] ?? 'global',
             ]);
 
-            $this->updateInventoryOverrides($product->id, null, $data['inventory_overrides'] ?? []);
+            $this->updateWarehouseLimits($product->id, null, $data['warehouse_limits'] ?? []);
 
             if (isset($data['variants']) && is_array($data['variants'])) {
                 foreach ($data['variants'] as $variantData) {
@@ -175,7 +175,7 @@ class ProductService
                 'min_stock_type' => $data['min_stock_type'] ?? 'global',
             ]);
 
-            $this->updateInventoryOverrides($product->id, null, $data['inventory_overrides'] ?? []);
+            $this->updateWarehouseLimits($product->id, null, $data['warehouse_limits'] ?? []);
 
             // Handle variants
             if (isset($data['variants']) && is_array($data['variants'])) {
@@ -261,7 +261,7 @@ class ProductService
             'min_stock_type' => $variantData['min_stock_type'] ?? 'global',
         ]);
 
-        $this->updateInventoryOverrides($productId, $variant->id, $variantData['inventory_overrides'] ?? []);
+        $this->updateWarehouseLimits($productId, $variant->id, $variantData['warehouse_limits'] ?? []);
 
         return $variant;
     }
@@ -289,19 +289,29 @@ class ProductService
             'min_stock_type' => $variantData['min_stock_type'] ?? 'global',
         ]);
 
-        $this->updateInventoryOverrides($variant->product_id, $variant->id, $variantData['inventory_overrides'] ?? []);
+        $this->updateWarehouseLimits($variant->product_id, $variant->id, $variantData['warehouse_limits'] ?? []);
     }
 
     /**
-     * Update inventory level overrides for a product/variant.
+     * Update warehouse-specific stock limits for a product/variant.
      */
-    protected function updateInventoryOverrides(int $productId, ?int $variantId, array $overrides): void
+    protected function updateWarehouseLimits(int $productId, ?int $variantId, array $limits): void
     {
-        foreach ($overrides as $inventoryLevelId => $minStock) {
-            \App\Models\InventoryLevel::where('id', $inventoryLevelId)
-                ->where('product_id', $productId)
-                ->when($variantId, fn($q) => $q->where('product_variant_id', $variantId))
-                ->update(['min_stock_override' => $minStock]);
+        // First remove old limits for this product/variant
+        \App\Models\WarehouseStockLimit::where('product_id', $productId)
+            ->when($variantId, fn($q) => $q->where('product_variant_id', $variantId))
+            ->when(!$variantId, fn($q) => $q->whereNull('product_variant_id'))
+            ->delete();
+
+        foreach ($limits as $warehouseId => $minStock) {
+            if ($minStock !== null && $minStock !== '') {
+                \App\Models\WarehouseStockLimit::create([
+                    'product_id' => $productId,
+                    'product_variant_id' => $variantId,
+                    'warehouse_id' => $warehouseId,
+                    'min_stock' => $minStock,
+                ]);
+            }
         }
     }
 

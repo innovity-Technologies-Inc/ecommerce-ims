@@ -39,8 +39,8 @@ class ProductRequest extends FormRequest
             'status' => ['nullable', 'boolean'],
             'min_stock_global' => ['nullable', 'integer', 'min:0'],
             'min_stock_type' => ['nullable', 'in:global,warehouse'],
-            'inventory_overrides' => ['nullable', 'array'],
-            'inventory_overrides.*' => ['nullable', 'integer', 'min:0'],
+            'warehouse_limits' => ['nullable', 'array'],
+            'warehouse_limits.*' => ['nullable', 'integer', 'min:0'],
             'variants' => ['nullable', 'array'],
             'variants.*.variant_name' => ['required_with:variants', 'string', 'max:255'],
             'variants.*.sku' => [
@@ -66,8 +66,8 @@ class ProductRequest extends FormRequest
             'variants.*.discount_percentage' => ['nullable', 'integer', 'min:0', 'max:100'],
             'variants.*.min_stock_global' => ['nullable', 'integer', 'min:0'],
             'variants.*.min_stock_type' => ['nullable', 'in:global,warehouse'],
-            'variants.*.inventory_overrides' => ['nullable', 'array'],
-            'variants.*.inventory_overrides.*' => ['nullable', 'integer', 'min:0'],
+            'variants.*.warehouse_limits' => ['nullable', 'array'],
+            'variants.*.warehouse_limits.*' => ['nullable', 'integer', 'min:0'],
             'images' => ['nullable', 'array'],
             'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:600'],
         ];

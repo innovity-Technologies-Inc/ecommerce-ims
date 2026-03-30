@@ -527,6 +527,18 @@ Every module or architectural change must be documented in this file before a ta
 - **Implementation Details:**
   - **Service Logic:** Inventory lookups now incorporate the `batch_id` to ensure accurate fulfillment.
 
+### 3.34 Warehouse Stock Limits (REQ-104)
+- **What:** A granular alerting system that allows administrators to set low-stock thresholds at both global and warehouse levels.
+- **How it Works:**
+  - **Global Limit:** A single threshold applied to the total saleable stock of a product/variant across all warehouses.
+  - **Warehouse Limit:** Specific thresholds defined for individual warehouses via a dedicated `warehouse_stock_limits` table.
+  - **UI/UX:** The product form features a modal-driven interface where admins can select a warehouse and assign a minimum stock limit. Multiple warehouse-specific limits can be added per item.
+  - **Dynamic Thresholding:** If a product is set to "Warehouse" limit type, the system monitors each warehouse's stock against its specific threshold. If set to "Global", it monitors the sum of all saleable stock.
+- **Implementation Details:**
+  - **Database:** Uses the `warehouse_stock_limits` table (`product_id`, `product_variant_id`, `warehouse_id`, `min_stock`).
+  - **Service Logic:** `DashboardService` joins `inventory_levels` with `warehouse_stock_limits` to accurately identify which products are below their required levels in specific locations.
+  - **Validation:** Enforced via `ProductRequest` to ensure non-negative integer thresholds.
+
 ### 3.35 Inventory Reports (Stock & Damaged Products)
 - **What:** A comprehensive suite of analytical views providing real-time visibility into physical stock distribution, batch tracking, and quarantine inventory.
 - **How it Works:**

@@ -154,32 +154,24 @@
                                     </div>
 
                                     <div class="col-12 warehouse-min-stock-section" style="{{ old('min_stock_type', $product->min_stock_type ?? 'global') == 'global' ? 'display:none;' : '' }}">
-                                        @if(isset($product) && $product->inventoryLevels->count() > 0)
-                                            <div class="table-responsive">
-                                                <table class="table table-sm table-bordered">
-                                                    <thead class="table-light">
-                                                        <tr>
-                                                            <th>Warehouse</th>
-                                                            <th>Current Stock</th>
-                                                            <th>Min Stock Override</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach($product->inventoryLevels as $level)
-                                                            <tr>
-                                                                <td>{{ $level->warehouse->name }}</td>
-                                                                <td>{{ $level->current_quantity }}</td>
-                                                                <td>
-                                                                    <input type="number" name="inventory_overrides[{{ $level->id }}]" class="form-control form-control-sm" value="{{ old('inventory_overrides.'.$level->id, $level->min_stock_override) }}">
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        @else
-                                            <p class="text-muted small">No inventory records found for this product. Minimum stock can only be set per-warehouse after stock is allocated.</p>
-                                        @endif
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                            <label class="form-label mb-0">Warehouse Stock Limits</label>
+                                            <button type="button" class="btn btn-sm btn-soft-primary add-warehouse-limit-btn" data-is-variant="0">
+                                                <i class="bx bx-plus me-1"></i> Add Warehouse
+                                            </button>
+                                        </div>
+                                        <div class="warehouse-limits-list">
+                                            @if(isset($product))
+                                                @foreach($product->warehouseStockLimits->whereNull('product_variant_id') as $limit)
+                                                    <div class="warehouse-limit-row badge badge-soft-info d-inline-flex align-items-center gap-2 p-2 me-2 mb-2">
+                                                        <span>{{ $limit->warehouse->name }}: <strong>{{ $limit->min_stock }}</strong></span>
+                                                        <input type="hidden" name="warehouse_limits[{{ $limit->warehouse_id }}]" value="{{ $limit->min_stock }}">
+                                                        <i class="bx bx-x cursor-pointer remove-limit" style="font-size: 16px;"></i>
+                                                    </div>
+                                                @endforeach
+                                            @endif
+                                        </div>
+                                        <p class="text-muted extra-small mt-1">Set specific low-stock thresholds for individual warehouses.</p>
                                     </div>
                                 </div>
                             </div>
@@ -299,16 +291,22 @@
                                                             <input type="number" name="variants[{{ $index }}][min_stock_global]" class="form-control form-control-sm" placeholder="Global Limit" value="{{ $vLimitGlobal }}">
                                                         </div>
                                                         <div class="v-warehouse-limit" style="{{ $vLimitType == 'global' ? 'display:none;' : '' }}">
-                                                            @if($vLevels->count() > 0)
-                                                                @foreach($vLevels as $level)
-                                                                    <div class="input-group input-group-sm mb-1">
-                                                                        <span class="input-group-text px-1" style="font-size: 10px; max-width: 80px; overflow: hidden; text-overflow: ellipsis;" title="{{ $level->warehouse->name }}">{{ $level->warehouse->name }}</span>
-                                                                        <input type="number" name="variants[{{ $index }}][inventory_overrides][{{ $level->id }}]" class="form-control" placeholder="Limit" value="{{ old('variants.'.$index.'.inventory_overrides.'.$level->id, $level->min_stock_override) }}">
-                                                                    </div>
-                                                                @endforeach
-                                                            @else
-                                                                <span class="text-muted extra-small">No inventory records</span>
-                                                            @endif
+                                                            <div class="d-flex justify-content-end mb-1">
+                                                                <button type="button" class="btn btn-extra-small btn-soft-primary add-warehouse-limit-btn" data-is-variant="1" data-row-index="{{ $index }}">
+                                                                    <i class="bx bx-plus"></i> Add
+                                                                </button>
+                                                            </div>
+                                                            <div class="warehouse-limits-list">
+                                                                @if(!is_array($variant))
+                                                                    @foreach($variant->warehouseStockLimits as $limit)
+                                                                        <div class="warehouse-limit-row badge badge-soft-info d-flex align-items-center justify-content-between gap-1 p-1 mb-1">
+                                                                            <span class="extra-small text-truncate" style="max-width: 60px;">{{ $limit->warehouse->name }}: {{ $limit->min_stock }}</span>
+                                                                            <input type="hidden" name="variants[{{ $index }}][warehouse_limits][{{ $limit->warehouse_id }}]" value="{{ $limit->min_stock }}">
+                                                                            <i class="bx bx-x cursor-pointer remove-limit"></i>
+                                                                        </div>
+                                                                    @endforeach
+                                                                @endif
+                                                            </div>
                                                         </div>
                                                     </td>
                                                     <td>
@@ -341,6 +339,40 @@
 @endsection
 
 @section('scripts')
+<!-- Warehouse Limit Modal -->
+<div class="modal fade" id="warehouseLimitModal" tabindex="-1" aria-labelledby="warehouseLimitModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="warehouseLimitModalLabel">Set Warehouse Stock Limit</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="modal-target-row-index">
+                <input type="hidden" id="modal-is-variant" value="0">
+                
+                <div class="mb-3">
+                    <label for="modal-warehouse-id" class="form-label">Select Warehouse</label>
+                    <select id="modal-warehouse-id" class="form-select select2-modal">
+                        <option value="">Select Warehouse</option>
+                        @foreach($warehouses as $wh)
+                            <option value="{{ $wh->id }}">{{ $wh->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="modal-min-stock" class="form-label">Minimum Stock Limit</label>
+                    <input type="number" id="modal-min-stock" class="form-control" placeholder="e.g. 5" min="0">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="save-warehouse-limit">Apply Limit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     $(document).ready(function() {
         const categorySelect = $('#category_id');
@@ -469,6 +501,76 @@
             if ($('.variant-row').length === 1) {
                 $('.remove-row').prop('disabled', true);
             }
+        });
+
+        // Warehouse Limit Modal Logic
+        const limitModal = new bootstrap.Modal(document.getElementById('warehouseLimitModal'));
+        const modalWhSelect = $('#modal-warehouse-id');
+        const modalStockInput = $('#modal-min-stock');
+        const modalTargetRowIndex = $('#modal-target-row-index');
+        const modalIsVariant = $('#modal-is-variant');
+
+        $(document).on('click', '.add-warehouse-limit-btn', function() {
+            const isVariant = $(this).data('is-variant');
+            const rowIndex = $(this).data('row-index');
+            
+            modalIsVariant.val(isVariant);
+            modalTargetRowIndex.val(rowIndex);
+            modalWhSelect.val('').trigger('change');
+            modalStockInput.val('');
+            
+            limitModal.show();
+        });
+
+        $('#save-warehouse-limit').on('click', function() {
+            const whId = modalWhSelect.val();
+            const whName = modalWhSelect.find(':selected').text();
+            const minStock = modalStockInput.val();
+            const isVariant = modalIsVariant.val() == '1';
+            const rowIndex = modalTargetRowIndex.val();
+
+            if (!whId || !minStock) {
+                toastr.error('Please select a warehouse and set a limit.');
+                return;
+            }
+
+            let container;
+            let inputName;
+
+            if (isVariant) {
+                container = $(`.variant-row:eq(${rowIndex})`).find('.warehouse-limits-list');
+                inputName = `variants[${rowIndex}][warehouse_limits][${whId}]`;
+            } else {
+                container = $('.warehouse-min-stock-section .warehouse-limits-list');
+                inputName = `warehouse_limits[${whId}]`;
+            }
+
+            // Check if already exists
+            if (container.find(`input[name="${inputName}"]`).length > 0) {
+                toastr.warning('This warehouse already has a limit set.');
+                return;
+            }
+
+            const rowHtml = `
+                <div class="warehouse-limit-row badge badge-soft-info d-flex align-items-center justify-content-between gap-1 p-1 mb-1" style="min-width: fit-content;">
+                    <span class="extra-small text-truncate" style="max-width: 100px;">${whName}: ${minStock}</span>
+                    <input type="hidden" name="${inputName}" value="${minStock}">
+                    <i class="bx bx-x cursor-pointer remove-limit"></i>
+                </div>
+            `;
+
+            container.append(rowHtml);
+            limitModal.hide();
+        });
+
+        $(document).on('click', '.remove-limit', function() {
+            $(this).closest('.warehouse-limit-row').remove();
+        });
+
+        $('.select2-modal').select2({
+            dropdownParent: $('#warehouseLimitModal'),
+            width: '100%',
+            theme: 'bootstrap-5'
         });
     });
 </script>

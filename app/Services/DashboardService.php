@@ -50,25 +50,46 @@ class DashboardService
             ->count();
 
         // Count Global Low Stock
-        // Products/Variants where type is 'global' and total stock <= min_stock_global
-        $globalLowStockCount = ProductVariant::where('min_stock_type', 'global')
+        // 1. Simple Products (no variants)
+        $simpleGlobalLowCount = Product::where('min_stock_type', 'global')
+            ->whereDoesntHave('variants')
             ->whereColumn('stock', '<=', 'min_stock_global')
             ->count();
 
+        // 2. Variants
+        $variantGlobalLowCount = ProductVariant::where('min_stock_type', 'global')
+            ->whereColumn('stock', '<=', 'min_stock_global')
+            ->count();
+
+        $globalLowStockCount = $simpleGlobalLowCount + $variantGlobalLowCount;
+
         // Count Warehouse Low Stock
-        // Inventory levels where product/variant type is 'warehouse' and current_quantity <= min_stock_override
-        $warehouseLowStockCount = InventoryLevel::whereNotNull('min_stock_override')
+        // Join inventory_levels with warehouse_stock_limits to check thresholds
+        $warehouseLowStockCount = DB::table('inventory_levels')
+            ->join('warehouse_stock_limits', function($join) {
+                $join->on('inventory_levels.product_id', '=', 'warehouse_stock_limits.product_id')
+                     ->on('inventory_levels.warehouse_id', '=', 'warehouse_stock_limits.warehouse_id')
+                     ->where(function($q) {
+                         $q->whereColumn('inventory_levels.product_variant_id', '=', 'warehouse_stock_limits.product_variant_id')
+                           ->orWhere(function($sq) {
+                               $sq->whereNull('inventory_levels.product_variant_id')
+                                  ->whereNull('warehouse_stock_limits.product_variant_id');
+                           });
+                     });
+            })
+            // Only count if the product/variant is set to 'warehouse' type
+            ->join('products', 'inventory_levels.product_id', '=', 'products.id')
+            ->leftJoin('product_variants', 'inventory_levels.product_variant_id', '=', 'product_variants.id')
             ->where(function($query) {
-                $query->whereHas('variant', function($q) {
-                    $q->where('min_stock_type', 'warehouse');
+                $query->where(function($q) {
+                    $q->whereNull('inventory_levels.product_variant_id')
+                      ->where('products.min_stock_type', 'warehouse');
                 })->orWhere(function($q) {
-                    $q->whereNull('product_variant_id')
-                      ->whereHas('product', function($pq) {
-                          $pq->where('min_stock_type', 'warehouse');
-                      });
+                    $q->whereNotNull('inventory_levels.product_variant_id')
+                      ->where('product_variants.min_stock_type', 'warehouse');
                 });
             })
-            ->whereColumn('current_quantity', '<=', 'min_stock_override')
+            ->whereColumn('inventory_levels.current_quantity', '<=', 'warehouse_stock_limits.min_stock')
             ->count();
 
         $lowStockCount = $globalLowStockCount + $warehouseLowStockCount;
@@ -240,21 +261,40 @@ class DashboardService
             ->paginate($perPage);
     }
 
-    /**
-     * Get low stock product variants (Global and Warehouse levels).
-     */
     public function getLowStockProducts(int $perPage = 10)
     {
         $allLowStock = collect();
 
         // 1. Check Global Stock Levels (Saleable)
-        // Products/Variants where type is 'global' and total stock <= min_stock_global
-        $globalLowStockVariants = ProductVariant::with(['product.primaryImage', 'product.category'])
+        
+        // 1a. Simple Products
+        $globalLowProducts = Product::with(['primaryImage', 'category'])
+            ->where('min_stock_type', 'global')
+            ->whereDoesntHave('variants')
+            ->whereColumn('stock', '<=', 'min_stock_global')
+            ->get();
+
+        foreach ($globalLowProducts as $product) {
+            $allLowStock->push([
+                'type' => 'Global',
+                'product_id' => $product->id,
+                'name' => $product->name,
+                'category' => $product->category?->name ?? 'N/A',
+                'image' => $product->primaryImage?->image_path ?? '',
+                'variant_name' => 'N/A',
+                'sku' => 'N/A',
+                'stock' => $product->stock,
+                'location' => 'All Warehouses',
+            ]);
+        }
+
+        // 1b. Variants
+        $globalLowVariants = ProductVariant::with(['product.primaryImage', 'product.category'])
             ->where('min_stock_type', 'global')
             ->whereColumn('stock', '<=', 'min_stock_global')
             ->get();
 
-        foreach ($globalLowStockVariants as $variant) {
+        foreach ($globalLowVariants as $variant) {
             $allLowStock->push([
                 'type' => 'Global',
                 'product_id' => $variant->product_id,
@@ -268,21 +308,32 @@ class DashboardService
             ]);
         }
 
-        // 2. Check Warehouse-specific Stock Levels (including Overrides)
-        // Inventory levels where product/variant type is 'warehouse' and current_quantity <= min_stock_override
+        // 2. Check Warehouse-specific Stock Levels
         $warehouseLowStock = InventoryLevel::with(['product.primaryImage', 'product.category', 'variant', 'warehouse'])
-            ->whereNotNull('min_stock_override')
+            ->join('warehouse_stock_limits', function($join) {
+                $join->on('inventory_levels.product_id', '=', 'warehouse_stock_limits.product_id')
+                     ->on('inventory_levels.warehouse_id', '=', 'warehouse_stock_limits.warehouse_id')
+                     ->where(function($q) {
+                         $q->whereColumn('inventory_levels.product_variant_id', '=', 'warehouse_stock_limits.product_variant_id')
+                           ->orWhere(function($sq) {
+                               $sq->whereNull('inventory_levels.product_variant_id')
+                                  ->whereNull('warehouse_stock_limits.product_variant_id');
+                           });
+                     });
+            })
+            ->join('products', 'inventory_levels.product_id', '=', 'products.id')
+            ->leftJoin('product_variants', 'inventory_levels.product_variant_id', '=', 'product_variants.id')
             ->where(function($query) {
-                $query->whereHas('variant', function($q) {
-                    $q->where('min_stock_type', 'warehouse');
+                $query->where(function($q) {
+                    $q->whereNull('inventory_levels.product_variant_id')
+                      ->where('products.min_stock_type', 'warehouse');
                 })->orWhere(function($q) {
-                    $q->whereNull('product_variant_id')
-                      ->whereHas('product', function($pq) {
-                          $pq->where('min_stock_type', 'warehouse');
-                      });
+                    $q->whereNotNull('inventory_levels.product_variant_id')
+                      ->where('product_variants.min_stock_type', 'warehouse');
                 });
             })
-            ->whereColumn('current_quantity', '<=', 'min_stock_override')
+            ->whereColumn('inventory_levels.current_quantity', '<=', 'warehouse_stock_limits.min_stock')
+            ->select('inventory_levels.*')
             ->get();
 
         foreach ($warehouseLowStock as $level) {

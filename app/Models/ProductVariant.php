@@ -45,4 +45,9 @@ class ProductVariant extends Model
     {
         return $this->hasMany(InventoryLevel::class);
     }
+
+    public function warehouseStockLimits()
+    {
+        return $this->hasMany(WarehouseStockLimit::class);
+    }
 }

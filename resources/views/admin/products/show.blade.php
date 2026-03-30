@@ -79,9 +79,49 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-sm-3 fw-bold">Base Stock:</div>
-                        <div class="col-sm-9 text-muted">{{ $product->stock ?? 0 }}</div>
+                        <div class="col-sm-3 fw-bold">Unit Cost:</div>
+                        <div class="col-sm-9 text-muted">{{ $gs->currency ?? '$' }}{{ number_format($product->unit_cost ?? 0, 2) }}</div>
                     </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3 fw-bold">Saleable Stock:</div>
+                        <div class="col-sm-9 text-muted"><span class="badge badge-soft-dark fs-13">{{ $product->stock ?? 0 }} Units</span></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3 fw-bold">Stock Limit:</div>
+                        <div class="col-sm-9 text-muted">
+                            <span class="badge {{ $product->min_stock_type == 'global' ? 'bg-info' : 'bg-primary' }} text-uppercase">{{ $product->min_stock_type }}</span>
+                            @if($product->min_stock_type == 'global')
+                                <span class="ms-2">Threshold: <strong>{{ $product->min_stock_global }}</strong></span>
+                            @endif
+                        </div>
+                    </div>
+
+                    @if($product->min_stock_type == 'warehouse' && $product->warehouseStockLimits->whereNull('product_variant_id')->count() > 0)
+                        <div class="row mb-3">
+                            <div class="col-sm-3 fw-bold">Warehouse Limits:</div>
+                            <div class="col-sm-9">
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-bordered mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Warehouse</th>
+                                                <th class="text-center">Min Alert</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($product->warehouseStockLimits->whereNull('product_variant_id') as $limit)
+                                                <tr>
+                                                    <td>{{ $limit->warehouse->name }}</td>
+                                                    <td class="text-center">{{ $limit->min_stock }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
                     <div class="row mb-3">
                         <div class="col-sm-3 fw-bold">Description:</div>
                         <div class="col-sm-9 text-muted">{!! $product->description !!}</div>
@@ -89,30 +129,46 @@
                     
                     <h5 class="mt-4 mb-3">Product Variations</h5>
                     <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead class="bg-light">
+                        <table class="table table-bordered align-middle">
+                            <thead class="table-light">
                                 <tr>
                                     <th>Variant Name</th>
                                     <th>SKU</th>
+                                    <th>Unit Cost</th>
                                     <th>Price</th>
-                                    <th>Stock</th>
+                                    <th class="text-center">Stock</th>
+                                    <th>Stock Limit</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($product->variants as $variant)
                                 <tr>
                                     <td>{{ $variant->variant_name ?? '-' }}</td>
-                                    <td>{{ $variant->sku }}</td>
+                                    <td><code>{{ $variant->sku }}</code></td>
+                                    <td>{{ $gs->currency ?? '$' }}{{ number_format($variant->unit_cost ?? 0, 2) }}</td>
                                     <td>
                                         @if($variant->discount_price > 0)
                                             <span class="text-decoration-line-through text-muted small">{{ $gs->currency ?? '$' }}{{ number_format($variant->regular_price, 2) }}</span>
                                             <span class="text-danger fw-bold ms-1">{{ $gs->currency ?? '$' }}{{ number_format($variant->discount_price, 2) }}</span>
-                                            <span class="badge bg-soft-danger text-danger ms-1">-{{ $variant->discount_percentage }}%</span>
                                         @else
                                             {{ $gs->currency ?? '$' }}{{ number_format($variant->regular_price ?? $product->regular_price, 2) }}
                                         @endif
                                     </td>
-                                    <td>{{ $variant->stock ?? '-' }}</td>
+                                    <td class="text-center"><span class="badge badge-soft-dark">{{ $variant->stock ?? 0 }}</span></td>
+                                    <td>
+                                        <span class="badge {{ $variant->min_stock_type == 'global' ? 'badge-soft-info' : 'badge-soft-primary' }} text-uppercase mb-1">{{ $variant->min_stock_type }}</span>
+                                        @if($variant->min_stock_type == 'global')
+                                            <div class="small">Threshold: <strong>{{ $variant->min_stock_global }}</strong></div>
+                                        @elseif($variant->warehouseStockLimits->count() > 0)
+                                            <div class="mt-1">
+                                                @foreach($variant->warehouseStockLimits as $vLimit)
+                                                    <div class="extra-small text-muted text-nowrap">{{ $vLimit->warehouse->name }}: <strong>{{ $vLimit->min_stock }}</strong></div>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <div class="small text-muted italic">No limits set</div>
+                                        @endif
+                                    </td>
                                 </tr>
                                 @empty
                                 <tr>

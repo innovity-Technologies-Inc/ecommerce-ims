@@ -90,6 +90,11 @@ class Product extends Model
         return $this->hasMany(InventoryLevel::class);
     }
 
+    public function warehouseStockLimits()
+    {
+        return $this->hasMany(WarehouseStockLimit::class);
+    }
+
     /**
      * Scope a query to only include active products.
      */

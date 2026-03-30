@@ -87,8 +87,9 @@ class ProductController extends Controller
     {
         $categories = $this->productService->getCategoriesForDropdown();
         $brands = Brand::active()->get();
+        $warehouses = \App\Models\Warehouse::all();
 
-        return view('admin.products.form', compact('categories', 'brands'));
+        return view('admin.products.form', compact('categories', 'brands', 'warehouses'));
     }
 
     /**
@@ -116,7 +117,7 @@ class ProductController extends Controller
      */
     public function show(Product $product): View
     {
-        $product->load(['images', 'variants', 'category', 'subCategory', 'inventoryLevels.warehouse', 'variants.inventoryLevels.warehouse']);
+        $product->load(['images', 'variants', 'category', 'subCategory', 'inventoryLevels.warehouse', 'variants.inventoryLevels.warehouse', 'warehouseStockLimits.warehouse', 'variants.warehouseStockLimits.warehouse']);
 
         return view('admin.products.show', compact('product'));
     }
@@ -126,11 +127,12 @@ class ProductController extends Controller
      */
     public function edit(Product $product): View
     {
-        $product->load(['images', 'variants', 'category', 'subCategory', 'inventoryLevels.warehouse', 'variants.inventoryLevels.warehouse']);
+        $product->load(['images', 'variants.warehouseStockLimits.warehouse', 'category', 'subCategory', 'inventoryLevels.warehouse', 'variants.inventoryLevels.warehouse', 'warehouseStockLimits.warehouse']);
         $categories = $this->productService->getCategoriesForDropdown();
         $brands = Brand::active()->get();
+        $warehouses = \App\Models\Warehouse::all();
 
-        return view('admin.products.form', compact('product', 'categories', 'brands'));
+        return view('admin.products.form', compact('product', 'categories', 'brands', 'warehouses'));
     }
 
     /**
