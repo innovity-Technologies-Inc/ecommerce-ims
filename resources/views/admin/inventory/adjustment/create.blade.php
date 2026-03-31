@@ -91,10 +91,18 @@
                         @foreach($products as $product)
                             @if($product->variants->count() > 0)
                                 @foreach($product->variants as $variant)
-                                    <option value="{{ $product->id }}" data-variant-id="{{ $variant->id }}">{{ $product->name }} ({{ $variant->variant_name }})</option>
+                                    <option value="{{ $product->id }}" 
+                                            data-variant-id="{{ $variant->id }}"
+                                            data-unit-cost="{{ $variant->unit_cost ?? $product->unit_cost ?? 0 }}">
+                                        {{ $product->name }} ({{ $variant->variant_name }})
+                                    </option>
                                 @endforeach
                             @else
-                                <option value="{{ $product->id }}" data-variant-id="">{{ $product->name }}</option>
+                                <option value="{{ $product->id }}" 
+                                        data-variant-id=""
+                                        data-unit-cost="{{ $product->unit_cost ?? 0 }}">
+                                    {{ $product->name }}
+                                </option>
                             @endif
                         @endforeach
                     </select>
@@ -240,6 +248,12 @@
             const selected = $(this).find(':selected');
             row.find('.hidden-product-id').val(selected.val());
             row.find('.hidden-variant-id').val(selected.data('variant-id'));
+            
+            // Auto-fill unit cost
+            const unitCost = selected.data('unit-cost');
+            if (unitCost !== undefined) {
+                row.find('.cost-input').val(unitCost);
+            }
         });
 
         $(document).on('click', '.remove-row', function() {
