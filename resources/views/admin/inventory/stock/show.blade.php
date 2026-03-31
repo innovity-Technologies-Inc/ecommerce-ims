@@ -57,11 +57,7 @@
                         </tr>
                         <tr>
                             <th>Current Stock:</th>
-                            <td><span class="fw-bold fs-16 {{ $level->current_quantity <= ($level->min_stock_override ?? 0) ? 'text-danger' : 'text-success' }}">{{ $level->current_quantity }}</span></td>
-                        </tr>
-                        <tr>
-                            <th>Min Alert Level:</th>
-                            <td>{{ $level->min_stock_override ?? 'No override' }}</td>
+                            <td><span class="fw-bold fs-16 text-success">{{ $level->current_quantity }}</span></td>
                         </tr>
                     </table>
                 </div>

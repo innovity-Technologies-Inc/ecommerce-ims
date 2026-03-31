@@ -8,9 +8,6 @@
                 <th>Batch No</th>
                 <th class="text-center">Saleable Qty</th>
                 <th class="text-center text-danger">Damaged Qty</th>
-                @if(!Route::is('admin.inventory.damaged.index'))
-                    <th class="text-center">Min Override</th>
-                @endif
                 <th>Last Update</th>
                 <th class="text-center">Actions</th>
             </tr>
@@ -48,11 +45,6 @@
                     <td class="text-center">
                         <span class="text-danger fw-bold">{{ $level->damaged_quantity }}</span>
                     </td>
-                    @if(!Route::is('admin.inventory.damaged.index'))
-                        <td class="text-center">
-                            {{ $level->min_stock_override ?? '-' }}
-                        </td>
-                    @endif
                     <td>
                         <small class="text-muted">{{ $level->updated_at->format('M d, Y H:i') }}</small>
                     </td>
@@ -64,7 +56,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="{{ Route::is('admin.inventory.damaged.index') ? 8 : 9 }}" class="text-center p-4">
+                    <td colspan="8" class="text-center p-4">
                         <iconify-icon icon="solar:box-minimalistic-broken" class="fs-48 text-muted mb-2"></iconify-icon>
                         <p class="text-muted">No stock records found matching your criteria.</p>
                     </td>
