@@ -7,6 +7,16 @@
             <a href="{{ route('admin.inventory.adjustment.index') }}" class="btn btn-secondary btn-sm">Back to List</a>
         </div>
 
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <form action="{{ route('admin.inventory.adjustment.store') }}" method="POST" id="adjustment-form">
             @csrf
             <div class="row">
@@ -22,18 +32,27 @@
                                     <select name="warehouse_id" id="warehouse_id" class="form-select select2" required>
                                         <option value="">Select Warehouse</option>
                                         @foreach($warehouses as $warehouse)
-                                            <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
+                                            <option value="{{ $warehouse->id }}" {{ old('warehouse_id') == $warehouse->id ? 'selected' : '' }}>{{ $warehouse->name }}</option>
                                         @endforeach
                                     </select>
+                                    @error('warehouse_id')
+                                        <span class="small text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Batch Number <span class="text-danger">*</span></label>
-                                    <input type="text" name="batch_number" class="form-control" placeholder="Enter Batch #" value="{{ $generatedBatchNumber }}" required>
+                                    <input type="text" name="batch_number" class="form-control" placeholder="Enter Batch #" value="{{ old('batch_number', $generatedBatchNumber) }}" required>
                                     <small class="text-muted">Auto-generated. You can edit this if needed.</small>
+                                    @error('batch_number')
+                                        <br><span class="small text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label">Adjustment Date <span class="text-danger">*</span></label>
-                                    <input type="date" name="adjustment_date" class="form-control" value="{{ date('Y-m-d') }}" required>
+                                    <input type="date" name="adjustment_date" class="form-control" value="{{ old('adjustment_date', date('Y-m-d')) }}" required>
+                                    @error('adjustment_date')
+                                        <span class="small text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                             </div>
                         </div>

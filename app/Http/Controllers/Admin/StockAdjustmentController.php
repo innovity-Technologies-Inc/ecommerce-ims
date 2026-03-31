@@ -50,11 +50,17 @@ class StockAdjustmentController extends Controller
         try {
             $this->adjustmentService->storeAdjustment($request->validated());
 
-            return redirect()->route('admin.inventory.adjustment.index')->with('success', 'Stock adjustment created successfully.');
+            return redirect()->route('admin.inventory.adjustment.index')->with([
+                'message' => 'Stock adjustment created successfully.',
+                'alert-type' => 'success'
+            ]);
         } catch (\Exception $e) {
             \Log::error('Stock Adjustment Store Error: '.$e->getMessage());
 
-            return back()->with('error', 'Something went wrong: '.$e->getMessage())->withInput();
+            return back()->with([
+                'message' => 'Something went wrong: '.$e->getMessage(),
+                'alert-type' => 'error',
+            ])->withInput();
         }
     }
 

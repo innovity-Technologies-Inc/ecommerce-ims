@@ -19,6 +19,14 @@ You MUST strictly follow this sequence for **EVERY** request:
     - **Seeder-Driven Verification (STRICT):** Verify logic using existing Seeders (`php artisan db:seed`) to populate dummy data. DO NOT create new Model Factories.
     - **Testing Policy:** Automated tests (PHPUnit) are now optional and can be skipped for every module unless explicitly requested.
     - **Optimization (MANDATORY):** ALWAYS run `php artisan optimize` after completing a requirement to ensure the configuration and routes are correctly cached.
+    - **Session Notifications (STRICT):** ALWAYS use the following array structure for redirect session messages (Success, Error, Warning, etc.):
+      ```php
+      return redirect()->route('...')->with([
+          'message' => 'Your message here.',
+          'alert-type' => 'success' // or 'error', 'warning', 'info'
+      ]);
+      ```
+      NEVER use standalone `->with('success', ...)` or `->with('error', ...)` calls.
 5. **Documentation Update (STRICT & MANDATORY):**
     - You MUST update `PROJECT_DOCUMENTATION.md` after completing **EVERY SINGLE INSTRUCTION** or modification.
     - Reflect the new module, connections, and system flow immediately.

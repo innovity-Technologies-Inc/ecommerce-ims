@@ -57,11 +57,17 @@ class SupplierRmaController extends Controller
         try {
             $this->rmaService->storeRma($request->validated());
 
-            return redirect()->route('admin.inventory.rma.index')->with('success', 'Supplier RMA created successfully.');
+            return redirect()->route('admin.inventory.rma.index')->with([
+                'message' => 'Supplier RMA created successfully.',
+                'alert-type' => 'success',
+            ]);
         } catch (\Exception $e) {
             \Log::error('Supplier RMA Store Error: '.$e->getMessage());
 
-            return back()->with('error', 'Something went wrong: '.$e->getMessage())->withInput();
+            return back()->with([
+                'message' => 'Something went wrong: '.$e->getMessage(),
+                'alert-type' => 'error',
+            ])->withInput();
         }
     }
 
@@ -83,11 +89,17 @@ class SupplierRmaController extends Controller
         try {
             $this->rmaService->updateStatus($rma, $request->status);
 
-            return back()->with('success', 'RMA status updated successfully.');
+            return back()->with([
+                'message' => 'RMA status updated successfully.',
+                'alert-type' => 'success',
+            ]);
         } catch (\Exception $e) {
             \Log::error('Supplier RMA Status Update Error: '.$e->getMessage());
 
-            return back()->with('error', 'Something went wrong: '.$e->getMessage());
+            return back()->with([
+                'message' => 'Something went wrong: '.$e->getMessage(),
+                'alert-type' => 'error',
+            ]);
         }
     }
 
