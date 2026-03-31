@@ -13,9 +13,12 @@ class Wastage extends Model
     protected $fillable = [
         'product_id',
         'product_variant_id',
+        'warehouse_id',
+        'batch_id',
         'quantity',
         'reason',
         'return_id',
+        'created_by',
     ];
 
     public function product(): BelongsTo
@@ -25,7 +28,22 @@ class Wastage extends Model
 
     public function productVariant(): BelongsTo
     {
-        return $this->belongsTo(ProductVariant::class);
+        return $this->belongsTo(ProductVariant::class, 'product_variant_id');
+    }
+
+    public function warehouse(): BelongsTo
+    {
+        return $this->belongsTo(Warehouse::class);
+    }
+
+    public function batch(): BelongsTo
+    {
+        return $this->belongsTo(Batch::class);
+    }
+
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(Admin::class, 'created_by');
     }
 
     public function returnRequest(): BelongsTo

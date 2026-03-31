@@ -4,6 +4,9 @@
 <div class="container-xxl">
     <div class="d-flex align-items-center justify-content-between mb-3">
         <h4 class="mb-0">Damaged Products (Wastage)</h4>
+        @can('returns.edit')
+        <a href="{{ route('admin.wastage.create') }}" class="btn btn-danger btn-sm">Record Warehouse Damage</a>
+        @endcan
     </div>
 
     <div class="card overflow-hidden">

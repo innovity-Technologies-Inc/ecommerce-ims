@@ -169,6 +169,15 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::get('/wastages', 'wastages')->name('wastages');
     });
 
+    // Damage Entry (Wastage)
+    Route::prefix('wastage-entry')->middleware('permission:returns.edit')->controller(\App\Http\Controllers\Admin\WastageController::class)->group(function () {
+        Route::get('/create', 'create')->name('admin.wastage.create');
+        Route::post('/', 'store')->name('admin.wastage.store');
+        Route::get('/ajax/batches', 'getBatches')->name('admin.wastage.ajax.batches');
+        Route::get('/ajax/products', 'getProducts')->name('admin.wastage.ajax.products');
+        Route::get('/ajax/serials', 'getGoodSerials')->name('admin.wastage.ajax.serials');
+    });
+
     Route::prefix('sections')->middleware('permission:homepage_sections.view')->group(function () {
         Route::get('/bestsellers', [\App\Http\Controllers\Admin\HomepageSectionController::class, 'bestsellers'])->name('admin.sections.bestsellers');
         Route::get('/{sectionName}', [\App\Http\Controllers\Admin\HomepageSectionController::class, 'editSection'])->name('admin.sections.edit');

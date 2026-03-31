@@ -750,5 +750,24 @@ Every module or architectural change must be documented in this file before a ta
   - **Dynamic UI:** Features a repeater-style form for adding multiple items with live product/variant selection.
   - **Financial Logic:** Automatically calculates total cost per line item and for the entire adjustment for ledger reporting.
 
+### 3.39 Damage Entry (Warehouse Wastage) Module
+- **What:** A specialized module to manually record products that have been damaged within the warehouse, distinct from damages identified during PO receipt.
+- **How it Works:**
+  - **Contextual Selection:** Admins select a Warehouse, then a specific Batch available in that warehouse, and finally the Product/Variant to be marked as damaged.
+  - **Mandatory Serial Tracking:** If the selected product/batch has associated serial numbers, the system forces the admin to select the specific physical units being discarded via a modal-based checkbox interface.
+  - **Inventory Synchronization:**
+    - **Quantity Transfer:** The system decrements the `current_quantity` (saleable) and increments the `damaged_quantity` in the `inventory_levels` table.
+    - **Batch Updates:** Similarly updates the `total_saleable_qty` and `total_damaged_qty` in the main `batches` and `batch_products` tables.
+    - **Serial Status:** Selected serials are updated to `product_status: damaged` and `stock_status: wastage`.
+  - **Audit Integrity:** Every entry creates a record in the `wastages` table and logs a transaction in the `StockLedger` with `transaction_type: warehouse_damage`.
+- **Data & Storage:**
+  - **Related Tables:** `wastages`, `batch_serials`, `inventory_levels`, `batches`, `batch_products`, `stock_ledgers`
+  - **Storage:** Standard relational columns for warehouse/batch linking; updated status flags for physical unit tracking.
+  - **Fetching:** `DamageEntryService` handles the atomic transition logic; AJAX endpoints provide real-time, context-aware filtering for warehouses, batches, and products.
+- **Implementation Details:**
+  - **`DamageEntryService`:** Manages the complex multi-table transaction to ensure stock consistency after a damage event.
+  - **UI Integration:** The "Damage Entry" button is integrated into the main Wastage index for easy access.
+  - **Validation:** `DamageEntryRequest` ensures that quantities do not exceed available saleable stock and that serial selections are mandatory when applicable.
+
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*
