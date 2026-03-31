@@ -216,6 +216,25 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
             Route::get('/batches/{batch}', 'showBatch')->name('admin.inventory.batches.show');
         });
 
+        // Supplier RMA
+        Route::prefix('rma')->middleware('permission:supplier_rma.view')->controller(\App\Http\Controllers\Admin\SupplierRmaController::class)->group(function () {
+            Route::get('/', 'index')->name('admin.inventory.rma.index');
+            Route::get('/create', 'create')->name('admin.inventory.rma.create')->middleware('permission:supplier_rma.create');
+            Route::post('/', 'store')->name('admin.inventory.rma.store')->middleware('permission:supplier_rma.create');
+            Route::get('/{rma}', 'show')->name('admin.inventory.rma.show');
+            Route::put('/{rma}/status', 'updateStatus')->name('admin.inventory.rma.update-status')->middleware('permission:supplier_rma.edit');
+            Route::get('/ajax/purchase-orders', 'getPurchaseOrders')->name('admin.inventory.rma.ajax.pos');
+            Route::get('/ajax/damaged-batches', 'getDamagedBatches')->name('admin.inventory.rma.ajax.batches');
+            Route::get('/ajax/damaged-serials', 'getDamagedSerials')->name('admin.inventory.rma.ajax.serials');
+        });
+
+        // Stock Adjustment
+        Route::prefix('adjustment')->middleware('permission:inventory.view')->controller(\App\Http\Controllers\Admin\StockAdjustmentController::class)->group(function () {
+            Route::get('/', 'index')->name('admin.inventory.adjustment.index');
+            Route::get('/create', 'create')->name('admin.inventory.adjustment.create')->middleware('permission:inventory.allocate');
+            Route::post('/', 'store')->name('admin.inventory.adjustment.store')->middleware('permission:inventory.allocate');
+            Route::get('/{adjustment}', 'show')->name('admin.inventory.adjustment.show');
+        });
     });
 });
 

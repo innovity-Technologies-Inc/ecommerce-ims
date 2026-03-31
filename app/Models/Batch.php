@@ -47,4 +47,9 @@ class Batch extends Model
     {
         return $this->hasMany(InventoryLevel::class);
     }
+
+    public function rmaItems(): HasMany
+    {
+        return $this->hasMany(RmaItem::class);
+    }
 }

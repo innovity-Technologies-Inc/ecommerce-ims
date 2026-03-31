@@ -64,4 +64,9 @@ class PurchaseOrder extends Model
     {
         return $this->hasMany(PurchaseOrderItem::class);
     }
+
+    public function supplierRmas(): HasMany
+    {
+        return $this->hasMany(SupplierRma::class);
+    }
 }

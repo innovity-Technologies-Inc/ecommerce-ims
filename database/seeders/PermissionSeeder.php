@@ -111,6 +111,12 @@ class PermissionSeeder extends Seeder
 
             'inventory.view',
             'inventory.allocate',
+
+            // Supplier RMA
+            'supplier_rma.view',
+            'supplier_rma.create',
+            'supplier_rma.edit',
+            'supplier_rma.delete',
         ];
 
         foreach ($permissions as $permission) {

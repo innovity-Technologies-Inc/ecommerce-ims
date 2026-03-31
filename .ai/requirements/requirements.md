@@ -124,4 +124,6 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-64:** Automated Stock Management (Automatic decrement of stock upon order placement and restorative increment upon order cancellation/rejection).
 - [x] **REQ-65:** Order Status Finality (Prevent further status changes once an order is set to 'Delivered', 'Cancelled' or 'Rejected').
 - [x] **REQ-66:** Status Reuse Restriction (Prevent an order from being moved to any status it has previously held in its lifecycle).
+- [ ] **REQ-106:** Stock Adjustment Module: Manual stock entry system without PO. Includes batch creation, warehouse targeting, product/variant selection, optional serial tracking, and unit cost recording. Synchronizes with Batch, Batch Serials, Inventory Levels, and Stock Ledger. (NEW)
+- [x] **REQ-105:** Supplier RMA Module (Return to Vendor): Admin can return damaged products to vendors. Selection of vendors/POs, batch/serial tracking, email notification toggle, and status workflow (Pending, Approved, Shipped, Closed). Stock ledger integration (RTV_Dispatch) and inventory updates upon closing. (NEW)
 - [x] **REQ-67:** Coupon Usage History (Dedicated administrative page to track detailed audit trails of specific coupon applications, including user and order data).

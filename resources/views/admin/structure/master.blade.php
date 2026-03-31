@@ -327,6 +327,28 @@
             console.error('Error:', error);
         });
     });
+
+    $('.confirmAction').click(function(event) {
+        event.preventDefault();
+        const form = $(this).closest("form");
+        const title = $(this).data("confirm-title") || 'Are you sure?';
+        const text = $(this).data("confirm-text") || 'Do you want to proceed with this action?';
+        const icon = $(this).data("confirm-icon") || 'info';
+
+        Swal.fire({
+            title: title,
+            text: text,
+            icon: icon,
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, proceed!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    });
 </script>
 
 
