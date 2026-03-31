@@ -192,6 +192,16 @@
                         <li class="sub-nav-item">
                             <a class="sub-nav-link" href="{{ route('admin.inventory.damaged.index') }}">Damaged Products</a>
                         </li>
+                        @can('inventory.allocate')
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="{{ route('admin.inventory.adjustment.index') }}">Stock Adjustment</a>
+                        </li>
+                        @endcan
+                        @can('supplier_rma.view')
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="{{ route('admin.inventory.rma.index') }}">Supplier RMA</a>
+                        </li>
+                        @endcan
                     </ul>
                 </div>
             </li>
@@ -204,17 +214,6 @@
                         <iconify-icon icon="solar:clipboard-list-bold-duotone"></iconify-icon>
                     </span>
                     <span class="nav-text"> Purchase Orders </span>
-                </a>
-            </li>
-            @endcan
-
-            @can('inventory.allocate')
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.inventory.adjustment.index') }}">
-                    <span class="nav-icon">
-                        <iconify-icon icon="solar:settings-minimalistic-bold-duotone"></iconify-icon>
-                    </span>
-                    <span class="nav-text"> Stock Adjustment </span>
                 </a>
             </li>
             @endcan
@@ -237,17 +236,6 @@
                         <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon>
                     </span>
                     <span class="nav-text"> Suppliers </span>
-                </a>
-            </li>
-            @endcan
-
-            @can('supplier_rma.view')
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.inventory.rma.index') }}">
-                    <span class="nav-icon">
-                        <iconify-icon icon="solar:restart-bold-duotone"></iconify-icon>
-                    </span>
-                    <span class="nav-text"> Supplier RMA </span>
                 </a>
             </li>
             @endcan

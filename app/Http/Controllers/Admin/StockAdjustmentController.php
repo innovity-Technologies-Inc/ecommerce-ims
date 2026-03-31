@@ -38,8 +38,8 @@ class StockAdjustmentController extends Controller
     {
         $warehouses = Warehouse::where('is_quarantine', false)->get();
         $products = Product::with('variants')->get();
-
-        return view('admin.inventory.adjustment.create', compact('warehouses', 'products'));
+        $generatedBatchNumber = 'ADJ-' . date('ymd') . '-' . strtoupper(bin2hex(random_bytes(2)));
+        return view('admin.inventory.adjustment.create', compact('warehouses', 'products', 'generatedBatchNumber'));
     }
 
     /**
