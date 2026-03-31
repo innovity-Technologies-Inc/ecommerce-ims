@@ -65,6 +65,15 @@ class StockAdjustmentController extends Controller
     {
         $adjustment->load(['warehouse', 'batch', 'items.product', 'items.variant', 'creator']);
 
+        // Manually attach serials to each item based on batch and product
+        foreach ($adjustment->items as $item) {
+            $item->serials = \App\Models\BatchSerial::where([
+                'batch_id' => $adjustment->batch_id,
+                'product_id' => $item->product_id,
+                'product_variant_id' => $item->product_variant_id,
+            ])->get();
+        }
+
         return view('admin.inventory.adjustment.show', compact('adjustment'));
     }
 }
