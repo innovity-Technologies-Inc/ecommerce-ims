@@ -14,6 +14,8 @@ class OrderItem extends Model
         'order_id',
         'product_id',
         'product_variant_id',
+        'warehouse_id',
+        'batch_id',
         'product_name',
         'variant_name',
         'unit_price',
@@ -42,5 +44,20 @@ class OrderItem extends Model
     public function productVariant(): BelongsTo
     {
         return $this->belongsTo(ProductVariant::class);
+    }
+
+    public function warehouse(): BelongsTo
+    {
+        return $this->belongsTo(Warehouse::class);
+    }
+
+    public function batch(): BelongsTo
+    {
+        return $this->belongsTo(Batch::class);
+    }
+
+    public function serials(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(BatchSerial::class, 'order_item_id');
     }
 }

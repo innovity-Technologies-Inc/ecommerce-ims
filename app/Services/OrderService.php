@@ -83,11 +83,11 @@ class OrderService
     /**
      * Update order status and send notification if requested.
      */
-    public function updateOrderStatus(Order $order, string $status, bool $notify = false, ?string $reason = null): bool
+    public function updateOrderStatus(Order $order, string $status, bool $notify = false, ?string $reason = null, array $itemData = []): bool
     {
         $status = trim($status);
 
-        return DB::transaction(function () use ($order, $status, $notify, $reason) {
+        return DB::transaction(function () use ($order, $status, $notify, $reason, $itemData) {
             $oldStatus = $order->order_status;
 
             // Finality check: If current status is Delivered, Cancelled or Rejected, do not allow changes
@@ -100,19 +100,136 @@ class OrderService
                 throw new \Exception("Order has already been in the '{$status}' status. Status cannot be reused.");
             }
 
+            // --- INVENTORY INTEGRATION LOGIC ---
+
+            if ($status === 'Shipped') {
+                if (empty($itemData)) {
+                    throw new \Exception('Inventory allocation data is required for Shipped status.');
+                }
+
+                foreach ($order->orderItems as $item) {
+                    $allocation = $itemData[$item->id] ?? null;
+                    if (! $allocation || ! $allocation['warehouse_id'] || ! $allocation['batch_id']) {
+                        throw new \Exception("Warehouse and Batch are required for {$item->product_name}.");
+                    }
+
+                    $item->update([
+                        'warehouse_id' => $allocation['warehouse_id'],
+                        'batch_id' => $allocation['batch_id'],
+                    ]);
+
+                    // Update Serials
+                    if (! empty($allocation['serials'])) {
+                        if (count($allocation['serials']) != $item->quantity) {
+                            throw new \Exception("Selected serials count must match quantity ({$item->quantity}) for {$item->product_name}.");
+                        }
+
+                        // Mark previous serials as in-stock if any (unlikely in normal flow)
+                        \App\Models\BatchSerial::where('order_item_id', $item->id)->update([
+                            'order_item_id' => null,
+                            'stock_status' => 'in-stock',
+                        ]);
+
+                        // Assign new serials and mark as shipped
+                        \App\Models\BatchSerial::whereIn('id', $allocation['serials'])->update([
+                            'order_item_id' => $item->id,
+                            'stock_status' => 'shipped',
+                        ]);
+                    }
+                }
+            }
+
+            if ($status === 'Delivered') {
+                foreach ($order->orderItems as $item) {
+                    // Update assigned serials to 'sold'
+                    \App\Models\BatchSerial::where('order_item_id', $item->id)->update([
+                        'stock_status' => 'sold',
+                    ]);
+
+                    // Deduct from Warehouse and Batch Inventory Levels
+                    if ($item->warehouse_id && $item->batch_id) {
+                        $inventoryLevel = \App\Models\InventoryLevel::where([
+                            'warehouse_id' => $item->warehouse_id,
+                            'batch_id' => $item->batch_id,
+                            'product_id' => $item->product_id,
+                            'product_variant_id' => $item->product_variant_id,
+                        ])->first();
+
+                        if ($inventoryLevel) {
+                            $inventoryLevel->decrement('current_quantity', $item->quantity);
+                        }
+
+                        // Update BatchProduct totals
+                        $batchProduct = \App\Models\BatchProduct::where([
+                            'batch_id' => $item->batch_id,
+                            'product_id' => $item->product_id,
+                            'product_variant_id' => $item->product_variant_id,
+                        ])->first();
+
+                        if ($batchProduct) {
+                            $batchProduct->decrement('total_saleable_qty', $item->quantity);
+                        }
+
+                        // Update Batch totals
+                        $item->batch->decrement('total_saleable_qty', $item->quantity);
+
+                        // Global Stock Deduction (Only on Delivered)
+                        if ($item->product_variant_id) {
+                            $item->productVariant->decrement('stock', $item->quantity);
+                        } else {
+                            $item->product->decrement('stock', $item->quantity);
+                        }
+
+                        // Financial Logic for Stock Ledger
+                        $unitCost = 0;
+                        if ($item->product_variant_id) {
+                            $unitCost = $item->productVariant->unit_cost ?? $item->product->unit_cost ?? 0;
+                        } else {
+                            $unitCost = $item->product->unit_cost ?? 0;
+                        }
+
+                        // Log to Stock Ledger
+                        $this->inventoryService->logStockChange(
+                            productId: $item->product_id,
+                            variantId: $item->product_variant_id,
+                            warehouseId: $item->warehouse_id,
+                            changeQty: -$item->quantity,
+                            transactionType: 'SALE',
+                            reasonCode: 'ORDER_DELIVERED',
+                            referenceId: $order->order_id,
+                            batchId: $item->batch_id,
+                            supplierId: $item->batch->supplier_id ?? null,
+                            unitCost: $unitCost,
+                            cost: (-$item->quantity * $unitCost)
+                        );
+                    }
+                }
+            }
+
             // Define statuses that are considered "Active" (stock is deducted)
-            $activeStatuses = ['Pending', 'Processing', 'Out for Delivery', 'Delivered'];
+            $activeStatuses = ['Pending', 'Processing', 'Out for Delivery', 'Delivered', 'Shipped'];
             // Define statuses that are considered "Restorative" (stock should be returned)
             $restorativeStatuses = ['Cancelled', 'Rejected'];
 
-            // If changing from an active status to a restorative status, return the stock
+            // Stock restoration if cancelled (handled here for simplicity, although terminal status usually prevents this)
             if (in_array($oldStatus, $activeStatuses) && in_array($status, $restorativeStatuses)) {
+                // Return serials to stock if they were shipped/allocated
+                foreach ($order->orderItems as $item) {
+                    \App\Models\BatchSerial::where('order_item_id', $item->id)->update([
+                        'order_item_id' => null,
+                        'stock_status' => 'in-stock',
+                    ]);
+                }
                 $this->adjustStock($order, 'increase');
             }
 
-            // If changing from a restorative status back to an active status, deduct the stock again
-            if (in_array($oldStatus, $restorativeStatuses) && in_array($status, $activeStatuses)) {
-                $this->adjustStock($order, 'decrease');
+            // Note: We don't deduct stock on 'Pending' anymore because we do it on 'Delivered' granularly.
+            // But we keep the overall products.stock sync for compatibility.
+            if ($status === 'Delivered') {
+                // The adjustStock(decrease) was called on ORDER_PLACED in placeOrder().
+                // To keep consistency, we should ensure the global product stock reflects reality.
+                // However, the user said: "it will not decrease the saleable stock value ... until the status is delivered"
+                // This means I need to REMOVE the decrement from placeOrder() and only do it on Delivered.
             }
 
             $order->order_status = $status;
@@ -310,25 +427,8 @@ class OrderService
                     'total_price' => $item->subtotal,
                 ]);
 
-                // Deduct Stock
-                if ($item->variant_id) {
-                    $variant = ProductVariant::findOrFail($item->variant_id);
-                    $variant->decrement('stock', $item->quantity);
-                } else {
-                    $product = Product::findOrFail($item->product_id);
-                    $product->decrement('stock', $item->quantity);
-                }
-
-                // Log to Stock Ledger
-                $this->inventoryService->logStockChange(
-                    $item->product_id,
-                    $item->variant_id,
-                    null, // Using unallocated pool for now
-                    -$item->quantity,
-                    'SALE',
-                    'ORDER_PLACED',
-                    $order->order_id
-                );
+                // We NO LONGER deduct stock here.
+                // Stock will be deducted only when status changes to 'Delivered'.
             }
 
             // Record Coupon Usage
@@ -437,5 +537,51 @@ class OrderService
     public function trackOrderById(string $orderId): ?Order
     {
         return Order::with(['orderItems', 'statusLogs'])->where('order_id', $orderId)->first();
+    }
+
+    /**
+     * Get warehouses that have stock for a specific product/variant.
+     */
+    public function getWarehousesForItem(int $productId, ?int $variantId = null): \Illuminate\Support\Collection
+    {
+        return \App\Models\Warehouse::whereHas('inventoryLevels', function ($query) use ($productId, $variantId) {
+            $query->where('product_id', $productId)
+                ->where('current_quantity', '>', 0);
+            if ($variantId) {
+                $query->where('product_variant_id', $variantId);
+            }
+        })->get();
+    }
+
+    /**
+     * Get batches for a product/variant in a specific warehouse.
+     */
+    public function getBatchesForItemInWarehouse(int $warehouseId, int $productId, ?int $variantId = null): \Illuminate\Support\Collection
+    {
+        return \App\Models\Batch::whereHas('inventoryLevels', function ($query) use ($warehouseId, $productId, $variantId) {
+            $query->where('warehouse_id', $warehouseId)
+                ->where('product_id', $productId)
+                ->where('current_quantity', '>', 0);
+            if ($variantId) {
+                $query->where('product_variant_id', $variantId);
+            }
+        })->get();
+    }
+
+    /**
+     * Get available serials for a batch and product/variant.
+     */
+    public function getAvailableSerials(int $batchId, int $productId, ?int $variantId = null): \Illuminate\Support\Collection
+    {
+        $query = \App\Models\BatchSerial::where('batch_id', $batchId)
+            ->where('product_id', $productId)
+            ->where('stock_status', 'in-stock')
+            ->where('product_status', 'good');
+
+        if ($variantId) {
+            $query->where('product_variant_id', $variantId);
+        }
+
+        return $query->get();
     }
 }

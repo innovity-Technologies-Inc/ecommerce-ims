@@ -12,6 +12,7 @@ class BatchSerial extends Model
         'warehouse_id',
         'product_id',
         'product_variant_id',
+        'order_item_id',
         'serial_no',
         'product_status',
         'stock_status',
@@ -35,5 +36,10 @@ class BatchSerial extends Model
     public function variant(): BelongsTo
     {
         return $this->belongsTo(ProductVariant::class, 'product_variant_id');
+    }
+
+    public function orderItem(): BelongsTo
+    {
+        return $this->belongsTo(OrderItem::class);
     }
 }

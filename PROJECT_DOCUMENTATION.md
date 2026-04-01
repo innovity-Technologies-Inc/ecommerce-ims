@@ -789,11 +789,18 @@ Every module or architectural change must be documented in this file before a ta
 - **What:** An automated performance evaluation system for vendors based on Purchase Order (PO) fulfillment accuracy and timeliness.
 - **How it Works:**
   - **Automated Calculation:** A performance score and fulfillment subtotals are automatically calculated and stored for every Purchase Order when its status is updated to "Delivered" via the formal receiving process.
-  - **Score Components:**
-    - **Delivery Score (40%):** Awarded in full (40 points) if the PO's `received_date` is on or before the `expected_delivery_date`. If late or if no expected date was set, the score is 0.
-    - **Quality Score (60%):** Calculated based on the ratio of good products vs. the total quantity received (Good + Damaged) across all items in the PO.
-    - **Total Score:** The sum of both components (Max 100%).
-  - **Fulfillment Subtotals:** The system calculates and stores `total_received_qty` (good products) and `total_damaged_qty` directly in the `purchase_orders` record. This provides a high-level summary of the shipment's quality without needing to query multiple batch tables.
+  - **Calculation Logic (Detailed Formulas):**
+    - The total score is out of **100 points**, calculated using two primary metrics:
+    - **1. Delivery Score (40% Weight):**
+      - **Formula:** `IF (Actual Received Date <= Expected Delivery Date) THEN 40 ELSE 0`
+      - **Logic:** If the shipment arrives on or before the deadline set during PO creation, the supplier receives the full 40 points. If late, or if no expected date was provided, they receive 0 points for this component.
+    - **2. Quality Score (60% Weight):**
+      - **Formula:** `(Total Received Qty / (Total Received Qty + Total Damaged Qty)) * 60`
+      - **Logic:** This measures the ratio of "Good" products vs. "Total" products delivered. If 100% of the items are intact, the supplier receives 60 points. If 10% are damaged, they receive `(0.9 * 60) = 54` points.
+    - **3. Final Performance Score:**
+      - **Formula:** `Total Score = Delivery Score + Quality Score`
+      - **Example:** A PO delivered on time (40 pts) with 5% damaged items (57 pts) results in a total performance score of **97.00%**.
+  - **Fulfillment Subtotals:** To ensure high-performance reporting, the system calculates and stores `total_received_qty` (good products) and `total_damaged_qty` directly in the `purchase_orders` record.
   - **Supplier Analytics:** The system maintains a running average of performance scores across all delivered POs for each supplier.
   - **Visibility:** 
     - **PO Details:** Displays the performance score and a "Fulfillment Summary" badge showing the breakdown of Good vs. Damaged totals.
@@ -803,8 +810,29 @@ Every module or architectural change must be documented in this file before a ta
   - **Storage:** `performance_score` (decimal), `total_received_qty` (int), and `total_damaged_qty` (int) are stored directly in the `purchase_orders` table.
   - **Fetching:** `PurchaseOrderService` handles the calculation and storage during receipt; `Supplier` model utilizes an Eloquent accessor (`average_performance_score`) to compute real-time averages across all its delivered orders.
 - **Implementation Details:**
-  - **Calculation Logic:** `Performance Score = (On-time ? 40 : 0) + (60 * (Total Received / (Total Received + Total Damaged)))`.
+  - **Architecture:** Follows the strict Service Layer pattern. Calculation occurs within a `DB::transaction` in `PurchaseOrderService::receivePurchaseOrder`.
   - **UI Integration:** Uses Bootstrap 5 badges and Iconify icons for consistent, modern data presentation in both the order summary and vendor management interfaces.
+
+### 3.41 Order Fulfillment & Inventory Integration
+- **What:** A granular inventory allocation and tracking system that connects customer orders with specific warehouse batches and physical unit serial numbers.
+- **How it Works:**
+  - **Shipped Status (Allocation):** When an admin changes an order status to "Shipped", the system triggers an "Inventory Allocation" workflow.
+    - **Warehouse Selection:** Admins select which warehouse(s) will fulfill each order item. Only warehouses with current stock for that product/variant are displayed.
+    - **Batch Selection:** Admins select specific batches within the chosen warehouse to pull stock from.
+    - **Serial Tracking:** For products that use serial numbers, admins must select the specific unit serials (status: 'in-stock' and 'good') being sent to the customer.
+    - **Status Update:** Allocated serials are marked as `shipped` in the `batch_serials` table. No stock is physically deducted from the levels at this stage.
+  - **Delivered Status (Finalization):** When the order is marked as "Delivered":
+    - **Stock Deduction:** The system formally decrements the `current_quantity` in `inventory_levels` and `total_saleable_qty` in `batches` and `batch_products`.
+    - **Global Stock Sync:** The primary `products` or `product_variants` stock field is updated to reflect the sale.
+    - **Serial Status:** Allocated serials are updated to `sold`.
+    - **Financial Reporting:** A `StockLedger` entry is created with the transaction type `SALE` and sub-type `ORDER_DELIVERED`, recording the product's `unit_cost` and calculating the total movement cost.
+  - **Resilience:** If an order is cancelled or rejected after being shipped, the system automatically releases the allocated serials back to `in-stock` status and restores any pending deductions.
+- **Data & Storage:**
+  - **Related Tables:** `order_items`, `batch_serials`, `inventory_levels`, `stock_ledgers`, `batches`, `batch_products`
+  - **Linkage:** `order_items` now stores `warehouse_id` and `batch_id`; `batch_serials` stores the `order_item_id` for traceability.
+- **Implementation Details:**
+  - **Backend:** `OrderService::updateOrderStatus` encapsulates the complex transactional logic for allocation and finalization.
+  - **UI:** The Order Details page features a dynamic, AJAX-driven selection interface that appears only when the "Shipped" status is chosen. It utilizes Select2 for high-volume serial selection and includes real-time validation to ensure allocated quantities match the order.
 
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*

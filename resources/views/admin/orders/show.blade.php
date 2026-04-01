@@ -144,7 +144,7 @@
                             @endif
                         @else
                             @can('orders.edit')
-                            <form action="{{ route('admin.orders.update-status', $order->id) }}" method="POST">
+                            <form id="statusUpdateForm" action="{{ route('admin.orders.update-status', $order->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
                                 <div class="mb-3">
@@ -154,6 +154,36 @@
                                             <option value="{{ $key }}" {{ $order->order_status === $key ? 'selected' : '' }}>{{ $value }}</option>
                                         @endforeach
                                     </select>
+                                </div>
+
+                                <div id="inventory_allocation_section" class="d-none">
+                                    <h6 class="text-uppercase fw-bold text-primary mb-3">Inventory Allocation</h6>
+                                    @foreach($order->orderItems as $item)
+                                        <div class="card border mb-3 shadow-none">
+                                            <div class="card-body p-2">
+                                                <div class="fw-bold small mb-2 text-dark">{{ $item->product_name }} (Qty: {{ $item->quantity }})</div>
+                                                
+                                                <div class="mb-2">
+                                                    <select name="items[{{ $item->id }}][warehouse_id]" class="form-select form-select-sm warehouse-select" data-product-id="{{ $item->product_id }}" data-variant-id="{{ $item->product_variant_id }}" required>
+                                                        <option value="">Select Warehouse</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="mb-2 batch-container d-none">
+                                                    <select name="items[{{ $item->id }}][batch_id]" class="form-select form-select-sm batch-select" required>
+                                                        <option value="">Select Batch</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="serial-container d-none">
+                                                    <label class="small text-muted mb-1">Select Serials ({{ $item->quantity }})</label>
+                                                    <select name="items[{{ $item->id }}][serials][]" class="form-select form-select-sm serial-select" multiple="multiple" data-qty="{{ $item->quantity }}">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                    <hr>
                                 </div>
 
                                 <div class="mb-3 d-none" id="rejection_reason_wrapper">
@@ -285,9 +315,12 @@
         const statusSelect = $('#order_status_select');
         const reasonWrapper = $('#rejection_reason_wrapper');
         const reasonInput = $('#rejection_reason');
+        const allocationSection = $('#inventory_allocation_section');
 
-        function toggleReasonField() {
+        function toggleStatusFields() {
             const status = statusSelect.val();
+            
+            // Rejection/Cancellation Logic
             if (status === 'Cancelled' || status === 'Rejected') {
                 reasonWrapper.removeClass('d-none');
                 reasonInput.attr('required', 'required');
@@ -295,12 +328,123 @@
                 reasonWrapper.addClass('d-none');
                 reasonInput.removeAttr('required');
             }
+
+            // Inventory Allocation Logic
+            if (status === 'Shipped') {
+                allocationSection.removeClass('d-none');
+                allocationSection.find('select').attr('required', 'required');
+                initializeAllocation();
+            } else {
+                allocationSection.addClass('d-none');
+                allocationSection.find('select').removeAttr('required');
+            }
         }
 
-        statusSelect.on('change', toggleReasonField);
-        
-        // Initial check
-        toggleReasonField();
+        function initializeAllocation() {
+            $('.warehouse-select').each(function() {
+                const select = $(this);
+                const productId = select.data('product-id');
+                const variantId = select.data('variant-id');
+
+                if (select.find('option').length <= 1) {
+                    $.ajax({
+                        url: "{{ route('admin.orders.ajax.get-warehouses') }}",
+                        data: { product_id: productId, variant_id: variantId },
+                        success: function(data) {
+                            select.empty().append('<option value="">Select Warehouse</option>');
+                            data.forEach(w => {
+                                select.append(`<option value="${w.id}">${w.name}</option>`);
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        $(document).on('change', '.warehouse-select', function() {
+            const select = $(this);
+            const warehouseId = select.val();
+            const cardBody = select.closest('.card-body');
+            const batchContainer = cardBody.find('.batch-container');
+            const batchSelect = cardBody.find('.batch-select');
+            const productId = select.data('product-id');
+            const variantId = select.data('variant-id');
+
+            if (warehouseId) {
+                $.ajax({
+                    url: "{{ route('admin.orders.ajax.get-batches') }}",
+                    data: { warehouse_id: warehouseId, product_id: productId, variant_id: variantId },
+                    success: function(data) {
+                        batchSelect.empty().append('<option value="">Select Batch</option>');
+                        data.forEach(b => {
+                            batchSelect.append(`<option value="${b.id}">${b.batch_number}</option>`);
+                        });
+                        batchContainer.removeClass('d-none');
+                    }
+                });
+            } else {
+                batchContainer.addClass('d-none');
+                cardBody.find('.serial-container').addClass('d-none');
+            }
+        });
+
+        $(document).on('change', '.batch-select', function() {
+            const select = $(this);
+            const batchId = select.val();
+            const cardBody = select.closest('.card-body');
+            const serialContainer = cardBody.find('.serial-container');
+            const serialSelect = cardBody.find('.serial-select');
+            const warehouseSelect = cardBody.find('.warehouse-select');
+            const productId = warehouseSelect.data('product-id');
+            const variantId = warehouseSelect.data('variant-id');
+            const qty = serialSelect.data('qty');
+
+            if (batchId) {
+                $.ajax({
+                    url: "{{ route('admin.orders.ajax.get-serials') }}",
+                    data: { batch_id: batchId, product_id: productId, variant_id: variantId },
+                    success: function(data) {
+                        if (data.length > 0) {
+                            serialSelect.empty();
+                            data.forEach(s => {
+                                serialSelect.append(`<option value="${s.id}">${s.serial_no}</option>`);
+                            });
+                            serialContainer.removeClass('d-none');
+                            serialSelect.select2({
+                                placeholder: `Select exactly ${qty} serials`,
+                                maximumSelectionLength: qty
+                            });
+                            serialSelect.attr('required', 'required');
+                        } else {
+                            serialContainer.addClass('d-none');
+                            serialSelect.removeAttr('required');
+                        }
+                    }
+                });
+            } else {
+                serialContainer.addClass('d-none');
+            }
+        });
+
+        $('#statusUpdateForm').on('submit', function(e) {
+            const status = statusSelect.val();
+            if (status === 'Shipped') {
+                let valid = true;
+                $('.serial-select:visible').each(function() {
+                    const select = $(this);
+                    const qty = select.data('qty');
+                    const selected = select.val() ? select.val().length : 0;
+                    if (selected != qty) {
+                        toastr.error(`Please select exactly ${qty} serials for ${select.closest('.card-body').find('.fw-bold').text()}`);
+                        valid = false;
+                    }
+                });
+                if (!valid) return false;
+            }
+        });
+
+        statusSelect.on('change', toggleStatusFields);
+        toggleStatusFields();
     });
 </script>
 @endsection

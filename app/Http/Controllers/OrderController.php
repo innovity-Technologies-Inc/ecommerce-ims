@@ -52,7 +52,8 @@ class OrderController extends Controller
                 $order,
                 $request->order_status,
                 $request->has('email_notify'),
-                $request->rejection_reason
+                $request->rejection_reason,
+                $request->items ?? []
             );
 
             return redirect()->back()->with([
@@ -60,7 +61,8 @@ class OrderController extends Controller
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $e) {
-            Log::error('Order Update Status Error: ' . $e->getMessage());
+            Log::error('Order Update Status Error: '.$e->getMessage());
+
             return redirect()->back()->with([
                 'message' => $e->getMessage(),
                 'alert-type' => 'error',
@@ -106,5 +108,35 @@ class OrderController extends Controller
         $order->load(['orderItems']);
 
         return view('admin.orders.invoice', compact('order'));
+    }
+
+    /**
+     * Get warehouses for an order item.
+     */
+    public function getWarehouses(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $warehouses = $this->orderService->getWarehousesForItem($request->product_id, $request->variant_id);
+
+        return response()->json($warehouses);
+    }
+
+    /**
+     * Get batches for an order item in a warehouse.
+     */
+    public function getBatches(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $batches = $this->orderService->getBatchesForItemInWarehouse($request->warehouse_id, $request->product_id, $request->variant_id);
+
+        return response()->json($batches);
+    }
+
+    /**
+     * Get available serials for a batch.
+     */
+    public function getSerials(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $serials = $this->orderService->getAvailableSerials($request->batch_id, $request->product_id, $request->variant_id);
+
+        return response()->json($serials);
     }
 }

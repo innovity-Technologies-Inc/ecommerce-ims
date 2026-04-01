@@ -158,6 +158,11 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::post('/{order}/generate-invoice', 'generateInvoice')->name('generate-invoice');
         Route::post('/{order}/regenerate-invoice', 'regenerateInvoice')->name('regenerate-invoice');
         Route::get('/{order}/view-invoice', 'viewInvoice')->name('view-invoice');
+
+        // Inventory Selection AJAX
+        Route::get('/ajax/get-warehouses', 'getWarehouses')->name('ajax.get-warehouses');
+        Route::get('/ajax/get-batches', 'getBatches')->name('ajax.get-batches');
+        Route::get('/ajax/get-serials', 'getSerials')->name('ajax.get-serials');
     });
 
     Route::prefix('returns')->middleware('permission:returns.view')->name('admin.returns.')->controller(\App\Http\Controllers\Admin\ReturnController::class)->group(function () {
