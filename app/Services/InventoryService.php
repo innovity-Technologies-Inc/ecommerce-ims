@@ -42,7 +42,7 @@ class InventoryService
                     'variant_name' => 'N/A',
                     'sku' => 'N/A',
                     'stock' => $diff,
-                    'type' => 'Product'
+                    'type' => 'Product',
                 ]);
             }
         }
@@ -63,7 +63,7 @@ class InventoryService
                     'variant_name' => $variant->variant_name,
                     'sku' => $variant->sku,
                     'stock' => $diff,
-                    'type' => 'Variant'
+                    'type' => 'Variant',
                 ]);
             }
         }
@@ -178,11 +178,15 @@ class InventoryService
 
         $sort = $params['sort'] ?? 'latest';
         switch ($sort) {
-            case 'oldest': $query->oldest(); break;
-            case 'a-z': $query->orderBy('name', 'asc'); break;
-            case 'z-a': $query->orderBy('name', 'desc'); break;
+            case 'oldest': $query->oldest();
+                break;
+            case 'a-z': $query->orderBy('name', 'asc');
+                break;
+            case 'z-a': $query->orderBy('name', 'desc');
+                break;
             case 'latest':
-            default: $query->latest(); break;
+            default: $query->latest();
+                break;
         }
 
         return $query->paginate($perPage);
@@ -198,7 +202,7 @@ class InventoryService
         $searchTerm = $params['search'] ?? null;
 
         if ($searchTerm) {
-            $query->where(function($q) use ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
                 $q->whereHas('product', function ($pq) use ($searchTerm) {
                     $pq->where('name', 'like', "%{$searchTerm}%");
                 })->orWhereHas('variant', function ($vq) use ($searchTerm) {
@@ -215,11 +219,15 @@ class InventoryService
 
         $sort = $params['sort'] ?? 'latest';
         switch ($sort) {
-            case 'oldest': $query->oldest(); break;
-            case 'stock_low': $query->orderBy('current_quantity', 'asc'); break;
-            case 'stock_high': $query->orderBy('current_quantity', 'desc'); break;
+            case 'oldest': $query->oldest();
+                break;
+            case 'stock_low': $query->orderBy('current_quantity', 'asc');
+                break;
+            case 'stock_high': $query->orderBy('current_quantity', 'desc');
+                break;
             case 'latest':
-            default: $query->latest(); break;
+            default: $query->latest();
+                break;
         }
 
         return $query->paginate($perPage);
@@ -237,7 +245,7 @@ class InventoryService
         $searchTerm = $params['search'] ?? null;
 
         if ($searchTerm) {
-            $query->where(function($q) use ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
                 $q->whereHas('product', function ($pq) use ($searchTerm) {
                     $pq->where('name', 'like', "%{$searchTerm}%");
                 })->orWhereHas('variant', function ($vq) use ($searchTerm) {
@@ -248,13 +256,22 @@ class InventoryService
             });
         }
 
-        $sort = $params['sort'] ?? 'latest';
+        $sort = $params['sort'] ?? 'batch_number';
         switch ($sort) {
-            case 'oldest': $query->oldest(); break;
-            case 'stock_low': $query->orderBy('damaged_quantity', 'asc'); break;
-            case 'stock_high': $query->orderBy('damaged_quantity', 'desc'); break;
+            case 'oldest': $query->oldest();
+                break;
+            case 'stock_low': $query->orderBy('damaged_quantity', 'asc');
+                break;
+            case 'stock_high': $query->orderBy('damaged_quantity', 'desc');
+                break;
+            case 'batch_number':
+                $query->join('batches', 'inventory_levels.batch_id', '=', 'batches.id')
+                    ->orderBy('batches.batch_number', 'asc')
+                    ->select('inventory_levels.*');
+                break;
             case 'latest':
-            default: $query->latest(); break;
+            default: $query->latest();
+                break;
         }
 
         return $query->paginate($perPage);
@@ -278,9 +295,11 @@ class InventoryService
 
         $sort = $params['sort'] ?? 'latest';
         switch ($sort) {
-            case 'oldest': $query->oldest(); break;
+            case 'oldest': $query->oldest();
+                break;
             case 'latest':
-            default: $query->latest(); break;
+            default: $query->latest();
+                break;
         }
 
         return $query->paginate($perPage);
@@ -343,11 +362,15 @@ class InventoryService
 
         $sort = $params['sort'] ?? 'latest';
         switch ($sort) {
-            case 'oldest': $query->oldest(); break;
-            case 'a-z': $query->orderBy('name', 'asc'); break;
-            case 'z-a': $query->orderBy('name', 'desc'); break;
+            case 'oldest': $query->oldest();
+                break;
+            case 'a-z': $query->orderBy('name', 'asc');
+                break;
+            case 'z-a': $query->orderBy('name', 'desc');
+                break;
             case 'latest':
-            default: $query->latest(); break;
+            default: $query->latest();
+                break;
         }
 
         return $query->paginate($perPage);
@@ -387,5 +410,19 @@ class InventoryService
     public function deleteSupplier(Supplier $supplier): void
     {
         $supplier->delete();
+    }
+
+    /**
+     * Get a specific supplier with its paginated purchase orders.
+     */
+    public function getSupplierWithOrders(int $id, int $perPage = 10): array
+    {
+        $supplier = Supplier::findOrFail($id);
+        $purchaseOrders = $supplier->purchaseOrders()->latest()->paginate($perPage);
+
+        return [
+            'supplier' => $supplier,
+            'purchase_orders' => $purchaseOrders,
+        ];
     }
 }

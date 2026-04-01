@@ -28,6 +28,22 @@ class SupplierController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     */
+    public function show(Request $request, int $id)
+    {
+        $data = $this->inventoryService->getSupplierWithOrders($id, 10);
+        $supplier = $data['supplier'];
+        $purchaseOrders = $data['purchase_orders'];
+
+        if ($request->ajax()) {
+            return view('admin.inventory.suppliers.partials.po_table', compact('purchaseOrders'))->render();
+        }
+
+        return view('admin.inventory.suppliers.show', compact('supplier', 'purchaseOrders'));
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create(): View

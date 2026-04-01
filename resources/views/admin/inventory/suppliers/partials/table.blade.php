@@ -7,6 +7,7 @@
             <th>Email</th>
             <th>Mobile</th>
             <th>Address</th>
+            <th>Avg Performance</th>
             <th>Action</th>
         </tr>
         </thead>
@@ -22,7 +23,22 @@
             <td>{{$data->mobile}}</td>
             <td>{{$data->address}}</td>
             <td>
+                @php
+                    $score = $data->average_performance_score;
+                    $badgeClass = 'bg-danger';
+                    if ($score >= 80) $badgeClass = 'bg-success';
+                    elseif ($score >= 50) $badgeClass = 'bg-warning text-dark';
+                @endphp
+                <span class="badge {{ $badgeClass }}">
+                    <iconify-icon icon="solar:star-bold" class="align-middle me-1"></iconify-icon>
+                    {{ $score }}%
+                </span>
+            </td>
+            <td>
                 <div class="d-flex gap-2">
+                    <a href="{{ route('admin.suppliers.show', $data->id) }}" class="btn btn-soft-info btn-sm">
+                        <iconify-icon icon="solar:eye-broken" class="align-middle fs-18"></iconify-icon>
+                    </a>
                     @can('supplier.edit')
                     <a href="{{ route('admin.suppliers.edit', $data->id) }}" class="btn btn-soft-primary btn-sm">
                         <iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon>

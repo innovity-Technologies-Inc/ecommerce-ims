@@ -161,6 +161,35 @@
                         </div>
                     </div>
 
+                    @if($po->status === 'Delivered' && $po->performance_score !== null)
+                        <div class="mb-3">
+                            <label class="text-muted mb-1">Performance Score:</label>
+                            @php
+                                $score = $po->performance_score;
+                                $scoreBadgeClass = 'bg-danger';
+                                if ($score >= 80) $scoreBadgeClass = 'bg-success';
+                                elseif ($score >= 50) $scoreBadgeClass = 'bg-warning text-dark';
+                            @endphp
+                            <div class="d-flex align-items-center">
+                                <div class="badge {{ $scoreBadgeClass }} fs-16 px-3 py-2">
+                                    <iconify-icon icon="solar:star-bold" class="align-middle me-1"></iconify-icon>
+                                    {{ $score }}%
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <small class="text-muted">Based on delivery time (40%) and product quality (60%).</small>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="text-muted mb-1">Fulfillment Summary:</label>
+                            <div class="d-flex flex-wrap gap-2">
+                                <div class="badge badge-soft-success fs-13">Good: {{ $po->total_received_qty }}</div>
+                                <div class="badge badge-soft-danger fs-13">Damaged: {{ $po->total_damaged_qty }}</div>
+                            </div>
+                        </div>
+                    @endif
+
                     <div class="mb-3">
                         <label class="text-muted mb-1">Supplier:</label>
                         <div class="fw-bold">{{ $po->supplier->name }}</div>

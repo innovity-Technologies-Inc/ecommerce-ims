@@ -21,4 +21,17 @@ class Supplier extends Model
     {
         return $this->hasMany(SupplierRma::class);
     }
+
+    public function purchaseOrders(): HasMany
+    {
+        return $this->hasMany(PurchaseOrder::class);
+    }
+
+    /**
+     * Get the average performance score for the supplier.
+     */
+    public function getAveragePerformanceScoreAttribute(): float
+    {
+        return round($this->purchaseOrders()->whereNotNull('performance_score')->avg('performance_score') ?? 0, 2);
+    }
 }

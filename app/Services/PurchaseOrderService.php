@@ -147,7 +147,7 @@ class PurchaseOrderService
      */
     public function updateStatus(PurchaseOrder $po, string $status, ?string $receivedDate = null, bool $notifySupplier = false): void
     {
-        DB::transaction(function () use ($po, $status, $receivedDate, $notifySupplier) {
+        DB::transaction(function () use ($po, $status, $notifySupplier) {
             if ($po->status === 'Delivered') {
                 throw new \Exception('Status cannot be changed once delivered.');
             }
@@ -210,11 +210,13 @@ class PurchaseOrderService
 
             foreach ($data['items'] as $itemId => $itemData) {
                 $item = $po->items()->find($itemId);
-                if (!$item) continue;
+                if (! $item) {
+                    continue;
+                }
 
                 $goodQty = (int) ($itemData['received_quantity'] ?? 0);
                 $damagedQty = (int) ($itemData['damaged_quantity'] ?? 0);
-                
+
                 // Parse separate serials
                 $receivedSerials = $this->parseSerialNumbers($itemData['received_serials'] ?? []);
                 $damagedSerials = $this->parseSerialNumbers($itemData['damaged_serials'] ?? []);
@@ -329,6 +331,27 @@ class PurchaseOrderService
                 'total_saleable_qty' => $totalSaleable,
                 'total_damaged_qty' => $totalDamaged,
             ]);
+
+            // Calculate Performance Score
+            $deliveryScore = 0;
+            $receivedDate = $data['received_date'] ?? now();
+            if ($po->expected_delivery_date && $receivedDate <= $po->expected_delivery_date) {
+                $deliveryScore = 40;
+            }
+
+            $qualityScore = 0;
+            $totalProducts = $totalReceived + $totalDamaged;
+            if ($totalProducts > 0) {
+                $qualityScore = ($totalReceived / $totalProducts) * 60;
+            }
+
+            $performanceScore = $deliveryScore + $qualityScore;
+
+            $po->update([
+                'total_received_qty' => $totalReceived,
+                'total_damaged_qty' => $totalDamaged,
+                'performance_score' => round($performanceScore, 2),
+            ]);
         });
     }
 
@@ -344,10 +367,13 @@ class PurchaseOrderService
                 $parsed = $this->parseSerialNumbers($item);
                 $serials = array_merge($serials, $parsed);
             }
+
             return array_unique($serials);
         }
 
-        if (empty(trim($input))) return [];
+        if (empty(trim($input))) {
+            return [];
+        }
 
         $serials = [];
         // Support both comma and space/newline separation from tag inputs
@@ -355,34 +381,7 @@ class PurchaseOrderService
 
         foreach ($parts as $part) {
             $part = trim($part);
-            if (empty($part)) continue;
-
-            if (str_contains($part, '-')) {
-                $range = explode('-', $part);
-                if (count($range) === 2) {
-                    $start = trim($range[0]);
-                    $end = trim($range[1]);
-
-                    preg_match('/^([a-zA-Z]*)([0-9]+)$/', $start, $startMatches);
-                    preg_match('/^([a-zA-Z]*)([0-9]+)$/', $end, $endMatches);
-
-                    if (count($startMatches) === 3 && count($endMatches) === 3) {
-                        $prefix = $startMatches[1];
-                        $startNum = (int) $startMatches[2];
-                        $endNum = (int) $endMatches[2];
-                        $padding = strlen($startMatches[2]);
-
-                        for ($i = $startNum; $i <= $endNum; $i++) {
-                            $serials[] = $prefix . str_pad((string)$i, $padding, '0', STR_PAD_LEFT);
-                        }
-                    } else {
-                        $serials[] = $start;
-                        $serials[] = $end;
-                    }
-                } else {
-                    $serials[] = $part;
-                }
-            } else {
+            if (! empty($part)) {
                 $serials[] = $part;
             }
         }
@@ -410,7 +409,7 @@ class PurchaseOrderService
             try {
                 Mail::to($po->supplier->email)->send(new PurchaseOrderMail($po));
             } catch (\Exception $e) {
-                Log::error('PO Send Mail Error: ' . $e->getMessage());
+                Log::error('PO Send Mail Error: '.$e->getMessage());
             }
         }
     }
