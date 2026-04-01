@@ -4,6 +4,7 @@
     <div class="container-xxl">
         <div class="row">
             <div class="col-lg-8">
+                {{-- Order Items Table --}}
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">Order Details: {{ $order->order_id }}</h5>
@@ -71,68 +72,36 @@
                     </div>
                 </div>
 
+                {{-- Order Status Management (Moved from right to below items) --}}
                 <div class="card mt-3">
                     <div class="card-header">
-                        <h5 class="card-title mb-0">Customer & Shipping Information</h5>
+                        <h5 class="card-title mb-0">Order Status & Fulfillment</h5>
                     </div>
                     <div class="card-body">
-                        <div class="row">
+                        <div class="row align-items-center mb-4">
                             <div class="col-md-6">
-                                <h6>Customer Info</h6>
-                                <p class="mb-1"><strong>Name:</strong> {{ $order->name }}</p>
-                                <p class="mb-1"><strong>Email:</strong> {{ $order->email }}</p>
-                                <p class="mb-1"><strong>Phone:</strong> {{ $order->mobile }}</p>
+                                <label class="form-label d-block text-muted small text-uppercase fw-bold mb-1">Current Status</label>
+                                @php
+                                    $statusClass = match($order->order_status) {
+                                        'Pending' => 'bg-warning',
+                                        'Processing' => 'bg-info',
+                                        'Shipped' => 'bg-primary',
+                                        'Out for Delivery' => 'bg-dark',
+                                        'Delivered' => 'bg-success',
+                                        'Cancelled' => 'bg-danger',
+                                        'Rejected' => 'bg-secondary',
+                                        default => 'bg-dark'
+                                    };
+                                @endphp
+                                <span class="badge {{ $statusClass }} text-white fs-14 px-3 py-2">{{ $order->order_status }}</span>
                             </div>
-                            <div class="col-md-6">
-                                <h6>Shipping Address</h6>
-                                <p class="mb-1">{{ $order->address }}</p>
-                                <p class="mb-1">{{ $order->city }}, {{ $order->state }} {{ $order->zip }}</p>
-                                <p class="mb-1">{{ $order->country }}</p>
-                            </div>
-                        </div>
-                        @if($order->notes)
-                            <div class="mt-3">
-                                <h6>Order Notes</h6>
-                                <div class="p-2 bg-light rounded">
-                                    {{ $order->notes }}
-                                </div>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Order Status</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-4">
-                            <label class="form-label d-block text-muted small text-uppercase fw-bold">Current Status</label>
-                            @php
-                                $statusClass = match($order->order_status) {
-                                    'Pending' => 'bg-warning',
-                                    'Processing' => 'bg-info',
-                                    'Out for Delivery' => 'bg-primary',
-                                    'Delivered' => 'bg-success',
-                                    'Cancelled' => 'bg-danger',
-                                    'Rejected' => 'bg-secondary',
-                                    default => 'bg-dark'
-                                };
-                            @endphp
-                            <span class="badge {{ $statusClass }} text-white fs-14 px-3 py-2">{{ $order->order_status }}</span>
                         </div>
 
                         <hr>
 
-                        @if(in_array($order->order_status, ['Delivered', 'Cancelled', 'Rejected']))
-                            @php
-                                $alertClass = $order->order_status === 'Delivered' ? 'alert-soft-success' : 'alert-soft-danger';
-                                $iconClass = $order->order_status === 'Delivered' ? 'bx-check-circle' : 'bx-info-circle';
-                            @endphp
-                            <div class="alert {{ $alertClass }} border-0 mb-3" role="alert">
-                                <i class="bx {{ $iconClass }} me-1"></i> This order is <strong>{{ $order->order_status }}</strong>. The status cannot be changed further.
+                        @if(empty($availableStatuses))
+                            <div class="alert {{ $order->order_status === 'Delivered' ? 'alert-soft-success' : 'alert-soft-danger' }} border-0 mb-3" role="alert">
+                                <i class="bx {{ $order->order_status === 'Delivered' ? 'bx-check-circle' : 'bx-info-circle' }} me-1"></i> This order is <strong>{{ $order->order_status }}</strong>. The status cannot be changed further.
                             </div>
                             @if($order->rejection_reason)
                                 <div class="mb-3">
@@ -147,42 +116,58 @@
                             <form id="statusUpdateForm" action="{{ route('admin.orders.update-status', $order->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
-                                <div class="mb-3">
-                                    <label for="order_status" class="form-label">Update Status</label>
-                                    <select name="order_status" id="order_status_select" class="form-select">
-                                        @foreach($statuses as $key => $value)
-                                            <option value="{{ $key }}" {{ $order->order_status === $key ? 'selected' : '' }}>{{ $value }}</option>
-                                        @endforeach
-                                    </select>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="order_status" class="form-label">Update Status</label>
+                                            <select name="order_status" id="order_status_select" class="form-select" required>
+                                                <option value="">Select Next Status</option>
+                                                @foreach($availableStatuses as $key => $value)
+                                                    <option value="{{ $key }}">{{ $value }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 d-flex align-items-center">
+                                        <div class="form-check form-switch mt-2">
+                                            <input class="form-check-input" type="checkbox" name="email_notify" id="email_notify" value="1">
+                                            <label class="form-check-label fw-medium" for="email_notify">Email Notify Customer</label>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div id="inventory_allocation_section" class="d-none">
+                                <div id="inventory_allocation_section" class="d-none mt-3">
                                     <h6 class="text-uppercase fw-bold text-primary mb-3">Inventory Allocation</h6>
-                                    @foreach($order->orderItems as $item)
-                                        <div class="card border mb-3 shadow-none">
-                                            <div class="card-body p-2">
-                                                <div class="fw-bold small mb-2 text-dark">{{ $item->product_name }} (Qty: {{ $item->quantity }})</div>
-                                                
-                                                <div class="mb-2">
-                                                    <select name="items[{{ $item->id }}][warehouse_id]" class="form-select form-select-sm warehouse-select" data-product-id="{{ $item->product_id }}" data-variant-id="{{ $item->product_variant_id }}" required>
-                                                        <option value="">Select Warehouse</option>
-                                                    </select>
-                                                </div>
+                                    <div class="row">
+                                        @foreach($order->orderItems as $item)
+                                            <div class="col-md-6">
+                                                <div class="card border mb-3 shadow-none">
+                                                    <div class="card-body p-2">
+                                                        <div class="fw-bold small mb-2 text-dark">{{ $item->product_name }} (Qty: {{ $item->quantity }})</div>
+                                                        
+                                                        <div class="mb-2">
+                                                            <select name="items[{{ $item->id }}][warehouse_id]" class="form-select form-select-sm warehouse-select" data-product-id="{{ $item->product_id }}" data-variant-id="{{ $item->product_variant_id }}" required>
+                                                                <option value="">Select Warehouse</option>
+                                                            </select>
+                                                        </div>
 
-                                                <div class="mb-2 batch-container d-none">
-                                                    <select name="items[{{ $item->id }}][batch_id]" class="form-select form-select-sm batch-select" required>
-                                                        <option value="">Select Batch</option>
-                                                    </select>
-                                                </div>
+                                                        <div class="mb-2 batch-container d-none">
+                                                            <select name="items[{{ $item->id }}][batch_id]" class="form-select form-select-sm batch-select" required>
+                                                                <option value="">Select Batch</option>
+                                                            </select>
+                                                        </div>
 
-                                                <div class="serial-container d-none">
-                                                    <label class="small text-muted mb-1">Select Serials ({{ $item->quantity }})</label>
-                                                    <select name="items[{{ $item->id }}][serials][]" class="form-select form-select-sm serial-select" multiple="multiple" data-qty="{{ $item->quantity }}">
-                                                    </select>
+                                                        <div class="serial-container d-none">
+                                                            <label class="small text-muted mb-1">Select Serials ({{ $item->quantity }})</label>
+                                                            <select name="items[{{ $item->id }}][serials][]" class="form-select form-select-sm serial-select" multiple="multiple" data-qty="{{ $item->quantity }}">
+                                                            </select>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    @endforeach
+                                        @endforeach
+                                    </div>
                                     <hr>
                                 </div>
 
@@ -191,14 +176,9 @@
                                     <textarea name="rejection_reason" id="rejection_reason" class="form-control" rows="3" placeholder="Enter reason for cancellation or rejection..."></textarea>
                                 </div>
 
-                                <div class="mb-4">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" name="email_notify" id="email_notify" value="1">
-                                        <label class="form-check-label fw-medium" for="email_notify">Email Notify Customer</label>
-                                    </div>
-                                    <small class="text-muted">If checked, the customer will receive an email about this status update.</small>
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary px-4 py-2">Update Order Status</button>
                                 </div>
-                                <button type="submit" class="btn btn-primary w-100 py-2">Update Status</button>
                             </form>
                             @else
                             <div class="alert alert-info border-0 mb-0" role="alert">
@@ -208,7 +188,94 @@
                         @endif
                     </div>
                 </div>
+            </div>
 
+            <div class="col-lg-4">
+                {{-- Customer & Shipping Information (Moved from left to right) --}}
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Customer & Shipping Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <h6>Customer Info</h6>
+                            <p class="mb-1"><strong>Name:</strong> {{ $order->name }}</p>
+                            <p class="mb-1"><strong>Email:</strong> {{ $order->email }}</p>
+                            <p class="mb-1"><strong>Phone:</strong> {{ $order->mobile }}</p>
+                        </div>
+                        <div>
+                            <h6>Shipping Address</h6>
+                            <p class="mb-1">{{ $order->address }}</p>
+                            <p class="mb-1">{{ $order->city }}, {{ $order->state }} {{ $order->zip }}</p>
+                            <p class="mb-1">{{ $order->country }}</p>
+                        </div>
+                        @if($order->notes)
+                            <div class="mt-3">
+                                <h6>Order Notes</h6>
+                                <div class="p-2 bg-light rounded">
+                                    {{ $order->notes }}
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Payment Info --}}
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Payment Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-2"><strong>Method:</strong> {{ $order->payment_method }}</p>
+                        <p class="mb-0"><strong>Status:</strong> 
+                            <span class="badge {{ $order->payment_status === 'Paid' ? 'bg-success' : 'bg-warning' }}">{{ $order->payment_status }}</span>
+                        </p>
+                    </div>
+                </div>
+
+                {{-- Invoice --}}
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Invoice</h5>
+                    </div>
+                    <div class="card-body">
+                        @if($order->invoice_no)
+                            <div class="mb-3">
+                                <label class="form-label d-block text-muted small text-uppercase fw-bold">Invoice Number</label>
+                                <span class="fw-bold fs-16">{{ $order->invoice_no }}</span>
+                                <br>
+                                <small class="text-muted">Generated on: {{ $order->invoice_date->format('d M, Y') }}</small>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <a href="{{ route('admin.orders.view-invoice', $order->id) }}" target="_blank" class="btn btn-outline-primary">
+                                    <i class="bx bx-show me-1"></i> View / Print Invoice
+                                </a>
+                                @can('orders.edit')
+                                <form action="{{ route('admin.orders.regenerate-invoice', $order->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-soft-secondary w-100">
+                                        <i class="bx bx-refresh me-1"></i> Regenerate
+                                    </button>
+                                </form>
+                                @endcan
+                            </div>
+                        @else
+                            <div class="text-center py-2">
+                                <p class="text-muted mb-3">No invoice generated yet.</p>
+                                @can('orders.edit')
+                                <form action="{{ route('admin.orders.generate-invoice', $order->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="bx bx-receipt me-1"></i> Generate Invoice
+                                    </button>
+                                </form>
+                                @endcan
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Status History --}}
                 <div class="card mt-3">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Status History</h5>
@@ -223,7 +290,8 @@
                                                 $logClass = match($log->status) {
                                                     'Pending' => 'bg-warning',
                                                     'Processing' => 'bg-info',
-                                                    'Out for Delivery' => 'bg-primary',
+                                                    'Shipped' => 'bg-primary',
+                                                    'Out for Delivery' => 'bg-dark',
                                                     'Delivered' => 'bg-success',
                                                     'Cancelled' => 'bg-danger',
                                                     'Rejected' => 'bg-secondary',
@@ -248,59 +316,6 @@
                         @else
                             <p class="text-muted text-center mb-0">No history available.</p>
                         @endif
-                    </div>
-                </div>
-
-                <div class="card mt-3">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Invoice</h5>
-                    </div>
-                    <div class="card-body">
-                        @if($order->invoice_no)
-                            <div class="mb-3">
-                                <label class="form-label d-block text-muted small text-uppercase fw-bold">Invoice Number</label>
-                                <span class="fw-bold fs-16">{{ $order->invoice_no }}</span>
-                                <br>
-                                <small class="text-muted">Generated on: {{ $order->invoice_date->format('d M, Y') }}</small>
-                            </div>
-                            <div class="d-grid gap-2">
-                                <a href="{{ route('admin.orders.view-invoice', $order->id) }}" target="_blank" class="btn btn-outline-primary">
-                                    <i class="bx bx-show me-1"></i> View / Print Invoice
-                                </a>
-                                @can('orders.edit')
-                                <form action="{{ route('admin.orders.regenerate-invoice', $order->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="btn btn-soft-secondary w-100">
-                                        <i class="bx bx-refresh me-1"></i> Generate
-                                    </button>
-                                </form>
-                                @endcan
-                            </div>
-                        @else
-                            <div class="text-center py-2">
-                                <p class="text-muted mb-3">No invoice has been generated for this order yet.</p>
-                                @can('orders.edit')
-                                <form action="{{ route('admin.orders.generate-invoice', $order->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="btn btn-primary w-100">
-                                        <i class="bx bx-receipt me-1"></i> Generate Invoice
-                                    </button>
-                                </form>
-                                @endcan
-                            </div>
-                        @endif
-                    </div>
-                </div>
-
-                <div class="card mt-3">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Payment Info</h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="mb-1"><strong>Method:</strong> {{ $order->payment_method }}</p>
-                        <p class="mb-1"><strong>Status:</strong> 
-                            <span class="badge {{ $order->payment_status === 'Paid' ? 'bg-success' : 'bg-warning' }}">{{ $order->payment_status }}</span>
-                        </p>
                     </div>
                 </div>
             </div>

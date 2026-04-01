@@ -499,11 +499,33 @@ class OrderService
         return [
             'Pending' => 'Pending',
             'Processing' => 'Processing',
+            'Shipped' => 'Shipped',
             'Out for Delivery' => 'Out for Delivery',
             'Delivered' => 'Delivered',
             'Cancelled' => 'Cancelled',
             'Rejected' => 'Rejected',
         ];
+    }
+
+    /**
+     * Get available status transitions based on current status.
+     */
+    public function getAvailableTransitions(string $currentStatus): array
+    {
+        $transitions = [
+            'Pending' => ['Processing', 'Cancelled', 'Rejected'],
+            'Processing' => ['Shipped'],
+            'Shipped' => ['Out for Delivery'],
+            'Out for Delivery' => ['Delivered'],
+            'Delivered' => [],
+            'Cancelled' => [],
+            'Rejected' => [],
+        ];
+
+        $availableKeys = $transitions[$currentStatus] ?? [];
+        $allStatuses = $this->getStatusList();
+
+        return array_intersect_key($allStatuses, array_flip($availableKeys));
     }
 
     public function getPaymentMethods(): array

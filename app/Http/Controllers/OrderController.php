@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Services\OrderService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class OrderController extends Controller
@@ -36,10 +37,9 @@ class OrderController extends Controller
     public function show(Order $order): View
     {
         $order->load(['orderItems', 'user']);
-        $statuses = $this->orderService->getStatusList();
-        unset($statuses['Pending']);
+        $availableStatuses = $this->orderService->getAvailableTransitions($order->order_status);
 
-        return view('admin.orders.show', compact('order', 'statuses'));
+        return view('admin.orders.show', compact('order', 'availableStatuses'));
     }
 
     /**
