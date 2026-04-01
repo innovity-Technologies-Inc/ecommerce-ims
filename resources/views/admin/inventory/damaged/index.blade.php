@@ -5,7 +5,7 @@
 @section('content')
 <div class="container-xxl">
     <div class="d-flex align-items-center justify-content-between mb-3">
-        <h4 class="mb-0">Damaged Products Report (Quarantine)</h4>
+        <h4 class="mb-0">Damaged Products Report</h4>
     </div>
 
     <div class="card">
@@ -19,6 +19,7 @@
                     </div>
                     <div class="col-md-4">
                         <select name="sort" id="sortFilter" class="form-select">
+                            <option value="batch_number">Batch Number (A-Z)</option>
                             <option value="latest">Latest</option>
                             <option value="oldest">Oldest</option>
                             <option value="stock_low">Quantity: Low to High</option>
@@ -33,7 +34,7 @@
         </div>
 
         <div id="tableContainer" class="card-body p-0">
-            @include('admin.inventory.stock.partials.table')
+            @include('admin.inventory.damaged.partials.table')
         </div>
     </div>
 </div>

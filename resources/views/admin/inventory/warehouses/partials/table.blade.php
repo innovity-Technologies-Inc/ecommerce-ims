@@ -5,7 +5,6 @@
             <th>#</th>
             <th>Name</th>
             <th>Location</th>
-            <th>Quarantine</th>
             <th>Action</th>
         </tr>
         </thead>
@@ -19,14 +18,10 @@
             <td>{{$data->name}}</td>
             <td>{{$data->location}}</td>
             <td>
-                @if($data->is_quarantine)
-                    <span class="badge bg-danger">Yes</span>
-                @else
-                    <span class="badge bg-success">No</span>
-                @endif
-            </td>
-            <td>
                 <div class="d-flex gap-2">
+                    <a href="{{ route('admin.warehouses.show', $data->id) }}" class="btn btn-soft-info btn-sm" title="View Stock Details">
+                        <iconify-icon icon="solar:eye-bold-duotone" class="align-middle fs-18"></iconify-icon>
+                    </a>
                     @can('warehouse.edit')
                     <a href="{{ route('admin.warehouses.edit', $data->id) }}" class="btn btn-soft-primary btn-sm">
                         <iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon>
@@ -47,7 +42,7 @@
         @endforeach
         @if($warehouses->isEmpty())
             <tr>
-                <td colspan="5" class="text-center">No warehouses found.</td>
+                <td colspan="4" class="text-center">No warehouses found.</td>
             </tr>
         @endif
         </tbody>

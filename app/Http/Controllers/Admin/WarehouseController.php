@@ -27,6 +27,13 @@ class WarehouseController extends Controller
         return view('admin.inventory.warehouses.index', compact('warehouses'));
     }
 
+    public function show(Warehouse $warehouse): View
+    {
+        $warehouse->load(['inventoryLevels.product', 'inventoryLevels.variant', 'inventoryLevels.batch']);
+
+        return view('admin.inventory.warehouses.show', compact('warehouse'));
+    }
+
     /**
      * Show the form for creating a new resource.
      */

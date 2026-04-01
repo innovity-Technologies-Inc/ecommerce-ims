@@ -261,11 +261,6 @@
 <script src="{{asset('admin_assets/assets/vendor/jsvectormap/maps/world-merc.js')}}"></script>
 <script src="{{asset('admin_assets/assets/vendor/jsvectormap/maps/world.js')}}"></script>
 
-<!-- Dashboard Js -->
-<script src="{{asset('admin_assets/assets/js/pages/dashboard.js')}}"></script>
-
-
-
 {{-- Toastr --}}
  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
@@ -293,6 +288,12 @@
             toastr.error("{{ Session::get('message') }}");
             break;
     }
+    @endif
+
+    @if ($errors->any())
+        @foreach ($errors->all() as $error)
+            toastr.error("{{ $error }}");
+        @endforeach
     @endif
 </script>
 

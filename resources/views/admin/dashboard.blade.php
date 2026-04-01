@@ -317,6 +317,7 @@
 
 @section('scripts')
 <script src="{{ asset('admin_assets/assets/vendor/apexcharts/apexcharts.min.js') }}"></script>
+<script src="{{ asset('admin_assets/assets/js/pages/dashboard.js') }}"></script>
 <script>
     // Monthly Chart
     var options = {

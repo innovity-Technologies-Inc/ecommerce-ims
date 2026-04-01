@@ -33,7 +33,7 @@
                                        placeholder="Enter global batch number"
                                        value="{{ old('batch_number', $po->po_number . '-R' . date('ymd')) }}" required>
                                 @error('batch_number')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-4 mb-3">
@@ -41,7 +41,7 @@
                                 <input type="date" name="received_date" id="received_date" class="form-control @error('received_date') is-invalid @enderror" 
                                        value="{{ old('received_date', date('Y-m-d')) }}" required>
                                 @error('received_date')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-4 mb-3">
@@ -60,7 +60,7 @@
                     </div>
                     <div class="card-body">
                         <div class="alert alert-info">
-                            <i class="bx bx-info-circle me-1"></i> Enter quantities for each item. For serial numbers, you can add multiple tags. Damaged items will be moved to the <strong>Quarantine</strong> warehouse automatically.
+                            <i class="bx bx-info-circle me-1"></i> Enter quantities for each item. For serial numbers, you can add multiple tags.
                         </div>
                         <div class="table-responsive">
                             <table class="table table-bordered align-middle">
@@ -88,34 +88,46 @@
                                             </td>
                                             <td>
                                                 <input type="number" name="items[{{ $item->id }}][received_quantity]" 
-                                                       class="form-control received-qty" 
+                                                       class="form-control received-qty @error('items.'.$item->id.'.received_quantity') is-invalid @enderror" 
                                                        min="0" 
                                                        max="{{ $item->order_quantity }}"
                                                        value="{{ old('items.'.$item->id.'.received_quantity', $item->order_quantity) }}" required>
+                                                @error('items.'.$item->id.'.received_quantity')
+                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                @enderror
                                             </td>
                                             <td>
                                                 <div class="serial-container">
                                                     <select name="items[{{ $item->id }}][received_serials][]" 
-                                                            class="form-control serial-tags received-serials" 
+                                                            class="form-control serial-tags received-serials @error('items.'.$item->id.'.received_serials') is-invalid @enderror" 
                                                             multiple="multiple">
                                                     </select>
                                                 </div>
+                                                @error('items.'.$item->id.'.received_serials')
+                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                @enderror
                                                 <div class="small text-muted mt-1 serial-count"></div>
                                             </td>
                                             <td>
                                                 <input type="number" name="items[{{ $item->id }}][damaged_quantity]" 
-                                                       class="form-control text-danger damaged-qty" 
+                                                       class="form-control text-danger damaged-qty @error('items.'.$item->id.'.damaged_quantity') is-invalid @enderror" 
                                                        min="0" 
                                                        max="{{ $item->order_quantity }}"
                                                        value="{{ old('items.'.$item->id.'.damaged_quantity', 0) }}">
+                                                @error('items.'.$item->id.'.damaged_quantity')
+                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                @enderror
                                             </td>
                                             <td>
                                                 <div class="serial-container">
                                                     <select name="items[{{ $item->id }}][damaged_serials][]" 
-                                                            class="form-control serial-tags damaged-serials" 
+                                                            class="form-control serial-tags damaged-serials @error('items.'.$item->id.'.damaged_serials') is-invalid @enderror" 
                                                             multiple="multiple">
                                                     </select>
                                                 </div>
+                                                @error('items.'.$item->id.'.damaged_serials')
+                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                @enderror
                                                 <div class="small text-muted mt-1 serial-count"></div>
                                             </td>
                                         </tr>

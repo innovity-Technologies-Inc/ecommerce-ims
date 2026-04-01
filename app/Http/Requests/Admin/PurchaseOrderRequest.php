@@ -26,7 +26,7 @@ class PurchaseOrderRequest extends FormRequest
             'warehouse_id' => 'required|exists:warehouses,id',
             'order_date' => 'required|date',
             'expected_delivery_date' => 'nullable|date|after_or_equal:order_date',
-            'status' => 'required|in:Draft,Sent,Delivered',
+            'status' => 'required|in:Draft,Sent',
             'notify_supplier' => 'nullable|boolean',
             'notes' => 'nullable|string',
             'items' => 'required|array|min:1',

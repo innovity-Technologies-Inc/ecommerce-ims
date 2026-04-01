@@ -38,12 +38,7 @@
                                     <div class="mb-3">
                                         <div class="form-check form-switch">
                                             <input type="hidden" name="is_quarantine" value="0">
-                                            <input class="form-check-input" type="checkbox" name="is_quarantine" id="is_quarantine" value="1" {{ old('is_quarantine', $warehouse->is_quarantine ?? false) ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="is_quarantine">Is Quarantine Warehouse? (Damaged products will be stored here)</label>
                                         </div>
-                                        @error('is_quarantine')
-                                        <span class="small text-danger">{{$message}}</span>
-                                        @enderror
                                     </div>
                                 </div>
                             </div>

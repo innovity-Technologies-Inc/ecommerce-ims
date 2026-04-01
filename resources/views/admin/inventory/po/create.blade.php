@@ -75,7 +75,6 @@
                                 <select name="status" id="status" class="form-select @error('status') is-invalid @enderror" required>
                                     <option value="Draft" {{ old('status') == 'Draft' ? 'selected' : '' }}>Draft</option>
                                     <option value="Sent" {{ old('status') == 'Sent' ? 'selected' : '' }}>Sent</option>
-                                    <option value="Delivered" {{ old('status') == 'Delivered' ? 'selected' : '' }}>Delivered</option>
                                 </select>
                                 @error('status')
                                     <div class="invalid-feedback">{{ $message }}</div>
