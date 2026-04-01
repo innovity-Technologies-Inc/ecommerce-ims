@@ -166,7 +166,7 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::put('/requests/{id}/update-status', 'updateStatus')->name('update_status')->middleware('permission:returns.edit');
         Route::post('/requests/{id}/receive', 'receive')->name('receive')->middleware('permission:returns.edit');
         Route::get('/returned-products', 'returnedProducts')->name('returned_products');
-        Route::get('/wastages', 'wastages')->name('wastages');
+        Route::get('/wastages', 'wastages')->name('wastages')->middleware('permission:wastage.view');
     });
 
     // Damage Entry (Wastage)
@@ -189,6 +189,7 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
             Route::get('/', 'index')->name('admin.warehouses.index');
             Route::get('/create', 'create')->name('admin.warehouses.create')->middleware('permission:warehouse.create');
             Route::post('/', 'store')->name('admin.warehouses.store')->middleware('permission:warehouse.create');
+            Route::get('/{warehouse}', 'show')->name('admin.warehouses.show');
             Route::get('/{warehouse}/edit', 'edit')->name('admin.warehouses.edit')->middleware('permission:warehouse.edit');
             Route::put('/{warehouse}', 'update')->name('admin.warehouses.update')->middleware('permission:warehouse.edit');
             Route::delete('/{warehouse}', 'destroy')->name('admin.warehouses.destroy')->middleware('permission:warehouse.delete');
@@ -198,6 +199,7 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
             Route::get('/', 'index')->name('admin.suppliers.index');
             Route::get('/create', 'create')->name('admin.suppliers.create')->middleware('permission:supplier.create');
             Route::post('/', 'store')->name('admin.suppliers.store')->middleware('permission:supplier.create');
+            Route::get('/{id}', 'show')->name('admin.suppliers.show');
             Route::get('/{supplier}/edit', 'edit')->name('admin.suppliers.edit')->middleware('permission:supplier.edit');
             Route::put('/{supplier}', 'update')->name('admin.suppliers.update')->middleware('permission:supplier.edit');
             Route::delete('/{supplier}', 'destroy')->name('admin.suppliers.destroy')->middleware('permission:supplier.delete');
@@ -217,12 +219,13 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         });
 
         // Inventory Reports (Stock, Damaged & Batches)
-        Route::prefix('inventory-reports')->middleware('permission:inventory.view')->controller(\App\Http\Controllers\Admin\InventoryReportController::class)->group(function () {
-            Route::get('/stock', 'stock')->name('admin.inventory.stock.index');
-            Route::get('/stock/{id}', 'productStockDetails')->name('admin.inventory.stock.show');
-            Route::get('/damaged-products', 'damaged')->name('admin.inventory.damaged.index');
-            Route::get('/batches', 'batches')->name('admin.inventory.batches.index');
-            Route::get('/batches/{batch}', 'showBatch')->name('admin.inventory.batches.show');
+        Route::prefix('inventory-reports')->controller(\App\Http\Controllers\Admin\InventoryReportController::class)->group(function () {
+            Route::get('/stock', 'stock')->name('admin.inventory.stock.index')->middleware('permission:stock_report.view');
+            Route::get('/stock/{id}', 'productStockDetails')->name('admin.inventory.stock.show')->middleware('permission:stock_report.view');
+            Route::get('/damaged-products', 'damaged')->name('admin.inventory.damaged.index')->middleware('permission:damaged_products.view');
+            Route::get('/damaged-products/{id}', 'damagedDetails')->name('admin.inventory.damaged.show')->middleware('permission:damaged_products.view');
+            Route::get('/batches', 'batches')->name('admin.inventory.batches.index')->middleware('permission:batch_tracking.view');
+            Route::get('/batches/{batch}', 'showBatch')->name('admin.inventory.batches.show')->middleware('permission:batch_tracking.view');
         });
 
         // Supplier RMA
@@ -238,11 +241,11 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         });
 
         // Stock Adjustment
-        Route::prefix('adjustment')->middleware('permission:inventory.view')->controller(\App\Http\Controllers\Admin\StockAdjustmentController::class)->group(function () {
-            Route::get('/', 'index')->name('admin.inventory.adjustment.index');
-            Route::get('/create', 'create')->name('admin.inventory.adjustment.create')->middleware('permission:inventory.allocate');
-            Route::post('/', 'store')->name('admin.inventory.adjustment.store')->middleware('permission:inventory.allocate');
-            Route::get('/{adjustment}', 'show')->name('admin.inventory.adjustment.show');
+        Route::prefix('adjustment')->controller(\App\Http\Controllers\Admin\StockAdjustmentController::class)->group(function () {
+            Route::get('/', 'index')->name('admin.inventory.adjustment.index')->middleware('permission:stock_adjustment.view');
+            Route::get('/create', 'create')->name('admin.inventory.adjustment.create')->middleware('permission:stock_adjustment.create');
+            Route::post('/', 'store')->name('admin.inventory.adjustment.store')->middleware('permission:stock_adjustment.create');
+            Route::get('/{adjustment}', 'show')->name('admin.inventory.adjustment.show')->middleware('permission:stock_adjustment.view');
         });
     });
 });

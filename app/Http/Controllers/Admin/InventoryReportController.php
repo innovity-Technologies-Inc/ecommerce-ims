@@ -64,10 +64,20 @@ class InventoryReportController extends Controller
         $inventoryLevels = $this->inventoryService->getDamagedReport($params);
 
         if ($request->ajax()) {
-            return view('admin.inventory.stock.partials.table', compact('inventoryLevels'));
+            return view('admin.inventory.damaged.partials.table', compact('inventoryLevels'));
         }
 
         return view('admin.inventory.damaged.index', compact('inventoryLevels'));
+    }
+
+    /**
+     * Display granular damaged details.
+     */
+    public function damagedDetails(int $id): View
+    {
+        $level = $this->inventoryService->getProductStockDetails($id);
+
+        return view('admin.inventory.damaged.show', compact('level'));
     }
 
     /**

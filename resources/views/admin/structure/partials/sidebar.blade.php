@@ -101,9 +101,6 @@
                         <li class="sub-nav-item">
                             <a class="sub-nav-link" href="{{ route('admin.returns.returned_products') }}">Returned Products</a>
                         </li>
-                        <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.returns.wastages') }}">Wastages</a>
-                        </li>
                     </ul>
                 </div>
             </li>
@@ -173,51 +170,6 @@
 
             <li class="menu-title">Inventory</li>
 
-            @can('inventory.view')
-            <li class="nav-item">
-                <a class="nav-link menu-arrow" href="#sidebarInventoryReports" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarInventoryReports">
-                    <span class="nav-icon">
-                        <iconify-icon icon="solar:graph-bold-duotone"></iconify-icon>
-                    </span>
-                    <span class="nav-text"> Inventory</span>
-                </a>
-                <div class="collapse" id="sidebarInventoryReports">
-                    <ul class="nav sub-navbar-nav">
-                        <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.inventory.stock.index') }}">Stock</a>
-                        </li>
-                        <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.inventory.batches.index') }}">Batch Tracking</a>
-                        </li>
-                        <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.inventory.damaged.index') }}">Damaged Products</a>
-                        </li>
-                        @can('inventory.allocate')
-                        <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.inventory.adjustment.index') }}">Stock Adjustment</a>
-                        </li>
-                        @endcan
-                        @can('supplier_rma.view')
-                        <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.inventory.rma.index') }}">Supplier RMA</a>
-                        </li>
-                        @endcan
-                    </ul>
-                </div>
-            </li>
-            @endcan
-
-            @can('po.view')
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.inventory.po.index') }}">
-                    <span class="nav-icon">
-                        <iconify-icon icon="solar:clipboard-list-bold-duotone"></iconify-icon>
-                    </span>
-                    <span class="nav-text"> Purchase Orders </span>
-                </a>
-            </li>
-            @endcan
-
             @can('warehouse.view')
             <li class="nav-item">
                <a class="nav-link" href="{{ route('admin.warehouses.index') }}">
@@ -236,6 +188,83 @@
                         <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon>
                     </span>
                     <span class="nav-text"> Suppliers </span>
+                </a>
+            </li>
+            @endcan
+
+            @can('stock_adjustment.view')
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.inventory.adjustment.index') }}">
+                    <span class="nav-icon">
+                        <iconify-icon icon="solar:settings-minimalistic-bold-duotone"></iconify-icon>
+                    </span>
+                    <span class="nav-text"> Stock Adjustment </span>
+                </a>
+            </li>
+            @endcan
+
+            @can('po.view')
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.inventory.po.index') }}">
+                    <span class="nav-icon">
+                        <iconify-icon icon="solar:clipboard-list-bold-duotone"></iconify-icon>
+                    </span>
+                    <span class="nav-text"> Purchase Orders </span>
+                </a>
+            </li>
+            @endcan
+
+            @can('stock_report.view')
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.inventory.stock.index') }}">
+                    <span class="nav-icon">
+                        <iconify-icon icon="solar:box-bold-duotone"></iconify-icon>
+                    </span>
+                    <span class="nav-text"> Stock Report </span>
+                </a>
+            </li>
+            @endcan
+
+            @can('batch_tracking.view')
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.inventory.batches.index') }}">
+                    <span class="nav-icon">
+                        <iconify-icon icon="solar:routing-2-bold-duotone"></iconify-icon>
+                    </span>
+                    <span class="nav-text"> Batch Tracking </span>
+                </a>
+            </li>
+            @endcan
+
+            @can('damaged_products.view')
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.inventory.damaged.index') }}">
+                    <span class="nav-icon">
+                        <iconify-icon icon="solar:danger-bold-duotone"></iconify-icon>
+                    </span>
+                    <span class="nav-text"> Damaged Products </span>
+                </a>
+            </li>
+            @endcan
+
+            @can('supplier_rma.view')
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.inventory.rma.index') }}">
+                    <span class="nav-icon">
+                        <iconify-icon icon="solar:undo-left-bold-duotone"></iconify-icon>
+                    </span>
+                    <span class="nav-text"> Supplier RMA </span>
+                </a>
+            </li>
+            @endcan
+
+            @can('wastage.view')
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.returns.wastages') }}">
+                    <span class="nav-icon">
+                        <iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon>
+                    </span>
+                    <span class="nav-text"> Wastages </span>
                 </a>
             </li>
             @endcan

@@ -516,6 +516,9 @@ Every module or architectural change must be documented in this file before a ta
     - `returns`: Stores the main request metadata, status, and proof image.
     - `return_items`: Stores granular data for each item being returned, including its condition and received status.
     - `wastages`: A dedicated table to track products lost due to damage.
+  - **Inventory Reports & Wastage Tracking:** 
+    - **Stock & Batch Reports:** Accessible under the **Inventory** sidebar menu.
+    - **Wastage Tracking:** The **Wastages** menu item (previously under Returns) has been moved to the **Inventory** section for better categorization, allowing admins to track damaged items and physical losses alongside other inventory reports.
   - **FlexSearch Integration:** Admin index pages for Requests, Returned Products, and Wastages all utilize `FlexSearch` for high-performance filtering and searching.
   - **UI/UX:** Uses AJAX for real-time order fetching on the client-side and a clean "Receiving Workflow" panel in the admin details view.
 
@@ -582,24 +585,32 @@ Every module or architectural change must be documented in this file before a ta
 - **Button Standardization:** All action elements (Add to Cart, Track, Details, Start Shopping) strictly utilize core theme classes (e.g., Bootstrap `.btn` overrides combined with theme colors `#7AAACE` and `#333`, specific uppercase typography, and zero border-radius) ensuring 1:1 visual continuity.
 - **Admin Avatar Standardization:** All admin profile images across the navbar, index tables, and forms are standardized to a fixed circular shape. This is achieved through a global CSS definition in `master.blade.php` that enforces `aspect-ratio: 1/1` and `object-fit: cover` for all `avatar-*` classes when used with the `rounded-circle` utility class.
 - **Admin Theme Customization:** The sidebar (`main-nav`) and dark theme background colors have been updated to a custom deep blue shade (`#001F3D`). These overrides are applied globally in `master.blade.php` to maintain brand consistency across the administrative interface.
+- **Sidebar Refinement:** The "Inventory" section has been flattened for better accessibility. Instead of a single collapsible dropdown, core inventory functions—Stock Report, Batch Tracking, Damaged Products, Wastages, Stock Adjustment, and Supplier RMA—are now individual top-level menu items under the "Inventory" title, each with its own unique icon.
 - **Admin Assets:** Public admin CSS/JS directories renamed from `public/admin` to `public/admin_assets` to permanently resolve routing conflicts with the `Route::prefix('admin')` backend architecture.
 - **Pagination UI Standardization:** All paginated index pages (both Admin and Client) are standardized to include "Showing X to Y of Z Results" text next to the pagination links. In the Admin panel, this is placed within a `card-footer` using a `d-flex justify-content-between` layout. On the Client side, it is centered above the pagination links to maintain visual balance.
 - **Index Number Serialization Fix:** Standardized the row numbering across all administrative tables. To prevent "Trying to access array offset on int" errors, the system utilizes `HelperClass::indexNumberSerialization($data)` to calculate the starting serial for the current page, which is then incremented within the `@foreach` loop using `$sl++`. This approach ensures accurate, consecutive numbering across all paginated modules (Products, Orders, Inventory, etc.).
 ### 3.31 Inventory Management Onboarding (Warehouses & Suppliers)
 - **What:** Foundation for an integrated inventory system, allowing administrators to manage storage locations (Warehouses) and external vendors (Suppliers).
 - **How it Works:**
-  - **Warehouse Management:** Admins create and manage physical storage locations. Each warehouse record stores a unique name, a detailed physical location, and an `is_quarantine` flag.
-  - **Warehouse Index Refinement (REQ-101):** The warehouse list explicitly displays the "Quarantine" status for each record using visual badges (Yes/No).
-  - **Dynamic Filtering:** A dedicated "Type" filter on the index page allows administrators to toggle between "All", "Normal", and "Quarantine" warehouses. This filtering is implemented using AJAX and integrated with `FlexSearch` for real-time updates.
-  - **Quarantine Warehouse:** A specialized warehouse (flagged `is_quarantine: true`) is used to automatically store damaged items received during the Purchase Order process.
-  - **Supplier Onboarding:** Admins manage the vendor database. Each supplier record includes the company name, contact email, mobile number, and full physical address.
+  - **Warehouse Management:** Admins create and manage physical storage locations. Each warehouse record stores a unique name and a detailed physical location.
+  - **Dynamic Filtering:** The warehouse index page supports real-time searching and sorting via AJAX, integrated with `FlexSearch`.
+  - **Warehouse Stock Details:** A "Stock Details" button in the warehouse index allows admins to view a dedicated inventory breakdown for each warehouse.
+    - **Inventory Breakdown:** Lists all products, variants, and specific batch numbers currently stored in that warehouse.
+    - **Quantity Tracking:** Displays both saleable and damaged quantities for each inventory record.
+    - **Granular Serials:** Provides a modal-based interface to view individual physical unit (serial) details, including their condition and stock status, specifically within the selected warehouse.
+  - **Supplier Management:**
+    - **Onboarding:** Admins manage the vendor database (Name, Email, Mobile, Address).
+    - **Supplier Details & History:** A comprehensive details view for each vendor that displays:
+      - **Vendor Profile:** Core contact information.
+      - **Performance Analytics:** Real-time Average Performance Score derived from all delivered POs.
+      - **Purchase History:** A paginated list of all Purchase Orders associated with the supplier, showing their current status, total value, and specific fulfillment score.
 - **Data & Storage:**
-  - **Related Tables:** `warehouses`, `suppliers`
+  - **Related Tables:** `warehouses`, `suppliers`, `purchase_orders`
   - **Storage:** Metadata for physical locations and vendor contact details are stored in standard relational columns.
-  - **Fetching:** `InventoryService` manages CRUD; `FlexSearch` provides real-time index filtering for rapid retrieval.
+  - **Fetching:** `InventoryService` manages CRUD and details retrieval; `Supplier` model provides a `purchaseOrders` relationship for history tracking.
 - **Implementation Details:**
-  - **Architecture:** Follows the strict Service Layer pattern. `InventoryService` centralizes all CRUD operations for both Warehouses and Suppliers.
-  - **Filtering Logic:** `InventoryService::getAllWarehouses()` accepts an optional `is_quarantine` parameter which is applied to the Eloquent query before pagination.
+  - **Architecture:** Follows the strict Service Layer pattern. `InventoryService::getSupplierWithOrders()` centralizes the data retrieval for the details view.
+  - **UI Integration:** The Supplier index features a "View Details" action button (Eye icon). The details page uses a responsive 2-column layout to separate profile info from the historical order table.
   - **Validation:** `WarehouseRequest` and `SupplierRequest` enforce strict data integrity.
   - **Search & Filtering:** Both index pages utilize `FlexSearch` for real-time searching and AJAX-driven sorting.
 
@@ -608,18 +619,22 @@ Every module or architectural change must be documented in this file before a ta
 - **How it Works:**
   - **Warehouse Targeting:** Every Purchase Order is assigned a target Warehouse upon creation. This dictates where the inventory will be physically stored once received.
   - **Itemization:** Admins add products or variants with specific `order_quantity` and `unit_cost`.
+  - **Status Management:** 
+    - At creation and edit, only **Draft** and **Sent** statuses are available. This ensures that the **Delivered** status is only reachable through the formal receiving process, which is necessary for accurate inventory and serial tracking.
   - **Refined Receiving Workflow:** When an order is "Sent", the receiving process facilitates granular tracking:
     - **Global Batch Management:** A single `batch_number` is assigned to the entire receipt. This creates a `Batch` header record (containing the `supplier_id`) that groups all items received in that shipment.
     - **Batch Items:** Individual quantities for each product/variant are stored in the `batch_items` table, linked to the main `Batch` header.
     - **Serial Number Tagging:** The system uses a "tag-style" UI (Select2) for entering individual product serial numbers. 
-      - **Granular Serials:** Administrators can enter separate lists of serial numbers for **Received** (Good) and **Damaged** products. 
+      - **Literal Parsing:** Serial numbers containing hyphens (e.g., `SN-123-ABC`) are treated as literal strings. The system no longer supports or expands numeric ranges (e.g., `SN001-SN005`) automatically, as each unit is now tracked as an individual tag to prevent accidental expansion of hyphenated serials.
+    - **Granular Serials:** Administrators can enter separate lists of serial numbers for **Received** (Good) and **Damaged** products. 
+ 
       - **UI Enhancement:** The serial number input area is designed to be compact, becoming scrollable after 4 tags are added to maintain page layout integrity.
       - **Validation:** The system enforces that the number of entered serials must exactly match the quantity specified for each category (Received or Damaged) if serial tracking is used.
-      - **Storage:** These serials are stored in a dedicated `batch_serials` table. Received serials are marked as `in-stock`, while damaged serials are routed to the Quarantine warehouse and marked as `damaged`.
+      - **Storage:** These serials are stored in a dedicated `batch_serials` table. Received serials are marked as `in-stock`, while damaged serials are marked as `damaged`.
     - **Damaged Goods Handling:** Admins specify `Received` and `Damaged` quantities. To ensure accuracy and speed, the interface includes **auto-calculation logic**:      - Entering a `Received` quantity automatically calculates and fills the remaining `Damaged` quantity based on the total ordered amount.
       - Entering a `Damaged` quantity automatically updates the `Received` quantity.
       - This logic enforces that the sum of Received and Damaged items never exceeds the total quantity originally ordered.
-      - `Received` items move to the PO's target warehouse, while `Damaged` items are automatically routed to the **Quarantine** warehouse under a separate "Damaged" batch header.
+      - `Received` items move to the PO's target warehouse, while `Damaged` items are tracked separately under a "Damaged" batch header.
   - **Automated Inventory Synchronization:**
     - **Batch-Level Tracking:** The system creates unique records in the `inventory_levels` table for each batch received. This allows for precise tracking of exactly how much of a specific batch is remaining in a warehouse.
     - **Stock & Ledger:** Updates total product stock, warehouse-batch inventory levels (`inventory_levels`), and creates detailed batch item records. Every movement triggers a **Stock Ledger** entry containing financial data (`supplier_id`, `unit_cost`, and total `cost`).
@@ -693,9 +708,10 @@ Every module or architectural change must be documented in this file before a ta
     - **Integrated Batch Tracking:** The report includes batch-level tracking by default. Admins can search for specific batch numbers directly within the main stock search bar.
     - **Quarantine Filtering:** By default, this report excludes all products stored in quarantine/damaged warehouses to ensure the "Stock" view represents saleable inventory.
     - **Low Stock Highlighting:** Quantities that fall below their specific `min_stock_override` are visually highlighted in red.
-  - **Damaged Products Report:** A dedicated report for inventory stored in quarantine warehouses.
-    - **Quarantine Focus:** Specifically filters for records where the warehouse `is_quarantine` flag is true.
-    - **Tracking:** Lists damaged products by batch, allowing admins to trace quarantine stock back to its original Purchase Order.
+  - **Damaged Products Report:** A dedicated report for inventory stored in quarantine warehouses or specifically marked as damaged.
+    - **Quarantine Focus:** Specifically filters for records where the warehouse `is_quarantine` flag is true OR `damaged_quantity` is greater than 0.
+    - **Batch-Centric Tracking:** The report is prioritized by **Batch Number** to assist in supplier tracing. It explicitly excludes saleable quantities to focus only on losses.
+    - **Granular Details:** Clicking "Details" on a damaged record opens a dedicated view showing only the damaged quantity and a list of physical serial numbers currently marked with a `damaged` status.
 - **Data & Storage:**
   - **Related Tables:** `inventory_levels`, `products`, `product_variants`, `warehouses`, `batches`
   - **Storage:** Relational views derived from current stock distributions.
@@ -768,6 +784,27 @@ Every module or architectural change must be documented in this file before a ta
   - **`DamageEntryService`:** Manages the complex multi-table transaction to ensure stock consistency after a damage event.
   - **UI Integration:** The "Damage Entry" button is integrated into the main Wastage index for easy access.
   - **Validation:** `DamageEntryRequest` ensures that quantities do not exceed available saleable stock and that serial selections are mandatory when applicable.
+
+### 3.40 Supplier Performance Scoring
+- **What:** An automated performance evaluation system for vendors based on Purchase Order (PO) fulfillment accuracy and timeliness.
+- **How it Works:**
+  - **Automated Calculation:** A performance score and fulfillment subtotals are automatically calculated and stored for every Purchase Order when its status is updated to "Delivered" via the formal receiving process.
+  - **Score Components:**
+    - **Delivery Score (40%):** Awarded in full (40 points) if the PO's `received_date` is on or before the `expected_delivery_date`. If late or if no expected date was set, the score is 0.
+    - **Quality Score (60%):** Calculated based on the ratio of good products vs. the total quantity received (Good + Damaged) across all items in the PO.
+    - **Total Score:** The sum of both components (Max 100%).
+  - **Fulfillment Subtotals:** The system calculates and stores `total_received_qty` (good products) and `total_damaged_qty` directly in the `purchase_orders` record. This provides a high-level summary of the shipment's quality without needing to query multiple batch tables.
+  - **Supplier Analytics:** The system maintains a running average of performance scores across all delivered POs for each supplier.
+  - **Visibility:** 
+    - **PO Details:** Displays the performance score and a "Fulfillment Summary" badge showing the breakdown of Good vs. Damaged totals.
+    - **Supplier List:** The main supplier index features an "Avg Performance" column with color-coded badges (Green for 80+, Yellow for 50+, Red for <50) and star icons for rapid vendor assessment.
+- **Data & Storage:**
+  - **Related Tables:** `purchase_orders`, `suppliers`
+  - **Storage:** `performance_score` (decimal), `total_received_qty` (int), and `total_damaged_qty` (int) are stored directly in the `purchase_orders` table.
+  - **Fetching:** `PurchaseOrderService` handles the calculation and storage during receipt; `Supplier` model utilizes an Eloquent accessor (`average_performance_score`) to compute real-time averages across all its delivered orders.
+- **Implementation Details:**
+  - **Calculation Logic:** `Performance Score = (On-time ? 40 : 0) + (60 * (Total Received / (Total Received + Total Damaged)))`.
+  - **UI Integration:** Uses Bootstrap 5 badges and Iconify icons for consistent, modern data presentation in both the order summary and vendor management interfaces.
 
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*

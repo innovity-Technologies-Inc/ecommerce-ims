@@ -109,8 +109,16 @@ class PermissionSeeder extends Seeder
             'po.edit',
             'po.delete',
 
-            'inventory.view',
-            'inventory.allocate',
+            'stock_report.view',
+
+            'batch_tracking.view',
+
+            'damaged_products.view',
+
+            'wastage.view',
+
+            'stock_adjustment.view',
+            'stock_adjustment.create',
 
             // Supplier RMA
             'supplier_rma.view',
