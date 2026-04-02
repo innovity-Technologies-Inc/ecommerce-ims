@@ -159,9 +159,15 @@
                                                         </div>
 
                                                         <div class="serial-container d-none">
-                                                            <label class="small text-muted mb-1">Select Serials ({{ $item->quantity }})</label>
-                                                            <select name="items[{{ $item->id }}][serials][]" class="form-select form-select-sm serial-select" multiple="multiple" data-qty="{{ $item->quantity }}">
-                                                            </select>
+                                                            <label class="small text-muted d-block mb-1">Serials ({{ $item->quantity }})</label>
+                                                            <button type="button" class="btn btn-sm btn-soft-primary select-serials-btn" 
+                                                                    data-item-id="{{ $item->id }}" 
+                                                                    data-qty="{{ $item->quantity }}"
+                                                                    data-product-name="{{ $item->product_name }}">
+                                                                <i class="bx bx-list-check me-1"></i> Select Serials
+                                                            </button>
+                                                            <div class="selected-serials-display mt-2 small text-primary fw-bold"></div>
+                                                            <div class="selected-serials-inputs"></div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -322,6 +328,30 @@
         </div>
     </div>
 
+    {{-- Serial Selection Modal --}}
+    <div class="modal fade" id="serialSelectionModal" tabindex="-1" aria-labelledby="serialSelectionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title" id="serialSelectionModalLabel">Select Serials for <span id="modal-product-name"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-soft-info border-0 mb-3">
+                        Please select exactly <strong id="modal-target-qty"></strong> serials. Currently selected: <strong id="modal-current-count">0</strong>
+                    </div>
+                    <div id="modal-serial-list" class="row">
+                        {{-- Serials will be populated here --}}
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmSerials">Confirm Selection</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('scripts')
@@ -331,6 +361,10 @@
         const reasonWrapper = $('#rejection_reason_wrapper');
         const reasonInput = $('#rejection_reason');
         const allocationSection = $('#inventory_allocation_section');
+        
+        let currentItemContext = null;
+        let availableSerials = {}; // Store serials for each item: { itemId: [ {id, serial_no} ] }
+        let selectedSerials = {}; // Store selected IDs for each item: { itemId: [id1, id2] }
 
         function toggleStatusFields() {
             const status = statusSelect.val();
@@ -347,7 +381,7 @@
             // Inventory Allocation Logic
             if (status === 'Shipped') {
                 allocationSection.removeClass('d-none');
-                allocationSection.find('select').attr('required', 'required');
+                allocationSection.find('select.warehouse-select').attr('required', 'required');
                 initializeAllocation();
             } else {
                 allocationSection.addClass('d-none');
@@ -362,11 +396,12 @@
                 const variantId = select.data('variant-id');
 
                 if (select.find('option').length <= 1) {
+                    select.prop('disabled', true).empty().append('<option value="">Loading warehouses...</option>');
                     $.ajax({
                         url: "{{ route('admin.orders.ajax.get-warehouses') }}",
                         data: { product_id: productId, variant_id: variantId },
                         success: function(data) {
-                            select.empty().append('<option value="">Select Warehouse</option>');
+                            select.prop('disabled', false).empty().append('<option value="">Select Warehouse</option>');
                             data.forEach(w => {
                                 select.append(`<option value="${w.id}">${w.name}</option>`);
                             });
@@ -386,15 +421,21 @@
             const variantId = select.data('variant-id');
 
             if (warehouseId) {
+                batchSelect.prop('disabled', true).empty().append('<option value="">Loading batches...</option>');
+                batchContainer.removeClass('d-none');
+                
                 $.ajax({
                     url: "{{ route('admin.orders.ajax.get-batches') }}",
                     data: { warehouse_id: warehouseId, product_id: productId, variant_id: variantId },
                     success: function(data) {
-                        batchSelect.empty().append('<option value="">Select Batch</option>');
+                        batchSelect.prop('disabled', false).empty().append('<option value="">Select Batch</option>');
                         data.forEach(b => {
                             batchSelect.append(`<option value="${b.id}">${b.batch_number}</option>`);
                         });
-                        batchContainer.removeClass('d-none');
+                        
+                        if (!batchSelect.hasClass('select2-hidden-accessible')) {
+                            batchSelect.select2({ theme: 'bootstrap-5', dropdownParent: cardBody });
+                        }
                     }
                 });
             } else {
@@ -408,31 +449,25 @@
             const batchId = select.val();
             const cardBody = select.closest('.card-body');
             const serialContainer = cardBody.find('.serial-container');
-            const serialSelect = cardBody.find('.serial-select');
+            const btn = cardBody.find('.select-serials-btn');
+            const itemId = btn.data('item-id');
             const warehouseSelect = cardBody.find('.warehouse-select');
             const productId = warehouseSelect.data('product-id');
             const variantId = warehouseSelect.data('variant-id');
-            const qty = serialSelect.data('qty');
 
             if (batchId) {
                 $.ajax({
                     url: "{{ route('admin.orders.ajax.get-serials') }}",
                     data: { batch_id: batchId, product_id: productId, variant_id: variantId },
                     success: function(data) {
-                        if (data.length > 0) {
-                            serialSelect.empty();
-                            data.forEach(s => {
-                                serialSelect.append(`<option value="${s.id}">${s.serial_no}</option>`);
-                            });
+                        if (data && data.length > 0) {
+                            availableSerials[itemId] = data;
+                            selectedSerials[itemId] = []; // Reset on batch change
                             serialContainer.removeClass('d-none');
-                            serialSelect.select2({
-                                placeholder: `Select exactly ${qty} serials`,
-                                maximumSelectionLength: qty
-                            });
-                            serialSelect.attr('required', 'required');
+                            updateSelectedSerialsDisplay(itemId);
                         } else {
+                            availableSerials[itemId] = null;
                             serialContainer.addClass('d-none');
-                            serialSelect.removeAttr('required');
                         }
                     }
                 });
@@ -441,17 +476,104 @@
             }
         });
 
+        $(document).on('click', '.select-serials-btn', function() {
+            const btn = $(this);
+            currentItemContext = {
+                itemId: btn.data('item-id'),
+                targetQty: btn.data('qty'),
+                productName: btn.data('product-name')
+            };
+
+            $('#modal-product-name').text(currentItemContext.productName);
+            $('#modal-target-qty').text(currentItemContext.targetQty);
+            
+            populateModal();
+            $('#serialSelectionModal').modal('show');
+        });
+
+        function populateModal() {
+            const list = $('#modal-serial-list');
+            list.empty();
+            const itemId = currentItemContext.itemId;
+            const serials = availableSerials[itemId] || [];
+            const selected = selectedSerials[itemId] || [];
+
+            serials.forEach(s => {
+                const isChecked = selected.includes(s.id.toString()) || selected.includes(s.id);
+                list.append(`
+                    <div class="col-md-4 mb-2">
+                        <div class="form-check border p-2 rounded">
+                            <input class="form-check-input ms-0 serial-checkbox" type="checkbox" value="${s.id}" id="s_${s.id}" data-serial-no="${s.serial_no}" ${isChecked ? 'checked' : ''}>
+                            <label class="form-check-label ms-2" for="s_${s.id}">${s.serial_no}</label>
+                        </div>
+                    </div>
+                `);
+            });
+            updateModalCount();
+        }
+
+        $(document).on('change', '.serial-checkbox', function() {
+            updateModalCount();
+        });
+
+        function updateModalCount() {
+            const count = $('.serial-checkbox:checked').length;
+            $('#modal-current-count').text(count);
+            if (count > currentItemContext.targetQty) {
+                $('#modal-current-count').addClass('text-danger');
+            } else {
+                $('#modal-current-count').removeClass('text-danger');
+            }
+        }
+
+        $('#confirmSerials').on('click', function() {
+            const selected = [];
+            const serialNos = [];
+            $('.serial-checkbox:checked').each(function() {
+                selected.push($(this).val());
+                serialNos.push($(this).data('serial-no'));
+            });
+
+            if (selected.length != currentItemContext.targetQty) {
+                toastr.error(`Please select exactly ${currentItemContext.targetQty} serials.`);
+                return;
+            }
+
+            const itemId = currentItemContext.itemId;
+            selectedSerials[itemId] = selected;
+            updateSelectedSerialsDisplay(itemId, serialNos);
+            $('#serialSelectionModal').modal('hide');
+        });
+
+        function updateSelectedSerialsDisplay(itemId, serialNos = []) {
+            const container = $(`.select-serials-btn[data-item-id="${itemId}"]`).closest('.serial-container');
+            const display = container.find('.selected-serials-display');
+            const inputs = container.find('.selected-serials-inputs');
+            
+            if (serialNos.length > 0) {
+                display.html('<i class="bx bx-check-double me-1"></i> Selected: ' + serialNos.join(', '));
+            } else {
+                display.html('<span class="text-danger">No serials selected</span>');
+            }
+
+            inputs.empty();
+            const ids = selectedSerials[itemId] || [];
+            ids.forEach(id => {
+                inputs.append(`<input type="hidden" name="items[${itemId}][serials][]" value="${id}">`);
+            });
+        }
+
         $('#statusUpdateForm').on('submit', function(e) {
-            const status = statusSelect.val();
-            if (status === 'Shipped') {
+            if (statusSelect.val() === 'Shipped') {
                 let valid = true;
-                $('.serial-select:visible').each(function() {
-                    const select = $(this);
-                    const qty = select.data('qty');
-                    const selected = select.val() ? select.val().length : 0;
+                $('.select-serials-btn:visible').each(function() {
+                    const itemId = $(this).data('item-id');
+                    const qty = $(this).data('qty');
+                    const selected = selectedSerials[itemId] ? selectedSerials[itemId].length : 0;
                     if (selected != qty) {
-                        toastr.error(`Please select exactly ${qty} serials for ${select.closest('.card-body').find('.fw-bold').text()}`);
+                        toastr.error(`Please select serials for ${$(this).data('product-name')}`);
                         valid = false;
+                        return false;
                     }
                 });
                 if (!valid) return false;

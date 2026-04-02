@@ -127,7 +127,7 @@ class OrderService
                         // Mark previous serials as in-stock if any (unlikely in normal flow)
                         \App\Models\BatchSerial::where('order_item_id', $item->id)->update([
                             'order_item_id' => null,
-                            'stock_status' => 'in-stock',
+                            'stock_status' => 'in_stock',
                         ]);
 
                         // Assign new serials and mark as shipped
@@ -217,7 +217,7 @@ class OrderService
                 foreach ($order->orderItems as $item) {
                     \App\Models\BatchSerial::where('order_item_id', $item->id)->update([
                         'order_item_id' => null,
-                        'stock_status' => 'in-stock',
+                        'stock_status' => 'in_stock',
                     ]);
                 }
                 $this->adjustStock($order, 'increase');
@@ -569,8 +569,11 @@ class OrderService
         return \App\Models\Warehouse::whereHas('inventoryLevels', function ($query) use ($productId, $variantId) {
             $query->where('product_id', $productId)
                 ->where('current_quantity', '>', 0);
-            if ($variantId) {
+
+            if ($variantId && $variantId != 0) {
                 $query->where('product_variant_id', $variantId);
+            } else {
+                $query->whereNull('product_variant_id');
             }
         })->get();
     }
@@ -584,8 +587,11 @@ class OrderService
             $query->where('warehouse_id', $warehouseId)
                 ->where('product_id', $productId)
                 ->where('current_quantity', '>', 0);
-            if ($variantId) {
+
+            if ($variantId && $variantId != 0) {
                 $query->where('product_variant_id', $variantId);
+            } else {
+                $query->whereNull('product_variant_id');
             }
         })->get();
     }
@@ -597,11 +603,13 @@ class OrderService
     {
         $query = \App\Models\BatchSerial::where('batch_id', $batchId)
             ->where('product_id', $productId)
-            ->where('stock_status', 'in-stock')
+            ->where('stock_status', 'in_stock')
             ->where('product_status', 'good');
 
-        if ($variantId) {
+        if ($variantId && $variantId != 0) {
             $query->where('product_variant_id', $variantId);
+        } else {
+            $query->whereNull('product_variant_id');
         }
 
         return $query->get();
