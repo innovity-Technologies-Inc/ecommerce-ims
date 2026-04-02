@@ -300,7 +300,7 @@
                                         <span class="fw-bold text-danger">{{ $item['stock'] }}</span>
                                     </td>
                                     <td>
-                                        <a href="{{ route('admin.products.edit', $item['product_id']) }}" class="btn btn-sm btn-soft-primary">Restock</a>
+                                        <a href="{{ route('admin.inventory.po.create') }}" class="btn btn-sm btn-soft-primary">Restock</a>
                                     </td>
                                 </tr>
                                 @endforeach
