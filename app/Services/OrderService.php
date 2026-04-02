@@ -167,7 +167,7 @@ class OrderService
                         ])->first();
 
                         if ($batchProduct) {
-                            $batchProduct->decrement('total_saleable_qty', $item->quantity);
+                            $batchProduct->decrement('saleable_qty', $item->quantity);
                         }
 
                         // Update Batch totals
