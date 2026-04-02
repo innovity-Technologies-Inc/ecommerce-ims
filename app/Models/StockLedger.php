@@ -15,10 +15,9 @@ class StockLedger extends Model
         'product_variant_id',
         'warehouse_id',
         'batch_id',
+        'batch_serial_id',
         'supplier_id',
         'change_qty',
-        'unit_cost',
-        'cost',
         'transaction_type',
         'reason_code',
         'reference_id',
@@ -32,6 +31,11 @@ class StockLedger extends Model
     public function batch(): BelongsTo
     {
         return $this->belongsTo(Batch::class);
+    }
+
+    public function serial(): BelongsTo
+    {
+        return $this->belongsTo(BatchSerial::class, 'batch_serial_id');
     }
 
     public function product(): BelongsTo

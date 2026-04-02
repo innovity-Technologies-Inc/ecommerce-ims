@@ -76,19 +76,17 @@ class DamageEntryService
                 $bp->increment('damaged_qty', $qty);
             }
 
-            // 5. Log to StockLedger
+            // 5. Log to StockLedger (Aggregate entry)
             $this->inventoryService->logStockChange(
-                $productId,
-                $variantId,
-                $warehouseId,
-                -$qty,
-                'warehouse_damage',
-                'Warehouse Damage',
-                'WASTAGE-'.$wastage->id,
-                $batchId,
-                null, // No supplier
-                0, // Unit cost not explicitly required for wastage ledger here
-                0
+                productId: $productId,
+                variantId: $variantId,
+                warehouseId: $warehouseId,
+                changeQty: -$qty,
+                transactionType: 'warehouse_damage',
+                reasonCode: 'Warehouse Damage',
+                referenceId: 'WASTAGE-'.$wastage->id,
+                batchId: $batchId,
+                supplierId: null
             );
 
             return $wastage;

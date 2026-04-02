@@ -104,12 +104,14 @@ class StockAdjustmentService
                 ]);
                 $bp->increment('received_qty', $qty);
                 $bp->increment('saleable_qty', $qty);
+                $bp->update(['unit_cost' => $item['unit_cost']]);
 
                 // 5. Update Global Product Stock
                 if ($item['product_variant_id']) {
                     ProductVariant::find($item['product_variant_id'])->increment('stock', $qty);
+                } else {
+                    Product::find($item['product_id'])->increment('stock', $qty);
                 }
-                Product::find($item['product_id'])->increment('stock', $qty);
 
                 // 6. Update/Create InventoryLevel
                 $inventory = InventoryLevel::firstOrCreate([
@@ -139,19 +141,17 @@ class StockAdjustmentService
                     }
                 }
 
-                // 8. Log to StockLedger
+                // 8. Log to StockLedger (Aggregate entry)
                 $this->inventoryService->logStockChange(
-                    $item['product_id'],
-                    $item['product_variant_id'] ?? null,
-                    $data['warehouse_id'],
-                    $qty,
-                    'Manual_Adjustment',
-                    'Stock Adjustment',
-                    $adjustment->adjustment_number,
-                    $batch->id,
-                    null, // No supplier
-                    $item['unit_cost'],
-                    $qty * $item['unit_cost']
+                    productId: $item['product_id'],
+                    variantId: $item['product_variant_id'] ?? null,
+                    warehouseId: $data['warehouse_id'],
+                    changeQty: $qty,
+                    transactionType: 'Manual_Adjustment',
+                    reasonCode: 'Stock Adjustment',
+                    referenceId: $adjustment->adjustment_number,
+                    batchId: $batch->id,
+                    supplierId: null
                 );
             }
 

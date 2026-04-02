@@ -92,6 +92,20 @@
                                 @endif
                             </td>
                         </tr>
+                        @php
+                            $batchProduct = \App\Models\BatchProduct::where([
+                                'batch_id' => $level->batch_id,
+                                'product_id' => $level->product_id,
+                                'product_variant_id' => $level->product_variant_id
+                            ])->first();
+                            $gs = \App\HelperClass::generalSettings();
+                        @endphp
+                        @if($batchProduct)
+                        <tr>
+                            <th>Unit Cost:</th>
+                            <td class="fw-bold text-primary">{{ $gs->currency ?? '$' }}{{ number_format($batchProduct->unit_cost, 2) }}</td>
+                        </tr>
+                        @endif
                         <tr>
                             <th>Received Date:</th>
                             <td>{{ $level->batch->created_at->format('M d, Y') }}</td>

@@ -165,19 +165,17 @@ class SupplierRmaService
                 ]);
             }
 
-            // 5. Log to StockLedger
+            // 5. Log to StockLedger (Aggregate entry for total quantity)
             $this->inventoryService->logStockChange(
-                $item->product_id,
-                $item->product_variant_id,
-                $batch->warehouse_id,
-                -$item->quantity,
-                'RTV_Dispatch',
-                'Supplier RMA',
-                $rma->rma_number,
-                $item->batch_id,
-                $rma->supplier_id,
-                $item->product->unit_cost ?? 0,
-                -($item->quantity * ($item->product->unit_cost ?? 0))
+                productId: $item->product_id,
+                variantId: $item->product_variant_id,
+                warehouseId: $batch->warehouse_id,
+                changeQty: -$item->quantity,
+                transactionType: 'RTV_Dispatch',
+                reasonCode: 'Supplier RMA',
+                referenceId: $rma->rma_number,
+                batchId: $item->batch_id,
+                supplierId: $rma->supplier_id
             );
         }
     }

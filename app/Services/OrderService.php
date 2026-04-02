@@ -180,15 +180,7 @@ class OrderService
                             $item->product->decrement('stock', $item->quantity);
                         }
 
-                        // Financial Logic for Stock Ledger
-                        $unitCost = 0;
-                        if ($item->product_variant_id) {
-                            $unitCost = $item->productVariant->unit_cost ?? $item->product->unit_cost ?? 0;
-                        } else {
-                            $unitCost = $item->product->unit_cost ?? 0;
-                        }
-
-                        // Log to Stock Ledger
+                        // Log to Stock Ledger (Aggregate entry)
                         $this->inventoryService->logStockChange(
                             productId: $item->product_id,
                             variantId: $item->product_variant_id,
@@ -198,9 +190,7 @@ class OrderService
                             reasonCode: 'ORDER_DELIVERED',
                             referenceId: $order->order_id,
                             batchId: $item->batch_id,
-                            supplierId: $item->batch->supplier_id ?? null,
-                            unitCost: $unitCost,
-                            cost: (-$item->quantity * $unitCost)
+                            supplierId: $item->batch->supplier_id ?? null
                         );
                     }
                 }

@@ -14,7 +14,15 @@ class BatchProduct extends Model
         'received_qty',
         'saleable_qty',
         'damaged_qty',
+        'unit_cost',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'unit_cost' => 'decimal:2',
+        ];
+    }
 
     public function batch(): BelongsTo
     {

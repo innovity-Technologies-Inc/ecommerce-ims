@@ -79,10 +79,6 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-sm-3 fw-bold">Unit Cost:</div>
-                        <div class="col-sm-9 text-muted">{{ $gs->currency ?? '$' }}{{ number_format($product->unit_cost ?? 0, 2) }}</div>
-                    </div>
-                    <div class="row mb-3">
                         <div class="col-sm-3 fw-bold">Saleable Stock:</div>
                         <div class="col-sm-9 text-muted"><span class="badge badge-soft-dark fs-13">{{ $product->stock ?? 0 }} Units</span></div>
                     </div>
@@ -135,7 +131,6 @@
                                 <tr>
                                     <th>Variant Name</th>
                                     <th>SKU</th>
-                                    <th>Unit Cost</th>
                                     <th>Price</th>
                                     <th class="text-center">Stock</th>
                                     <th>Stock Limit</th>
@@ -146,7 +141,6 @@
                                 <tr>
                                     <td>{{ $variant->variant_name ?? '-' }}</td>
                                     <td><code>{{ $variant->sku }}</code></td>
-                                    <td>{{ $gs->currency ?? '$' }}{{ number_format($variant->unit_cost ?? 0, 2) }}</td>
                                     <td>
                                         @if($variant->discount_price > 0)
                                             <span class="text-decoration-line-through text-muted small">{{ $gs->currency ?? '$' }}{{ number_format($variant->regular_price, 2) }}</span>

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class InventoryLevel extends Model
 {
@@ -49,5 +50,15 @@ class InventoryLevel extends Model
     public function batch(): BelongsTo
     {
         return $this->belongsTo(Batch::class);
+    }
+
+    /**
+     * Get the batch product record for this inventory level.
+     */
+    public function batchProduct(): HasOne
+    {
+        return $this->hasOne(BatchProduct::class, 'batch_id', 'batch_id')
+            ->where('product_id', $this->product_id)
+            ->where('product_variant_id', $this->product_variant_id);
     }
 }

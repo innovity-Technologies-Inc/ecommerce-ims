@@ -229,29 +229,30 @@ class PurchaseOrderService
                     'received_qty' => $goodQty,   // Good items received
                     'saleable_qty' => $goodQty,   // Initial saleable same as good
                     'damaged_qty' => $damagedQty, // Damaged items received
+                    'unit_cost' => $item->unit_cost,
                 ]);
 
                 // Store Good Serials
-                foreach ($receivedSerials as $serial) {
+                foreach ($receivedSerials as $serialNo) {
                     BatchSerial::create([
                         'batch_id' => $batch->id,
                         'warehouse_id' => $po->warehouse_id,
                         'product_id' => $item->product_id,
                         'product_variant_id' => $item->product_variant_id,
-                        'serial_no' => $serial,
+                        'serial_no' => $serialNo,
                         'product_status' => 'good',
                         'stock_status' => 'in_stock',
                     ]);
                 }
 
                 // Store Damaged Serials
-                foreach ($damagedSerials as $serial) {
+                foreach ($damagedSerials as $serialNo) {
                     BatchSerial::create([
                         'batch_id' => $batch->id,
                         'warehouse_id' => $po->warehouse_id,
                         'product_id' => $item->product_id,
                         'product_variant_id' => $item->product_variant_id,
-                        'serial_no' => $serial,
+                        'serial_no' => $serialNo,
                         'product_status' => 'damaged',
                         'stock_status' => 'in_stock',
                     ]);
@@ -269,37 +270,32 @@ class PurchaseOrderService
                 $inventoryLevel->damaged_quantity += $damagedQty;
                 $inventoryLevel->save();
 
-                // Log Stock Change (Saleable/Good)
+                // Log Aggregate Stock Changes
                 if ($goodQty > 0) {
                     $this->inventoryService->logStockChange(
-                        $item->product_id,
-                        $item->product_variant_id,
-                        $po->warehouse_id,
-                        $goodQty,
-                        'PO_RECEIPT',
-                        'RECEIVED_GOOD',
-                        $po->po_number,
-                        $batch->id,
-                        $po->supplier_id,
-                        $item->unit_cost,
-                        $goodQty * $item->unit_cost
+                        productId: $item->product_id,
+                        variantId: $item->product_variant_id,
+                        warehouseId: $po->warehouse_id,
+                        changeQty: $goodQty,
+                        transactionType: 'PO_RECEIPT',
+                        reasonCode: 'RECEIVED_GOOD',
+                        referenceId: $po->po_number,
+                        batchId: $batch->id,
+                        supplierId: $po->supplier_id
                     );
                 }
 
-                // Log Damaged Stock
                 if ($damagedQty > 0) {
                     $this->inventoryService->logStockChange(
-                        $item->product_id,
-                        $item->product_variant_id,
-                        $po->warehouse_id,
-                        $damagedQty,
-                        'DAMAGED',
-                        'RECEIVED_DAMAGED',
-                        $po->po_number,
-                        $batch->id,
-                        $po->supplier_id,
-                        $item->unit_cost,
-                        $damagedQty * $item->unit_cost
+                        productId: $item->product_id,
+                        variantId: $item->product_variant_id,
+                        warehouseId: $po->warehouse_id,
+                        changeQty: $damagedQty,
+                        transactionType: 'DAMAGED',
+                        reasonCode: 'RECEIVED_DAMAGED',
+                        referenceId: $po->po_number,
+                        batchId: $batch->id,
+                        supplierId: $po->supplier_id
                     );
                 }
 
@@ -307,12 +303,15 @@ class PurchaseOrderService
                 if ($goodQty > 0) {
                     if ($item->product_variant_id) {
                         $variant = ProductVariant::find($item->product_variant_id);
-                        $variant->increment('stock', $goodQty);
-                        $variant->update(['unit_cost' => $item->unit_cost]);
+                        if ($variant) {
+                            $variant->increment('stock', $goodQty);
+                        }
+                        // Note: We intentionally do NOT increment base product stock if it's a variant
                     } else {
                         $product = Product::find($item->product_id);
-                        $product->increment('stock', $goodQty);
-                        $product->update(['unit_cost' => $item->unit_cost]);
+                        if ($product) {
+                            $product->increment('stock', $goodQty);
+                        }
                     }
                 }
 

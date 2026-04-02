@@ -85,12 +85,14 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Product / Variant</th>
+                                    <th class="text-end">Unit Cost</th>
                                     <th class="text-center">Received Qty</th>
                                     <th class="text-center text-danger">Damaged Qty</th>
                                     <th>Serial Numbers</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                @php($gs = \App\HelperClass::generalSettings())
                                 @foreach($batch->batchProducts as $bp)
                                     <tr>
                                         <td>
@@ -100,6 +102,9 @@
                                             @if($bp->variant)
                                                 <br><small class="text-muted">Variant: {{ $bp->variant->variant_name }}</small>
                                             @endif
+                                        </td>
+                                        <td class="text-end">
+                                            {{ $gs->currency ?? '$' }}{{ number_format($bp->unit_cost ?? 0, 2) }}
                                         </td>
                                         <td class="text-center">
                                             <span class="badge badge-soft-dark">{{ $bp->received_qty }}</span>

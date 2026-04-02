@@ -140,18 +140,16 @@ class InventoryService
         ?string $referenceId = null,
         ?int $batchId = null,
         ?int $supplierId = null,
-        float $unitCost = 0,
-        float $cost = 0
+        ?int $batchSerialId = null
     ): void {
         StockLedger::create([
             'product_id' => $productId,
             'product_variant_id' => $variantId,
             'warehouse_id' => $warehouseId,
             'batch_id' => $batchId,
+            'batch_serial_id' => $batchSerialId,
             'supplier_id' => $supplierId,
             'change_qty' => $changeQty,
-            'unit_cost' => $unitCost, // Always the purchase unit cost
-            'cost' => $cost,           // The transaction value (qty * price)
             'transaction_type' => $transactionType,
             'reason_code' => $reasonCode,
             'reference_id' => $referenceId,
@@ -278,19 +276,34 @@ class InventoryService
     }
 
     /**
-     * Get Batch Report.
+     * Get Stock Ledger Report.
      */
-    public function getBatchReport(array $params = [], int $perPage = 15): LengthAwarePaginator
+    public function getStockLedger(array $params = [], int $perPage = 15): LengthAwarePaginator
     {
-        $query = Batch::with(['purchaseOrder', 'warehouse', 'supplier']);
+        $query = StockLedger::with(['product', 'variant', 'warehouse', 'batch', 'serial', 'supplier']);
 
         $searchTerm = $params['search'] ?? null;
+
         if ($searchTerm) {
-            $query->where('batch_number', 'like', "%{$searchTerm}%");
+            $query->where(function ($q) use ($searchTerm) {
+                $q->whereHas('product', function ($pq) use ($searchTerm) {
+                    $pq->where('name', 'like', "%{$searchTerm}%");
+                })->orWhereHas('variant', function ($vq) use ($searchTerm) {
+                    $vq->where('variant_name', 'like', "%{$searchTerm}%");
+                })->orWhereHas('batch', function ($bq) use ($searchTerm) {
+                    $bq->where('batch_number', 'like', "%{$searchTerm}%");
+                })->orWhereHas('serial', function ($sq) use ($searchTerm) {
+                    $sq->where('serial_no', 'like', "%{$searchTerm}%");
+                })->orWhere('reference_id', 'like', "%{$searchTerm}%");
+            });
         }
 
         if (isset($params['warehouse_id']) && $params['warehouse_id'] !== 'all') {
             $query->where('warehouse_id', $params['warehouse_id']);
+        }
+
+        if (isset($params['transaction_type']) && $params['transaction_type'] !== 'all') {
+            $query->where('transaction_type', $params['transaction_type']);
         }
 
         $sort = $params['sort'] ?? 'latest';

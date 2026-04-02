@@ -223,6 +223,14 @@
                     <span class="nav-text"> Stock Report </span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.inventory.ledger.index') }}">
+                    <span class="nav-icon">
+                        <iconify-icon icon="solar:history-bold-duotone"></iconify-icon>
+                    </span>
+                    <span class="nav-text"> Stock Ledger </span>
+                </a>
+            </li>
             @endcan
 
             @can('batch_tracking.view')

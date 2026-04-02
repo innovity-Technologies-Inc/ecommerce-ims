@@ -224,13 +224,14 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         });
 
         // Inventory Reports (Stock, Damaged & Batches)
-        Route::prefix('inventory-reports')->controller(\App\Http\Controllers\Admin\InventoryReportController::class)->group(function () {
-            Route::get('/stock', 'stock')->name('admin.inventory.stock.index')->middleware('permission:stock_report.view');
-            Route::get('/stock/{id}', 'productStockDetails')->name('admin.inventory.stock.show')->middleware('permission:stock_report.view');
-            Route::get('/damaged-products', 'damaged')->name('admin.inventory.damaged.index')->middleware('permission:damaged_products.view');
-            Route::get('/damaged-products/{id}', 'damagedDetails')->name('admin.inventory.damaged.show')->middleware('permission:damaged_products.view');
-            Route::get('/batches', 'batches')->name('admin.inventory.batches.index')->middleware('permission:batch_tracking.view');
-            Route::get('/batches/{batch}', 'showBatch')->name('admin.inventory.batches.show')->middleware('permission:batch_tracking.view');
+        Route::controller(\App\Http\Controllers\Admin\InventoryReportController::class)->group(function () {
+            Route::get('/inventory-reports/stock', 'stock')->name('admin.inventory.stock.index')->middleware('permission:stock_report.view');
+            Route::get('/inventory-reports/stock/{id}', 'productStockDetails')->name('admin.inventory.stock.show')->middleware('permission:stock_report.view');
+            Route::get('/inventory-reports/damaged-products', 'damaged')->name('admin.inventory.damaged.index')->middleware('permission:damaged_products.view');
+            Route::get('/inventory-reports/damaged-products/{id}', 'damagedDetails')->name('admin.inventory.damaged.show')->middleware('permission:damaged_products.view');
+            Route::get('/inventory-reports/batches', 'batches')->name('admin.inventory.batches.index')->middleware('permission:batch_tracking.view');
+            Route::get('/inventory-reports/batches/{batch}', 'showBatch')->name('admin.inventory.batches.show')->middleware('permission:batch_tracking.view');
+            Route::get('/inventory-reports/ledger', 'ledger')->name('admin.inventory.ledger.index')->middleware('permission:stock_report.view');
         });
 
         // Supplier RMA

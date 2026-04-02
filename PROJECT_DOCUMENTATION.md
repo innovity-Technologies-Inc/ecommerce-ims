@@ -623,7 +623,7 @@ Every module or architectural change must be documented in this file before a ta
     - At creation and edit, only **Draft** and **Sent** statuses are available. This ensures that the **Delivered** status is only reachable through the formal receiving process, which is necessary for accurate inventory and serial tracking.
   - **Refined Receiving Workflow:** When an order is "Sent", the receiving process facilitates granular tracking:
     - **Global Batch Management:** A single `batch_number` is assigned to the entire receipt. This creates a `Batch` header record (containing the `supplier_id`) that groups all items received in that shipment.
-    - **Batch Items:** Individual quantities for each product/variant are stored in the `batch_items` table, linked to the main `Batch` header.
+    - **Batch Items:** Individual quantities for each product/variant are stored in the `batch_products` table, linked to the main `Batch` header.
     - **Serial Number Tagging:** The system uses a "tag-style" UI (Select2) for entering individual product serial numbers. 
       - **Literal Parsing:** Serial numbers containing hyphens (e.g., `SN-123-ABC`) are treated as literal strings. The system no longer supports or expands numeric ranges (e.g., `SN001-SN005`) automatically, as each unit is now tracked as an individual tag to prevent accidental expansion of hyphenated serials.
     - **Granular Serials:** Administrators can enter separate lists of serial numbers for **Received** (Good) and **Damaged** products. 
@@ -637,43 +637,40 @@ Every module or architectural change must be documented in this file before a ta
       - `Received` items move to the PO's target warehouse, while `Damaged` items are tracked separately under a "Damaged" batch header.
   - **Automated Inventory Synchronization:**
     - **Batch-Level Tracking:** The system creates unique records in the `inventory_levels` table for each batch received. This allows for precise tracking of exactly how much of a specific batch is remaining in a warehouse.
-    - **Stock & Ledger:** Updates total product stock, warehouse-batch inventory levels (`inventory_levels`), and creates detailed batch item records. Every movement triggers a **Stock Ledger** entry containing financial data (`supplier_id`, `unit_cost`, and total `cost`).
+    - **Stock & Ledger:** Updates total product stock, warehouse-batch inventory levels (`inventory_levels`), and creates detailed batch product records. Every movement triggers a **Stock Ledger** entry for movement traceability.
 - **Data & Storage:**
   - **Related Tables:** `purchase_orders`, `purchase_order_items`, `batches`, `batch_products`, `batch_serials`, `inventory_levels`, `stock_ledgers`
-  - **Storage:** Procurement data is stored across a complex relational hierarchy; serial numbers use a specialized tagging table for individual unit tracking.
+  - **Storage:** Procurement data is stored across a complex relational hierarchy; serial numbers use a specialized tagging table for individual unit tracking; **unit costs are stored at the Batch Product level**.
   - **Fetching:** `PurchaseOrderService` executes massive atomic transactions (`DB::transaction`) to synchronize data across 7+ tables during the receiving phase.
 - **Implementation Details:**
-  - **`PurchaseOrderService`:** Manages the complex multi-table transaction for receiving, which includes creating a `Batch` header, multiple `BatchItem` and `BatchSerial` records, updating `InventoryLevel`, and logging to the `StockLedger`.
-  - **Schema Optimization:** Removed `serial_numbers` from the `purchase_order_items` table to eliminate data redundancy, as serials are now exclusively managed via `batch_serials`.
+  - **`PurchaseOrderService`:** Manages the complex multi-table transaction for receiving, which includes creating a `Batch` header, multiple `BatchProduct` and `BatchSerial` records, updating `InventoryLevel`, and logging to the `StockLedger`.
+  - **Schema Optimization:** Removed `serial_numbers` from the `purchase_order_items` table and `unit_cost` from `products`/`variants` to eliminate data redundancy and centralize costing at the batch level.
   - **Validation:** `PurchaseOrderReceiveRequest` ensures a single global `batch_number` is provided and that serial counts match the total quantities per item.
 
 ### 3.33 Stock Ledger & Audit Trail
-- **What:** A centralized, immutable transaction log that tracks every stock movement (increase or decrease) across the entire system, including financial impact.
+- **What:** A centralized, immutable transaction log that tracks every stock movement (increase or decrease) across the entire system, with support for individual physical unit (serial) tracking.
 - **How it Works:**
-  - **Automated Logging:** Any action that modifies stock (PO Receipt, Sales, Returns, Adjustments) automatically triggers a ledger entry.
-  - **Granular Data:** Each entry records the product, variant, warehouse, batch, supplier, change quantity (positive or negative), and financial details.
-  - **Financial Logic:**
-    - **`unit_cost`:** This field always stores the **original purchase unit cost** of the product, regardless of the transaction type.
-    - **`cost`:** This field stores the total financial value of the specific movement.
-      - For **Purchases**, it records `quantity * unit_cost`.
-      - For **Sales**, it records `quantity * product_price` (selling price).
-      - This value can be positive (Stock In) or negative (Stock Out).
-  - **Consistency:** The ledger acts as the source of truth, ensuring that the current stock levels in the `products` and `inventory_levels` tables can be reconciled against the history of transactions and their financial values.
+  - **Automated Logging:** Any action that modifies stock (PO Receipt, Sales, Returns, Adjustments, Damage Entry) automatically triggers a ledger entry.
+  - **Granular Data:** Each entry records the product, variant, warehouse, batch, supplier, and change quantity.
+  - **Aggregate Logging:** Movements are logged as a single aggregate transaction with the total quantity (e.g., -3 for a 3-unit RMA return), providing a clean and concise audit trail.
+  - **Cost Tracking:** Financial data (unit cost) is resolved dynamically by joining with the `batch_products` table via the `batch_id` associated with the ledger entry.
 - **Data & Storage:**
-  - **Related Tables:** `stock_ledgers`, `products`, `product_variants`, `warehouses`, `batches`
-  - **Storage:** Immutable transaction logs using UUID primary keys for audit integrity.
-  - **Fetching:** `InventoryService::logStockChange()` acts as the centralized recording engine; reporting controllers query the ledger for financial and movement audits.
+  - **Related Tables:** `stock_ledgers`, `products`, `product_variants`, `warehouses`, `batches`, `batch_products`, `batch_serials`
+  - **Storage:** Relational tracking using UUIDs for audit integrity; includes a `batch_serial_id` column for 1:1 unit traceability.
+  - **Fetching:** `InventoryService::getStockLedger()` provides a searchable, filterable report accessible via the Admin Sidebar.
 - **Implementation Details:**
-  - **`InventoryService::logStockChange()`:** A centralized method used by all modules to ensure standardized ledger recording with support for financial auditing.
-  - **Database:** Uses UUIDs for primary keys to support distributed systems or future scalability.
+  - **`InventoryService::logStockChange()`:** Centralized recording engine updated to support `batch_serial_id`.
+  - **Module Integration:** Updated `PurchaseOrderService`, `OrderService`, `SupplierRmaService`, `StockAdjustmentService`, and `DamageEntryService` to loop and log individual serials when applicable.
+  - **Stock Ledger Report:** A new administrative view (`admin/inventory-reports/ledger`) allowing admins to search by product, batch, serial number, or reference ID.
 
 ### 3.34 Advanced Inventory Tracking (Inventory Levels)
-- **What:** Granular, batch-aware tracking of products within specific warehouses, including proactive stock management features.
+- **What:** Granular, batch-aware tracking of products within specific warehouses, including proactive stock management and accurate procurement costing.
 - **How it Works:**
   - **Batch Integration:** Stock is no longer just tracked by warehouse; it is tracked by **Warehouse + Batch**. The `inventory_levels` table stores `current_quantity` for every unique batch-warehouse-product combination.
+  - **Batch-Level Costing:** The `unit_cost` is now stored at the **Batch Product** level (`batch_products` table). This allows the system to track different procurement costs for the same item across different shipments, enabling more accurate FIFO/LIFO reporting.
   - **Total Stock Synchronization:** The system maintains a "Saleable Stock" model.
     - **Global Stock:** The `stock` field in the `products` and `product_variants` tables represents the **Total Saleable System Stock** (the sum of all quantities across non-quarantine warehouses).
-    - **PO Receipt:** When a shipment is received, it increments the global `stock` only by the **Good/Received Quantity**. Damaged items are tracked in `inventory_levels` (Quarantine) and the Stock Ledger but are excluded from the global `stock` availability to prevent them from being sold.
+    - **PO Receipt:** When a shipment is received, it increments the global `stock` only by the **Good/Received Quantity**. Damaged items are tracked in `inventory_levels` (Quarantine) and the Stock Ledger but are excluded from the global `stock` availability.
     - **Sales:** When an item is sold, it decrements the global `stock`.
     - **Consistency:** This tracking ensures that the customer-facing catalog only shows items available for purchase, while the administrative reporting module provides visibility into both saleable and quarantined physical units.
   - **Customizable Thresholds:** Supports `min_stock_override` per record, allowing for fine-tuned stock alerts that override global product limits.
@@ -816,23 +813,29 @@ Every module or architectural change must be documented in this file before a ta
 ### 3.41 Order Fulfillment & Inventory Integration
 - **What:** A granular inventory allocation and tracking system that connects customer orders with specific warehouse batches and physical unit serial numbers.
 - **How it Works:**
-  - **Shipped Status (Allocation):** When an admin changes an order status to "Shipped", the system triggers an "Inventory Allocation" workflow.
-    - **Warehouse Selection:** Admins select which warehouse(s) will fulfill each order item. Only warehouses with current stock for that product/variant are displayed.
-    - **Batch Selection:** Admins select specific batches within the chosen warehouse to pull stock from.
-    - **Serial Tracking:** For products that use serial numbers, admins must select the specific unit serials (status: 'in_stock' and 'good') being sent to the customer.
-    - **Status Update:** Allocated serials are marked as `shipped` in the `batch_serials` table. No stock is physically deducted from the levels at this stage.
+  - **Restricted Status Workflow:** Orders follow a strict logical progression to ensure operational integrity:
+    - **Pending:** Can move to `Processing`, `Cancelled`, or `Rejected`.
+    - **Processing:** Can only move to `Shipped` (triggers inventory allocation).
+    - **Shipped:** Can only move to `Out for Delivery`.
+    - **Out for Delivery:** Can only move to `Delivered`.
+    - **Terminal States:** `Delivered`, `Cancelled`, and `Rejected` are final and allow no further changes.
+  - **Shipped Status (Allocation):** When an admin moves an order from `Processing` to `Shipped`, the "Inventory Allocation" interface appears.
+    - **Warehouse Selection:** Admins select fulfillment warehouses. Only locations with active stock for the specific product/variant are visible.
+    - **Batch Selection:** Admins select specific batches (tracked by PO/Receipt date) within the chosen warehouse.
+    - **Modal-Based Serial Tracking:** For serial-tracked items, a "Select Serials" button opens a modal. Admins must check exactly the number of units ordered from the pool of `in_stock` and `good` serials.
+    - **Status Update:** Allocated serials are marked as `shipped` in the `batch_serials` table. Saleable stock levels remain unchanged to reflect "In-Transit" inventory.
   - **Delivered Status (Finalization):** When the order is marked as "Delivered":
-    - **Stock Deduction:** The system formally decrements the `current_quantity` in `inventory_levels` and `total_saleable_qty` in `batches` and `batch_products`.
-    - **Global Stock Sync:** The primary `products` or `product_variants` stock field is updated to reflect the sale.
+    - **Stock Deduction:** The system formally decrements the `current_quantity` in `inventory_levels` and `saleable_qty` in `batches` and `batch_products`.
+    - **Global Stock Sync:** The primary `products` or `product_variants` stock field is updated to reflect the final sale.
     - **Serial Status:** Allocated serials are updated to `sold`.
-    - **Financial Reporting:** A `StockLedger` entry is created with the transaction type `SALE` and sub-type `ORDER_DELIVERED`, recording the product's `unit_cost` and calculating the total movement cost.
+    - **Financial Reporting:** A `StockLedger` entry is created with the transaction type `SALE` and sub-type `ORDER_DELIVERED`, recording the product's `unit_cost` and calculating the total movement cost (`qty * unit_cost` as a negative value).
   - **Resilience:** If an order is cancelled or rejected after being shipped, the system automatically releases the allocated serials back to `in_stock` status and restores any pending deductions.
 - **Data & Storage:**
   - **Related Tables:** `order_items`, `batch_serials`, `inventory_levels`, `stock_ledgers`, `batches`, `batch_products`
-  - **Linkage:** `order_items` now stores `warehouse_id` and `batch_id`; `batch_serials` stores the `order_item_id` for traceability.
+  - **Linkage:** `order_items` stores `warehouse_id` and `batch_id`; `batch_serials` stores the `order_item_id` for 1:1 unit traceability.
 - **Implementation Details:**
-  - **Backend:** `OrderService::updateOrderStatus` encapsulates the complex transactional logic for allocation and finalization.
-  - **UI:** The Order Details page features a dynamic, AJAX-driven selection interface that appears only when the "Shipped" status is chosen. It utilizes Select2 for high-volume serial selection and includes real-time validation to ensure allocated quantities match the order.
+  - **UI/UX:** The Order Details page utilizes a sidebar-heavy layout. "Customer & Shipping Info", "Payment", and "Status History" are grouped on the right, while the main column focuses on the Items Table and the "Order Status & Fulfillment" form.
+  - **Fulfillment Visibility:** Once an item is allocated, its specific Warehouse, Batch, and Serial Numbers are displayed directly in the items table for administrative reference.
 
 ### 4.0 Inventory & Stock Calculation Logic
 This section defines the mathematical and logical rules governing stock levels throughout the application lifecycle.
