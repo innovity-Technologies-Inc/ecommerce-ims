@@ -154,12 +154,12 @@
                 @foreach($products as $product)
                     @if($product->variants->count() > 0)
                         @foreach($product->variants as $variant)
-                            <option value="v-{{ $variant->id }}" data-cost="{{ $variant->unit_cost }}" data-product-id="{{ $product->id }}">
+                            <option value="v-{{ $variant->id }}" data-product-id="{{ $product->id }}">
                                 {{ $product->name }} ({{ $variant->variant_name }})
                             </option>
                         @endforeach
                     @else
-                        <option value="p-{{ $product->id }}" data-cost="{{ $product->unit_cost }}" data-product-id="{{ $product->id }}">
+                        <option value="p-{{ $product->id }}" data-product-id="{{ $product->id }}">
                             {{ $product->name }}
                         </option>
                     @endif
@@ -225,7 +225,6 @@
             let selectedValue = $(this).val();
             let row = $(this).closest('tr');
             
-            let cost = selectedOption.data('cost') || 0;
             let productId = selectedOption.data('product-id') || '';
             
             row.find('.product-id').val(productId);
@@ -236,7 +235,6 @@
                 row.find('.variant-id').val('');
             }
 
-            row.find('.unit-cost').val(cost);
             calculateRow(row);
         });
 
