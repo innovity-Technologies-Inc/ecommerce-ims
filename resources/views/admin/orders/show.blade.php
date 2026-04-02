@@ -31,6 +31,26 @@
                                                     @if($item->variant_name)
                                                         <small class="text-muted">{{ $item->variant_name }}</small>
                                                     @endif
+
+                                                    {{-- Fulfillment Details --}}
+                                                    @if($item->warehouse_id && $item->batch_id)
+                                                        <div class="mt-2 pt-2 border-top border-dashed">
+                                                            <div class="d-flex flex-wrap gap-2">
+                                                                <span class="badge badge-soft-info" title="Warehouse">
+                                                                    <i class="bx bx-home-alt me-1"></i> {{ $item->warehouse->name }}
+                                                                </span>
+                                                                <span class="badge badge-soft-secondary" title="Batch">
+                                                                    <i class="bx bx-purchase-tag-alt me-1"></i> {{ $item->batch->batch_number }}
+                                                                </span>
+                                                            </div>
+                                                            @if($item->serials->count() > 0)
+                                                                <div class="mt-1 small">
+                                                                    <strong class="text-muted">Serials:</strong>
+                                                                    <span class="text-primary">{{ $item->serials->pluck('serial_no')->implode(', ') }}</span>
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </td>
