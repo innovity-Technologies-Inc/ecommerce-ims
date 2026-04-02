@@ -661,7 +661,6 @@ Every module or architectural change must be documented in this file before a ta
 - **Implementation Details:**
   - **`InventoryService::logStockChange()`:** Centralized recording engine updated to support `batch_serial_id`.
   - **Module Integration:** Updated `PurchaseOrderService`, `OrderService`, `SupplierRmaService`, `StockAdjustmentService`, and `DamageEntryService` to loop and log individual serials when applicable.
-  - **Stock Ledger Report:** A new administrative view (`admin/inventory-reports/ledger`) allowing admins to search by product, batch, serial number, or reference ID.
 
 ### 3.34 Advanced Inventory Tracking (Inventory Levels)
 - **What:** Granular, batch-aware tracking of products within specific warehouses, including proactive stock management and accurate procurement costing.

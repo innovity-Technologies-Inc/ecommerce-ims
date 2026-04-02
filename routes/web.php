@@ -231,7 +231,6 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
             Route::get('/inventory-reports/damaged-products/{id}', 'damagedDetails')->name('admin.inventory.damaged.show')->middleware('permission:damaged_products.view');
             Route::get('/inventory-reports/batches', 'batches')->name('admin.inventory.batches.index')->middleware('permission:batch_tracking.view');
             Route::get('/inventory-reports/batches/{batch}', 'showBatch')->name('admin.inventory.batches.show')->middleware('permission:batch_tracking.view');
-            Route::get('/inventory-reports/ledger', 'ledger')->name('admin.inventory.ledger.index')->middleware('permission:stock_report.view');
         });
 
         // Supplier RMA

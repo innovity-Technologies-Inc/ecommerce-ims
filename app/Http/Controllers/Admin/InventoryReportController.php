@@ -89,20 +89,4 @@ class InventoryReportController extends Controller
 
         return view('admin.inventory.batches.show', compact('batch'));
     }
-
-    /**
-     * Display the stock ledger report.
-     */
-    public function ledger(Request $request): View
-    {
-        $params = $request->all();
-        $ledgers = $this->inventoryService->getStockLedger($params);
-        $warehouses = Warehouse::all();
-
-        if ($request->ajax()) {
-            return view('admin.inventory.ledger.partials.table', compact('ledgers'));
-        }
-
-        return view('admin.inventory.ledger.index', compact('ledgers', 'warehouses'));
-    }
 }

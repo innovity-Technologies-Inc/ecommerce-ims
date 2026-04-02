@@ -4,7 +4,7 @@
     <div class="container-xxl">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h4 class="mb-0">Stock Adjustments</h4>
-            @can('inventory.allocate')
+            @can('stock_adjustment.create')
             <a href="{{ route('admin.inventory.adjustment.create') }}" class="btn btn-primary btn-sm">New Adjustment</a>
             @endcan
         </div>

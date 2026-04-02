@@ -276,34 +276,19 @@ class InventoryService
     }
 
     /**
-     * Get Stock Ledger Report.
+     * Get Batch Report.
      */
-    public function getStockLedger(array $params = [], int $perPage = 15): LengthAwarePaginator
+    public function getBatchReport(array $params = [], int $perPage = 15): LengthAwarePaginator
     {
-        $query = StockLedger::with(['product', 'variant', 'warehouse', 'batch', 'serial', 'supplier']);
+        $query = Batch::with(['purchaseOrder', 'warehouse', 'supplier']);
 
         $searchTerm = $params['search'] ?? null;
-
         if ($searchTerm) {
-            $query->where(function ($q) use ($searchTerm) {
-                $q->whereHas('product', function ($pq) use ($searchTerm) {
-                    $pq->where('name', 'like', "%{$searchTerm}%");
-                })->orWhereHas('variant', function ($vq) use ($searchTerm) {
-                    $vq->where('variant_name', 'like', "%{$searchTerm}%");
-                })->orWhereHas('batch', function ($bq) use ($searchTerm) {
-                    $bq->where('batch_number', 'like', "%{$searchTerm}%");
-                })->orWhereHas('serial', function ($sq) use ($searchTerm) {
-                    $sq->where('serial_no', 'like', "%{$searchTerm}%");
-                })->orWhere('reference_id', 'like', "%{$searchTerm}%");
-            });
+            $query->where('batch_number', 'like', "%{$searchTerm}%");
         }
 
         if (isset($params['warehouse_id']) && $params['warehouse_id'] !== 'all') {
             $query->where('warehouse_id', $params['warehouse_id']);
-        }
-
-        if (isset($params['transaction_type']) && $params['transaction_type'] !== 'all') {
-            $query->where('transaction_type', $params['transaction_type']);
         }
 
         $sort = $params['sort'] ?? 'latest';
