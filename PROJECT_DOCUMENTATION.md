@@ -819,20 +819,53 @@ Every module or architectural change must be documented in this file before a ta
   - **Shipped Status (Allocation):** When an admin changes an order status to "Shipped", the system triggers an "Inventory Allocation" workflow.
     - **Warehouse Selection:** Admins select which warehouse(s) will fulfill each order item. Only warehouses with current stock for that product/variant are displayed.
     - **Batch Selection:** Admins select specific batches within the chosen warehouse to pull stock from.
-    - **Serial Tracking:** For products that use serial numbers, admins must select the specific unit serials (status: 'in-stock' and 'good') being sent to the customer.
+    - **Serial Tracking:** For products that use serial numbers, admins must select the specific unit serials (status: 'in_stock' and 'good') being sent to the customer.
     - **Status Update:** Allocated serials are marked as `shipped` in the `batch_serials` table. No stock is physically deducted from the levels at this stage.
   - **Delivered Status (Finalization):** When the order is marked as "Delivered":
     - **Stock Deduction:** The system formally decrements the `current_quantity` in `inventory_levels` and `total_saleable_qty` in `batches` and `batch_products`.
     - **Global Stock Sync:** The primary `products` or `product_variants` stock field is updated to reflect the sale.
     - **Serial Status:** Allocated serials are updated to `sold`.
     - **Financial Reporting:** A `StockLedger` entry is created with the transaction type `SALE` and sub-type `ORDER_DELIVERED`, recording the product's `unit_cost` and calculating the total movement cost.
-  - **Resilience:** If an order is cancelled or rejected after being shipped, the system automatically releases the allocated serials back to `in-stock` status and restores any pending deductions.
+  - **Resilience:** If an order is cancelled or rejected after being shipped, the system automatically releases the allocated serials back to `in_stock` status and restores any pending deductions.
 - **Data & Storage:**
   - **Related Tables:** `order_items`, `batch_serials`, `inventory_levels`, `stock_ledgers`, `batches`, `batch_products`
   - **Linkage:** `order_items` now stores `warehouse_id` and `batch_id`; `batch_serials` stores the `order_item_id` for traceability.
 - **Implementation Details:**
   - **Backend:** `OrderService::updateOrderStatus` encapsulates the complex transactional logic for allocation and finalization.
   - **UI:** The Order Details page features a dynamic, AJAX-driven selection interface that appears only when the "Shipped" status is chosen. It utilizes Select2 for high-volume serial selection and includes real-time validation to ensure allocated quantities match the order.
+
+### 4.0 Inventory & Stock Calculation Logic
+This section defines the mathematical and logical rules governing stock levels throughout the application lifecycle.
+
+#### 4.1 Stock Definitions
+- **Total System Stock:** The global sum of all saleable units across all warehouses.
+  - *Storage:* `products.stock` or `product_variants.stock`.
+- **Saleable Stock (Current Qty):** High-quality units available for immediate sale.
+  - *Storage:* `inventory_levels.current_quantity`, `batch_products.saleable_qty`.
+- **Damaged Stock:** Units received in poor condition or moved to quarantine. These are **excluded** from saleable counts.
+  - *Storage:* `inventory_levels.damaged_quantity`, `batch_products.damaged_qty`.
+
+#### 4.2 Calculation Formulas
+| Event | Action | Formula |
+| :--- | :--- | :--- |
+| **PO Receipt** | Increase Stock | `Saleable Qty = Saleable Qty + Received Qty (Good)` |
+| **PO Receipt** | Track Damage | `Damaged Qty = Damaged Qty + Received Qty (Damaged)` |
+| **Order Placed** | No Change | *Stock is reserved but not deducted from database levels.* |
+| **Order Shipped** | No Change | *Serials marked 'shipped'; Saleable stock level remains same.* |
+| **Order Delivered** | Decrease Stock | `Saleable Qty = Saleable Qty - Order Qty` |
+| **Order Cancelled** | Release Stock | `Serials status = 'in_stock'; OrderItem linkage removed.` |
+| **Damage Entry** | Transfer | `Saleable Qty = Saleable Qty - Qty`; `Damaged Qty = Damaged Qty + Qty` |
+
+#### 4.3 Transactional Integrity
+All stock movements are executed within database transactions (`DB::transaction`). A movement is only valid if:
+1. The requested warehouse has sufficient `current_quantity`.
+2. The specific batch selected contains the requested quantity.
+3. (If applicable) The number of selected serial units exactly matches the `order_item.quantity`.
+
+#### 4.4 Financial Impact (Stock Ledger)
+Every physical decrement of stock (Sale, Damage, Wastage) triggers a ledger entry:
+- **Unit Cost:** Derived from the specific Batch or Product record at the time of movement.
+- **Total Movement Cost:** `Quantity Change * Unit Cost`. (Negative for sales/wastage).
 
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*
