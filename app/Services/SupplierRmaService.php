@@ -125,56 +125,65 @@ class SupplierRmaService
      */
     protected function processClosing(SupplierRma $rma): void
     {
-        foreach ($rma->rmaItems as $item) {
-            $batch = $item->batch;
+        // Group items by Batch, Product, and Variant to perform aggregate updates
+        $groupedItems = $rma->rmaItems->groupBy(function ($item) {
+            return $item->batch_id.'-'.$item->product_id.'-'.($item->product_variant_id ?? '0');
+        });
+
+        foreach ($groupedItems as $group) {
+            $firstItem = $group->first();
+            $totalQty = $group->sum('quantity');
+            $batch = $firstItem->batch;
 
             // 1. Update Batch total damaged quantity
-            $batch->decrement('total_damaged_qty', $item->quantity);
+            $batch->decrement('total_damaged_qty', $totalQty);
 
             // 2. Update BatchProduct damaged quantity
             BatchProduct::where([
-                'batch_id' => $item->batch_id,
-                'product_id' => $item->product_id,
-                'product_variant_id' => $item->product_variant_id,
-            ])->decrement('damaged_qty', $item->quantity);
+                'batch_id' => $firstItem->batch_id,
+                'product_id' => $firstItem->product_id,
+                'product_variant_id' => $firstItem->product_variant_id,
+            ])->decrement('damaged_qty', $totalQty);
 
             // 3. Update InventoryLevel damaged quantity
             \App\Models\InventoryLevel::where([
-                'batch_id' => $item->batch_id,
+                'batch_id' => $firstItem->batch_id,
                 'warehouse_id' => $batch->warehouse_id,
-                'product_id' => $item->product_id,
-                'product_variant_id' => $item->product_variant_id,
-            ])->decrement('damaged_quantity', $item->quantity);
+                'product_id' => $firstItem->product_id,
+                'product_variant_id' => $firstItem->product_variant_id,
+            ])->decrement('damaged_quantity', $totalQty);
 
-            // 4. Update BatchSerials
-            if ($item->batch_serial_id) {
-                BatchSerial::where('id', $item->batch_serial_id)->update([
-                    'product_status' => 'damaged_return',
-                    'stock_status' => 'returned',
-                ]);
-            } else {
-                // If no specific serial, update available damaged serials for this product in this batch
-                BatchSerial::where([
-                    'batch_id' => $item->batch_id,
-                    'product_id' => $item->product_id,
-                    'product_variant_id' => $item->product_variant_id,
-                    'product_status' => 'damaged',
-                ])->limit($item->quantity)->update([
-                    'product_status' => 'damaged_return',
-                    'stock_status' => 'returned',
-                ]);
+            // 4. Update BatchSerials statuses
+            foreach ($group as $item) {
+                if ($item->batch_serial_id) {
+                    BatchSerial::where('id', $item->batch_serial_id)->update([
+                        'product_status' => 'damaged_return',
+                        'stock_status' => 'returned',
+                    ]);
+                } else {
+                    // Bulk update for items without specific serial IDs
+                    BatchSerial::where([
+                        'batch_id' => $item->batch_id,
+                        'product_id' => $item->product_id,
+                        'product_variant_id' => $item->product_variant_id,
+                        'product_status' => 'damaged',
+                    ])->limit($item->quantity)->update([
+                        'product_status' => 'damaged_return',
+                        'stock_status' => 'returned',
+                    ]);
+                }
             }
 
-            // 5. Log to StockLedger (Aggregate entry for total quantity)
+            // 5. Log to StockLedger (Aggregate entry for the whole group)
             $this->inventoryService->logStockChange(
-                productId: $item->product_id,
-                variantId: $item->product_variant_id,
+                productId: $firstItem->product_id,
+                variantId: $firstItem->product_variant_id,
                 warehouseId: $batch->warehouse_id,
-                changeQty: -$item->quantity,
+                changeQty: -$totalQty,
                 transactionType: 'RTV_Dispatch',
                 reasonCode: 'Supplier RMA',
                 referenceId: $rma->rma_number,
-                batchId: $item->batch_id,
+                batchId: $firstItem->batch_id,
                 supplierId: $rma->supplier_id
             );
         }

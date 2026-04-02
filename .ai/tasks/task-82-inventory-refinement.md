@@ -50,3 +50,4 @@ Refactor the inventory system to move cost tracking from products/variants to ba
 - [x] `unit_cost` visible and correctly stored in Batch details.
 - [x] Stock ledger no longer tracks cost (tracked at batch level).
 - [x] All related services updated to use batch-level cost.
+- [x] Supplier RMA closing logs aggregate stock ledger entries even when serials are selected.
