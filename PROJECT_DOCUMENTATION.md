@@ -500,6 +500,8 @@ Every module or architectural change must be documented in this file before a ta
 - **How it Works:**
   - **Guest & Authenticated Returns:** Users can request returns for items in 'Delivered' orders.
   - **Admin Approval (Dynamic Allocation):** When approving a return, admins must specify the condition (Intact or Damage) and allocate the return to specific batches and serial numbers.
+    - **Full-Width Approval Form:** The approval interface uses a full-width layout to provide ample space for managing complex multi-item returns and batch allocations.
+    - **Accurate Shipment Tracking:** The system automatically filters the available batches and serial numbers for selection. Admins can **only** select from the specific batches and physical serial units that were originally shipped to the customer for that particular order, ensuring 100% inventory accuracy.
     - **Allocation Source:** The system only allows selecting from batches and serials that were used to fulfill the original order, ensuring data integrity.
     - **Multi-Batch Returns:** Supports returning a single item quantity across multiple batches if the original order was fulfilled from multiple batches.
   - **Receiving Workflow:** Once marked as 'Received', the system executes atomic transactions to update inventory and financial records.
@@ -520,10 +522,8 @@ Every module or architectural change must be documented in this file before a ta
 - **Implementation Details:**
   - **`ReturnService`:** Manages the complex grouped update logic, ensuring that stock is only restored for intact items while financial totals are adjusted for all returned units.
   - **UI/UX:** The Return Request details page uses a dynamic allocation interface similar to the Shipped status flow, allowing for precise tracking of returned physical units.
-- **Implementation Details:**
-  - **`ReturnService`:** Manages the complex grouped update logic, ensuring that stock is only restored for intact items while financial totals are adjusted for all returned units.
-  - **UI/UX:** The Order Details page features a dynamic allocation interface allowing rows to be added/removed per item. It includes real-time calculation of allocated quantities.
-  - **Fulfillment Visibility:** Once allocated, the specific Warehouse, Batch, and Serial Numbers for every split allocation are displayed directly in the items table.
+  - **Smart Data Lookups:** The admin interface uses a refined `@php` block to robustly identify the correct `order_item_id` (handling both simple and variant products) to feed the AJAX-based batch/serial selectors.
+
 ### 3.28 Role-Based Access Control (RBAC) Module
 - **What:** A comprehensive security layer for managing administrative access using the `spatie/laravel-permission` package. It ensures that administrators can only perform operations explicitly granted to their roles.
 - **How it Works:**

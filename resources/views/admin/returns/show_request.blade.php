@@ -10,7 +10,7 @@
     </div>
 
     <div class="row g-3">
-        <div class="col-lg-8">
+        <div class="col-lg-9">
             <div class="card mb-3">
                 <div class="card-header">
                     <h5 class="card-title mb-0">Return Items</h5>
@@ -59,7 +59,7 @@
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card mb-3">
                 <div class="card-header">
                     <h5 class="card-title mb-0">Return Reason & Proof Images</h5>
                 </div>
@@ -93,7 +93,7 @@
             </div>
         </div>
 
-        <div class="col-lg-4">
+        <div class="col-lg-3">
             <div class="card mb-3">
                 <div class="card-header">
                     <h5 class="card-title mb-0">Customer & Order Details</h5>
@@ -118,71 +118,107 @@
                     </ul>
                 </div>
             </div>
+        </div>
 
+        <div class="col-12">
             @if($request->status === 'pending')
                 @can('returns.edit')
                 <div class="card mb-3">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Action</h5>
+                    <div class="card-header bg-light-subtle">
+                        <h5 class="card-title mb-0">Update Return Request Status</h5>
                     </div>
                     <div class="card-body">
                         <form action="{{ route('admin.returns.update_status', $request->id) }}" method="POST">
                             @csrf
                             @method('PUT')
-                            <div class="mb-3">
-                                <label class="form-label">Update Status</label>
-                                <select name="status" id="status_toggle" class="form-select" required>
-                                    <option value="">Select Action</option>
-                                    <option value="approved">Approve</option>
-                                    <option value="rejected">Reject</option>
-                                </select>
-                            </div>
-
-                            <div id="rejection_container" class="d-none mb-3">
-                                <label class="form-label">Rejection Reason</label>
-                                <textarea name="rejection_reason" class="form-control" rows="3"></textarea>
-                            </div>
-
-                            <div id="condition_container" class="d-none mt-3">
-                                <h6 class="text-uppercase fw-bold text-primary mb-3">Return Allocation</h6>
-                                @foreach($request->returnItems as $item)
-                                    <div class="card border mb-3 shadow-none return-item-card" 
-                                         data-item-id="{{ $item->id }}" 
-                                         data-order-item-id="{{ \App\Models\OrderItem::where('order_id', $request->order_id)->where('product_id', $item->product_id)->where('product_variant_id', $item->product_variant_id)->first()->id ?? 0 }}"
-                                         data-target-qty="{{ $item->quantity }}"
-                                         data-product-name="{{ $item->product->name }}">
-                                        <div class="card-header bg-light-subtle py-2 d-flex justify-content-between align-items-center">
-                                            <div class="fw-bold small text-dark">
-                                                {{ $item->product->name }}
-                                                <span class="badge bg-soft-primary text-primary ms-2">Return Qty: {{ $item->quantity }}</span>
+                            <div class="row g-4">
+                                <div class="col-12">
+                                    <div class="p-3 bg-light rounded-3 border">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-4">
+                                                <label class="form-label fw-bold fs-15 mb-md-0">Decision Action <span class="text-danger">*</span></label>
                                             </div>
-                                            <div class="allocation-status small">
-                                                Allocated: <span class="current-allocated-qty fw-bold">0</span> / {{ $item->quantity }}
-                                            </div>
-                                        </div>
-                                        <div class="card-body p-2">
-                                            <div class="mb-2">
-                                                <label class="form-label small fw-bold text-muted mb-1">Condition <span class="text-danger">*</span></label>
-                                                <select name="items[{{ $item->id }}][condition]" class="form-select form-select-sm" required>
-                                                    <option value="intact">Intact (Restock)</option>
-                                                    <option value="damage">Damage (Wastage)</option>
+                                            <div class="col-md-8">
+                                                <select name="status" id="status_toggle" class="form-select form-select-lg shadow-sm" required>
+                                                    <option value="">Choose an action...</option>
+                                                    <option value="approved">Approve Return & Start Allocation</option>
+                                                    <option value="rejected">Reject Return Request</option>
                                                 </select>
-                                            </div>
-
-                                            <div class="allocation-rows-container mt-2">
-                                                {{-- Allocation rows will be added here --}}
-                                            </div>
-                                            <div class="mt-2">
-                                                <button type="button" class="btn btn-sm btn-soft-success add-allocation-row-btn">
-                                                    <i class="bx bx-plus me-1"></i> Add Batch Allocation
-                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                                @endforeach
+
+                                    <div id="rejection_container" class="d-none mt-3">
+                                        <label class="form-label fw-bold">Rejection Reason <span class="text-danger">*</span></label>
+                                        <textarea name="rejection_reason" class="form-control" rows="4" placeholder="Briefly explain why the return is rejected..."></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div id="condition_container" class="d-none">
+                                        <div class="d-flex align-items-center justify-content-between mb-3">
+                                            <h6 class="text-uppercase fw-bold text-primary mb-0">Allocation & Condition Management</h6>
+                                            <span class="badge bg-soft-info text-info">
+                                                <i class="bx bx-info-circle me-1"></i> Selection is restricted to items originally sold in this order
+                                            </span>
+                                        </div>
+
+                                        @foreach($request->returnItems as $item)
+                                            @php
+                                                $orderItem = \App\Models\OrderItem::where('order_id', $request->order_id)
+                                                    ->where('product_id', $item->product_id)
+                                                    ->where('product_variant_id', $item->product_variant_id)
+                                                    ->first();
+                                            @endphp
+                                            <div class="card border mb-3 shadow-none return-item-card" 
+                                                 data-item-id="{{ $item->id }}" 
+                                                 data-order-item-id="{{ $orderItem->id ?? 0 }}"
+                                                 data-target-qty="{{ $item->quantity }}"
+                                                 data-product-name="{{ $item->product->name }}">
+                                                <div class="card-header bg-light-subtle py-2 d-flex justify-content-between align-items-center">
+                                                    <div class="fw-bold text-dark">
+                                                        <i class="bx bx-package me-1 text-muted"></i> {{ $item->product->name }}
+                                                        <span class="badge bg-primary ms-2">Requested: {{ $item->quantity }}</span>
+                                                    </div>
+                                                    <div class="allocation-status">
+                                                        <span class="text-muted small">Total Allocated:</span> 
+                                                        <span class="current-allocated-qty fw-bold fs-15">0</span> 
+                                                        <span class="text-muted">/ {{ $item->quantity }}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="card-body p-4">
+                                                    <div class="row g-4">
+                                                        <div class="col-lg-3 border-end">
+                                                            <div class="mb-4">
+                                                                <label class="form-label small fw-bold text-uppercase text-muted mb-2">Item Condition <span class="text-danger">*</span></label>
+                                                                <select name="items[{{ $item->id }}][condition]" class="form-select shadow-sm" required>
+                                                                    <option value="intact">Intact (Restock)</option>
+                                                                    <option value="damage">Damage (Wastage)</option>
+                                                                </select>
+                                                                <div class="form-text small">Select 'Intact' to return items to saleable stock.</div>
+                                                            </div>
+                                                            
+                                                            <button type="button" class="btn btn-sm btn-soft-success add-allocation-row-btn w-100 py-2">
+                                                                <i class="bx bx-plus-circle me-1"></i> Add Batch Split
+                                                            </button>
+                                                        </div>
+                                                        <div class="col-lg-9">
+                                                            <label class="form-label small fw-bold text-uppercase text-muted mb-2">Batch & Unit Allocation</label>
+                                                            <div class="allocation-rows-container">
+                                                                {{-- Allocation rows will be added here --}}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
                             </div>
 
-                            <button type="submit" class="btn btn-primary w-100">Confirm Action</button>
+                            <div class="border-top pt-3 text-end mt-4">
+                                <button type="submit" class="btn btn-primary px-5 py-2 fw-bold">Confirm & Update Request</button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -198,13 +234,19 @@
                         <h5 class="card-title mb-0 text-white">Receiving Workflow</h5>
                     </div>
                     <div class="card-body">
-                        <p class="small text-muted mb-4">The return request is approved. Once you have physically received the products, click the button below to process stock and sales adjustments.</p>
-                        <form action="{{ route('admin.returns.receive', $request->id) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-success w-100 py-2 fw-bold">
-                                <i class="bx bx-check-circle me-1"></i> MARK AS RECEIVED
-                            </button>
-                        </form>
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <p class="mb-0">The return request is approved. Once you have physically received the products, click the button below to process stock and sales adjustments. This will update inventory and financial records.</p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <form action="{{ route('admin.returns.receive', $request->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success px-4 py-2 fw-bold">
+                                        <i class="bx bx-check-circle me-1"></i> MARK AS RECEIVED
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 @else
@@ -224,6 +266,7 @@
             @endif
         </div>
     </div>
+
 </div>
 
 {{-- Serial Selection Modal --}}
@@ -291,31 +334,36 @@
             const rowUniqueId = `row_${itemId}_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
 
             const rowHtml = `
-                <div class="allocation-row border rounded p-2 mb-2 bg-white" data-row-id="${rowUniqueId}">
-                    <div class="row g-2 align-items-center">
-                        <div class="col-md-8">
-                            <label class="small text-muted mb-1 d-block">Batch <span class="text-danger">*</span></label>
-                            <select name="items[${itemId}][allocations][${rowUniqueId}][batch_id]" class="form-select form-select-sm return-batch-select" data-order-item-id="${orderItemId}" required>
+                <div class="allocation-row border rounded p-3 mb-3 bg-white shadow-sm" data-row-id="${rowUniqueId}">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-md-7">
+                            <label class="small fw-bold text-muted mb-1 d-block text-uppercase">Batch Number <span class="text-danger">*</span></label>
+                            <select name="items[${itemId}][allocations][${rowUniqueId}][batch_id]" class="form-select return-batch-select" data-order-item-id="${orderItemId}" required>
                                 <option value="">Select Batch</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
-                            <label class="small text-muted mb-1 d-block">Qty <span class="text-danger">*</span></label>
-                            <input type="number" name="items[${itemId}][allocations][${rowUniqueId}][quantity]" class="form-control form-control-sm allocation-qty" placeholder="Qty" min="1" required>
+                        <div class="col-md-3">
+                            <label class="small fw-bold text-muted mb-1 d-block text-uppercase">Quantity <span class="text-danger">*</span></label>
+                            <input type="number" name="items[${itemId}][allocations][${rowUniqueId}][quantity]" class="form-control allocation-qty" placeholder="0" min="1" required>
                         </div>
                         <div class="col-md-2 text-end pt-3">
-                            <button type="button" class="btn btn-sm btn-outline-danger remove-row-btn d-none">
-                                <i class="bx bx-trash"></i>
+                            <button type="button" class="btn btn-outline-danger remove-row-btn d-none">
+                                <i class="bx bx-trash me-1"></i>Remove
                             </button>
                         </div>
                     </div>
-                    <div class="serial-container d-none mt-2 pt-2 border-top border-dashed">
-                        <button type="button" class="btn btn-xs btn-soft-primary select-serials-btn" 
-                                data-item-id="${itemId}" 
-                                data-row-id="${rowUniqueId}">
-                            <i class="bx bx-list-check me-1"></i> Select Serials
-                        </button>
-                        <div class="selected-serials-display mt-1 small text-primary fw-bold"></div>
+                    <div class="serial-container d-none mt-3 p-3 bg-light rounded-3 border-dashed border-2">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="small fw-bold text-primary mb-0 text-uppercase">Serial Verification Required</label>
+                            <button type="button" class="btn btn-sm btn-primary select-serials-btn" 
+                                    data-item-id="${itemId}" 
+                                    data-row-id="${rowUniqueId}">
+                                <i class="bx bx-list-check me-1"></i> Select physical units
+                            </button>
+                        </div>
+                        <div class="selected-serials-display mt-2 p-2 bg-white rounded border small text-primary fw-bold">
+                            <i class="bx bx-info-circle me-1"></i> No serials selected yet
+                        </div>
                         <div class="selected-serials-inputs"></div>
                     </div>
                 </div>
@@ -501,7 +549,7 @@
             
             inputs.empty();
             selected.forEach(id => {
-                inputs.append(`<input type="hidden" name="items[${currentItemContext.itemId}][allocations][${rowId}][batch_serial_id]" value="${id}">`);
+                inputs.append(`<input type="hidden" name="items[${currentItemContext.itemId}][allocations][${rowId}][batch_serial_ids][]" value="${id}">`);
             });
 
             $('#serialSelectionModal').modal('hide');

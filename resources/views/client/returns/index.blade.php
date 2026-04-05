@@ -117,6 +117,9 @@
                                         </div>
 
                                         <div id="order_details_container" class="d-none">
+                                            <div id="validation_errors" class="alert alert-danger d-none mb-4">
+                                                <ul class="mb-0" id="error_list"></ul>
+                                            </div>
                                             <form id="return_request_form" enctype="multipart/form-data">
                                                 @csrf
                                                 <input type="hidden" name="order_id" id="hidden_order_id">
@@ -277,6 +280,8 @@
                 contentType: false,
                 beforeSend: function() {
                     $('.checkout-btn').prop('disabled', true).text('Submitting...');
+                    $('#validation_errors').addClass('d-none');
+                    $('#error_list').empty();
                 },
                 success: function(response) {
                     toastr.success(response.message);
@@ -289,11 +294,18 @@
                 error: function(xhr) {
                     if (xhr.status === 422) {
                         const errors = xhr.responseJSON.errors;
+                        $('#validation_errors').removeClass('d-none');
                         Object.keys(errors).forEach(key => {
-                            toastr.error(errors[key][0]);
+                            const msg = errors[key][0];
+                            toastr.error(msg);
+                            $('#error_list').append(`<li>${msg}</li>`);
                         });
+                        $('html, body').animate({
+                            scrollTop: $("#validation_errors").offset().top - 100
+                        }, 500);
                     } else {
-                        toastr.error('Something went wrong. Please try again.');
+                        const msg = xhr.responseJSON.message || 'Something went wrong. Please try again.';
+                        toastr.error(msg);
                     }
                 },
                 complete: function() {

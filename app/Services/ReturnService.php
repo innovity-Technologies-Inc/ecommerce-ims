@@ -124,30 +124,60 @@ class ReturnService
                     if (! empty($itemData['allocations'])) {
                         $firstAlloc = true;
                         foreach ($itemData['allocations'] as $alloc) {
-                            if ($firstAlloc) {
-                                // Update existing ReturnItem with first allocation
-                                $returnItem->update([
-                                    'condition' => $itemData['condition'],
-                                    'batch_id' => $alloc['batch_id'],
-                                    'batch_serial_id' => $alloc['batch_serial_id'] ?? null,
-                                    'quantity' => $alloc['quantity'],
-                                    'total_price' => $alloc['quantity'] * $returnItem->unit_price,
-                                ]);
-                                $firstAlloc = false;
+                            $serialIds = $alloc['batch_serial_ids'] ?? (isset($alloc['batch_serial_id']) ? [$alloc['batch_serial_id']] : []);
+
+                            if (! empty($serialIds)) {
+                                foreach ($serialIds as $serialId) {
+                                    if ($firstAlloc) {
+                                        $returnItem->update([
+                                            'condition' => $itemData['condition'],
+                                            'batch_id' => $alloc['batch_id'],
+                                            'batch_serial_id' => $serialId,
+                                            'quantity' => 1,
+                                            'total_price' => 1 * $returnItem->unit_price,
+                                        ]);
+                                        $firstAlloc = false;
+                                    } else {
+                                        ReturnItem::create([
+                                            'return_id' => $returnRequest->id,
+                                            'product_id' => $returnItem->product_id,
+                                            'product_variant_id' => $returnItem->product_variant_id,
+                                            'batch_id' => $alloc['batch_id'],
+                                            'batch_serial_id' => $serialId,
+                                            'quantity' => 1,
+                                            'unit_price' => $returnItem->unit_price,
+                                            'total_price' => $returnItem->unit_price,
+                                            'condition' => $itemData['condition'],
+                                            'is_received' => false,
+                                        ]);
+                                    }
+                                }
                             } else {
-                                // Create new ReturnItem for additional allocations
-                                ReturnItem::create([
-                                    'return_id' => $returnRequest->id,
-                                    'product_id' => $returnItem->product_id,
-                                    'product_variant_id' => $returnItem->product_variant_id,
-                                    'batch_id' => $alloc['batch_id'],
-                                    'batch_serial_id' => $alloc['batch_serial_id'] ?? null,
-                                    'quantity' => $alloc['quantity'],
-                                    'unit_price' => $returnItem->unit_price,
-                                    'total_price' => $alloc['quantity'] * $returnItem->unit_price,
-                                    'condition' => $itemData['condition'],
-                                    'is_received' => false,
-                                ]);
+                                if ($firstAlloc) {
+                                    // Update existing ReturnItem with first allocation
+                                    $returnItem->update([
+                                        'condition' => $itemData['condition'],
+                                        'batch_id' => $alloc['batch_id'],
+                                        'batch_serial_id' => null,
+                                        'quantity' => $alloc['quantity'],
+                                        'total_price' => $alloc['quantity'] * $returnItem->unit_price,
+                                    ]);
+                                    $firstAlloc = false;
+                                } else {
+                                    // Create new ReturnItem for additional allocations
+                                    ReturnItem::create([
+                                        'return_id' => $returnRequest->id,
+                                        'product_id' => $returnItem->product_id,
+                                        'product_variant_id' => $returnItem->product_variant_id,
+                                        'batch_id' => $alloc['batch_id'],
+                                        'batch_serial_id' => null,
+                                        'quantity' => $alloc['quantity'],
+                                        'unit_price' => $returnItem->unit_price,
+                                        'total_price' => $alloc['quantity'] * $returnItem->unit_price,
+                                        'condition' => $itemData['condition'],
+                                        'is_received' => false,
+                                    ]);
+                                }
                             }
                         }
                     } else {
@@ -369,7 +399,7 @@ class ReturnService
     {
         return \App\Models\BatchSerial::where('order_item_id', $orderItemId)
             ->where('batch_id', $batchId)
-            ->where('stock_status', 'shipped')
+            ->where('stock_status', 'sold')
             ->get(['id', 'serial_no']);
     }
 }

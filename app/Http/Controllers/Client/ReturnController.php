@@ -31,7 +31,7 @@ class ReturnController extends Controller
         }
 
         if ($order->order_status !== 'Delivered') {
-            return response()->json(['message' => 'Returns are only allowed for delivered orders. Current status: ' . $order->order_status], 400);
+            return response()->json(['message' => 'Returns are only allowed for delivered orders. Current status: '.$order->order_status], 400);
         }
 
         if ($this->returnService->checkExistingReturn($order->id)) {
@@ -46,16 +46,22 @@ class ReturnController extends Controller
 
     public function store(ReturnRequestStoreRequest $request): JsonResponse
     {
-        if ($this->returnService->checkExistingReturn($request->order_id_pk)) {
-            return response()->json(['message' => 'A return request has already been submitted for this order.'], 400);
+        try {
+            if ($this->returnService->checkExistingReturn($request->order_id_pk)) {
+                return response()->json(['message' => 'A return request has already been submitted for this order.'], 400);
+            }
+
+            $this->returnService->storeReturnRequest($request->validated());
+
+            return response()->json([
+                'message' => 'Return request submitted successfully.',
+                'order_id' => $request->order_id,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to submit return request: '.$e->getMessage(),
+            ], 500);
         }
-
-        $this->returnService->storeReturnRequest($request->validated());
-
-        return response()->json([
-            'message' => 'Return request submitted successfully.',
-            'order_id' => $request->order_id,
-        ]);
     }
 
     public function track(Request $request): JsonResponse

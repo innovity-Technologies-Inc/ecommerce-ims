@@ -138,6 +138,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-121:** Advanced Order Inventory Processing: Implement `ordered_product_batches` table to track multiple batches per order item. Add `total_cost` to `orders` and `order_items` tables. Update Shipped status workflow to support multi-batch selection, automated procurement cost calculation, and aggregate stock ledger entries.
 - [x] **REQ-122:** Advanced Return Inventory Processing: Implement batch and serial selection for returns. For 'intact' returns, increase stock levels across products, variants, batches, batch_products, and inventory_levels. Update ordered quantities in orders, order_items, and ordered_product_batches. For 'damaged' returns, mark serials as damaged and move to wastage.
 - [ ] **REQ-123:** Multiple Image Uploads for Returns: Enable clients to upload multiple images when requesting a return. Store images in a dedicated `return_images` table and display them in the admin return request details view.
+- [x] **REQ-124:** Return Request UI & Logic Fix: Expand the return approval form to full-width. Ensure batch and serial selection only shows items originally shipped to the customer for that specific order.
 
  
  
