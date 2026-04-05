@@ -135,9 +135,11 @@ This document lists the high-level requirements for the modules implemented in t
 - [ ] **REQ-118:** Order Inventory Selection: Connect order flow with inventory. When status is changed to 'Shipped', allow selection of specific warehouses, batches, and serial numbers. Update stock status to 'Shipped' and then to 'Sold' upon delivery, with corresponding stock ledger entries.
 - [x] **REQ-119:** Inventory Costing Refinement: Move `unit_cost` from `products`, `product_variants`, and `stock_ledgers` to `batch_products`. Remove `cost` from `stock_ledgers`. Update Admin UI to show `unit_cost` in Batch details instead of Product details.
 - [x] **REQ-120:** Granular Stock Ledger Entries: Ensure that stock movements for serial-tracked items are logged as individual entries (change_qty: 1 or -1) per serial number in the `stock_ledgers` table. Added `batch_serial_id` to `stock_ledgers`. (UI Table removed per user request).
-- [ ] **REQ-121:** Advanced Order Inventory Processing: Implement `ordered_product_batches` table to track multiple batches per order item. Add `total_cost` to `orders` and `order_items` tables. Update Shipped status workflow to support multi-batch selection, automated procurement cost calculation, and aggregate stock ledger entries.
-R E Q - 1 1 2 :   R e m o v e   ' D e l i v e r e d '   s t a t u s   o p t i o n   f r o m   P u r c h a s e   O r d e r   c r e a t i o n   a n d   e d i t   f o r m s   t o   e n s u r e   i n v e n t o r y   t r a c k i n g   i n t e g r i t y .  
- R E Q - 1 1 3 :   R e f a c t o r   D a m a g e d   P r o d u c t s   r e p o r t   t o   p r i o r i t i z e   B a t c h   N u m b e r ,   r e m o v e   s a l e a b l e   q u a n t i t y ,   a n d   s h o w   g r a n u l a r   d a m a g e d   s e r i a l s   i n   d e t a i l s .  
- R E Q - 1 1 4 :   A d d   ' S t o c k   D e t a i l s '   b u t t o n   t o   W a r e h o u s e   i n d e x   t o   v i e w   g r a n u l a r   w a r e h o u s e - w i s e   i n v e n t o r y ,   b a t c h e s ,   a n d   s e r i a l s .  
- R E Q - 1 1 5 :   R e f a c t o r   A d m i n   S i d e b a r   t o   e l e v a t e   I n v e n t o r y   s u b m e n u s   t o   t o p - l e v e l   m e n u   i t e m s   f o r   b e t t e r   a c c e s s i b i l i t y .  
+- [x] **REQ-121:** Advanced Order Inventory Processing: Implement `ordered_product_batches` table to track multiple batches per order item. Add `total_cost` to `orders` and `order_items` tables. Update Shipped status workflow to support multi-batch selection, automated procurement cost calculation, and aggregate stock ledger entries.
+- [x] **REQ-122:** Advanced Return Inventory Processing: Implement batch and serial selection for returns. For 'intact' returns, increase stock levels across products, variants, batches, batch_products, and inventory_levels. Update ordered quantities in orders, order_items, and ordered_product_batches. For 'damaged' returns, mark serials as damaged and move to wastage.
+
+ 
+ 
+ 
+ 
  

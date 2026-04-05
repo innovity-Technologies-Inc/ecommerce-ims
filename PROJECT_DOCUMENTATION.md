@@ -494,34 +494,24 @@ Every module or architectural change must be documented in this file before a ta
   - **Test Data:** A dedicated `test_data/` directory is maintained with pre-filled CSV and XLSX files for rapid verification of import logic.
 
 ### 3.27 Return Module
-- **What:** A comprehensive return management system allowing both guests and authenticated users to request returns for delivered items, with a full administrative workflow for approval, receiving, and stock/sales adjustment.
+- **What:** A comprehensive return management system allowing both guests and authenticated users to request returns for delivered items, with a granular administrative workflow for batch/serial allocation, stock restoration, and financial adjustment.
 - **How it Works:**
-  - **Guest Returns:** Unauthenticated users can access a dedicated "/returns" page, enter their Order ID, and fetch order details via AJAX. **Validation:** The system only allows fetching product details if the order status is 'Delivered'; otherwise, an error message is returned.
-  - **Authenticated Returns:** Logged-in users see a "Request Return" button directly within their Order Details page if the order is marked as "Delivered".
-  - **Admin Approval Workflow:** Admins review requests in the "Return Requests" submenu. They can:
-    - **Approve:** Must specify the condition for each item (Intact or Damage).
-    - **Reject:** Must provide a rejection reason.
-  - **Receiving Workflow:** Once approved, the request moves to a "Processing" state. After physically receiving the items, the admin marks the return as "Received".
-  - **Stock & Sales Adjustment:** 
-    - **Intact Items:** Automatically restocked (incremented) in the `products` or `product_variants` table. The product's `sales_count` is decremented.
-    - **Damaged Items:** Automatically added to the `wastages` table for loss tracking. They are NOT restocked.
-  - **Status Tracking:** Customers can track their return status (Pending, Approved, Rejected, Received) by entering their Order ID on the return page.
+  - **Guest & Authenticated Returns:** Users can request returns for items in 'Delivered' orders.
+  - **Admin Approval (Dynamic Allocation):** When approving a return, admins must specify the condition (Intact or Damage) and allocate the return to specific batches and serial numbers.
+    - **Allocation Source:** The system only allows selecting from batches and serials that were used to fulfill the original order, ensuring data integrity.
+    - **Multi-Batch Returns:** Supports returning a single item quantity across multiple batches if the original order was fulfilled from multiple batches.
+  - **Receiving Workflow:** Once marked as 'Received', the system executes atomic transactions to update inventory and financial records.
+  - **Stock & Sales Adjustment:**
+    - **Intact Items (Restock):** Increases stock levels across five tables: `products`, `product_variants`, `batches`, `batch_products`, and `inventory_levels`. Serials are marked as `in_stock`.
+    - **Damaged Items (Wastage):** Serials are marked as `damaged` and the `stock_status` is set to `returned`. Items are added to the `wastages` table for loss tracking.
+    - **Order Synchronization:** Decrements `quantity` and `total_price` in the original `order_items` table and updates `quantity` and `subtotal_cost` in the `ordered_product_batches` table. The main `orders` table's `subtotal`, `total_amount`, and `total_cost` are adjusted accordingly.
+    - **Ledger Integration:** Logs **aggregate stock ledger entries** (one per batch allocation) for 'intact' returns.
 - **Data & Storage:**
-  - **Related Tables:** `returns`, `return_items`, `wastages`, `products`, `product_variants`
-  - **Storage:** Stores return headers, granular item conditions, proof images, and loss tracking for damaged units.
-  - **Fetching:** `ReturnService` manages the complex workflow; `FlexSearch` is used for high-performance administrative indexing of requests and wastages.
+  - **Related Tables:** `returns`, `return_items`, `wastages`, `products`, `product_variants`, `batches`, `batch_products`, `inventory_levels`, `batch_serials`, `order_items`, `ordered_product_batches`, `orders`
+  - **Linkage:** `return_items` stores `batch_id` and `batch_serial_id` for granular unit tracking.
 - **Implementation Details:**
-  - **`ReturnService`:** Orchestrates the entire lifecycle, including multi-item return logic, image handling via `HelperClass`, and the complex database transactions for receiving.
-  - **Database Architecture:**
-    - `returns`: Stores the main request metadata, status, and proof image.
-    - `return_items`: Stores granular data for each item being returned, including its condition and received status.
-    - `wastages`: A dedicated table to track products lost due to damage.
-  - **Inventory Reports & Wastage Tracking:** 
-    - **Stock & Batch Reports:** Accessible under the **Inventory** sidebar menu.
-    - **Wastage Tracking:** The **Wastages** menu item (previously under Returns) has been moved to the **Inventory** section for better categorization, allowing admins to track damaged items and physical losses alongside other inventory reports.
-  - **FlexSearch Integration:** Admin index pages for Requests, Returned Products, and Wastages all utilize `FlexSearch` for high-performance filtering and searching.
-  - **UI/UX:** Uses AJAX for real-time order fetching on the client-side and a clean "Receiving Workflow" panel in the admin details view.
-
+  - **`ReturnService`:** Manages the complex grouped update logic, ensuring that stock is only restored for intact items while financial totals are adjusted for all returned units.
+  - **UI/UX:** The Return Request details page uses a dynamic allocation interface similar to the Shipped status flow, allowing for precise tracking of returned physical units.
 ### 3.28 Role-Based Access Control (RBAC) Module
 - **What:** A comprehensive security layer for managing administrative access using the `spatie/laravel-permission` package. It ensures that administrators can only perform operations explicitly granted to their roles.
 - **How it Works:**

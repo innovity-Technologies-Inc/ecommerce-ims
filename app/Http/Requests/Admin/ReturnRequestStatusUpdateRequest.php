@@ -26,6 +26,10 @@ class ReturnRequestStatusUpdateRequest extends FormRequest
             'rejection_reason' => 'required_if:status,rejected|string|nullable',
             'items' => 'required_if:status,approved|array',
             'items.*.condition' => 'required_with:items|in:damage,intact',
+            'items.*.allocations' => 'required_if:status,approved|array',
+            'items.*.allocations.*.batch_id' => 'required_if:status,approved|exists:batches,id',
+            'items.*.allocations.*.quantity' => 'required_if:status,approved|integer|min:1',
+            'items.*.allocations.*.batch_serial_id' => 'nullable|exists:batch_serials,id',
         ];
     }
 

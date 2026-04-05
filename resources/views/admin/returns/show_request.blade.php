@@ -125,15 +125,41 @@
                                 <textarea name="rejection_reason" class="form-control" rows="3"></textarea>
                             </div>
 
-                            <div id="condition_container" class="d-none mb-3">
-                                <label class="form-label fw-bold mb-3 border-bottom pb-2 w-100">Set Item Conditions</label>
+                            <div id="condition_container" class="d-none mt-3">
+                                <h6 class="text-uppercase fw-bold text-primary mb-3">Return Allocation</h6>
                                 @foreach($request->returnItems as $item)
-                                    <div class="mb-3">
-                                        <p class="mb-1 small fw-bold">{{ $item->product->name }}</p>
-                                        <select name="items[{{ $item->id }}][condition]" class="form-select form-select-sm" required>
-                                            <option value="intact">Intact (Restock)</option>
-                                            <option value="damage">Damage (Wastage)</option>
-                                        </select>
+                                    <div class="card border mb-3 shadow-none return-item-card" 
+                                         data-item-id="{{ $item->id }}" 
+                                         data-order-item-id="{{ \App\Models\OrderItem::where('order_id', $request->order_id)->where('product_id', $item->product_id)->where('product_variant_id', $item->product_variant_id)->first()->id ?? 0 }}"
+                                         data-target-qty="{{ $item->quantity }}"
+                                         data-product-name="{{ $item->product->name }}">
+                                        <div class="card-header bg-light-subtle py-2 d-flex justify-content-between align-items-center">
+                                            <div class="fw-bold small text-dark">
+                                                {{ $item->product->name }}
+                                                <span class="badge bg-soft-primary text-primary ms-2">Return Qty: {{ $item->quantity }}</span>
+                                            </div>
+                                            <div class="allocation-status small">
+                                                Allocated: <span class="current-allocated-qty fw-bold">0</span> / {{ $item->quantity }}
+                                            </div>
+                                        </div>
+                                        <div class="card-body p-2">
+                                            <div class="mb-2">
+                                                <label class="form-label small fw-bold text-muted mb-1">Condition <span class="text-danger">*</span></label>
+                                                <select name="items[{{ $item->id }}][condition]" class="form-select form-select-sm" required>
+                                                    <option value="intact">Intact (Restock)</option>
+                                                    <option value="damage">Damage (Wastage)</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="allocation-rows-container mt-2">
+                                                {{-- Allocation rows will be added here --}}
+                                            </div>
+                                            <div class="mt-2">
+                                                <button type="button" class="btn btn-sm btn-soft-success add-allocation-row-btn">
+                                                    <i class="bx bx-plus me-1"></i> Add Batch Allocation
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>
@@ -182,17 +208,46 @@
     </div>
 </div>
 
+{{-- Serial Selection Modal --}}
+<div class="modal fade" id="serialSelectionModal" tabindex="-1" aria-labelledby="serialSelectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title" id="serialSelectionModalLabel">Select Serials for <span id="modal-product-name"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-soft-info border-0 mb-3">
+                    Please select exactly <strong id="modal-target-qty"></strong> serials. Currently selected: <strong id="modal-current-count">0</strong>
+                </div>
+                <div id="modal-serial-list" class="row">
+                    {{-- Serials will be populated here --}}
+                </div>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmSerials">Confirm Selection</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('scripts')
 <script>
     $(document).ready(function() {
+        let currentItemContext = null;
+        let availableSerials = {};
+        let selectedSerials = {};
+
         $('#status_toggle').on('change', function() {
             const val = $(this).val();
             if (val === 'approved') {
                 $('#condition_container').removeClass('d-none');
                 $('#rejection_container').addClass('d-none');
                 $('#rejection_container textarea').removeAttr('required');
+                initializeReturnAllocation();
             } else if (val === 'rejected') {
                 $('#rejection_container').removeClass('d-none');
                 $('#rejection_container textarea').attr('required', 'required');
@@ -200,6 +255,269 @@
             } else {
                 $('#condition_container').addClass('d-none');
                 $('#rejection_container').addClass('d-none');
+            }
+        });
+
+        function initializeReturnAllocation() {
+            $('.return-item-card').each(function() {
+                const card = $(this);
+                if (card.find('.allocation-row').length === 0) {
+                    addReturnAllocationRow(card);
+                }
+            });
+        }
+
+        function addReturnAllocationRow(card) {
+            const itemId = card.data('item-id');
+            const orderItemId = card.data('order-item-id');
+            const rowUniqueId = `row_${itemId}_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+
+            const rowHtml = `
+                <div class="allocation-row border rounded p-2 mb-2 bg-white" data-row-id="${rowUniqueId}">
+                    <div class="row g-2 align-items-center">
+                        <div class="col-md-8">
+                            <label class="small text-muted mb-1 d-block">Batch <span class="text-danger">*</span></label>
+                            <select name="items[${itemId}][allocations][${rowUniqueId}][batch_id]" class="form-select form-select-sm return-batch-select" data-order-item-id="${orderItemId}" required>
+                                <option value="">Select Batch</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="small text-muted mb-1 d-block">Qty <span class="text-danger">*</span></label>
+                            <input type="number" name="items[${itemId}][allocations][${rowUniqueId}][quantity]" class="form-control form-control-sm allocation-qty" placeholder="Qty" min="1" required>
+                        </div>
+                        <div class="col-md-2 text-end pt-3">
+                            <button type="button" class="btn btn-sm btn-outline-danger remove-row-btn d-none">
+                                <i class="bx bx-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="serial-container d-none mt-2 pt-2 border-top border-dashed">
+                        <button type="button" class="btn btn-xs btn-soft-primary select-serials-btn" 
+                                data-item-id="${itemId}" 
+                                data-row-id="${rowUniqueId}">
+                            <i class="bx bx-list-check me-1"></i> Select Serials
+                        </button>
+                        <div class="selected-serials-display mt-1 small text-primary fw-bold"></div>
+                        <div class="selected-serials-inputs"></div>
+                    </div>
+                </div>
+            `;
+
+            const $row = $(rowHtml);
+            card.find('.allocation-rows-container').append($row);
+            
+            if (card.find('.allocation-row').length > 1) {
+                $row.find('.remove-row-btn').removeClass('d-none');
+            }
+
+            // Load batches from ORIGINAL ORDER
+            const batchSelect = $row.find('.return-batch-select');
+            $.ajax({
+                url: "{{ route('admin.returns.ajax.get-order-batches') }}",
+                data: { order_item_id: orderItemId },
+                success: function(data) {
+                    batchSelect.empty().append('<option value="">Select Batch</option>');
+                    data.forEach(b => {
+                        batchSelect.append(`<option value="${b.id}">${b.batch_number} (Shipped: ${b.shipped_qty})</option>`);
+                    });
+                }
+            });
+        }
+
+        $(document).on('click', '.add-allocation-row-btn', function() {
+            addReturnAllocationRow($(this).closest('.return-item-card'));
+        });
+
+        $(document).on('click', '.remove-row-btn', function() {
+            const row = $(this).closest('.allocation-row');
+            const card = row.closest('.return-item-card');
+            const rowId = row.data('row-id');
+            delete availableSerials[rowId];
+            delete selectedSerials[rowId];
+            row.remove();
+            calculateReturnAllocatedTotal(card);
+        });
+
+        $(document).on('change', '.return-batch-select', function() {
+            const select = $(this);
+            const batchId = select.val();
+            const row = select.closest('.allocation-row');
+            const orderItemId = select.data('order-item-id');
+            const serialContainer = row.find('.serial-container');
+            const rowId = row.data('row-id');
+
+            row.find('.selected-serials-display').empty();
+            row.find('.selected-serials-inputs').empty();
+            delete selectedSerials[rowId];
+
+            if (batchId) {
+                $.ajax({
+                    url: "{{ route('admin.returns.ajax.get-order-serials') }}",
+                    data: { order_item_id: orderItemId, batch_id: batchId },
+                    success: function(data) {
+                        if (data && data.length > 0) {
+                            availableSerials[rowId] = data;
+                            selectedSerials[rowId] = [];
+                            serialContainer.removeClass('d-none');
+                        } else {
+                            availableSerials[rowId] = null;
+                            serialContainer.addClass('d-none');
+                        }
+                    }
+                });
+            } else {
+                serialContainer.addClass('d-none');
+            }
+        });
+
+        $(document).on('input', '.allocation-qty', function() {
+            calculateReturnAllocatedTotal($(this).closest('.return-item-card'));
+        });
+
+        function calculateReturnAllocatedTotal(card) {
+            let total = 0;
+            card.find('.allocation-qty').each(function() {
+                total += parseInt($(this).val()) || 0;
+            });
+            card.find('.current-allocated-qty').text(total);
+            
+            const target = card.data('target-qty');
+            if (total > target) {
+                card.find('.current-allocated-qty').addClass('text-danger');
+            } else {
+                card.find('.current-allocated-qty').removeClass('text-danger');
+            }
+        }
+
+        $(document).on('click', '.select-serials-btn', function() {
+            const btn = $(this);
+            const row = btn.closest('.allocation-row');
+            const card = row.closest('.return-item-card');
+            const qty = parseInt(row.find('.allocation-qty').val()) || 0;
+
+            if (qty <= 0) {
+                toastr.error('Please enter a valid quantity first.');
+                return;
+            }
+
+            currentItemContext = {
+                itemId: card.data('item-id'),
+                rowId: row.data('row-id'),
+                targetQty: qty,
+                productName: card.data('product-name')
+            };
+
+            $('#modal-product-name').text(currentItemContext.productName);
+            $('#modal-target-qty').text(currentItemContext.targetQty);
+            
+            populateSerialModal();
+            $('#serialSelectionModal').modal('show');
+        });
+
+        function populateSerialModal() {
+            const list = $('#modal-serial-list');
+            list.empty();
+            const rowId = currentItemContext.rowId;
+            const serials = availableSerials[rowId] || [];
+            const selected = selectedSerials[rowId] || [];
+
+            const allOtherSelectedIds = [];
+            Object.keys(selectedSerials).forEach(rId => {
+                if (rId !== rowId) {
+                    allOtherSelectedIds.push(...selectedSerials[rId]);
+                }
+            });
+
+            serials.forEach(s => {
+                const isSelectedElsewhere = allOtherSelectedIds.includes(s.id.toString()) || allOtherSelectedIds.includes(s.id);
+                if (isSelectedElsewhere) return; 
+
+                const isChecked = selected.includes(s.id.toString()) || selected.includes(s.id);
+                list.append(`
+                    <div class="col-md-4 mb-2">
+                        <div class="form-check border p-2 rounded">
+                            <input class="form-check-input ms-0 serial-checkbox" type="checkbox" value="${s.id}" id="s_${s.id}" data-serial-no="${s.serial_no}" ${isChecked ? 'checked' : ''}>
+                            <label class="form-check-label ms-2" for="s_${s.id}">${s.serial_no}</label>
+                        </div>
+                    </div>
+                `);
+            });
+            updateSerialModalCount();
+        }
+
+        $(document).on('change', '.serial-checkbox', function() {
+            updateSerialModalCount();
+        });
+
+        function updateSerialModalCount() {
+            const count = $('.serial-checkbox:checked').length;
+            $('#modal-current-count').text(count);
+            if (count > currentItemContext.targetQty) {
+                $('#modal-current-count').addClass('text-danger');
+            } else {
+                $('#modal-current-count').removeClass('text-danger');
+            }
+        }
+
+        $('#confirmSerials').on('click', function() {
+            const selected = [];
+            const serialNos = [];
+            $('.serial-checkbox:checked').each(function() {
+                selected.push($(this).val());
+                serialNos.push($(this).data('serial-no'));
+            });
+
+            if (selected.length != currentItemContext.targetQty) {
+                toastr.error(`Please select exactly ${currentItemContext.targetQty} serials.`);
+                return;
+            }
+
+            const rowId = currentItemContext.rowId;
+            selectedSerials[rowId] = selected;
+            
+            const row = $(`.allocation-row[data-row-id="${rowId}"]`);
+            const display = row.find('.selected-serials-display');
+            const inputs = row.find('.selected-serials-inputs');
+            
+            display.html('<i class="bx bx-check-double me-1"></i> Selected: ' + serialNos.join(', '));
+            
+            inputs.empty();
+            selected.forEach(id => {
+                inputs.append(`<input type="hidden" name="items[${currentItemContext.itemId}][allocations][${rowId}][batch_serial_id]" value="${id}">`);
+            });
+
+            $('#serialSelectionModal').modal('hide');
+        });
+
+        $('form').on('submit', function(e) {
+            if ($('#status_toggle').val() === 'approved') {
+                let valid = true;
+                $('.return-item-card').each(function() {
+                    const card = $(this);
+                    const target = card.data('target-qty');
+                    let totalAllocated = 0;
+                    
+                    card.find('.allocation-row').each(function() {
+                        const row = $(this);
+                        const rowId = row.data('row-id');
+                        const qty = parseInt(row.find('.allocation-qty').val()) || 0;
+                        totalAllocated += qty;
+
+                        if (availableSerials[rowId] && (!selectedSerials[rowId] || selectedSerials[rowId].length !== qty)) {
+                            toastr.error(`Please select serials for ${card.data('product-name')} in all batches.`);
+                            valid = false;
+                            return false;
+                        }
+                    });
+
+                    if (totalAllocated !== target) {
+                        toastr.error(`Total allocated quantity (${totalAllocated}) must equal return quantity (${target}) for ${card.data('product-name')}.`);
+                        valid = false;
+                        return false;
+                    }
+                });
+                
+                if (!valid) return false;
             }
         });
     });

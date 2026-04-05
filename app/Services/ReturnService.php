@@ -101,9 +101,43 @@ class ReturnService
             if ($data['status'] === 'approved') {
                 foreach ($data['items'] as $itemId => $itemData) {
                     $returnItem = ReturnItem::findOrFail($itemId);
-                    $returnItem->update([
-                        'condition' => $itemData['condition'],
-                    ]);
+
+                    // Handle Multiple Allocations (Splitting ReturnItem if needed)
+                    if (! empty($itemData['allocations'])) {
+                        $firstAlloc = true;
+                        foreach ($itemData['allocations'] as $alloc) {
+                            if ($firstAlloc) {
+                                // Update existing ReturnItem with first allocation
+                                $returnItem->update([
+                                    'condition' => $itemData['condition'],
+                                    'batch_id' => $alloc['batch_id'],
+                                    'batch_serial_id' => $alloc['batch_serial_id'] ?? null,
+                                    'quantity' => $alloc['quantity'],
+                                    'total_price' => $alloc['quantity'] * $returnItem->unit_price,
+                                ]);
+                                $firstAlloc = false;
+                            } else {
+                                // Create new ReturnItem for additional allocations
+                                ReturnItem::create([
+                                    'return_id' => $returnRequest->id,
+                                    'product_id' => $returnItem->product_id,
+                                    'product_variant_id' => $returnItem->product_variant_id,
+                                    'batch_id' => $alloc['batch_id'],
+                                    'batch_serial_id' => $alloc['batch_serial_id'] ?? null,
+                                    'quantity' => $alloc['quantity'],
+                                    'unit_price' => $returnItem->unit_price,
+                                    'total_price' => $alloc['quantity'] * $returnItem->unit_price,
+                                    'condition' => $itemData['condition'],
+                                    'is_received' => false,
+                                ]);
+                            }
+                        }
+                    } else {
+                        // Fallback for non-granular (though UI should prevent this)
+                        $returnItem->update([
+                            'condition' => $itemData['condition'],
+                        ]);
+                    }
                 }
             }
 
@@ -119,72 +153,135 @@ class ReturnService
 
             $order = $returnRequest->order;
 
-            foreach ($returnRequest->returnItems as $item) {
-                $item->update(['is_received' => true]);
+            // Group items by Batch, Product, and Variant for aggregate updates
+            $groupedItems = $returnRequest->returnItems->groupBy(function ($item) {
+                return ($item->batch_id ?? '0').'-'.$item->product_id.'-'.($item->product_variant_id ?? '0');
+            });
 
-                if ($item->condition === 'intact') {
-                    // Restock
-                    if ($item->product_variant_id) {
-                        $variant = \App\Models\ProductVariant::find($item->product_variant_id);
-                        if ($variant) {
-                            $variant->increment('stock', $item->quantity);
+            foreach ($groupedItems as $group) {
+                $firstItem = $group->first();
+                $totalQty = $group->sum('quantity');
+                $totalPrice = $group->sum('total_price');
+
+                // 1. Process Stock & Status for each item in group
+                foreach ($group as $item) {
+                    $item->update(['is_received' => true]);
+
+                    if ($item->condition === 'intact') {
+                        // Mark Serial as In-Stock if exists
+                        if ($item->batch_serial_id) {
+                            \App\Models\BatchSerial::where('id', $item->batch_serial_id)->update([
+                                'product_status' => 'good',
+                                'stock_status' => 'in_stock',
+                                'order_item_id' => null, // Unlink from original order
+                            ]);
                         }
-                    } else {
-                        $product = \App\Models\Product::find($item->product_id);
-                        if ($product) {
-                            $product->increment('stock', $item->quantity);
+                    } elseif ($item->condition === 'damage') {
+                        // Mark Serial as Damaged/Wastage if exists
+                        if ($item->batch_serial_id) {
+                            \App\Models\BatchSerial::where('id', $item->batch_serial_id)->update([
+                                'product_status' => 'damaged',
+                                'stock_status' => 'returned', // Keep 'returned' but mark status as damaged
+                            ]);
+                        }
+
+                        Wastage::create([
+                            'product_id' => $item->product_id,
+                            'product_variant_id' => $item->product_variant_id,
+                            'quantity' => $item->quantity,
+                            'reason' => 'Damaged return ('.$returnRequest->return_id.')',
+                            'return_id' => $returnRequest->id,
+                        ]);
+                    }
+                }
+
+                // 2. Aggregate Inventory Updates (Only for INTACT items in the group)
+                $intactQty = $group->where('condition', 'intact')->sum('quantity');
+                if ($intactQty > 0 && $firstItem->batch_id) {
+                    $batch = \App\Models\Batch::find($firstItem->batch_id);
+                    if ($batch) {
+                        // Increment physical stock in all tables
+
+                        // a. Global Product/Variant Stock
+                        if ($firstItem->product_variant_id) {
+                            \App\Models\ProductVariant::where('id', $firstItem->product_variant_id)->increment('stock', $intactQty);
+                        } else {
+                            \App\Models\Product::where('id', $firstItem->product_id)->increment('stock', $intactQty);
+                        }
+
+                        // b. Batch Totals
+                        $batch->increment('total_saleable_qty', $intactQty);
+
+                        // c. BatchProduct Totals
+                        \App\Models\BatchProduct::where([
+                            'batch_id' => $firstItem->batch_id,
+                            'product_id' => $firstItem->product_id,
+                            'product_variant_id' => $firstItem->product_variant_id,
+                        ])->increment('saleable_qty', $intactQty);
+
+                        // d. Inventory Level (Warehouse + Batch)
+                        \App\Models\InventoryLevel::where([
+                            'warehouse_id' => $batch->warehouse_id,
+                            'batch_id' => $firstItem->batch_id,
+                            'product_id' => $firstItem->product_id,
+                            'product_variant_id' => $firstItem->product_variant_id,
+                        ])->increment('current_quantity', $intactQty);
+
+                        // Log to Stock Ledger
+                        $this->inventoryService->logStockChange(
+                            productId: $firstItem->product_id,
+                            variantId: $firstItem->product_variant_id,
+                            warehouseId: $batch->warehouse_id,
+                            changeQty: $intactQty,
+                            transactionType: 'RTV_DISPATCH',
+                            reasonCode: 'INTACT_RETURN',
+                            referenceId: $returnRequest->return_id,
+                            batchId: $firstItem->batch_id
+                        );
+                    }
+                }
+
+                // 3. Financial & Quantity Reductions in Original Order (For ALL returned items)
+                $product = \App\Models\Product::find($firstItem->product_id);
+                if ($product) {
+                    $product->decrement('sales_count', $totalQty);
+                }
+
+                $order->subtotal -= $totalPrice;
+                $order->total_amount -= $totalPrice;
+
+                // Update OrderItem quantity
+                $orderItem = \App\Models\OrderItem::where('order_id', $order->id)
+                    ->where('product_id', $firstItem->product_id)
+                    ->where('product_variant_id', $firstItem->product_variant_id)
+                    ->first();
+
+                if ($orderItem) {
+                    $orderItem->decrement('quantity', $totalQty);
+                    $orderItem->decrement('total_price', $totalPrice);
+
+                    // Reduce from ordered_product_batches if possible
+                    if ($firstItem->batch_id) {
+                        $opb = \App\Models\OrderedProductBatch::where([
+                            'order_item_id' => $orderItem->id,
+                            'batch_id' => $firstItem->batch_id,
+                        ])->first();
+
+                        if ($opb) {
+                            $reducedQty = min($opb->quantity, $totalQty);
+                            $costReduction = $reducedQty * $opb->unit_cost;
+
+                            $opb->decrement('quantity', $reducedQty);
+                            $opb->decrement('subtotal_cost', $costReduction);
+
+                            $orderItem->decrement('total_cost', $costReduction);
+                            $order->decrement('total_cost', $costReduction);
+
+                            if ($opb->quantity <= 0) {
+                                $opb->delete();
+                            }
                         }
                     }
-
-                    // Decrease product sales count
-                    $product = \App\Models\Product::find($item->product_id);
-                    if ($product) {
-                        $product->decrement('sales_count', $item->quantity);
-                    }
-
-                    // Adjust Order and OrderItem for Dashboard
-                    $order->subtotal -= $item->total_price;
-                    $order->total_amount -= $item->total_price;
-
-                    $orderItem = \App\Models\OrderItem::where('order_id', $order->id)
-                        ->where('product_id', $item->product_id)
-                        ->where('product_variant_id', $item->product_variant_id)
-                        ->first();
-
-                    if ($orderItem) {
-                        $orderItem->decrement('quantity', $item->quantity);
-                        $orderItem->decrement('total_price', $item->total_price);
-                    }
-
-                    // Log to Stock Ledger (Intact return to pool)
-                    $this->inventoryService->logStockChange(
-                        $item->product_id,
-                        $item->product_variant_id,
-                        null,
-                        $item->quantity,
-                        'RTV_DISPATCH',
-                        'INTACT_RETURN',
-                        $returnRequest->return_id
-                    );
-                } elseif ($item->condition === 'damage') {
-                    Wastage::create([
-                        'product_id' => $item->product_id,
-                        'product_variant_id' => $item->product_variant_id,
-                        'quantity' => $item->quantity,
-                        'reason' => 'Damaged return',
-                        'return_id' => $returnRequest->id,
-                    ]);
-
-                    // Log to Stock Ledger (Damaged - not restocked but tracked as adjustment)
-                    $this->inventoryService->logStockChange(
-                        $item->product_id,
-                        $item->product_variant_id,
-                        null,
-                        0, // Stock didn't change (wasn't restocked), but we log the wastage event
-                        'ADJUSTMENT',
-                        'SHRINKAGE_LOST_DAMAGED_RETURN',
-                        $returnRequest->return_id
-                    );
                 }
             }
 
@@ -228,5 +325,33 @@ class ReturnService
         return ReturnRequest::whereHas('order', function ($query) use ($orderId) {
             $query->where('order_id', $orderId);
         })->latest()->first();
+    }
+
+    /**
+     * Get batches that were used to fulfill a specific order item.
+     */
+    public function getOrderBatches(int $orderItemId): \Illuminate\Support\Collection
+    {
+        return \App\Models\OrderedProductBatch::with('batch')
+            ->where('order_item_id', $orderItemId)
+            ->get()
+            ->map(function ($opb) {
+                return [
+                    'id' => $opb->batch_id,
+                    'batch_number' => $opb->batch->batch_number,
+                    'shipped_qty' => $opb->quantity,
+                ];
+            });
+    }
+
+    /**
+     * Get serials that were shipped for a specific order item and batch.
+     */
+    public function getOrderSerials(int $orderItemId, int $batchId): \Illuminate\Support\Collection
+    {
+        return \App\Models\BatchSerial::where('order_item_id', $orderItemId)
+            ->where('batch_id', $batchId)
+            ->where('stock_status', 'shipped')
+            ->get(['id', 'serial_no']);
     }
 }

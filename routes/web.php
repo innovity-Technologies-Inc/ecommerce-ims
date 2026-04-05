@@ -172,6 +172,10 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::post('/requests/{id}/receive', 'receive')->name('receive')->middleware('permission:returns.edit');
         Route::get('/returned-products', 'returnedProducts')->name('returned_products');
         Route::get('/wastages', 'wastages')->name('wastages')->middleware('permission:wastage.view');
+
+        // Return Allocation AJAX
+        Route::get('/ajax/get-order-batches', 'getOrderBatches')->name('ajax.get-order-batches');
+        Route::get('/ajax/get-order-serials', 'getOrderSerials')->name('ajax.get-order-serials');
     });
 
     // Damage Entry (Wastage)

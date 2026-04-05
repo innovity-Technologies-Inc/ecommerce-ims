@@ -14,6 +14,8 @@ class ReturnItem extends Model
         'return_id',
         'product_id',
         'product_variant_id',
+        'batch_id',
+        'batch_serial_id',
         'quantity',
         'unit_price',
         'total_price',
@@ -43,5 +45,15 @@ class ReturnItem extends Model
     public function productVariant(): BelongsTo
     {
         return $this->belongsTo(ProductVariant::class);
+    }
+
+    public function batch(): BelongsTo
+    {
+        return $this->belongsTo(Batch::class);
+    }
+
+    public function serial(): BelongsTo
+    {
+        return $this->belongsTo(BatchSerial::class, 'batch_serial_id');
     }
 }

@@ -66,4 +66,24 @@ class ReturnController extends Controller
 
         return view('admin.returns.wastages', compact('wastages'));
     }
+
+    /**
+     * Get batches for an order item.
+     */
+    public function getOrderBatches(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $batches = $this->returnService->getOrderBatches($request->order_item_id);
+
+        return response()->json($batches);
+    }
+
+    /**
+     * Get serials for an order item and batch.
+     */
+    public function getOrderSerials(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $serials = $this->returnService->getOrderSerials($request->order_item_id, $request->batch_id);
+
+        return response()->json($serials);
+    }
 }
