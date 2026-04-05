@@ -26,7 +26,7 @@ class UpdateOrderStatusRequest extends FormRequest
             'rejection_reason' => 'required_if:order_status,Cancelled,Rejected|nullable|string',
             'email_notify' => 'nullable|boolean',
             'items' => 'required_if:order_status,Shipped|array',
-            'items.*.warehouse_id' => 'required_if:order_status,Shipped|exists:warehouses,id',
+            'items.*.warehouse_id' => 'required_if:order_status,Shipped|nullable|exists:warehouses,id',
             'items.*.allocations' => 'required_if:order_status,Shipped|array',
             'items.*.allocations.*.batch_id' => 'required_if:order_status,Shipped|exists:batches,id',
             'items.*.allocations.*.quantity' => 'required_if:order_status,Shipped|integer|min:1',

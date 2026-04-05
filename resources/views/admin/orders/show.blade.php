@@ -205,7 +205,7 @@
                                                 <div class="row mb-2">
                                                     <div class="col-md-12">
                                                         <label class="form-label small fw-bold text-muted mb-1">Select Warehouse <span class="text-danger">*</span></label>
-                                                        <select name="items[{{ $item->id }}][warehouse_id]" class="form-select form-select-sm item-warehouse-select" data-product-id="{{ $item->product_id }}" data-variant-id="{{ $item->product_variant_id }}" required>
+                                                        <select name="items[{{ $item->id }}][warehouse_id]" class="form-select form-select-sm item-warehouse-select" data-product-id="{{ $item->product_id }}" data-variant-id="{{ $item->product_variant_id }}">
                                                             <option value="">Select Warehouse</option>
                                                         </select>
                                                     </div>
