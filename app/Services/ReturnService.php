@@ -229,7 +229,8 @@ class ReturnService
                         if ($item->batch_serial_id) {
                             \App\Models\BatchSerial::where('id', $item->batch_serial_id)->update([
                                 'product_status' => 'damaged',
-                                'stock_status' => 'returned', // Keep 'returned' but mark status as damaged
+                                'stock_status' => 'wastage',
+                                'order_item_id' => null,
                             ]);
                         }
 
@@ -281,7 +282,7 @@ class ReturnService
                             variantId: $firstItem->product_variant_id,
                             warehouseId: $batch->warehouse_id,
                             changeQty: $intactQty,
-                            transactionType: 'RTV_DISPATCH',
+                            transactionType: 'RETURN_INTACT',
                             reasonCode: 'INTACT_RETURN',
                             referenceId: $returnRequest->return_id,
                             batchId: $firstItem->batch_id

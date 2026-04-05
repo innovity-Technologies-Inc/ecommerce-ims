@@ -30,7 +30,10 @@ You MUST strictly follow this sequence for **EVERY** request:
 5. **Documentation Update (STRICT & MANDATORY):**
     - You MUST update `PROJECT_DOCUMENTATION.md` after completing **EVERY SINGLE INSTRUCTION** or modification.
     - Reflect the new module, connections, and system flow immediately.
-    - **Detail Requirement:** Every update must include a "What" (Business purpose) and "How it Works / Implementation Details" (Technical flow, Service logic, DB interactions).
+    - **SOP: Documentation Standard (MANDATORY):** Every module or feature update must follow this specific structure:
+        - **What (Business Purpose):** High-level explanation of why the feature exists and what value it provides to the user/admin.
+        - **How it Works (Technical Flow):** A step-by-step procedure of the logic (e.g., from Request -> Service Logic -> Result). Explain the "lifecycle" of the data.
+        - **Data & Storage (DB Connectivity):** List related tables and explain HOW they are connected (e.g., "Table A connects to Table B via `id` to track X").
     - A task is ONLY complete when the documentation is updated with these technical specifics.
 
 ## 2. Architectural Patterns (MANDATORY & ENFORCED)

@@ -7,10 +7,24 @@
                 {{-- Order Items Table --}}
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">Order Details: {{ $order->order_id }}</h5>
+                        <div>
+                            <h5 class="card-title mb-0 d-inline-block me-2">Order Details: {{ $order->order_id }}</h5>
+                            @if($order->returnRequests->where('status', 'received')->count() > 0)
+                                <span class="badge bg-soft-danger text-danger">
+                                    <i class="bx bx-undo me-1"></i> Returned Items
+                                </span>
+                            @endif
+                        </div>
                         <span class="text-muted">{{ $order->created_at->format('d M, Y h:i A') }}</span>
                     </div>
                     <div class="card-body">
+                        @php
+                            $returnedItemsMap = \App\Models\ReturnItem::whereIn('return_id', $order->returnRequests->pluck('id'))
+                                ->where('is_received', true)
+                                ->get()
+                                ->groupBy(fn($ri) => $ri->product_id . '-' . ($ri->product_variant_id ?? '0'))
+                                ->map(fn($group) => $group->sum('quantity'));
+                        @endphp
                         <div class="table-responsive">
                             <table class="table table-centered mb-0">
                                 <thead class="bg-light-subtle">
@@ -23,11 +37,22 @@
                                 </thead>
                                 <tbody>
                                 @foreach($order->orderItems as $item)
+                                    @php
+                                        $key = $item->product_id . '-' . ($item->product_variant_id ?? '0');
+                                        $returnedQty = $returnedItemsMap->get($key, 0);
+                                    @endphp
                                     <tr>
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="ms-2">
-                                                    <h6 class="mb-0">{{ $item->product_name }}</h6>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <h6 class="mb-0">{{ $item->product_name }}</h6>
+                                                        @if($returnedQty > 0)
+                                                            <span class="badge bg-soft-danger text-danger">
+                                                                <i class="bx bx-undo me-1"></i> Returned: {{ $returnedQty }}
+                                                            </span>
+                                                        @endif
+                                                    </div>
                                                     @if($item->variant_name)
                                                         <small class="text-muted">{{ $item->variant_name }}</small>
                                                     @endif
