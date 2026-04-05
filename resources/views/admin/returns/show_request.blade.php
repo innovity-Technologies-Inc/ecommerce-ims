@@ -61,16 +61,34 @@
 
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">Return Reason & Image</h5>
+                    <h5 class="card-title mb-0">Return Reason & Proof Images</h5>
                 </div>
                 <div class="card-body">
                     <p class="mb-4"><strong>Reason:</strong><br>{{ $request->reason }}</p>
-                    @if($request->image)
-                        <h6 class="mb-3">Uploaded Image:</h6>
-                        <img src="{{ asset('storage/' . $request->image) }}" class="img-fluid rounded border shadow-sm" style="max-width: 300px;">
-                    @else
-                        <div class="alert alert-secondary py-2">No image uploaded.</div>
-                    @endif
+                    
+                    <h6 class="mb-3">Proof Images:</h6>
+                    <div class="row g-2">
+                        @forelse($request->returnImages as $image)
+                            <div class="col-md-3 col-sm-4 col-6">
+                                <a href="{{ asset('storage/' . $image->image_path) }}" target="_blank">
+                                    <img src="{{ asset('storage/' . $image->image_path) }}" class="img-fluid rounded border shadow-sm" style="height: 150px; width: 100%; object-fit: cover;">
+                                </a>
+                            </div>
+                        @empty
+                            @if($request->image)
+                                <div class="col-md-3 col-sm-4 col-6">
+                                    <a href="{{ asset('storage/' . $request->image) }}" target="_blank">
+                                        <img src="{{ asset('storage/' . $request->image) }}" class="img-fluid rounded border shadow-sm" style="height: 150px; width: 100%; object-fit: cover;">
+                                    </a>
+                                    <small class="text-muted d-block mt-1">Primary Image</small>
+                                </div>
+                            @else
+                                <div class="col-12">
+                                    <div class="alert alert-secondary py-2 mb-0">No images uploaded.</div>
+                                </div>
+                            @endif
+                        @endforelse
+                    </div>
                 </div>
             </div>
         </div>

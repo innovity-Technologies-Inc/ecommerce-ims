@@ -507,11 +507,21 @@ Every module or architectural change must be documented in this file before a ta
     - **Order Synchronization:** Decrements `quantity` and `total_price` in the original `order_items` table and updates `quantity` and `subtotal_cost` in the `ordered_product_batches` table. The main `orders` table's `subtotal`, `total_amount`, and `total_cost` are adjusted accordingly.
     - **Ledger Integration:** Logs **aggregate stock ledger entries** (one per batch allocation) for 'intact' returns.
 - **Data & Storage:**
-  - **Related Tables:** `returns`, `return_items`, `wastages`, `products`, `product_variants`, `batches`, `batch_products`, `inventory_levels`, `batch_serials`, `order_items`, `ordered_product_batches`, `orders`
-  - **Linkage:** `return_items` stores `batch_id` and `batch_serial_id` for granular unit tracking.
+  - **Related Tables:** `returns`, `return_items`, `return_images`, `wastages`, `products`, `product_variants`, `batches`, `batch_products`, `inventory_levels`, `batch_serials`, `order_items`, `ordered_product_batches`, `orders`
+  - **Storage:**
+    - `returns`: Stores the main request metadata, status, and rejection reason.
+    - `return_images`: Stores multiple proof image paths linked to a single return request.
+    - `return_items`: Stores granular unit tracking including batch and serial linkages.
+  - **Implementation Details:**
+    - **Multiple Proof Images:** Clients can upload multiple photos when submitting a request. The system loops through uploads, stores them via `HelperClass`, and maintains a primary image reference in the `returns` table for backward compatibility while linking all images in `return_images`.
+    - **Admin Gallery:** The Return Request details page displays all uploaded proof images in a responsive grid, allowing admins to inspect the condition of products from multiple angles before approval.
 - **Implementation Details:**
   - **`ReturnService`:** Manages the complex grouped update logic, ensuring that stock is only restored for intact items while financial totals are adjusted for all returned units.
   - **UI/UX:** The Return Request details page uses a dynamic allocation interface similar to the Shipped status flow, allowing for precise tracking of returned physical units.
+- **Implementation Details:**
+  - **`ReturnService`:** Manages the complex grouped update logic, ensuring that stock is only restored for intact items while financial totals are adjusted for all returned units.
+  - **UI/UX:** The Order Details page features a dynamic allocation interface allowing rows to be added/removed per item. It includes real-time calculation of allocated quantities.
+  - **Fulfillment Visibility:** Once allocated, the specific Warehouse, Batch, and Serial Numbers for every split allocation are displayed directly in the items table.
 ### 3.28 Role-Based Access Control (RBAC) Module
 - **What:** A comprehensive security layer for managing administrative access using the `spatie/laravel-permission` package. It ensures that administrators can only perform operations explicitly granted to their roles.
 - **How it Works:**

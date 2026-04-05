@@ -133,9 +133,9 @@
                                                     </div>
                                                     <div class="col-md-12 mt-3">
                                                         <div class="billing-info">
-                                                            <label class="fw-bold mb-2">Upload Product Photo (Optional)</label>
-                                                            <input type="file" name="image" class="form-control rounded-0">
-                                                            <small class="text-muted">JPG, PNG, WEBP (Max 2MB)</small>
+                                                            <label class="fw-bold mb-2">Upload Product Photos (Optional)</label>
+                                                            <input type="file" name="images[]" class="form-control rounded-0" multiple>
+                                                            <small class="text-muted">You can upload multiple images. JPG, PNG, WEBP (Max 2MB per image)</small>
                                                         </div>
                                                     </div>
                                                 </div>

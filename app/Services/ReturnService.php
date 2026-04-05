@@ -32,19 +32,37 @@ class ReturnService
     public function storeReturnRequest(array $data): ReturnRequest
     {
         return DB::transaction(function () use ($data) {
-            $imagePath = null;
-            if (isset($data['image'])) {
-                $imagePath = HelperClass::file_upload($data['image'], 'returns');
-            }
-
             $returnRequest = ReturnRequest::create([
                 'order_id' => $data['order_id_pk'],
                 'return_id' => 'RET-'.strtoupper(uniqid()),
                 'user_id' => Auth::check() ? Auth::id() : null,
                 'reason' => $data['reason'],
                 'status' => 'pending',
-                'image' => $imagePath,
             ]);
+
+            // Handle Multiple Images
+            if (isset($data['images']) && is_array($data['images'])) {
+                foreach ($data['images'] as $index => $image) {
+                    $path = HelperClass::file_upload($image, 'returns');
+                    \App\Models\ReturnImage::create([
+                        'return_id' => $returnRequest->id,
+                        'image_path' => $path,
+                    ]);
+
+                    // Set first image as primary for backward compatibility
+                    if ($index === 0) {
+                        $returnRequest->update(['image' => $path]);
+                    }
+                }
+            } elseif (isset($data['image'])) {
+                // Handle single image fallback
+                $path = HelperClass::file_upload($data['image'], 'returns');
+                \App\Models\ReturnImage::create([
+                    'return_id' => $returnRequest->id,
+                    'image_path' => $path,
+                ]);
+                $returnRequest->update(['image' => $path]);
+            }
 
             foreach ($data['items'] as $item) {
                 if ($item['quantity'] > 0) {

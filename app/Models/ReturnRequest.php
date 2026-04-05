@@ -37,4 +37,9 @@ class ReturnRequest extends Model
     {
         return $this->hasMany(ReturnItem::class, 'return_id');
     }
+
+    public function returnImages(): HasMany
+    {
+        return $this->hasMany(ReturnImage::class, 'return_id');
+    }
 }
