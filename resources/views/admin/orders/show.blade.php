@@ -96,7 +96,12 @@
                                         </tr>
                                         <tr>
                                             <th>Discount :</th>
-                                            <td class="text-end">${{ number_format($order->discount, 2) }}</td>
+                                            <td class="text-end">
+                                                @if($order->coupon)
+                                                    <span class="badge bg-soft-success text-success me-1">{{ $order->coupon->code }}</span>
+                                                @endif
+                                                ${{ number_format($order->discount, 2) }}
+                                            </td>
                                         </tr>
                                         @if($order->total_cost > 0)
                                         <tr>

@@ -28,6 +28,7 @@ class Order extends Model
         'shipping_charge',
         'shipping_method_id',
         'shipping_method_name',
+        'coupon_id',
         'discount',
         'total_amount',
         'total_cost',
@@ -73,5 +74,10 @@ class Order extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function coupon(): BelongsTo
+    {
+        return $this->belongsTo(Coupon::class);
     }
 }
