@@ -65,13 +65,15 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>${{ number_format($item->unit_price, 2) }}</td>
+                                        <td>
+                                            ${{ number_format($item->regular_price, 2) }}
+                                        </td>
                                         <td>{{ $item->quantity }}</td>
                                         <td>
-                                            ${{ number_format($item->total_price, 2) }}
+                                            ${{ number_format($item->regular_price * $item->quantity, 2) }}
                                             @if($item->total_cost > 0)
                                                 <div class="small text-muted mt-1" title="Procurement Cost">
-                                                    Cost: ${{ number_format($item->total_cost, 2) }}
+                                                    Proc. Cost: ${{ number_format($item->total_cost, 2) }}
                                                 </div>
                                             @endif
                                         </td>

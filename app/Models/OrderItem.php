@@ -19,6 +19,9 @@ class OrderItem extends Model
         'batch_id',
         'product_name',
         'variant_name',
+        'regular_price',
+        'product_discount',
+        'coupon_discount',
         'unit_price',
         'quantity',
         'total_price',
@@ -28,6 +31,9 @@ class OrderItem extends Model
     protected function casts(): array
     {
         return [
+            'regular_price' => 'decimal:2',
+            'product_discount' => 'decimal:2',
+            'coupon_discount' => 'decimal:2',
             'unit_price' => 'decimal:2',
             'total_price' => 'decimal:2',
             'total_cost' => 'decimal:2',

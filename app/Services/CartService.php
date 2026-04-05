@@ -26,24 +26,28 @@ class CartService
 
         return $items->map(function ($item) {
             if ($item->variant) {
+                $regularPrice = $item->variant->regular_price ?? $item->product->regular_price;
                 // Priority: Flash Discount > Standard Discount > Regular Price
                 if ($item->product->is_flash_sale && $item->variant->flash_discount_price > 0) {
                     $price = $item->variant->flash_discount_price;
                 } elseif ($item->variant->discount_price > 0) {
                     $price = $item->variant->discount_price;
                 } else {
-                    $price = $item->variant->regular_price ?? $item->product->regular_price;
+                    $price = $regularPrice;
                 }
             } else {
+                $regularPrice = $item->product->regular_price;
                 // Priority: Flash Discount > Standard Discount > Regular Price
                 if ($item->product->is_flash_sale && $item->product->flash_discount_price > 0) {
                     $price = $item->product->flash_discount_price;
                 } elseif ($item->product->discount_price > 0) {
                     $price = $item->product->discount_price;
                 } else {
-                    $price = $item->product->regular_price;
+                    $price = $regularPrice;
                 }
             }
+
+            $productDiscount = (float) $regularPrice - (float) $price;
 
             $variantName = $item->variant ? $item->variant->variant_name : null;
             $variantDetails = null;
@@ -68,6 +72,8 @@ class CartService
                 'variant_name' => $variantName,
                 'variant_details' => $variantDetails,
                 'image' => $item->product->primaryImage ? $item->product->primaryImage->image_path : null,
+                'regular_price' => (float) $regularPrice,
+                'product_discount' => (float) $productDiscount,
                 'price' => (float) $price,
                 'quantity' => $item->quantity,
                 'subtotal' => (float) $price * $item->quantity,

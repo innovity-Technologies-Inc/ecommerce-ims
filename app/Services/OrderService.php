@@ -418,6 +418,8 @@ class OrderService
 
             $totalAmount = ($subtotal + $shippingCharge) - $discount;
 
+            $productDiscountTotal = $cartItems->sum(fn ($item) => $item->product_discount * $item->quantity);
+
             $order = Order::create([
                 'order_id' => $orderId,
                 'user_id' => auth()->id(),
@@ -435,6 +437,7 @@ class OrderService
                 'subtotal' => $subtotal,
                 'shipping_charge' => $shippingCharge,
                 'discount' => $discount,
+                'product_discount' => $productDiscountTotal,
                 'total_amount' => $totalAmount,
                 'payment_method' => $data['payment_method'],
                 'payment_status' => 'Pending',
@@ -462,16 +465,32 @@ class OrderService
                 'changed_at' => now(),
             ]);
 
+            // If there's a coupon discount, calculate proportional distribution for items
+            // but only if applied to product price. If applied to shipping, it's different.
+            $couponProductDiscount = 0;
+            if ($appliedCoupon && $appliedCoupon->apply_for === 'total_product_price') {
+                $couponProductDiscount = $discount;
+            }
+
             foreach ($cartItems as $item) {
+                $itemCouponDiscount = 0;
+                if ($couponProductDiscount > 0 && $subtotal > 0) {
+                    // Proportional distribution: (item_subtotal / total_subtotal) * total_coupon_discount
+                    $itemCouponDiscount = ($item->subtotal / $subtotal) * $couponProductDiscount;
+                }
+
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $item->product_id,
                     'product_variant_id' => $item->variant_id,
                     'product_name' => $item->product_name,
                     'variant_name' => $item->variant_name,
-                    'unit_price' => $item->price,
+                    'regular_price' => $item->regular_price,
+                    'product_discount' => $item->product_discount,
+                    'coupon_discount' => $itemCouponDiscount / $item->quantity, // per unit
+                    'unit_price' => $item->price - ($itemCouponDiscount / $item->quantity),
                     'quantity' => $item->quantity,
-                    'total_price' => $item->subtotal,
+                    'total_price' => $item->subtotal - $itemCouponDiscount,
                 ]);
 
                 // We NO LONGER deduct stock here.

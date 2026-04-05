@@ -140,11 +140,13 @@
                                                                 @endif
                                                             </td>
                                                             <td class="product-price-cart">
-                                                                <span class="amount">${{ number_format($item->unit_price, 2) }}</span>
+                                                                <span class="amount">${{ number_format($item->regular_price, 2) }}</span>
                                                             </td>
-                                                            <td class="product-quantity text-dark">
+                                                            <td class="product-quantity">
                                                                 {{ $item->quantity }}
                                                             </td>
+                                                            <td class="product-subtotal">${{ number_format($item->regular_price * $item->quantity, 2) }}</td>
+
                                                             <td class="product-subtotal text-end pe-3">
                                                                 <span class="fw-bold text-dark">${{ number_format($item->total_price, 2) }}</span>
                                                             </td>
@@ -158,19 +160,25 @@
                                             <div class="col-lg-4 col-md-6">
                                                 <div class="grand-totall mt-0 w-100 border p-3 rounded bg-light-subtle">
                                                     <div class="d-flex justify-content-between mb-2">
-                                                        <span class="text-muted">Subtotal</span>
-                                                        <span class="fw-bold text-dark">${{ number_format($order->subtotal, 2) }}</span>
+                                                        <span class="text-muted">Subtotal (Gross)</span>
+                                                        <span class="fw-bold text-dark">${{ number_format($order->orderItems->sum(fn($i) => $i->regular_price * $i->quantity), 2) }}</span>
                                                     </div>
+                                                    @if($order->product_discount > 0)
+                                                        <div class="d-flex justify-content-between mb-2">
+                                                            <span class="text-muted">Product Discount</span>
+                                                            <span class="fw-bold text-danger">-${{ number_format($order->product_discount, 2) }}</span>
+                                                        </div>
+                                                    @endif
+                                                    @if($order->discount > 0)
+                                                        <div class="d-flex justify-content-between mb-2">
+                                                            <span class="text-muted">Coupon Discount</span>
+                                                            <span class="fw-bold text-danger">-${{ number_format($order->discount, 2) }}</span>
+                                                        </div>
+                                                    @endif
                                                     <div class="d-flex justify-content-between mb-2">
                                                         <span class="text-muted">Shipping</span>
                                                         <span class="fw-bold text-dark">${{ number_format($order->shipping_charge, 2) }}</span>
                                                     </div>
-                                                    @if($order->discount > 0)
-                                                        <div class="d-flex justify-content-between mb-2">
-                                                            <span class="text-muted">Discount</span>
-                                                            <span class="fw-bold text-danger">-${{ number_format($order->discount, 2) }}</span>
-                                                        </div>
-                                                    @endif
                                                     <div class="d-flex justify-content-between mt-3 pt-2 border-top">
                                                         <h4 class="mb-0 text-primary">Grand Total</h4>
                                                         <h4 class="mb-0 text-primary fw-bold">${{ number_format($order->total_amount, 2) }}</h4>

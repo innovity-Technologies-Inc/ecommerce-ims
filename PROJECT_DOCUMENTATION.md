@@ -163,19 +163,21 @@ Every module or architectural change must be documented in this file before a ta
   - **UI/UX:** Uses AJAX for adding items, updating quantities, and removing items. The frontend dynamically updates the Mini-Cart, Cart Count, and Grand Totals without page reloads.
 
 ### 3.9 Checkout & Order Management System
-- **What:** The complete flow from cart conversion to order fulfillment and admin tracking.
+- **What:** The complete flow from cart conversion to order fulfillment and admin tracking, featuring granular discount transparency.
 - **How it Works:**
   - **Shipping Methods:** Admins create shipping methods (Name, Price, Status). On the Cart page, customers select a method via AJAX, which temporarily stores the `shipping_method_id` in the session and updates the Grand Total.
-  - **Checkout Processing:** The customer fills out their billing/shipping info. `OrderService::placeOrder()` retrieves the cart items, calculates final totals (including the selected shipping charge), and inserts a record into `orders` and multiple records into `order_items`.
+  - **Granular Discount Tracking:** The system distinguishes between different types of savings to provide detailed financial reporting and customer transparency:
+    - **Product Discount:** Captures the difference between the `regular_price` and the selling price (Standard Discount or Flash Sale override).
+    - **Coupon Discount:** If a coupon is applied, the system calculates the proportional discount for each item based on its weight in the total order value.
+  - **Checkout Processing:** `OrderService::placeOrder()` retrieves cart items, calculates final totals, and stores the breakdown of regular prices and both discount types in the `order_items` and `orders` tables.
+  - **Invoice Transparency:** Both administrative and customer invoices display a detailed "Price Breakdown" for each item: `Regular Price` → `- Product Discount` → `- Coupon Discount` → `Final Unit Price`.
   - **Order ID Generation:** A unique tracking ID (e.g., `ORD-XXXXXXXXXX`) is generated programmatically to ensure collision-free tracking.
-  - **Cart Clearing:** Upon successful insertion, the `CartService` clears the session or database cart.
 - **Data & Storage:**
-  - **Related Tables:** `orders`, `order_items`, `shipping_methods`, `carts`
-  - **Storage:** Relational storage for order headers and granular line items; transient shipping selections are stored in the `session`.
+  - **Related Tables:** `orders`, `order_items`, `shipping_methods`, `carts`, `coupons`
+  - **Storage:**
+    - `order_items`: Stores `regular_price`, `product_discount`, and `coupon_discount` per line item.
+    - `orders`: Stores `product_discount` (sum of all item product discounts) and `discount` (total coupon savings).
   - **Fetching:** `OrderService` handles complex transactional creation and retrieval using Eloquent with eager-loading for performance.
-- **Implementation Details:** 
-  - Supports Cash on Delivery (COD).
-  - Triggers an `OrderConfirmationMail` to the customer immediately upon successful creation.
 
 ### 3.10 Order History & Guest Tracking
 - **What:** Customer-facing interfaces to view past purchases and track order status.

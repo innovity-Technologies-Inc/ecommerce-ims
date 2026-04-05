@@ -30,6 +30,7 @@ class Order extends Model
         'shipping_method_name',
         'coupon_id',
         'discount',
+        'product_discount',
         'total_amount',
         'total_cost',
         'payment_method',
@@ -46,6 +47,7 @@ class Order extends Model
             'subtotal' => 'decimal:2',
             'shipping_charge' => 'decimal:2',
             'discount' => 'decimal:2',
+            'product_discount' => 'decimal:2',
             'total_amount' => 'decimal:2',
             'total_cost' => 'decimal:2',
         ];
