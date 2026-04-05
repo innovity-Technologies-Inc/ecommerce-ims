@@ -33,22 +33,33 @@
                                                     @endif
 
                                                     {{-- Fulfillment Details --}}
-                                                    @if($item->warehouse_id && $item->batch_id)
+                                                    @if($item->orderedProductBatches->count() > 0)
                                                         <div class="mt-2 pt-2 border-top border-dashed">
-                                                            <div class="d-flex flex-wrap gap-2">
-                                                                <span class="badge badge-soft-info" title="Warehouse">
-                                                                    <i class="bx bx-home-alt me-1"></i> {{ $item->warehouse->name }}
-                                                                </span>
-                                                                <span class="badge badge-soft-secondary" title="Batch">
-                                                                    <i class="bx bx-purchase-tag-alt me-1"></i> {{ $item->batch->batch_number }}
-                                                                </span>
-                                                            </div>
-                                                            @if($item->serials->count() > 0)
-                                                                <div class="mt-1 small">
-                                                                    <strong class="text-muted">Serials:</strong>
-                                                                    <span class="text-primary">{{ $item->serials->pluck('serial_no')->implode(', ') }}</span>
+                                                            <div class="fw-bold small mb-1 text-muted">Fulfillment:</div>
+                                                            @foreach($item->orderedProductBatches as $batch)
+                                                                <div class="mb-2 last-child-mb-0">
+                                                                    <div class="d-flex flex-wrap gap-2 mb-1">
+                                                                        <span class="badge badge-soft-info" title="Warehouse">
+                                                                            <i class="bx bx-home-alt me-1"></i> {{ $batch->batch->warehouse->name }}
+                                                                        </span>
+                                                                        <span class="badge badge-soft-secondary" title="Batch">
+                                                                            <i class="bx bx-purchase-tag-alt me-1"></i> {{ $batch->batch->batch_number }}
+                                                                        </span>
+                                                                        <span class="badge badge-soft-dark">Qty: {{ $batch->quantity }}</span>
+                                                                    </div>
+                                                                    @php
+                                                                        $itemBatchSerials = \App\Models\BatchSerial::where('order_item_id', $item->id)
+                                                                            ->where('batch_id', $batch->batch_id)
+                                                                            ->get();
+                                                                    @endphp
+                                                                    @if($itemBatchSerials->count() > 0)
+                                                                        <div class="small ps-2 border-start border-2 border-info ms-1">
+                                                                            <strong class="text-muted">Serials:</strong>
+                                                                            <span class="text-primary">{{ $itemBatchSerials->pluck('serial_no')->implode(', ') }}</span>
+                                                                        </div>
+                                                                    @endif
                                                                 </div>
-                                                            @endif
+                                                            @endforeach
                                                         </div>
                                                     @endif
                                                 </div>
@@ -56,7 +67,14 @@
                                         </td>
                                         <td>${{ number_format($item->unit_price, 2) }}</td>
                                         <td>{{ $item->quantity }}</td>
-                                        <td>${{ number_format($item->total_price, 2) }}</td>
+                                        <td>
+                                            ${{ number_format($item->total_price, 2) }}
+                                            @if($item->total_cost > 0)
+                                                <div class="small text-muted mt-1" title="Procurement Cost">
+                                                    Cost: ${{ number_format($item->total_cost, 2) }}
+                                                </div>
+                                            @endif
+                                        </td>
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -80,6 +98,12 @@
                                             <th>Discount :</th>
                                             <td class="text-end">${{ number_format($order->discount, 2) }}</td>
                                         </tr>
+                                        @if($order->total_cost > 0)
+                                        <tr>
+                                            <th>Total Cost :</th>
+                                            <td class="text-end text-muted small">${{ number_format($order->total_cost, 2) }}</td>
+                                        </tr>
+                                        @endif
                                         <tr class="border-top">
                                             <th class="fs-16">Total :</th>
                                             <td class="text-end fs-16 fw-bold">${{ number_format($order->total_amount, 2) }}</td>
@@ -159,41 +183,45 @@
 
                                 <div id="inventory_allocation_section" class="d-none mt-3">
                                     <h6 class="text-uppercase fw-bold text-primary mb-3">Inventory Allocation</h6>
-                                    <div class="row">
-                                        @foreach($order->orderItems as $item)
-                                            <div class="col-md-6">
-                                                <div class="card border mb-3 shadow-none">
-                                                    <div class="card-body p-2">
-                                                        <div class="fw-bold small mb-2 text-dark">{{ $item->product_name }} (Qty: {{ $item->quantity }})</div>
-                                                        
-                                                        <div class="mb-2">
-                                                            <select name="items[{{ $item->id }}][warehouse_id]" class="form-select form-select-sm warehouse-select" data-product-id="{{ $item->product_id }}" data-variant-id="{{ $item->product_variant_id }}" required>
-                                                                <option value="">Select Warehouse</option>
-                                                            </select>
-                                                        </div>
-
-                                                        <div class="mb-2 batch-container d-none">
-                                                            <select name="items[{{ $item->id }}][batch_id]" class="form-select form-select-sm batch-select" required>
-                                                                <option value="">Select Batch</option>
-                                                            </select>
-                                                        </div>
-
-                                                        <div class="serial-container d-none">
-                                                            <label class="small text-muted d-block mb-1">Serials ({{ $item->quantity }})</label>
-                                                            <button type="button" class="btn btn-sm btn-soft-primary select-serials-btn" 
-                                                                    data-item-id="{{ $item->id }}" 
-                                                                    data-qty="{{ $item->quantity }}"
-                                                                    data-product-name="{{ $item->product_name }}">
-                                                                <i class="bx bx-list-check me-1"></i> Select Serials
-                                                            </button>
-                                                            <div class="selected-serials-display mt-2 small text-primary fw-bold"></div>
-                                                            <div class="selected-serials-inputs"></div>
-                                                        </div>
-                                                    </div>
+                                    
+                                    @foreach($order->orderItems as $item)
+                                        <div class="card border mb-3 shadow-none allocation-item-card" 
+                                             data-item-id="{{ $item->id }}" 
+                                             data-product-id="{{ $item->product_id }}" 
+                                             data-variant-id="{{ $item->product_variant_id }}"
+                                             data-target-qty="{{ $item->quantity }}"
+                                             data-product-name="{{ $item->product_name }}">
+                                            <div class="card-header bg-light-subtle py-2 d-flex justify-content-between align-items-center">
+                                                <div class="fw-bold small text-dark">
+                                                    {{ $item->product_name }} 
+                                                    @if($item->variant_name) <small class="text-muted">({{ $item->variant_name }})</small> @endif
+                                                    <span class="badge bg-soft-primary text-primary ms-2">Ordered Qty: {{ $item->quantity }}</span>
+                                                </div>
+                                                <div class="allocation-status small">
+                                                    Allocated: <span class="current-allocated-qty fw-bold">0</span> / {{ $item->quantity }}
                                                 </div>
                                             </div>
-                                        @endforeach
-                                    </div>
+                                            <div class="card-body p-2">
+                                                <div class="row mb-2">
+                                                    <div class="col-md-12">
+                                                        <label class="form-label small fw-bold text-muted mb-1">Select Warehouse <span class="text-danger">*</span></label>
+                                                        <select name="items[{{ $item->id }}][warehouse_id]" class="form-select form-select-sm item-warehouse-select" data-product-id="{{ $item->product_id }}" data-variant-id="{{ $item->product_variant_id }}" required>
+                                                            <option value="">Select Warehouse</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="allocation-rows-container mt-2">
+                                                    {{-- Allocation rows will be added here --}}
+                                                </div>
+                                                <div class="mt-2 d-none batch-action-container">
+                                                    <button type="button" class="btn btn-sm btn-soft-success add-allocation-row-btn">
+                                                        <i class="bx bx-plus me-1"></i> Add Another Batch
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
                                     <hr>
                                 </div>
 
@@ -382,14 +410,13 @@
         const reasonInput = $('#rejection_reason');
         const allocationSection = $('#inventory_allocation_section');
         
-        let currentItemContext = null;
-        let availableSerials = {}; // Store serials for each item: { itemId: [ {id, serial_no} ] }
-        let selectedSerials = {}; // Store selected IDs for each item: { itemId: [id1, id2] }
+        let currentItemContext = null; // { itemId, rowId, targetQty, productName }
+        let availableSerials = {}; // { rowUniqueId: [ {id, serial_no} ] }
+        let selectedSerials = {}; // { rowUniqueId: [id1, id2] }
 
         function toggleStatusFields() {
             const status = statusSelect.val();
             
-            // Rejection/Cancellation Logic
             if (status === 'Cancelled' || status === 'Rejected') {
                 reasonWrapper.removeClass('d-none');
                 reasonInput.attr('required', 'required');
@@ -398,19 +425,16 @@
                 reasonInput.removeAttr('required');
             }
 
-            // Inventory Allocation Logic
             if (status === 'Shipped') {
                 allocationSection.removeClass('d-none');
-                allocationSection.find('select.warehouse-select').attr('required', 'required');
-                initializeAllocation();
+                initializeWarehouses();
             } else {
                 allocationSection.addClass('d-none');
-                allocationSection.find('select').removeAttr('required');
             }
         }
 
-        function initializeAllocation() {
-            $('.warehouse-select').each(function() {
+        function initializeWarehouses() {
+            $('.item-warehouse-select').each(function() {
                 const select = $(this);
                 const productId = select.data('product-id');
                 const variantId = select.data('variant-id');
@@ -431,49 +455,113 @@
             });
         }
 
-        $(document).on('change', '.warehouse-select', function() {
+        $(document).on('change', '.item-warehouse-select', function() {
             const select = $(this);
+            const card = select.closest('.allocation-item-card');
             const warehouseId = select.val();
-            const cardBody = select.closest('.card-body');
-            const batchContainer = cardBody.find('.batch-container');
-            const batchSelect = cardBody.find('.batch-select');
-            const productId = select.data('product-id');
-            const variantId = select.data('variant-id');
+            const container = card.find('.allocation-rows-container');
+            const actionContainer = card.find('.batch-action-container');
+
+            // Clear existing rows
+            container.find('.allocation-row').each(function() {
+                const rowId = $(this).data('row-id');
+                delete availableSerials[rowId];
+                delete selectedSerials[rowId];
+            });
+            container.empty();
+            actionContainer.addClass('d-none');
 
             if (warehouseId) {
-                batchSelect.prop('disabled', true).empty().append('<option value="">Loading batches...</option>');
-                batchContainer.removeClass('d-none');
-                
-                $.ajax({
-                    url: "{{ route('admin.orders.ajax.get-batches') }}",
-                    data: { warehouse_id: warehouseId, product_id: productId, variant_id: variantId },
-                    success: function(data) {
-                        batchSelect.prop('disabled', false).empty().append('<option value="">Select Batch</option>');
-                        data.forEach(b => {
-                            batchSelect.append(`<option value="${b.id}">${b.batch_number}</option>`);
-                        });
-                        
-                        if (!batchSelect.hasClass('select2-hidden-accessible')) {
-                            batchSelect.select2({ theme: 'bootstrap-5', dropdownParent: cardBody });
-                        }
-                    }
-                });
-            } else {
-                batchContainer.addClass('d-none');
-                cardBody.find('.serial-container').addClass('d-none');
+                addAllocationRow(card, warehouseId);
+                actionContainer.removeClass('d-none');
             }
+            calculateAllocatedTotal(card);
+        });
+
+        function addAllocationRow(card, warehouseId) {
+            const itemId = card.data('item-id');
+            const productId = card.data('product-id');
+            const variantId = card.data('variant-id');
+            const rowIndex = card.find('.allocation-row').length;
+            const rowUniqueId = `row_${itemId}_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+
+            const rowHtml = `
+                <div class="allocation-row border rounded p-2 mb-2 bg-white" data-row-id="${rowUniqueId}">
+                    <div class="row g-2 align-items-center">
+                        <div class="col-md-8">
+                            <label class="small text-muted mb-1 d-block">Batch <span class="text-danger">*</span></label>
+                            <select name="items[${itemId}][allocations][${rowUniqueId}][batch_id]" class="form-select form-select-sm batch-select" data-warehouse-id="${warehouseId}" required>
+                                <option value="">Select Batch</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="small text-muted mb-1 d-block">Qty <span class="text-danger">*</span></label>
+                            <input type="number" name="items[${itemId}][allocations][${rowUniqueId}][quantity]" class="form-control form-control-sm allocation-qty" placeholder="Qty" min="1" required>
+                        </div>
+                        <div class="col-md-2 text-end pt-3">
+                            <button type="button" class="btn btn-sm btn-outline-danger remove-row-btn ${rowIndex === 0 ? 'd-none' : ''}">
+                                <i class="bx bx-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="serial-container d-none mt-2 pt-2 border-top border-dashed">
+                        <button type="button" class="btn btn-xs btn-soft-primary select-serials-btn" 
+                                data-item-id="${itemId}" 
+                                data-row-id="${rowUniqueId}">
+                            <i class="bx bx-list-check me-1"></i> Select Serials
+                        </button>
+                        <div class="selected-serials-display mt-1 small text-primary fw-bold"></div>
+                        <div class="selected-serials-inputs"></div>
+                    </div>
+                </div>
+            `;
+
+            const $row = $(rowHtml);
+            card.find('.allocation-rows-container').append($row);
+            
+            // Load batches for this warehouse/product
+            const batchSelect = $row.find('.batch-select');
+            $.ajax({
+                url: "{{ route('admin.orders.ajax.get-batches') }}",
+                data: { warehouse_id: warehouseId, product_id: productId, variant_id: variantId },
+                success: function(data) {
+                    batchSelect.empty().append('<option value="">Select Batch</option>');
+                    data.forEach(b => {
+                        batchSelect.append(`<option value="${b.id}">${b.batch_number} (Avail: ${b.saleable_qty})</option>`);
+                    });
+                }
+            });
+        }
+
+        $(document).on('click', '.add-allocation-row-btn', function() {
+            const card = $(this).closest('.allocation-item-card');
+            const warehouseId = card.find('.item-warehouse-select').val();
+            if (warehouseId) {
+                addAllocationRow(card, warehouseId);
+            }
+        });
+
+        $(document).on('click', '.remove-row-btn', function() {
+            const row = $(this).closest('.allocation-row');
+            const card = row.closest('.allocation-item-card');
+            const rowUniqueId = row.data('row-id');
+            
+            delete availableSerials[rowUniqueId];
+            delete selectedSerials[rowUniqueId];
+            row.remove();
+            calculateAllocatedTotal(card);
         });
 
         $(document).on('change', '.batch-select', function() {
             const select = $(this);
             const batchId = select.val();
-            const cardBody = select.closest('.card-body');
-            const serialContainer = cardBody.find('.serial-container');
-            const btn = cardBody.find('.select-serials-btn');
-            const itemId = btn.data('item-id');
-            const warehouseSelect = cardBody.find('.warehouse-select');
-            const productId = warehouseSelect.data('product-id');
-            const variantId = warehouseSelect.data('variant-id');
+            const row = select.closest('.allocation-row');
+            const card = row.closest('.allocation-item-card');
+            const serialContainer = row.find('.serial-container');
+            const rowUniqueId = row.data('row-id');
+            
+            const productId = card.data('product-id');
+            const variantId = card.data('variant-id');
 
             if (batchId) {
                 $.ajax({
@@ -481,12 +569,11 @@
                     data: { batch_id: batchId, product_id: productId, variant_id: variantId },
                     success: function(data) {
                         if (data && data.length > 0) {
-                            availableSerials[itemId] = data;
-                            selectedSerials[itemId] = []; // Reset on batch change
+                            availableSerials[rowUniqueId] = data;
+                            selectedSerials[rowUniqueId] = [];
                             serialContainer.removeClass('d-none');
-                            updateSelectedSerialsDisplay(itemId);
                         } else {
-                            availableSerials[itemId] = null;
+                            availableSerials[rowUniqueId] = null;
                             serialContainer.addClass('d-none');
                         }
                     }
@@ -496,12 +583,41 @@
             }
         });
 
+        $(document).on('input', '.allocation-qty', function() {
+            calculateAllocatedTotal($(this).closest('.allocation-item-card'));
+        });
+
+        function calculateAllocatedTotal(card) {
+            let total = 0;
+            card.find('.allocation-qty').each(function() {
+                total += parseInt($(this).val()) || 0;
+            });
+            card.find('.current-allocated-qty').text(total);
+            
+            const target = card.data('target-qty');
+            if (total > target) {
+                card.find('.current-allocated-qty').addClass('text-danger');
+            } else {
+                card.find('.current-allocated-qty').removeClass('text-danger');
+            }
+        }
+
         $(document).on('click', '.select-serials-btn', function() {
             const btn = $(this);
+            const row = btn.closest('.allocation-row');
+            const card = row.closest('.allocation-item-card');
+            const qty = parseInt(row.find('.allocation-qty').val()) || 0;
+
+            if (qty <= 0) {
+                toastr.error('Please enter a valid quantity first.');
+                return;
+            }
+
             currentItemContext = {
-                itemId: btn.data('item-id'),
-                targetQty: btn.data('qty'),
-                productName: btn.data('product-name')
+                itemId: card.data('item-id'),
+                rowId: row.data('row-id'),
+                targetQty: qty,
+                productName: card.data('product-name')
             };
 
             $('#modal-product-name').text(currentItemContext.productName);
@@ -514,11 +630,21 @@
         function populateModal() {
             const list = $('#modal-serial-list');
             list.empty();
-            const itemId = currentItemContext.itemId;
-            const serials = availableSerials[itemId] || [];
-            const selected = selectedSerials[itemId] || [];
+            const rowId = currentItemContext.rowId;
+            const serials = availableSerials[rowId] || [];
+            const selected = selectedSerials[rowId] || [];
+
+            const allOtherSelectedIds = [];
+            Object.keys(selectedSerials).forEach(rId => {
+                if (rId !== rowId) {
+                    allOtherSelectedIds.push(...selectedSerials[rId]);
+                }
+            });
 
             serials.forEach(s => {
+                const isSelectedElsewhere = allOtherSelectedIds.includes(s.id.toString()) || allOtherSelectedIds.includes(s.id);
+                if (isSelectedElsewhere) return; 
+
                 const isChecked = selected.includes(s.id.toString()) || selected.includes(s.id);
                 list.append(`
                     <div class="col-md-4 mb-2">
@@ -559,43 +685,58 @@
                 return;
             }
 
-            const itemId = currentItemContext.itemId;
-            selectedSerials[itemId] = selected;
-            updateSelectedSerialsDisplay(itemId, serialNos);
+            const rowId = currentItemContext.rowId;
+            selectedSerials[rowId] = selected;
+            
+            const row = $(`.allocation-row[data-row-id="${rowId}"]`);
+            const display = row.find('.selected-serials-display');
+            const inputs = row.find('.selected-serials-inputs');
+            
+            display.html('<i class="bx bx-check-double me-1"></i> Selected: ' + serialNos.join(', '));
+            
+            inputs.empty();
+            selected.forEach(id => {
+                inputs.append(`<input type="hidden" name="items[${currentItemContext.itemId}][allocations][${rowId}][serials][]" value="${id}">`);
+            });
+
             $('#serialSelectionModal').modal('hide');
         });
-
-        function updateSelectedSerialsDisplay(itemId, serialNos = []) {
-            const container = $(`.select-serials-btn[data-item-id="${itemId}"]`).closest('.serial-container');
-            const display = container.find('.selected-serials-display');
-            const inputs = container.find('.selected-serials-inputs');
-            
-            if (serialNos.length > 0) {
-                display.html('<i class="bx bx-check-double me-1"></i> Selected: ' + serialNos.join(', '));
-            } else {
-                display.html('<span class="text-danger">No serials selected</span>');
-            }
-
-            inputs.empty();
-            const ids = selectedSerials[itemId] || [];
-            ids.forEach(id => {
-                inputs.append(`<input type="hidden" name="items[${itemId}][serials][]" value="${id}">`);
-            });
-        }
 
         $('#statusUpdateForm').on('submit', function(e) {
             if (statusSelect.val() === 'Shipped') {
                 let valid = true;
-                $('.select-serials-btn:visible').each(function() {
-                    const itemId = $(this).data('item-id');
-                    const qty = $(this).data('qty');
-                    const selected = selectedSerials[itemId] ? selectedSerials[itemId].length : 0;
-                    if (selected != qty) {
-                        toastr.error(`Please select serials for ${$(this).data('product-name')}`);
+                $('.allocation-item-card').each(function() {
+                    const card = $(this);
+                    const target = card.data('target-qty');
+                    const warehouseId = card.find('.item-warehouse-select').val();
+                    let totalAllocated = 0;
+                    
+                    if (!warehouseId) {
+                        toastr.error(`Please select a warehouse for ${card.data('product-name')}.`);
+                        valid = false;
+                        return false;
+                    }
+
+                    card.find('.allocation-row').each(function() {
+                        const row = $(this);
+                        const rowId = row.data('row-id');
+                        const qty = parseInt(row.find('.allocation-qty').val()) || 0;
+                        totalAllocated += qty;
+
+                        if (availableSerials[rowId] && (!selectedSerials[rowId] || selectedSerials[rowId].length !== qty)) {
+                            toastr.error(`Please select serials for ${card.data('product-name')} in all batches.`);
+                            valid = false;
+                            return false;
+                        }
+                    });
+
+                    if (totalAllocated !== target) {
+                        toastr.error(`Total allocated quantity (${totalAllocated}) must equal ordered quantity (${target}) for ${card.data('product-name')}.`);
                         valid = false;
                         return false;
                     }
                 });
+                
                 if (!valid) return false;
             }
         });

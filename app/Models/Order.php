@@ -30,6 +30,7 @@ class Order extends Model
         'shipping_method_name',
         'discount',
         'total_amount',
+        'total_cost',
         'payment_method',
         'payment_status',
         'order_status',
@@ -45,12 +46,18 @@ class Order extends Model
             'shipping_charge' => 'decimal:2',
             'discount' => 'decimal:2',
             'total_amount' => 'decimal:2',
+            'total_cost' => 'decimal:2',
         ];
     }
 
     public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function orderedProductBatches(): HasMany
+    {
+        return $this->hasMany(OrderedProductBatch::class);
     }
 
     public function returnRequests(): HasMany

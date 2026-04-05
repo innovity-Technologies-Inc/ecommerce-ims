@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class OrderItem extends Model
 {
@@ -21,6 +22,7 @@ class OrderItem extends Model
         'unit_price',
         'quantity',
         'total_price',
+        'total_cost',
     ];
 
     protected function casts(): array
@@ -28,6 +30,7 @@ class OrderItem extends Model
         return [
             'unit_price' => 'decimal:2',
             'total_price' => 'decimal:2',
+            'total_cost' => 'decimal:2',
         ];
     }
 
@@ -54,6 +57,11 @@ class OrderItem extends Model
     public function batch(): BelongsTo
     {
         return $this->belongsTo(Batch::class);
+    }
+
+    public function orderedProductBatches(): HasMany
+    {
+        return $this->hasMany(OrderedProductBatch::class);
     }
 
     public function serials(): \Illuminate\Database\Eloquent\Relations\HasMany

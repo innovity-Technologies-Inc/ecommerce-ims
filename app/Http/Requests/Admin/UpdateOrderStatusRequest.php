@@ -25,6 +25,12 @@ class UpdateOrderStatusRequest extends FormRequest
             'order_status' => 'required|string',
             'rejection_reason' => 'required_if:order_status,Cancelled,Rejected|nullable|string',
             'email_notify' => 'nullable|boolean',
+            'items' => 'required_if:order_status,Shipped|array',
+            'items.*.warehouse_id' => 'required_if:order_status,Shipped|exists:warehouses,id',
+            'items.*.allocations' => 'required_if:order_status,Shipped|array',
+            'items.*.allocations.*.batch_id' => 'required_if:order_status,Shipped|exists:batches,id',
+            'items.*.allocations.*.quantity' => 'required_if:order_status,Shipped|integer|min:1',
+            'items.*.allocations.*.serials' => 'nullable|array',
         ];
     }
 
@@ -33,6 +39,7 @@ class UpdateOrderStatusRequest extends FormRequest
         return [
             'order_status.required' => 'Please select an order status.',
             'rejection_reason.required_if' => 'A reason/remarks is required when the order is being Cancelled or Rejected.',
+            'items.required_if' => 'Inventory allocation data is required for Shipped status.',
         ];
     }
 }

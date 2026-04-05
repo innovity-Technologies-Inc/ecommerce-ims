@@ -107,91 +107,148 @@ class OrderService
                     throw new \Exception('Inventory allocation data is required for Shipped status.');
                 }
 
+                $orderTotalCost = 0;
+
                 foreach ($order->orderItems as $item) {
-                    $allocation = $itemData[$item->id] ?? null;
-                    if (! $allocation || ! $allocation['warehouse_id'] || ! $allocation['batch_id']) {
-                        throw new \Exception("Warehouse and Batch are required for {$item->product_name}.");
+                    $itemAllocations = $itemData[$item->id]['allocations'] ?? [];
+                    if (empty($itemAllocations)) {
+                        throw new \Exception("Inventory allocation is required for {$item->product_name}.");
                     }
 
-                    $item->update([
-                        'warehouse_id' => $allocation['warehouse_id'],
-                        'batch_id' => $allocation['batch_id'],
-                    ]);
+                    // Validate total allocated quantity
+                    $totalAllocatedQty = array_sum(array_column($itemAllocations, 'quantity'));
+                    if ($totalAllocatedQty != $item->quantity) {
+                        throw new \Exception("Total allocated quantity ({$totalAllocatedQty}) does not match ordered quantity ({$item->quantity}) for {$item->product_name}.");
+                    }
 
-                    // Update Serials
-                    if (! empty($allocation['serials'])) {
-                        if (count($allocation['serials']) != $item->quantity) {
-                            throw new \Exception("Selected serials count must match quantity ({$item->quantity}) for {$item->product_name}.");
+                    $itemTotalCost = 0;
+
+                    // Clear previous allocations if any (re-shipped scenario, though unlikely)
+                    $item->orderedProductBatches()->delete();
+
+                    foreach ($itemAllocations as $alloc) {
+                        // Fetch unit cost from BatchProduct
+                        $batchProduct = \App\Models\BatchProduct::where([
+                            'batch_id' => $alloc['batch_id'],
+                            'product_id' => $item->product_id,
+                            'product_variant_id' => $item->product_variant_id,
+                        ])->first();
+
+                        if (! $batchProduct) {
+                            throw new \Exception("Batch #{$alloc['batch_id']} does not contain {$item->product_name}.");
                         }
 
-                        // Mark previous serials as in-stock if any (unlikely in normal flow)
-                        \App\Models\BatchSerial::where('order_item_id', $item->id)->update([
-                            'order_item_id' => null,
-                            'stock_status' => 'in_stock',
+                        $unitCost = $batchProduct->unit_cost;
+                        $subtotalCost = $alloc['quantity'] * $unitCost;
+                        $itemTotalCost += $subtotalCost;
+
+                        $orderedBatch = \App\Models\OrderedProductBatch::create([
+                            'order_id' => $order->id,
+                            'order_item_id' => $item->id,
+                            'batch_id' => $alloc['batch_id'],
+                            'quantity' => $alloc['quantity'],
+                            'unit_cost' => $unitCost,
+                            'subtotal_cost' => $subtotalCost,
                         ]);
 
-                        // Assign new serials and mark as shipped
-                        \App\Models\BatchSerial::whereIn('id', $allocation['serials'])->update([
-                            'order_item_id' => $item->id,
-                            'stock_status' => 'shipped',
-                        ]);
+                        // Update Serials if provided for this batch
+                        if (! empty($alloc['serials'])) {
+                            if (count($alloc['serials']) != $alloc['quantity']) {
+                                throw new \Exception("Selected serials count must match allocated quantity ({$alloc['quantity']}) for Batch #{$alloc['batch_id']}.");
+                            }
+
+                            // Mark previous serials as in-stock if any
+                            \App\Models\BatchSerial::where('order_item_id', $item->id)
+                                ->where('batch_id', $alloc['batch_id'])
+                                ->update([
+                                    'order_item_id' => null,
+                                    'stock_status' => 'in_stock',
+                                ]);
+
+                            // Assign new serials and mark as shipped
+                            \App\Models\BatchSerial::whereIn('id', $alloc['serials'])->update([
+                                'order_item_id' => $item->id,
+                                'stock_status' => 'shipped',
+                            ]);
+                        } else {
+                            // If NO serials provided, we should check if this product/batch REQUIRES serials.
+                            // However, based on requirements: "if any batch products dont have serials than it can be nullable"
+                            // So we just proceed without serial linkage.
+                        }
                     }
+
+                    // Update item total cost
+                    $item->update(['total_cost' => $itemTotalCost]);
+                    $orderTotalCost += $itemTotalCost;
                 }
+
+                // Update order total cost
+                $order->update(['total_cost' => $orderTotalCost]);
             }
 
             if ($status === 'Delivered') {
                 foreach ($order->orderItems as $item) {
-                    // Update assigned serials to 'sold'
-                    \App\Models\BatchSerial::where('order_item_id', $item->id)->update([
-                        'stock_status' => 'sold',
-                    ]);
+                    $allocations = $item->orderedProductBatches;
 
-                    // Deduct from Warehouse and Batch Inventory Levels
-                    if ($item->warehouse_id && $item->batch_id) {
+                    if ($allocations->isEmpty()) {
+                        throw new \Exception("No inventory allocation found for {$item->product_name}. Please ensure the order was Shipped correctly.");
+                    }
+
+                    foreach ($allocations as $alloc) {
+                        $warehouseId = $alloc->batch->warehouse_id;
+
+                        // Update assigned serials to 'sold' for this item/batch
+                        \App\Models\BatchSerial::where('order_item_id', $item->id)
+                            ->where('batch_id', $alloc->batch_id)
+                            ->update([
+                                'stock_status' => 'sold',
+                            ]);
+
+                        // Deduct from Warehouse and Batch Inventory Levels
                         $inventoryLevel = \App\Models\InventoryLevel::where([
-                            'warehouse_id' => $item->warehouse_id,
-                            'batch_id' => $item->batch_id,
+                            'warehouse_id' => $warehouseId,
+                            'batch_id' => $alloc->batch_id,
                             'product_id' => $item->product_id,
                             'product_variant_id' => $item->product_variant_id,
                         ])->first();
 
                         if ($inventoryLevel) {
-                            $inventoryLevel->decrement('current_quantity', $item->quantity);
+                            $inventoryLevel->decrement('current_quantity', $alloc->quantity);
                         }
 
                         // Update BatchProduct totals
                         $batchProduct = \App\Models\BatchProduct::where([
-                            'batch_id' => $item->batch_id,
+                            'batch_id' => $alloc->batch_id,
                             'product_id' => $item->product_id,
                             'product_variant_id' => $item->product_variant_id,
                         ])->first();
 
                         if ($batchProduct) {
-                            $batchProduct->decrement('saleable_qty', $item->quantity);
+                            $batchProduct->decrement('saleable_qty', $alloc->quantity);
                         }
 
                         // Update Batch totals
-                        $item->batch->decrement('total_saleable_qty', $item->quantity);
+                        $alloc->batch->decrement('total_saleable_qty', $alloc->quantity);
 
-                        // Global Stock Deduction (Only on Delivered)
-                        if ($item->product_variant_id) {
-                            $item->productVariant->decrement('stock', $item->quantity);
-                        } else {
-                            $item->product->decrement('stock', $item->quantity);
-                        }
-
-                        // Log to Stock Ledger (Aggregate entry)
+                        // Log to Stock Ledger (Aggregate entry per batch)
                         $this->inventoryService->logStockChange(
                             productId: $item->product_id,
                             variantId: $item->product_variant_id,
-                            warehouseId: $item->warehouse_id,
-                            changeQty: -$item->quantity,
+                            warehouseId: $warehouseId,
+                            changeQty: -$alloc->quantity,
                             transactionType: 'SALE',
                             reasonCode: 'ORDER_DELIVERED',
                             referenceId: $order->order_id,
-                            batchId: $item->batch_id,
-                            supplierId: $item->batch->supplier_id ?? null
+                            batchId: $alloc->batch_id,
+                            supplierId: $alloc->batch->supplier_id ?? null
                         );
+                    }
+
+                    // Global Stock Deduction (Only on Delivered)
+                    if ($item->product_variant_id) {
+                        $item->productVariant->decrement('stock', $item->quantity);
+                    } else {
+                        $item->product->decrement('stock', $item->quantity);
                     }
                 }
             }
@@ -573,17 +630,19 @@ class OrderService
      */
     public function getBatchesForItemInWarehouse(int $warehouseId, int $productId, ?int $variantId = null): \Illuminate\Support\Collection
     {
-        return \App\Models\Batch::whereHas('inventoryLevels', function ($query) use ($warehouseId, $productId, $variantId) {
-            $query->where('warehouse_id', $warehouseId)
-                ->where('product_id', $productId)
-                ->where('current_quantity', '>', 0);
+        $query = \App\Models\Batch::select('batches.*', 'inventory_levels.current_quantity as saleable_qty')
+            ->join('inventory_levels', 'batches.id', '=', 'inventory_levels.batch_id')
+            ->where('inventory_levels.warehouse_id', $warehouseId)
+            ->where('inventory_levels.product_id', $productId)
+            ->where('inventory_levels.current_quantity', '>', 0);
 
-            if ($variantId && $variantId != 0) {
-                $query->where('product_variant_id', $variantId);
-            } else {
-                $query->whereNull('product_variant_id');
-            }
-        })->get();
+        if ($variantId && $variantId != 0) {
+            $query->where('inventory_levels.product_variant_id', $variantId);
+        } else {
+            $query->whereNull('inventory_levels.product_variant_id');
+        }
+
+        return $query->get();
     }
 
     /**

@@ -810,31 +810,25 @@ Every module or architectural change must be documented in this file before a ta
   - **UI Integration:** Uses Bootstrap 5 badges and Iconify icons for consistent, modern data presentation in both the order summary and vendor management interfaces.
 
 ### 3.41 Order Fulfillment & Inventory Integration
-- **What:** A granular inventory allocation and tracking system that connects customer orders with specific warehouse batches and physical unit serial numbers.
+- **What:** A granular inventory allocation and tracking system that connects customer orders with multiple specific warehouse batches and physical unit serial numbers, while tracking procurement costs.
 - **How it Works:**
-  - **Restricted Status Workflow:** Orders follow a strict logical progression to ensure operational integrity:
-    - **Pending:** Can move to `Processing`, `Cancelled`, or `Rejected`.
-    - **Processing:** Can only move to `Shipped` (triggers inventory allocation).
-    - **Shipped:** Can only move to `Out for Delivery`.
-    - **Out for Delivery:** Can only move to `Delivered`.
-    - **Terminal States:** `Delivered`, `Cancelled`, and `Rejected` are final and allow no further changes.
-  - **Shipped Status (Allocation):** When an admin moves an order from `Processing` to `Shipped`, the "Inventory Allocation" interface appears.
-    - **Warehouse Selection:** Admins select fulfillment warehouses. Only locations with active stock for the specific product/variant are visible.
-    - **Batch Selection:** Admins select specific batches (tracked by PO/Receipt date) within the chosen warehouse.
-    - **Modal-Based Serial Tracking:** For serial-tracked items, a "Select Serials" button opens a modal. Admins must check exactly the number of units ordered from the pool of `in_stock` and `good` serials.
-    - **Status Update:** Allocated serials are marked as `shipped` in the `batch_serials` table. Saleable stock levels remain unchanged to reflect "In-Transit" inventory.
-  - **Delivered Status (Finalization):** When the order is marked as "Delivered":
-    - **Stock Deduction:** The system formally decrements the `current_quantity` in `inventory_levels` and `saleable_qty` in `batches` and `batch_products`.
-    - **Global Stock Sync:** The primary `products` or `product_variants` stock field is updated to reflect the final sale.
-    - **Serial Status:** Allocated serials are updated to `sold`.
-    - **Financial Reporting:** A `StockLedger` entry is created with the transaction type `SALE` and sub-type `ORDER_DELIVERED`, recording the product's `unit_cost` and calculating the total movement cost (`qty * unit_cost` as a negative value).
-  - **Resilience:** If an order is cancelled or rejected after being shipped, the system automatically releases the allocated serials back to `in_stock` status and restores any pending deductions.
+  - **Restricted Status Workflow:** Orders follow a strict logical progression: `Pending` → `Processing` → `Shipped` → `Out for Delivery` → `Delivered`.
+  - **Shipped Status (Dynamic Allocation):** When an admin moves an order to `Shipped`, they must allocate inventory.
+    - **Multi-Batch Support:** A single order item can be fulfilled from **multiple warehouses** and/or **multiple batches**. Admins can split the total item quantity across different batches via a dynamic UI.
+    - **Warehouse & Batch Selection:** Admins select fulfillment locations and specific batches. The UI validates that the total allocated quantity across all rows exactly matches the ordered quantity.
+    - **Procurement Cost Calculation:** The system automatically fetches the `unit_cost` from each selected `batch_products` record. It calculates a `subtotal_cost` per batch and a `total_cost` per item and order, allowing for precise profit/loss reporting based on actual procurement history.
+    - **Modal-Based Serial Tracking:** For serial-tracked items, admins select specific units for each batch allocation. Serial status is updated to `shipped`.
+  - **Delivered Status (Finalization):** When marked as `Delivered`:
+    - **Stock Deduction:** The system decrements physical stock (`inventory_levels`, `batches`, `batch_products`) based on the granular `ordered_product_batches` records.
+    - **Global Stock Sync:** Global `products` or `variants` stock fields are updated.
+    - **Ledger Integration:** Logs **aggregate stock ledger entries** (one per batch allocation) for movement traceability.
 - **Data & Storage:**
-  - **Related Tables:** `order_items`, `batch_serials`, `inventory_levels`, `stock_ledgers`, `batches`, `batch_products`
-  - **Linkage:** `order_items` stores `warehouse_id` and `batch_id`; `batch_serials` stores the `order_item_id` for 1:1 unit traceability.
+  - **Related Tables:** `orders`, `order_items`, `ordered_product_batches`, `batch_serials`, `inventory_levels`, `stock_ledgers`, `batches`, `batch_products`
+  - **Storage:** The `ordered_product_batches` table serves as the granular linkage between orders and specific inventory units.
+  - **Financial Audit:** `orders` and `order_items` tables store `total_cost` (procurement sum).
 - **Implementation Details:**
-  - **UI/UX:** The Order Details page utilizes a sidebar-heavy layout. "Customer & Shipping Info", "Payment", and "Status History" are grouped on the right, while the main column focuses on the Items Table and the "Order Status & Fulfillment" form.
-  - **Fulfillment Visibility:** Once an item is allocated, its specific Warehouse, Batch, and Serial Numbers are displayed directly in the items table for administrative reference.
+  - **UI/UX:** The Order Details page features a dynamic allocation interface allowing rows to be added/removed per item. It includes real-time calculation of allocated quantities.
+  - **Fulfillment Visibility:** Once allocated, the specific Warehouse, Batch, and Serial Numbers for every split allocation are displayed directly in the items table.
 
 ### 4.0 Inventory & Stock Calculation Logic
 This section defines the mathematical and logical rules governing stock levels throughout the application lifecycle.
