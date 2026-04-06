@@ -140,7 +140,10 @@ This document lists the high-level requirements for the modules implemented in t
 - [ ] **REQ-123:** Multiple Image Uploads for Returns: Enable clients to upload multiple images when requesting a return. Store images in a dedicated `return_images` table and display them in the admin return request details view.
 - [x] **REQ-124:** Return Request UI & Logic Fix: Expand the return approval form to full-width. Ensure batch and serial selection only shows items originally shipped to the customer for that specific order.
 - [x] **REQ-125:** Sales Reporting Module: Comprehensive sales metrics including gross/net sales, costs, profit, and margins with dynamic grouping (daily/weekly/monthly/yearly) and deep filtering by warehouse, products, and variants.
-- [ ] **REQ-126:** Inventory Reporting Module: Comprehensive inventory level and valuation reports with "As-of date" support, filtering by warehouse, supplier, product/category/brand, and batch, including valuation breakdowns.
+- [x] **REQ-126:** Inventory Reporting Module: Comprehensive inventory level and valuation reports with "As-of date" support, filtering by warehouse, supplier, product/category/brand, and batch, including valuation breakdowns.
+- [x] **REQ-127:** Stock Reporting Module: Detailed stock reports including movement history, batch aging, damaged stock, and serial tracing. Features include warehouse-specific stock levels, low-stock alerts, and valuation metrics.
+- [x] **REQ-128:** Stock Report Calculation Fix: Correct the stock calculation discrepancy in the Stock Report by ensuring the join between `inventory_levels` and `batch_products` includes `product_variant_id` to prevent row duplication. Align with Inventory Valuation logic.
+- [x] **REQ-129:** Warehouse Performance Report: Implement a comprehensive warehouse efficiency and quality metrics report. KPIs include stock movements (Opening, Received, Sold, Adjusted, Damaged, RTV, Closing), Inventory Value, Fulfillment metrics (Fill rate, Damage rate, Stock turnover), and Operational metrics (Slow-moving stock %, Low-stock SKU count). Requires integration with `stock_ledgers`, `inventory_levels`, and `order_items`.
 
  
  

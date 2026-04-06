@@ -11,9 +11,12 @@
         <div class="card-body">
             <form action="{{ route('admin.reports.inventory') }}" method="GET" class="row g-3">
                 <div class="col-md-2">
-                    <label class="form-label small fw-bold">As-of Date</label>
-                    <input type="date" name="as_of_date" class="form-control" value="{{ $filters['as_of_date'] ?? '' }}">
-                    <div class="form-text xsmall">Leave blank for current stock</div>
+                    <label class="form-label small fw-bold">Start Date</label>
+                    <input type="date" name="start_date" class="form-control" value="{{ $filters['start_date'] ?? '' }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-bold">End Date</label>
+                    <input type="date" name="end_date" class="form-control" value="{{ $filters['end_date'] ?? '' }}">
                 </div>
                 <div class="col-md-2">
                     <label class="form-label small fw-bold">Warehouse</label>
@@ -34,13 +37,6 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label small fw-bold">Include Damaged?</label>
-                    <select name="include_damaged" class="form-select">
-                        <option value="no" {{ ($filters['include_damaged'] ?? 'no') == 'no' ? 'selected' : '' }}>No (Saleable only)</option>
-                        <option value="yes" {{ ($filters['include_damaged'] ?? 'no') == 'yes' ? 'selected' : '' }}>Yes (Include Wastage)</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
                     <label class="form-label small fw-bold">Batch #</label>
                     <input type="text" name="batch_number" class="form-control" placeholder="Search Batch..." value="{{ $filters['batch_number'] ?? '' }}">
                 </div>
@@ -52,11 +48,18 @@
 
                 <div class="col-12 mt-2">
                     <a class="text-primary small fw-bold text-decoration-none" data-bs-toggle="collapse" href="#extraFilters">
-                        <i class="bx bx-plus me-1"></i> Catalog Filters
+                        <i class="bx bx-plus me-1"></i> More Filters
                     </a>
-                    <div class="collapse {{ !empty($filters['product_id']) || !empty($filters['category_id']) || !empty($filters['brand_id']) ? 'show' : '' }} mt-3" id="extraFilters">
+                    <div class="collapse {{ !empty($filters['product_id']) || !empty($filters['category_id']) || !empty($filters['brand_id']) || !empty($filters['include_damaged']) ? 'show' : '' }} mt-3" id="extraFilters">
                         <div class="row g-3">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold">Include Wastage & Damage?</label>
+                                <select name="include_damaged" class="form-select">
+                                    <option value="no" {{ ($filters['include_damaged'] ?? 'no') == 'no' ? 'selected' : '' }}>No (Saleable only)</option>
+                                    <option value="yes" {{ ($filters['include_damaged'] ?? 'no') == 'yes' ? 'selected' : '' }}>Yes (Include Wastage & Damage)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
                                 <label class="form-label small fw-bold">Category</label>
                                 <select name="category_id" class="form-select select2_list">
                                     <option value="">All Categories</option>
@@ -65,7 +68,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label class="form-label small fw-bold">Brand</label>
                                 <select name="brand_id" class="form-select select2_list">
                                     <option value="">All Brands</option>
@@ -74,7 +77,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label class="form-label small fw-bold">Product</label>
                                 <select name="product_id" class="form-select select2_list">
                                     <option value="">All Products</option>
@@ -145,101 +148,28 @@
         </div>
     </div>
 
-    <div class="row g-4">
-        <!-- Warehouse Valuation -->
-        <div class="col-md-6">
-            <div id="card-warehouse" class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Warehouse-wise Valuation</h5>
-                    <div class="btn-group">
-                        <a href="{{ route('admin.reports.inventory.export', array_merge(request()->all(), ['type' => 'warehouse'])) }}" class="btn btn-sm btn-soft-success">
-                            <i class="bx bx-download"></i>
-                        </a>
-                        <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-warehouse', 'Warehouse Valuation')">
-                            <i class="bx bx-printer"></i>
-                        </button>
-                    </div>
+    @if(!empty($view))
+        <!-- Detailed Paginated View -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="{{ route('admin.reports.inventory', request()->except('view', 'page')) }}" class="btn btn-sm btn-outline-secondary me-2">
+                        <i class="bx bx-arrow-back"></i> Dashboard
+                    </a>
+                    <h5 class="card-title mb-0 d-inline-block">{{ $title }}</h5>
                 </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-sm align-middle mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="ps-3">Warehouse</th>
-                                    <th class="text-center">Units</th>
-                                    <th class="text-end pe-3">Valuation (Cost)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($report['breakdowns']['warehouse'] as $wh)
-                                    <tr>
-                                        <td class="ps-3 fw-medium">{{ $wh['name'] }}</td>
-                                        <td class="text-center">{{ number_format($wh['quantity']) }}</td>
-                                        <td class="text-end pe-3 fw-bold">${{ number_format($wh['valuation'], 2) }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="btn-group">
+                    <a href="{{ route('admin.reports.inventory.export', array_merge(request()->all(), ['type' => $view])) }}" class="btn btn-sm btn-soft-success">
+                        <i class="bx bx-download me-1"></i> Export
+                    </a>
+                    <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('detailed-table-container', '{{ $title }}')">
+                        <i class="bx bx-printer"></i>
+                    </button>
                 </div>
             </div>
-        </div>
-
-        <!-- Product Valuation -->
-        <div class="col-md-6">
-            <div id="card-product" class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Product-wise Valuation (Top 50)</h5>
-                    <div class="btn-group">
-                        <a href="{{ route('admin.reports.inventory.export', array_merge(request()->all(), ['type' => 'product'])) }}" class="btn btn-sm btn-soft-success">
-                            <i class="bx bx-download"></i>
-                        </a>
-                        <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-product', 'Product Valuation')">
-                            <i class="bx bx-printer"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-sm align-middle mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="ps-3">Product</th>
-                                    <th class="text-center">Units</th>
-                                    <th class="text-end pe-3">Valuation (Cost)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($report['breakdowns']['product'] as $prod)
-                                    <tr>
-                                        <td class="ps-3 small fw-medium">{{ $prod['name'] }}</td>
-                                        <td class="text-center">{{ number_format($prod['quantity']) }}</td>
-                                        <td class="text-end pe-3 fw-bold">${{ number_format($prod['valuation'], 2) }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Batch-wise Detail -->
-        <div class="col-12 mt-4">
-            <div id="card-batch" class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Batch-wise Inventory Breakdown (Recent 50)</h5>
-                    <div class="btn-group">
-                        <a href="{{ route('admin.reports.inventory.export', array_merge(request()->all(), ['type' => 'batch'])) }}" class="btn btn-sm btn-soft-success">
-                            <i class="bx bx-download"></i>
-                        </a>
-                        <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-batch', 'Batch Breakdown')">
-                            <i class="bx bx-printer"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
+            <div class="card-body p-0" id="detailed-table-container">
+                <div class="table-responsive">
+                    @if($view === 'batch')
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
@@ -252,27 +182,184 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($report['breakdowns']['batch'] as $batch)
+                                @foreach($data as $row)
                                     <tr>
-                                        <td class="ps-3 fw-bold text-primary">{{ $batch['name'] }}</td>
-                                        <td>{{ $batch['warehouse'] }}</td>
-                                        <td class="small">{{ $batch['product'] }}</td>
-                                        <td class="text-center fw-bold">{{ number_format($batch['quantity']) }}</td>
-                                        <td class="text-end text-muted small">${{ number_format($batch['unit_cost'], 2) }}</td>
-                                        <td class="text-end pe-3 fw-bold text-dark">${{ number_format($batch['valuation'], 2) }}</td>
+                                        <td class="ps-3 fw-bold text-primary">{{ $row->name }}</td>
+                                        <td>{{ $row->warehouse }}</td>
+                                        <td class="small">{{ $row->product }}</td>
+                                        <td class="text-center fw-bold">{{ number_format($row->quantity) }}</td>
+                                        <td class="text-end text-muted small">${{ number_format($row->unit_cost, 2) }}</td>
+                                        <td class="text-end pe-3 fw-bold text-dark">${{ number_format($row->valuation, 2) }}</td>
                                     </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="6" class="text-center py-5 text-muted">No inventory records found matching your filters.</td>
-                                    </tr>
-                                @endforelse
+                                @endforeach
                             </tbody>
                         </table>
+                    @else
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3">{{ $view === 'warehouse' ? 'Warehouse' : 'Product' }}</th>
+                                    <th class="text-center">Units</th>
+                                    <th class="text-end pe-3">Valuation (Cost)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($data as $row)
+                                    <tr>
+                                        <td class="ps-3 fw-medium">{{ $row->name }}</td>
+                                        <td class="text-center">{{ number_format($row->quantity) }}</td>
+                                        <td class="text-end pe-3 fw-bold">${{ number_format($row->valuation, 2) }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @endif
+                </div>
+            </div>
+            <div class="card-footer bg-white border-0 py-3">
+                {{ $data->links() }}
+            </div>
+        </div>
+    @else
+        <!-- Dashboard Overview Mode -->
+        <div class="row g-4">
+            <!-- Warehouse Valuation -->
+            <div class="col-md-6">
+                <div id="card-warehouse" class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Warehouse-wise Valuation</h5>
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('admin.reports.inventory', array_merge(request()->all(), ['view' => 'warehouse'])) }}" class="btn btn-sm btn-soft-primary text-nowrap">View All</a>
+                            <div class="btn-group">
+                                <a href="{{ route('admin.reports.inventory.export', array_merge(request()->all(), ['type' => 'warehouse'])) }}" class="btn btn-sm btn-soft-success">
+                                    <i class="bx bx-download"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-warehouse', 'Warehouse Valuation')">
+                                    <i class="bx bx-printer"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-3">Warehouse</th>
+                                        <th class="text-center">Units</th>
+                                        <th class="text-end pe-3">Valuation (Cost)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($report['breakdowns']['warehouse'] as $wh)
+                                        <tr>
+                                            <td class="ps-3 fw-medium">{{ $wh['name'] }}</td>
+                                            <td class="text-center">{{ number_format($wh['quantity']) }}</td>
+                                            <td class="text-end pe-3 fw-bold">${{ number_format($wh['valuation'], 2) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Valuation -->
+            <div class="col-md-6">
+                <div id="card-product" class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Product-wise Valuation</h5>
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('admin.reports.inventory', array_merge(request()->all(), ['view' => 'product'])) }}" class="btn btn-sm btn-soft-primary text-nowrap">View All</a>
+                            <div class="btn-group">
+                                <a href="{{ route('admin.reports.inventory.export', array_merge(request()->all(), ['type' => 'product'])) }}" class="btn btn-sm btn-soft-success">
+                                    <i class="bx bx-download"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-product', 'Product Valuation')">
+                                    <i class="bx bx-printer"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-3">Product</th>
+                                        <th class="text-center">Units</th>
+                                        <th class="text-end pe-3">Valuation (Cost)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($report['breakdowns']['product'] as $prod)
+                                        <tr>
+                                            <td class="ps-3 small fw-medium">{{ $prod['name'] }}</td>
+                                            <td class="text-center">{{ number_format($prod['quantity']) }}</td>
+                                            <td class="text-end pe-3 fw-bold">${{ number_format($prod['valuation'], 2) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Batch-wise Detail -->
+            <div class="col-12 mt-4">
+                <div id="card-batch" class="card border-0 shadow-sm">
+                    <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Batch-wise Inventory Breakdown</h5>
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('admin.reports.inventory', array_merge(request()->all(), ['view' => 'batch'])) }}" class="btn btn-sm btn-soft-primary text-nowrap">View All</a>
+                            <div class="btn-group">
+                                <a href="{{ route('admin.reports.inventory.export', array_merge(request()->all(), ['type' => 'batch'])) }}" class="btn btn-sm btn-soft-success">
+                                    <i class="bx bx-download"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-batch', 'Batch Breakdown')">
+                                    <i class="bx bx-printer"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-3">Batch #</th>
+                                        <th>Warehouse</th>
+                                        <th>Product</th>
+                                        <th class="text-center">Qty</th>
+                                        <th class="text-end">Unit Cost</th>
+                                        <th class="text-end pe-3">Total Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($report['breakdowns']['batch'] as $batch)
+                                        <tr>
+                                            <td class="ps-3 fw-bold text-primary">{{ $batch['name'] }}</td>
+                                            <td>{{ $batch['warehouse'] }}</td>
+                                            <td class="small">{{ $batch['product'] }}</td>
+                                            <td class="text-center fw-bold">{{ number_format($batch['quantity']) }}</td>
+                                            <td class="text-end text-muted small">${{ number_format($batch['unit_cost'], 2) }}</td>
+                                            <td class="text-end pe-3 fw-bold text-dark">${{ number_format($batch['valuation'], 2) }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6" class="text-center py-5 text-muted">No inventory records found matching your filters.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
 </div>
 @endsection
 
@@ -296,7 +383,7 @@
 
         var bName = "{{ \App\HelperClass::generalSettings()->business_name ?? 'Smart Ecom' }}";
         var dateStr = new Date().toLocaleString();
-        var asOfDate = "{{ $filters['as_of_date'] ?? 'Current' }}";
+        var asOfDate = "{{ $filters['end_date'] ?? 'Current' }}";
 
         printWin.document.title = 'Inventory Report - ' + reportTitle;
         
@@ -306,7 +393,7 @@
 
         var header = printWin.document.createElement('div');
         header.className = 'hdr';
-        header.innerHTML = '<h1>' + bName + '</h1><h3>Inventory Report: ' + reportTitle + '</h3><p>As-of Date: ' + asOfDate + ' | Generated: ' + dateStr + '</p>';
+        header.innerHTML = '<h1>' + bName + '</h1><h3>Inventory Report: ' + reportTitle + '</h3><p>Snapshot Date: ' + asOfDate + ' | Generated: ' + dateStr + '</p>';
         printWin.document.body.appendChild(header);
 
         var bodyContent = printWin.document.createElement('div');

@@ -126,6 +126,46 @@
     *   `stock_ledgers`: The source of truth for historical "As-of date" snapshots.
     *   `warehouses` & `suppliers`: Linked via `batches` to provide location and vendor-based valuation.
 
+### 3.10 Stock Reporting Module
+- **What (Business Purpose):** Provides a granular view of current stock status, movement history, and batch-level insights to ensure optimal inventory health and alert administrators to low-stock or stagnant items.
+- **How it Works (Technical Flow):**
+    1. **Data Integration:** The `ReportService` integrates data from `inventory_levels`, `batches`, `batch_products`, `stock_ledgers`, and `warehouse_stock_limits`.
+    2. **Stock Calculation Fix (REQ-128):** Every record is uniquely identified by the combination of `batch_id`, `product_id`, and `product_variant_id`. All JOINS strictly use these three keys to prevent row duplication and ensure calculation accuracy.
+    3. **Low-Stock Alerts:** The system compares `current_quantity` against either `warehouse_stock_limits.min_stock` (if defined) or the global `products.min_stock_global` to flag low-stock items.
+    4. **Batch Aging Logic:** Calculates the number of days since receipt (`DATEDIFF`) to categorize inventory health:
+        *   **Fresh:** 0 - 30 days old.
+        *   **Aging:** 31 - 90 days old.
+        *   **Stagnant:** 91+ days old (flagged for immediate review/promotion).
+    5. **Stock Movement Trace:** Provides a chronological audit trail of all transactions for specific products, warehouses, or batches via `stock_ledgers`.
+    6. **Serial Tracing:** Allows administrators to track the lifecycle of individual physical units (serials) from receipt to sale or wastage.
+- **Data & Storage (DB Connectivity):**
+    *   `inventory_levels`: The primary source for current quantity snapshots.
+    *   `batch_products`: Linked to provide `unit_cost` for valuation metrics.
+    *   `stock_ledgers`: Source for movement history.
+    *   `warehouse_stock_limits`: Source for warehouse-specific threshold overrides.
+    *   `suppliers`: Linked via `batches` (using `leftJoin` to support all batch types) to identify vendors.
+
+### 3.11 Warehouse Performance Module
+- **What (Business Purpose):** Evaluates warehouse operational efficiency, quality control, and inventory health to optimize fulfillment and minimize losses.
+- **How it Works (Technical Flow):**
+    1. **Stock Reconciliation:** Uses `stock_ledgers` to balance Opening Stock + Receipts + Returns + Adjustments - Outflows (Sales/RTV). Provides a mathematical audit of `closing_stock` accuracy.
+    2. **Efficiency Metrics:**
+        *   **Fill Rate:** Measures fulfillment success by comparing `units_shipped` (from `ordered_product_batches`) against the `total_ordered` quantity for the warehouse.
+        *   **Stock Turnover:** Calculates COGS / Current Inventory Value to determine how quickly stock is sold and replaced.
+    3. **Quality Metrics:**
+        *   **Damage Rate:** Percentage of items marked as damaged compared to total handled inventory (Receipts + Returns).
+        *   **Wastage Tracking:** Specifically tracks units moved to damaged status during the period.
+    4. **Inventory Health:**
+        *   **Slow-Moving SKUs:** Identifies the percentage of unique SKUs with zero sales movements during the reporting period.
+        *   **Low-Stock SKUs:** Real-time count of SKUs below their warehouse-specific or global minimum thresholds.
+- **Data & Storage (DB Connectivity):**
+    *   `stock_ledgers`: Source for all historical movement trends.
+    *   `inventory_levels`: Source for live closing stock snapshots.
+    *   `ordered_product_batches`: Source for warehouse-specific fulfillment attribution and COGS calculation.
+    *   `warehouse_stock_limits`: Source for localized alert thresholds.
+
+
+
 ---
 
 ## 4. Key Procedural Lifecycle: Stock Movement Ledger

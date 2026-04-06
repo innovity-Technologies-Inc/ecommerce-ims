@@ -36,8 +36,44 @@ class ReportController extends Controller
             $filters['end_date'] = now()->format('Y-m-d');
         }
 
-        $summary = $this->reportService->getSalesSummary($filters);
+        $view = $request->get('view');
 
+        // Filter Options (Needed for both modes)
+        $warehouses = Warehouse::orderBy('name')->get();
+        $categories = Category::orderBy('name')->get();
+        $brands = Brand::orderBy('name')->get();
+        $products = Product::orderBy('name')->limit(100)->get();
+
+        // Detailed View Mode
+        if ($view) {
+            $summary = $this->reportService->getSalesSummary($filters); // For Summary Cards
+            $title = '';
+            $data = null;
+
+            if ($view === 'trends') {
+                $title = 'Sales Trends';
+                $reportData = $this->reportService->getSalesSummary($filters, 20);
+                $data = $reportData['grouped_data'];
+            } else {
+                $title = match ($view) {
+                    'product' => 'Top Products by Sales',
+                    'variant' => 'Sales by Variant',
+                    'warehouse' => 'Sales by Warehouse',
+                    'batch' => 'Top Batches by Sales',
+                    'payment_method' => 'Payment Methods Breakdown',
+                    default => 'Report Details'
+                };
+                $data = $this->reportService->getSalesByEntity($view, $filters, 20);
+            }
+
+            return view('admin.reports.sales', compact(
+                'summary', 'filters', 'view', 'title', 'data',
+                'warehouses', 'categories', 'brands', 'products'
+            ));
+        }
+
+        // Dashboard Mode
+        $summary = $this->reportService->getSalesSummary($filters);
         $breakdowns = [
             'product' => $this->reportService->getSalesByEntity('product', $filters),
             'variant' => $this->reportService->getSalesByEntity('variant', $filters),
@@ -46,22 +82,8 @@ class ReportController extends Controller
             'payment_method' => $this->reportService->getSalesByEntity('payment_method', $filters),
         ];
 
-        // Filter Options
-        $warehouses = Warehouse::orderBy('name')->get();
-        $categories = Category::orderBy('name')->get();
-        $brands = Brand::orderBy('name')->get();
-
-        // We'll limit products in filter to avoid massive dropdowns, or use Select2 AJAX
-        $products = Product::orderBy('name')->limit(100)->get();
-
         return view('admin.reports.sales', compact(
-            'summary',
-            'breakdowns',
-            'filters',
-            'warehouses',
-            'categories',
-            'brands',
-            'products'
+            'summary', 'breakdowns', 'filters', 'warehouses', 'categories', 'brands', 'products'
         ));
     }
 
@@ -71,7 +93,48 @@ class ReportController extends Controller
     public function inventory(Request $request): View
     {
         $filters = $request->all();
+        $view = $request->get('view');
+
+        // Filter Options (Needed for both modes)
+        $warehouses = Warehouse::orderBy('name')->get();
+        $suppliers = Supplier::orderBy('name')->get();
+        $categories = Category::orderBy('name')->get();
+        $brands = Brand::orderBy('name')->get();
+        $products = Product::orderBy('name')->limit(100)->get();
+
+        // Detailed View Mode
+        if ($view) {
+            $report = $this->reportService->getInventoryReport($filters); // For Summary Cards
+            $title = match ($view) {
+                'warehouse' => 'Warehouse-wise Valuation',
+                'product' => 'Product-wise Valuation',
+                'batch' => 'Batch-wise Inventory Breakdown',
+                default => 'Inventory Details'
+            };
+            $reportData = $this->reportService->getInventoryReport($filters, $view, 20);
+            $data = $reportData['data'];
+
+            return view('admin.reports.inventory', compact(
+                'report', 'filters', 'view', 'title', 'data',
+                'warehouses', 'suppliers', 'categories', 'brands', 'products'
+            ));
+        }
+
+        // Dashboard Mode
         $report = $this->reportService->getInventoryReport($filters);
+
+        return view('admin.reports.inventory', compact(
+            'report', 'filters', 'warehouses', 'suppliers', 'categories', 'brands', 'products'
+        ));
+    }
+
+    /**
+     * Display the stock report.
+     */
+    public function stock(Request $request): View
+    {
+        $filters = $request->all();
+        $view = $request->get('view');
 
         // Filter Options
         $warehouses = Warehouse::orderBy('name')->get();
@@ -80,15 +143,142 @@ class ReportController extends Controller
         $brands = Brand::orderBy('name')->get();
         $products = Product::orderBy('name')->limit(100)->get();
 
-        return view('admin.reports.inventory', compact(
-            'report',
-            'filters',
-            'warehouses',
-            'suppliers',
-            'categories',
-            'brands',
-            'products'
+        // 1. Handle "View All" Mode
+        if ($view) {
+            $data = null;
+            $title = '';
+
+            switch ($view) {
+                case 'warehouse':
+                    $title = 'Stock by Warehouse';
+                    $data = $this->reportService->getStockReport(array_merge($filters, ['group_by' => 'warehouse']), 20);
+                    break;
+                case 'product':
+                    $title = 'Stock by Product';
+                    $data = $this->reportService->getStockReport(array_merge($filters, ['group_by' => 'product']), 20);
+                    break;
+                case 'batch':
+                    $title = 'Stock by Batch';
+                    $data = $this->reportService->getStockReport($filters, 20);
+                    break;
+                case 'movement':
+                    $title = 'Stock Movement History';
+                    $data = $this->reportService->getStockMovements($filters, 20);
+                    break;
+                case 'aging':
+                    $title = 'Batch Aging (Stagnant Stock)';
+                    $data = $this->reportService->getBatchAging($filters, 50); // Total limit 50 as requested
+                    break;
+                case 'wastage_product':
+                    $title = 'Wastage by Product';
+                    $data = $this->reportService->getWastageBreakdown('product', $filters, 20);
+                    break;
+                case 'wastage_warehouse':
+                    $title = 'Wastage by Warehouse';
+                    $data = $this->reportService->getWastageBreakdown('warehouse', $filters, 20);
+                    break;
+                case 'wastage_batch':
+                    $title = 'Wastage by Batch';
+                    $data = $this->reportService->getWastageBreakdown('batch', $filters, 20);
+                    break;
+                case 'serial':
+                    $title = 'Serial Number Trace';
+                    $data = $this->reportService->getSerialTrace($filters, 20);
+                    break;
+            }
+
+            // Summary cards still needed for context
+            $rawReport = $this->reportService->getStockReport($filters);
+            $summary = [
+                'total_qty' => $rawReport->sum('current_quantity'),
+                'damaged_qty' => $rawReport->sum('damaged_quantity'),
+                'low_stock_count' => $rawReport->where('is_low_stock', 1)->count(),
+                'total_value' => $rawReport->sum('inventory_value'),
+            ];
+
+            return view('admin.reports.stock', compact(
+                'data', 'summary', 'filters', 'view', 'title',
+                'warehouses', 'suppliers', 'categories', 'brands', 'products'
+            ));
+        }
+
+        // 2. Dashboard Mode (Show top 10 for all)
+        $rawReport = $this->reportService->getStockReport($filters);
+        
+        $summary = [
+            'total_qty' => $rawReport->sum('current_quantity'),
+            'damaged_qty' => $rawReport->sum('damaged_quantity'),
+            'low_stock_count' => $rawReport->where('is_low_stock', 1)->count(),
+            'total_value' => $rawReport->sum('inventory_value'),
+        ];
+
+        $breakdowns = [
+            'warehouse' => $this->reportService->getStockReport(array_merge($filters, ['group_by' => 'warehouse']))->take(10),
+            'product' => $this->reportService->getStockReport(array_merge($filters, ['group_by' => 'product']))->take(10),
+            'batch' => $rawReport->take(10),
+            'movement' => $this->reportService->getStockMovements($filters, 10),
+            'aging' => $this->reportService->getBatchAging($filters, 10),
+            'wastage_product' => $this->reportService->getWastageBreakdown('product', $filters, 10),
+            'wastage_warehouse' => $this->reportService->getWastageBreakdown('warehouse', $filters, 10),
+            'wastage_batch' => $this->reportService->getWastageBreakdown('batch', $filters, 10),
+            'serial' => $this->reportService->getSerialTrace($filters, 10),
+        ];
+
+        return view('admin.reports.stock', compact(
+            'breakdowns', 'summary', 'filters',
+            'warehouses', 'suppliers', 'categories', 'brands', 'products'
         ));
+    }
+
+    /**
+     * Export stock report to Excel.
+     */
+    public function exportStock(Request $request): BinaryFileResponse
+    {
+        $filters = $request->all();
+        $tab = $request->get('tab', 'main');
+        $headings = [];
+        $exportData = [];
+        $title = 'Stock Report';
+
+        switch ($tab) {
+            case 'movement':
+                $title = 'Stock Movements';
+                $headings = ['Date', 'Product', 'Warehouse', 'Batch', 'Change Qty', 'Type'];
+                $data = $this->reportService->getStockMovements($filters, 1000); // Higher limit for export
+                foreach ($data as $item) {
+                    $exportData[] = [
+                        $item->created_at, $item->product_name, $item->warehouse_name,
+                        $item->batch_number, $item->change_qty, $item->transaction_type,
+                    ];
+                }
+                break;
+            case 'aging':
+                $title = 'Batch Aging';
+                $headings = ['Batch #', 'Product', 'Warehouse', 'Supplier', 'Receipt Date', 'Age (Days)'];
+                $data = $this->reportService->getBatchAging($filters, 1000);
+                foreach ($data as $item) {
+                    $exportData[] = [
+                        $item->batch_number, 'N/A', $item->warehouse_name,
+                        $item->supplier_name, $item->created_at, $item->age_days,
+                    ];
+                }
+                break;
+            default:
+                $title = 'Stock Status';
+                $headings = ['Warehouse', 'Product', 'SKU', 'Batch', 'Qty', 'Damaged', 'Valuation'];
+                $data = $this->reportService->getStockReport($filters);
+                foreach ($data as $item) {
+                    $exportData[] = [
+                        $item->warehouse_name, $item->product_name, $item->sku,
+                        $item->batch_number, $item->current_quantity, $item->damaged_quantity,
+                        number_format($item->inventory_value, 2, '.', ''),
+                    ];
+                }
+                break;
+        }
+
+        return Excel::download(new SalesExport($exportData, $headings, $title), 'stock_report_'.$tab.'_'.now()->format('Ymd_His').'.xlsx');
     }
 
     /**

@@ -241,6 +241,15 @@ class ReturnService
                             'reason' => 'Damaged return ('.$returnRequest->return_id.')',
                             'return_id' => $returnRequest->id,
                         ]);
+
+                        // Increment damaged_qty in BatchProduct
+                        if ($item->batch_id) {
+                            \App\Models\BatchProduct::where([
+                                'batch_id' => $item->batch_id,
+                                'product_id' => $item->product_id,
+                                'product_variant_id' => $item->product_variant_id,
+                            ])->increment('damaged_qty', $item->quantity);
+                        }
                     }
                 }
 

@@ -103,68 +103,116 @@
     <!-- Summary Metrics -->
     <div class="row g-3 mb-4">
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <h6 class="text-muted small text-uppercase mb-2">Net Sales</h6>
-                    <h3 class="mb-0 fw-bold text-primary">${{ number_format($summary['totals']['net_sales'], 2) }}</h3>
-                    <div class="small text-muted mt-1">Gross: ${{ number_format($summary['totals']['gross_sales'], 2) }}</div>
+            <div class="card border-0 shadow-sm border-start border-primary border-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 me-3">
+                            <div class="avatar-sm bg-soft-primary rounded">
+                                <i class="bx bx-dollar fs-24 text-primary mt-2 ms-2"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="text-muted small text-uppercase mb-1">Net Sales</h6>
+                            <h3 class="mb-0 fw-bold text-primary">${{ number_format($summary['totals']['net_sales'], 2) }}</h3>
+                            <div class="small text-muted">Gross: ${{ number_format($summary['totals']['gross_sales'], 2) }}</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <h6 class="text-muted small text-uppercase mb-2">Gross Profit</h6>
-                    <h3 class="mb-0 fw-bold text-success">${{ number_format($summary['totals']['gross_profit'], 2) }}</h3>
-                    <div class="small text-muted mt-1">Margin: {{ number_format($summary['totals']['gross_margin_percent'], 1) }}%</div>
+            <div class="card border-0 shadow-sm border-start border-success border-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 me-3">
+                            <div class="avatar-sm bg-soft-success rounded">
+                                <i class="bx bx-trending-up fs-24 text-success mt-2 ms-2"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="text-muted small text-uppercase mb-1">Gross Profit</h6>
+                            <h3 class="mb-0 fw-bold text-success">${{ number_format($summary['totals']['gross_profit'], 2) }}</h3>
+                            <div class="small text-muted">Margin: {{ number_format($summary['totals']['gross_margin_percent'], 1) }}%</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <h6 class="text-muted small text-uppercase mb-2">AOV</h6>
-                    <h3 class="mb-0 fw-bold">${{ number_format($summary['totals']['aov'], 2) }}</h3>
-                    <div class="small text-muted mt-1">Per Order</div>
+            <div class="card border-0 shadow-sm border-start border-info border-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 me-2">
+                            <div class="avatar-sm bg-soft-info rounded">
+                                <i class="bx bx-calculator fs-20 text-info mt-2 ms-2"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="text-muted small text-uppercase mb-1">AOV</h6>
+                            <h3 class="mb-0 fw-bold">${{ number_format($summary['totals']['aov'], 2) }}</h3>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <h6 class="text-muted small text-uppercase mb-2">Orders</h6>
-                    <h3 class="mb-0 fw-bold">{{ number_format($summary['totals']['orders_count']) }}</h3>
-                    <div class="small text-muted mt-1">Count</div>
+            <div class="card border-0 shadow-sm border-start border-warning border-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 me-2">
+                            <div class="avatar-sm bg-soft-warning rounded">
+                                <i class="bx bx-cart fs-20 text-warning mt-2 ms-2"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="text-muted small text-uppercase mb-1">Orders</h6>
+                            <h3 class="mb-0 fw-bold">{{ number_format($summary['totals']['orders_count']) }}</h3>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-md-2">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body text-center">
-                    <h6 class="text-muted small text-uppercase mb-2">Units Sold</h6>
-                    <h3 class="mb-0 fw-bold">{{ number_format($summary['totals']['units_sold']) }}</h3>
-                    <div class="small text-muted mt-1">Items</div>
+            <div class="card border-0 shadow-sm border-start border-danger border-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 me-2">
+                            <div class="avatar-sm bg-soft-danger rounded">
+                                <i class="bx bx-package fs-20 text-danger mt-2 ms-2"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="text-muted small text-uppercase mb-1">Units</h6>
+                            <h3 class="mb-0 fw-bold">{{ number_format($summary['totals']['units_sold']) }}</h3>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row g-4 mb-4">
-        <div class="col-lg-8">
-            <div id="card-trends" class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Sales Trends ({{ ucfirst($summary['group_by']) }})</h5>
-                    <div class="btn-group">
-                        <a href="{{ route('admin.reports.sales.export', array_merge(request()->all(), ['type' => 'trends'])) }}" class="btn btn-sm btn-soft-success">
-                            <i class="bx bx-download"></i>
-                        </a>
-                        <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-trends', 'Sales Trends')">
-                            <i class="bx bx-printer"></i>
-                        </button>
-                    </div>
+    @if(!empty($view))
+        <!-- Detailed Paginated View -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="{{ route('admin.reports.sales', request()->except('view', 'page')) }}" class="btn btn-sm btn-outline-secondary me-2">
+                        <i class="bx bx-arrow-back"></i> Dashboard
+                    </a>
+                    <h5 class="card-title mb-0 d-inline-block">{{ $title }}</h5>
                 </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
+                <div class="btn-group">
+                    <a href="{{ route('admin.reports.sales.export', array_merge(request()->all(), ['type' => $view === 'trends' ? 'trends' : $view])) }}" class="btn btn-sm btn-soft-success">
+                        <i class="bx bx-download me-1"></i> Export
+                    </a>
+                    <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('detailed-table-container', '{{ $title }}')">
+                        <i class="bx bx-printer"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-0" id="detailed-table-container">
+                <div class="table-responsive">
+                    @if($view === 'trends')
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
@@ -176,164 +224,19 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($summary['grouped_data'] as $data)
+                                @foreach($data as $row)
                                     <tr>
-                                        <td class="ps-3 fw-medium">{{ $data->period }}</td>
-                                        <td class="text-center">{{ $data->orders_count }}</td>
-                                        <td class="text-end text-primary fw-bold">${{ number_format($data->net_sales, 2) }}</td>
-                                        <td class="text-end text-muted small">${{ number_format($data->total_cost, 2) }}</td>
-                                        <td class="text-end text-success fw-bold pe-3">${{ number_format($data->gross_profit, 2) }}</td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="5" class="text-center py-5">No sales data found for this period.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4">
-            <div id="card-financial" class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Financial Summary</h5>
-                    <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-financial', 'Financial Summary')">
-                        <i class="bx bx-printer"></i>
-                    </button>
-                </div>
-                <div class="card-body p-0">
-                    <table class="table table-sm mb-0">
-                        <tbody>
-                            <tr>
-                                <td class="ps-3 py-3">Gross Sales</td>
-                                <td class="text-end pe-3 py-3 fw-bold">${{ number_format($summary['totals']['gross_sales'], 2) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="ps-3 py-3">Discounts</td>
-                                <td class="text-end pe-3 py-3 text-danger fw-bold">-${{ number_format($summary['totals']['discount_amount'], 2) }}</td>
-                            </tr>
-                            <tr class="bg-light">
-                                <td class="ps-3 py-3 fw-bold text-primary">Net Sales</td>
-                                <td class="text-end pe-3 py-3 fw-bold text-primary">${{ number_format($summary['totals']['net_sales'], 2) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="ps-3 py-3">Shipping Revenue</td>
-                                <td class="text-end pe-3 py-3 fw-bold">${{ number_format($summary['totals']['shipping_revenue'], 2) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="ps-3 py-3">Total Cost (COGS)</td>
-                                <td class="text-end pe-3 py-3 text-muted fw-bold">-${{ number_format($summary['totals']['total_cost'], 2) }}</td>
-                            </tr>
-                            <tr class="bg-soft-success">
-                                <td class="ps-3 py-3 fw-bold text-success">Gross Profit</td>
-                                <td class="text-end pe-3 py-3 fw-bold text-success">${{ number_format($summary['totals']['gross_profit'], 2) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="ps-3 py-3">Gross Margin %</td>
-                                <td class="text-end pe-3 py-3 fw-bold">{{ number_format($summary['totals']['gross_margin_percent'], 2) }}%</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row g-4">
-        <div class="col-md-6">
-            <div id="card-product" class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Top 10 Products by Sales</h5>
-                    <div class="btn-group">
-                        <a href="{{ route('admin.reports.sales.export', array_merge(request()->all(), ['type' => 'product'])) }}" class="btn btn-sm btn-soft-success">
-                            <i class="bx bx-download"></i>
-                        </a>
-                        <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-product', 'Top Products')">
-                            <i class="bx bx-printer"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-sm align-middle mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="ps-3">Product</th>
-                                    <th class="text-center">Sold</th>
-                                    <th class="text-end pe-3">Net Sales</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($breakdowns['product'] as $prod)
-                                    <tr>
-                                        <td class="ps-3 small">{{ $prod->name }}</td>
-                                        <td class="text-center">{{ $prod->units_sold }}</td>
-                                        <td class="text-end pe-3 fw-bold">${{ number_format($prod->net_sales, 2) }}</td>
+                                        <td class="ps-3 fw-medium">{{ $row->period }}</td>
+                                        <td class="text-center">{{ $row->orders_count }}</td>
+                                        <td class="text-end text-primary fw-bold">${{ number_format($row->net_sales, 2) }}</td>
+                                        <td class="text-end text-muted small">${{ number_format($row->total_cost, 2) }}</td>
+                                        <td class="text-end text-success fw-bold pe-3">${{ number_format($row->gross_profit, 2) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div id="card-warehouse" class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Sales by Warehouse</h5>
-                    <div class="btn-group">
-                        <a href="{{ route('admin.reports.sales.export', array_merge(request()->all(), ['type' => 'warehouse'])) }}" class="btn btn-sm btn-soft-success">
-                            <i class="bx bx-download"></i>
-                        </a>
-                        <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-warehouse', 'Warehouse Sales')">
-                            <i class="bx bx-printer"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-sm align-middle mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="ps-3">Warehouse</th>
-                                    <th class="text-center">Sold</th>
-                                    <th class="text-end pe-3">Net Sales</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($breakdowns['warehouse'] as $wh)
-                                    <tr>
-                                        <td class="ps-3 fw-medium">{{ $wh->name }}</td>
-                                        <td class="text-center">{{ $wh->units_sold }}</td>
-                                        <td class="text-end pe-3 fw-bold">${{ number_format($wh->net_sales, 2) }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div id="card-payment" class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Payment Methods Breakdown</h5>
-                    <div class="btn-group">
-                        <a href="{{ route('admin.reports.sales.export', array_merge(request()->all(), ['type' => 'payment_method'])) }}" class="btn btn-sm btn-soft-success">
-                            <i class="bx bx-download"></i>
-                        </a>
-                        <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-payment', 'Payment Methods')">
-                            <i class="bx bx-printer"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-sm align-middle mb-0">
+                    @elseif($view === 'payment_method')
+                        <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
                                     <th class="ps-3">Method</th>
@@ -342,13 +245,138 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($breakdowns['payment_method'] as $pm)
+                                @foreach($data as $row)
                                     <tr>
-                                        <td class="ps-3 fw-medium">{{ $pm->name }}</td>
-                                        <td class="text-center">{{ $pm->orders_count }}</td>
-                                        <td class="text-end pe-3 fw-bold">${{ number_format($pm->net_sales, 2) }}</td>
+                                        <td class="ps-3 fw-medium">{{ $row->name }}</td>
+                                        <td class="text-center">{{ $row->orders_count }}</td>
+                                        <td class="text-end pe-3 fw-bold">${{ number_format($row->net_sales, 2) }}</td>
                                     </tr>
                                 @endforeach
+                            </tbody>
+                        </table>
+                    @else
+                        {{-- Product, Variant, Warehouse, Batch --}}
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3">{{ ucfirst($view) }}</th>
+                                    <th class="text-center">Units Sold</th>
+                                    <th class="text-end">Net Sales</th>
+                                    <th class="text-end">Cost</th>
+                                    <th class="text-end pe-3">Profit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($data as $row)
+                                    <tr>
+                                        <td class="ps-3 fw-medium">{{ $row->name }}</td>
+                                        <td class="text-center">{{ number_format($row->units_sold) }}</td>
+                                        <td class="text-end fw-bold">${{ number_format($row->net_sales, 2) }}</td>
+                                        <td class="text-end text-muted small">${{ number_format($row->total_cost, 2) }}</td>
+                                        <td class="text-end text-success fw-bold pe-3">${{ number_format($row->gross_profit, 2) }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @endif
+                </div>
+            </div>
+            <div class="card-footer bg-white border-0 py-3">
+                {{ $data->links() }}
+            </div>
+        </div>
+    @else
+        <!-- Dashboard Overview Mode -->
+        <div class="row g-4 mb-4">
+            <div class="col-lg-8">
+                <!-- Grouped Data Table -->
+                <div id="card-trends" class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Sales Trends ({{ ucfirst($summary['group_by']) }})</h5>
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('admin.reports.sales', array_merge(request()->all(), ['view' => 'trends'])) }}" class="btn btn-sm btn-soft-primary">View All</a>
+                            <div class="btn-group">
+                                <a href="{{ route('admin.reports.sales.export', array_merge(request()->all(), ['type' => 'trends'])) }}" class="btn btn-sm btn-soft-success">
+                                    <i class="bx bx-download"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-trends', 'Sales Trends')">
+                                    <i class="bx bx-printer"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-3">Period</th>
+                                        <th class="text-center">Orders</th>
+                                        <th class="text-end">Net Sales</th>
+                                        <th class="text-end">Cost</th>
+                                        <th class="text-end pe-3">Profit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($summary['grouped_data']->take(10) as $data)
+                                        <tr>
+                                            <td class="ps-3 fw-medium">{{ $data->period }}</td>
+                                            <td class="text-center">{{ $data->orders_count }}</td>
+                                            <td class="text-end text-primary fw-bold">${{ number_format($data->net_sales, 2) }}</td>
+                                            <td class="text-end text-muted small">${{ number_format($data->total_cost, 2) }}</td>
+                                            <td class="text-end text-success fw-bold pe-3">${{ number_format($data->gross_profit, 2) }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="5" class="text-center py-5">No sales data found for this period.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <!-- Summary Table -->
+                <div id="card-financial" class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Financial Summary</h5>
+                        <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-financial', 'Financial Summary')">
+                            <i class="bx bx-printer"></i>
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-sm mb-0">
+                            <tbody>
+                                <tr>
+                                    <td class="ps-3 py-3">Gross Sales</td>
+                                    <td class="text-end pe-3 py-3 fw-bold">${{ number_format($summary['totals']['gross_sales'], 2) }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-3 py-3">Discounts</td>
+                                    <td class="text-end pe-3 py-3 text-danger fw-bold">-${{ number_format($summary['totals']['discount_amount'], 2) }}</td>
+                                </tr>
+                                <tr class="bg-light">
+                                    <td class="ps-3 py-3 fw-bold text-primary">Net Sales</td>
+                                    <td class="text-end pe-3 py-3 fw-bold text-primary">${{ number_format($summary['totals']['net_sales'], 2) }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-3 py-3">Shipping Revenue</td>
+                                    <td class="text-end pe-3 py-3 fw-bold">${{ number_format($summary['totals']['shipping_revenue'], 2) }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-3 py-3">Total Cost (COGS)</td>
+                                    <td class="text-end pe-3 py-3 text-muted fw-bold">-${{ number_format($summary['totals']['total_cost'], 2) }}</td>
+                                </tr>
+                                <tr class="bg-soft-success">
+                                    <td class="ps-3 py-3 fw-bold text-success">Gross Profit</td>
+                                    <td class="text-end pe-3 py-3 fw-bold text-success">${{ number_format($summary['totals']['gross_profit'], 2) }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-3 py-3">Gross Margin %</td>
+                                    <td class="text-end pe-3 py-3 fw-bold">{{ number_format($summary['totals']['gross_margin_percent'], 2) }}%</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -356,44 +384,172 @@
             </div>
         </div>
 
-        <div class="col-md-6">
-            <div id="card-batch" class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Top 10 Batches by Sales</h5>
-                    <div class="btn-group">
-                        <a href="{{ route('admin.reports.sales.export', array_merge(request()->all(), ['type' => 'batch'])) }}" class="btn btn-sm btn-soft-success">
-                            <i class="bx bx-download"></i>
-                        </a>
-                        <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-batch', 'Batch Sales')">
-                            <i class="bx bx-printer"></i>
-                        </button>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div id="card-product" class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Top Products by Sales</h5>
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('admin.reports.sales', array_merge(request()->all(), ['view' => 'product'])) }}" class="btn btn-sm btn-soft-primary">View All</a>
+                            <div class="btn-group">
+                                <a href="{{ route('admin.reports.sales.export', array_merge(request()->all(), ['type' => 'product'])) }}" class="btn btn-sm btn-soft-success">
+                                    <i class="bx bx-download"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-product', 'Top Products')">
+                                    <i class="bx bx-printer"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-3">Product</th>
+                                        <th class="text-center">Sold</th>
+                                        <th class="text-end pe-3">Net Sales</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($breakdowns['product']->take(10) as $prod)
+                                        <tr>
+                                            <td class="ps-3 small">{{ $prod->name }}</td>
+                                            <td class="text-center">{{ $prod->units_sold }}</td>
+                                            <td class="text-end pe-3 fw-bold">${{ number_format($prod->net_sales, 2) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-sm align-middle mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="ps-3">Batch #</th>
-                                    <th class="text-center">Sold</th>
-                                    <th class="text-end pe-3">Net Sales</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($breakdowns['batch'] as $batch)
+            </div>
+
+            <div class="col-md-6">
+                <div id="card-warehouse" class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Sales by Warehouse</h5>
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('admin.reports.sales', array_merge(request()->all(), ['view' => 'warehouse'])) }}" class="btn btn-sm btn-soft-primary">View All</a>
+                            <div class="btn-group">
+                                <a href="{{ route('admin.reports.sales.export', array_merge(request()->all(), ['type' => 'warehouse'])) }}" class="btn btn-sm btn-soft-success">
+                                    <i class="bx bx-download"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-warehouse', 'Warehouse Sales')">
+                                    <i class="bx bx-printer"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead class="table-light">
                                     <tr>
-                                        <td class="ps-3 fw-medium">{{ $batch->name }}</td>
-                                        <td class="text-center">{{ $batch->units_sold }}</td>
-                                        <td class="text-end pe-3 fw-bold">${{ number_format($batch->net_sales, 2) }}</td>
+                                        <th class="ps-3">Warehouse</th>
+                                        <th class="text-center">Sold</th>
+                                        <th class="text-end pe-3">Net Sales</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach($breakdowns['warehouse']->take(10) as $wh)
+                                        <tr>
+                                            <td class="ps-3 fw-medium">{{ $wh->name }}</td>
+                                            <td class="text-center">{{ $wh->units_sold }}</td>
+                                            <td class="text-end pe-3 fw-bold">${{ number_format($wh->net_sales, 2) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div id="card-payment" class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Payment Methods Breakdown</h5>
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('admin.reports.sales', array_merge(request()->all(), ['view' => 'payment_method'])) }}" class="btn btn-sm btn-soft-primary">View All</a>
+                            <div class="btn-group">
+                                <a href="{{ route('admin.reports.sales.export', array_merge(request()->all(), ['type' => 'payment_method'])) }}" class="btn btn-sm btn-soft-success">
+                                    <i class="bx bx-download"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-payment', 'Payment Methods')">
+                                    <i class="bx bx-printer"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-3">Method</th>
+                                        <th class="text-center">Orders</th>
+                                        <th class="text-end pe-3">Net Sales</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($breakdowns['payment_method']->take(10) as $pm)
+                                        <tr>
+                                            <td class="ps-3 fw-medium">{{ $pm->name }}</td>
+                                            <td class="text-center">{{ $pm->orders_count }}</td>
+                                            <td class="text-end pe-3 fw-bold">${{ number_format($pm->net_sales, 2) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div id="card-batch" class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Top Batches by Sales</h5>
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('admin.reports.sales', array_merge(request()->all(), ['view' => 'batch'])) }}" class="btn btn-sm btn-soft-primary">View All</a>
+                            <div class="btn-group">
+                                <a href="{{ route('admin.reports.sales.export', array_merge(request()->all(), ['type' => 'batch'])) }}" class="btn btn-sm btn-soft-success">
+                                    <i class="bx bx-download"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-batch', 'Batch Sales')">
+                                    <i class="bx bx-printer"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-3">Batch #</th>
+                                        <th class="text-center">Sold</th>
+                                        <th class="text-end pe-3">Net Sales</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($breakdowns['batch']->take(10) as $batch)
+                                        <tr>
+                                            <td class="ps-3 fw-medium">{{ $batch->name }}</td>
+                                            <td class="text-center">{{ $batch->units_sold }}</td>
+                                            <td class="text-end pe-3 fw-bold">${{ number_format($batch->net_sales, 2) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
 </div>
 @endsection
 

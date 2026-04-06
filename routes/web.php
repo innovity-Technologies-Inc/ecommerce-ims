@@ -199,6 +199,15 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
 
         Route::get('/inventory', [\App\Http\Controllers\Admin\ReportController::class, 'inventory'])->name('admin.reports.inventory');
         Route::get('/inventory/export', [\App\Http\Controllers\Admin\ReportController::class, 'exportInventory'])->name('admin.reports.inventory.export');
+
+        Route::get('/stock', [\App\Http\Controllers\Admin\ReportController::class, 'stock'])->name('admin.reports.stock');
+        Route::get('/stock/export', [\App\Http\Controllers\Admin\ReportController::class, 'exportStock'])->name('admin.reports.stock.export');
+
+        // Warehouse Performance
+        Route::prefix('warehouse-performance')->controller(\App\Http\Controllers\Admin\WarehousePerformanceController::class)->group(function () {
+            Route::get('/', 'index')->name('admin.reports.warehouse-performance');
+            Route::get('/{id}', 'show')->name('admin.reports.warehouse-performance.show');
+        });
     });
 
     Route::prefix('inventory')->group(function () {
