@@ -144,6 +144,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-127:** Stock Reporting Module: Detailed stock reports including movement history, batch aging, damaged stock, and serial tracing. Features include warehouse-specific stock levels, low-stock alerts, and valuation metrics.
 - [x] **REQ-128:** Stock Report Calculation Fix: Correct the stock calculation discrepancy in the Stock Report by ensuring the join between `inventory_levels` and `batch_products` includes `product_variant_id` to prevent row duplication. Align with Inventory Valuation logic.
 - [x] **REQ-129:** Warehouse Performance Report: Implement a comprehensive warehouse efficiency and quality metrics report. KPIs include stock movements (Opening, Received, Sold, Adjusted, Damaged, RTV, Closing), Inventory Value, Fulfillment metrics (Fill rate, Damage rate, Stock turnover), and Operational metrics (Slow-moving stock %, Low-stock SKU count). Requires integration with `stock_ledgers`, `inventory_levels`, and `order_items`.
+- [x] **REQ-130:** Standardize Product Variant Stock Defaults: Update `product_variants` table to ensure the `stock` column has a default value of `0` and is `NOT NULL`, matching the `products` table schema for consistency and to prevent calculation errors.
 
  
  
