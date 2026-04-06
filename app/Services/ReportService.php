@@ -246,6 +246,154 @@ class ReportService
                ! empty($filters['brand_id']);
     }
 
+    /**
+     * Get Inventory Report with valuation and filters.
+     */
+    public function getInventoryReport(array $filters): array
+    {
+        $asOfDate = ! empty($filters['as_of_date']) ? $filters['as_of_date'] : null;
+        $includeDamaged = ($filters['include_damaged'] ?? 'no') === 'yes';
+
+        // 1. Core Query for Current or Historical Stock
+        if ($asOfDate) {
+            $data = $this->getHistoricalInventory($filters, $asOfDate, $includeDamaged);
+        } else {
+            $data = $this->getCurrentInventory($filters, $includeDamaged);
+        }
+
+        // 2. Summary Totals
+        $totals = [
+            'total_items' => $data->unique('product_id')->count(),
+            'total_quantity' => $data->sum('quantity'),
+            'total_valuation' => $data->sum('valuation'),
+        ];
+
+        // 3. Entity Breakdowns
+        $breakdowns = [
+            'warehouse' => $data->groupBy('warehouse_name')->map(fn ($group) => [
+                'name' => $group->first()->warehouse_name,
+                'quantity' => $group->sum('quantity'),
+                'valuation' => $group->sum('valuation'),
+            ])->sortByDesc('valuation'),
+
+            'product' => $data->groupBy('product_name')->map(fn ($group) => [
+                'name' => $group->first()->product_name,
+                'quantity' => $group->sum('quantity'),
+                'valuation' => $group->sum('valuation'),
+            ])->sortByDesc('valuation')->take(50),
+
+            'batch' => $data->sortByDesc('batch_id')->map(fn ($item) => [
+                'name' => $item->batch_number,
+                'warehouse' => $item->warehouse_name,
+                'product' => $item->product_name,
+                'quantity' => $item->quantity,
+                'unit_cost' => $item->unit_cost,
+                'valuation' => $item->valuation,
+            ])->take(50),
+        ];
+
+        return [
+            'totals' => $totals,
+            'breakdowns' => $breakdowns,
+            'raw_data' => $data,
+        ];
+    }
+
+    /**
+     * Get Current Inventory from batch_products and warehouses.
+     */
+    protected function getCurrentInventory(array $filters, bool $includeDamaged): \Illuminate\Support\Collection
+    {
+        $query = DB::table('batch_products')
+            ->join('batches', 'batch_products.batch_id', '=', 'batches.id')
+            ->join('warehouses', 'batches.warehouse_id', '=', 'warehouses.id')
+            ->join('products', 'batch_products.product_id', '=', 'products.id')
+            ->leftJoin('product_variants', 'batch_products.product_variant_id', '=', 'product_variants.id')
+            ->select(
+                'batch_products.product_id',
+                'batches.id as batch_id',
+                'batches.batch_number',
+                'warehouses.name as warehouse_name',
+                DB::raw("CONCAT(products.name, IF(product_variants.variant_name IS NOT NULL, CONCAT(' (', product_variants.variant_name, ')'), '')) as product_name"),
+                'batch_products.unit_cost'
+            );
+
+        // Quantity Selection
+        if ($includeDamaged) {
+            $query->addSelect(DB::raw('(batch_products.saleable_qty + batch_products.damaged_qty) as quantity'));
+            $query->addSelect(DB::raw('((batch_products.saleable_qty + batch_products.damaged_qty) * batch_products.unit_cost) as valuation'));
+        } else {
+            $query->addSelect('batch_products.saleable_qty as quantity');
+            $query->addSelect(DB::raw('(batch_products.saleable_qty * batch_products.unit_cost) as valuation'));
+        }
+
+        $this->applyInventoryFilters($query, $filters);
+
+        return $query->get();
+    }
+
+    /**
+     * Calculate Inventory as of a specific date using Stock Ledgers.
+     */
+    protected function getHistoricalInventory(array $filters, string $date, bool $includeDamaged): \Illuminate\Support\Collection
+    {
+        $subQuery = DB::table('stock_ledgers')
+            ->whereDate('created_at', '<=', $date)
+            ->select(
+                'batch_id',
+                'product_id',
+                'product_variant_id',
+                DB::raw('SUM(change_qty) as historical_qty')
+            )
+            ->groupBy('batch_id', 'product_id', 'product_variant_id');
+
+        $query = DB::table('batch_products')
+            ->join('batches', 'batch_products.batch_id', '=', 'batches.id')
+            ->join('warehouses', 'batches.warehouse_id', '=', 'warehouses.id')
+            ->join('products', 'batch_products.product_id', '=', 'products.id')
+            ->leftJoin('product_variants', 'batch_products.product_variant_id', '=', 'product_variants.id')
+            ->joinSub($subQuery, 'ledger_sums', function ($join) {
+                $join->on('batch_products.batch_id', '=', 'ledger_sums.batch_id')
+                    ->on('batch_products.product_id', '=', 'ledger_sums.product_id');
+            })
+            ->select(
+                'batch_products.product_id',
+                'batches.id as batch_id',
+                'batches.batch_number',
+                'warehouses.name as warehouse_name',
+                DB::raw("CONCAT(products.name, IF(product_variants.variant_name IS NOT NULL, CONCAT(' (', product_variants.variant_name, ')'), '')) as product_name"),
+                'batch_products.unit_cost',
+                'ledger_sums.historical_qty as quantity',
+                DB::raw('(ledger_sums.historical_qty * batch_products.unit_cost) as valuation')
+            );
+
+        $this->applyInventoryFilters($query, $filters);
+
+        return $query->get();
+    }
+
+    protected function applyInventoryFilters($query, array $filters): void
+    {
+        if (! empty($filters['warehouse_id'])) {
+            $query->where('batches.warehouse_id', $filters['warehouse_id']);
+        }
+        if (! empty($filters['supplier_id'])) {
+            $query->where('batches.supplier_id', $filters['supplier_id']);
+        }
+        if (! empty($filters['product_id'])) {
+            $query->where('batch_products.product_id', $filters['product_id']);
+        }
+        if (! empty($filters['category_id'])) {
+            $query->where('products.category_id', $filters['category_id']);
+        }
+        if (! empty($filters['brand_id'])) {
+            $query->where('products.brand_id', $filters['brand_id']);
+        }
+        if (! empty($filters['batch_number'])) {
+            $query->where('batches.batch_number', 'like', '%'.$filters['batch_number'].'%');
+        }
+    }
+
     protected function getEmptyTotals(): array
     {
         return [

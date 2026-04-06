@@ -114,6 +114,18 @@
     *   `ordered_product_batches`: Used to link sales to specific **Warehouses** and **Batches** for cost and location-based reporting.
     *   `products` & `categories`: Linked for brand and category-level performance analysis.
 
+### 3.9 Inventory Reporting Module
+- **What (Business Purpose):** Provides real-time and historical visibility into stock levels and financial valuation of inventory, enabling accurate balance sheet reporting and procurement planning.
+- **How it Works (Technical Flow):**
+    1. **Historical Logic (As-of Date):** When a date is selected, the `ReportService` queries the `stock_ledgers` table to sum all `change_qty` values for every batch up to the end of that specific date. This effectively "replays" the history to find the exact stock level at that point in time.
+    2. **Current Logic:** Without a date, the system uses the live `batch_products` table for instant performance.
+    3. **Valuation:** The system multiplies the quantity (saleable/damaged) by the `unit_cost` stored in the `batch_products` table for each specific batch to calculate the true procurement value of the inventory.
+    4. **Filtering:** Granular filters allow grouping by Warehouse, Supplier, Batch, or Catalog segments (Product/Category/Brand).
+- **Data & Storage (DB Connectivity):**
+    *   `batch_products`: The primary source for `unit_cost` and current `saleable_qty`.
+    *   `stock_ledgers`: The source of truth for historical "As-of date" snapshots.
+    *   `warehouses` & `suppliers`: Linked via `batches` to provide location and vendor-based valuation.
+
 ---
 
 ## 4. Key Procedural Lifecycle: Stock Movement Ledger

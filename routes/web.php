@@ -196,6 +196,9 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     Route::prefix('reports')->middleware('permission:reports.view')->group(function () {
         Route::get('/sales', [\App\Http\Controllers\Admin\ReportController::class, 'sales'])->name('admin.reports.sales');
         Route::get('/sales/export', [\App\Http\Controllers\Admin\ReportController::class, 'exportSales'])->name('admin.reports.sales.export');
+
+        Route::get('/inventory', [\App\Http\Controllers\Admin\ReportController::class, 'inventory'])->name('admin.reports.inventory');
+        Route::get('/inventory/export', [\App\Http\Controllers\Admin\ReportController::class, 'exportInventory'])->name('admin.reports.inventory.export');
     });
 
     Route::prefix('inventory')->group(function () {

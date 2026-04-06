@@ -280,6 +280,14 @@
                     <span class="nav-text"> Sales Reports </span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.reports.inventory') }}">
+                    <span class="nav-icon">
+                        <iconify-icon icon="solar:box-minimalistic-bold-duotone"></iconify-icon>
+                    </span>
+                    <span class="nav-text"> Inventory Valuation </span>
+                </a>
+            </li>
             @endcan
 
             <li class="menu-title mt-2">Management</li>
