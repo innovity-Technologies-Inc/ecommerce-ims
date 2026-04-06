@@ -139,6 +139,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-122:** Advanced Return Inventory Processing: Implement batch and serial selection for returns. For 'intact' returns, increase stock levels across products, variants, batches, batch_products, and inventory_levels. Update ordered quantities in orders, order_items, and ordered_product_batches. For 'damaged' returns, mark serials as damaged and move to wastage.
 - [ ] **REQ-123:** Multiple Image Uploads for Returns: Enable clients to upload multiple images when requesting a return. Store images in a dedicated `return_images` table and display them in the admin return request details view.
 - [x] **REQ-124:** Return Request UI & Logic Fix: Expand the return approval form to full-width. Ensure batch and serial selection only shows items originally shipped to the customer for that specific order.
+- [ ] **REQ-125:** Sales Reporting Module: Comprehensive sales metrics including gross/net sales, costs, profit, and margins with dynamic grouping (daily/weekly/monthly/yearly) and deep filtering by warehouse, products, and variants.
 
  
  

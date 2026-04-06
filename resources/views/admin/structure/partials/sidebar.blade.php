@@ -168,7 +168,7 @@
             </li>
             @endif
 
-            <li class="menu-title">Inventory</li>
+            <li class="menu-title mt-2">Inventory</li>
 
             @can('warehouse.view')
             <li class="nav-item">
@@ -265,6 +265,19 @@
                         <iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon>
                     </span>
                     <span class="nav-text"> Wastages </span>
+                </a>
+            </li>
+            @endcan
+
+            @can('reports.view')
+            <li class="menu-title mt-2">Reports</li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.reports.sales') }}">
+                    <span class="nav-icon">
+                        <iconify-icon icon="solar:graph-up-bold-duotone"></iconify-icon>
+                    </span>
+                    <span class="nav-text"> Sales Reports </span>
                 </a>
             </li>
             @endcan

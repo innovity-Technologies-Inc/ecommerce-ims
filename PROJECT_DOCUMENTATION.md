@@ -98,6 +98,22 @@
     *   `coupons` store rules and constraints.
     *   `coupon_usages` link `coupons` to `users` and `orders`.
 
+### 3.8 Sales Reporting Module
+- **What (Business Purpose):** Provides a comprehensive overview of the business's financial performance, enabling data-driven decision-making through real-time sales metrics, profit analysis, and granular breakdowns.
+- **How it Works (Technical Flow):**
+    1. **Data Aggregation:** The `ReportService` performs complex SQL aggregations on `orders`, `order_items`, and `ordered_product_batches`.
+    2. **Metrics Calculation:**
+        *   **Net Sales:** Calculated from `total_amount` (after all discounts).
+        *   **Profit & Margin:** Derived by subtracting `total_cost` (procurement cost captured during fulfillment) from Net Sales.
+        *   **AOV:** Average Order Value based on filtered results.
+    3. **Time Grouping:** Users can toggle between Daily, Weekly, Monthly, and Yearly views, with dynamic SQL `DATE_FORMAT` grouping.
+    4. **Filtering:** Deep filtering by Warehouse, Brand, Category, Product, and Payment/Order statuses allows for multi-dimensional analysis.
+    5. **Breakdowns:** Secondary tables provide the Top 10 rankings for Products, Warehouses, Batches, and Payment Methods to identify high-performing entities.
+- **Data & Storage (DB Connectivity):**
+    *   `orders` & `order_items`: Primary sources for revenue, discounts, and units sold.
+    *   `ordered_product_batches`: Used to link sales to specific **Warehouses** and **Batches** for cost and location-based reporting.
+    *   `products` & `categories`: Linked for brand and category-level performance analysis.
+
 ---
 
 ## 4. Key Procedural Lifecycle: Stock Movement Ledger

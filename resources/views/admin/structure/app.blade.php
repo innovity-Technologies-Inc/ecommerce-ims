@@ -25,5 +25,8 @@
     </div>
     <!-- END Wrapper -->
 
+@endsection
 
+@section('scripts')
+    @yield('scripts')
 @endsection

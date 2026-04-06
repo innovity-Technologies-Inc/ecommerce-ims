@@ -193,6 +193,11 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::post('/{sectionName}/update', [\App\Http\Controllers\Admin\HomepageSectionController::class, 'updateSection'])->name('admin.sections.update')->middleware('permission:homepage_sections.edit');
     });
 
+    Route::prefix('reports')->middleware('permission:reports.view')->group(function () {
+        Route::get('/sales', [\App\Http\Controllers\Admin\ReportController::class, 'sales'])->name('admin.reports.sales');
+        Route::get('/sales/export', [\App\Http\Controllers\Admin\ReportController::class, 'exportSales'])->name('admin.reports.sales.export');
+    });
+
     Route::prefix('inventory')->group(function () {
         Route::prefix('warehouses')->middleware('permission:warehouse.view')->controller(\App\Http\Controllers\Admin\WarehouseController::class)->group(function () {
             Route::get('/', 'index')->name('admin.warehouses.index');
