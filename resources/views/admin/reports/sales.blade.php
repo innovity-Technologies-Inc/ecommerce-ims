@@ -102,8 +102,8 @@
 
     <!-- Summary Metrics -->
     <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm border-start border-primary border-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm border-start border-primary border-4 h-100">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
@@ -120,8 +120,8 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm border-start border-success border-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm border-start border-success border-4 h-100">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
@@ -138,8 +138,11 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-2">
-            <div class="card border-0 shadow-sm border-start border-info border-4">
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm border-start border-info border-4 h-100">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-2">
@@ -155,8 +158,8 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-2">
-            <div class="card border-0 shadow-sm border-start border-warning border-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm border-start border-warning border-4 h-100">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-2">
@@ -172,8 +175,8 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-2">
-            <div class="card border-0 shadow-sm border-start border-danger border-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm border-start border-danger border-4 h-100">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-2">
