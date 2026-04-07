@@ -152,3 +152,4 @@ This document lists the high-level requirements for the modules implemented in t
  
  
 - [x] **REQ-131:** Warehouse Performance Report Export & Print: Implement "Excel Export" and "Print" functionality for the Warehouse Performance report (both index and detail views). Align UI and logic with existing Sales and Inventory reports, utilizing the `ReportService` and `WarehousePerformanceService`.
+- [ ] **REQ-132:** Warehouse Performance Gross Fill Rate Logic Update: Update the calculation logic for "Gross Fill Rate" in the Warehouse Performance Report to use the `stock_ledger` table as the primary source of truth for total units ordered and fulfilled.

@@ -180,8 +180,8 @@ class SupplierRmaService
                 variantId: $firstItem->product_variant_id,
                 warehouseId: $batch->warehouse_id,
                 changeQty: -$totalQty,
-                transactionType: 'RTV_Dispatch',
-                reasonCode: 'Supplier RMA',
+                transactionType: 'RTV_DISPATCH',
+                reasonCode: 'SUPPLIER_RMA',
                 referenceId: $rma->rma_number,
                 batchId: $firstItem->batch_id,
                 supplierId: $rma->supplier_id

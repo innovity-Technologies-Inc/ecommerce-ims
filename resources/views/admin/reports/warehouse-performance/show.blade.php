@@ -31,9 +31,9 @@
                         </div>
                         <div class="col-md-3">
                             <label class="text-muted small text-uppercase fw-semibold">Total Inflows</label>
-                            <h3 class="fw-bold text-success mb-0">+{{ number_format($report['received_qty'] + $report['returns_qty'] + $report['adjusted_in'] + $report['damaged_plus_stock']) }}</h3>
+                            <h3 class="fw-bold text-success mb-0">+{{ number_format($report['received_qty'] + $report['returns_qty'] + $report['adjusted_in'] + $report['po_damaged_qty']) }}</h3>
                             <div class="small text-muted mt-1">
-                                Rcv: {{ $report['received_qty'] }} | Dmg: {{ $report['damaged_plus_stock'] }} | Ret: {{ $report['returns_qty'] }} | Adj: {{ $report['adjusted_in'] }}
+                                Rcv: {{ $report['received_qty'] }} | Dmg: {{ $report['po_damaged_qty'] }} | Ret: {{ $report['returns_qty'] }} | Adj: {{ $report['adjusted_in'] }}
                             </div>
                         </div>
                         <div class="col-md-1 text-center d-none d-md-flex align-items-center justify-content-center">
@@ -41,9 +41,9 @@
                         </div>
                         <div class="col-md-3">
                             <label class="text-muted small text-uppercase fw-semibold">Total Outflows</label>
-                            <h3 class="fw-bold text-danger mb-0">-{{ number_format($report['sold_qty'] + $report['rtv_qty'] + $report['wastage_entry_qty']) }}</h3>
+                            <h3 class="fw-bold text-danger mb-0">-{{ number_format($report['sold_qty'] + $report['rtv_qty'] + $report['total_wastage_qty']) }}</h3>
                             <div class="small text-muted mt-1">
-                                Sold: {{ $report['sold_qty'] }} | RTV: {{ $report['rtv_qty'] }} | Wst: {{ $report['wastage_entry_qty'] }}
+                                Sold: {{ $report['sold_qty'] }} | RTV: {{ $report['rtv_qty'] }} | Wst: {{ $report['total_wastage_qty'] }}
                             </div>
                         </div>
                     </div>
@@ -60,12 +60,16 @@
                                 <span class="text-secondary"><i class="bx bxs-circle text-success me-1 small"></i> Saleable:</span>
                                 <span class="fw-bold h5 mb-0">{{ number_format($report['saleable_closing']) }}</span>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="text-secondary"><i class="bx bxs-circle text-danger me-1 small"></i> Damaged:</span>
-                                <span class="fw-bold h5 mb-0">{{ number_format($report['damaged_closing']) }}</span>
+                                <span class="fw-bold h5 mb-0">{{ number_format($report['po_damaged_closing']) }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-secondary"><i class="bx bxs-circle text-warning me-1 small"></i> Wastage:</span>
+                                <span class="fw-bold h5 mb-0">{{ number_format($report['wastage_closing']) }}</span>
                             </div>
                             <div class="mt-3 pt-2 border-top">
-                                <span class="small text-muted italic">Internal Wastage: {{ $report['wastage_entry_qty'] }} units</span>
+                                <span class="small text-muted italic">Total Inflow Damaged: {{ $report['po_damaged_qty'] }} units</span>
                             </div>
                         </div>
                     </div>
@@ -192,8 +196,8 @@
                         </div>
                         <div class="col-md-6 ps-4">
                             <div class="mb-2">
-                                <label class="text-muted small">Wastage Units:</label>
-                                <span class="fw-bold text-danger">{{ number_format($report['wastage_entry_qty']) }}</span>
+                                <label class="text-muted small">Total Wastage:</label>
+                                <span class="fw-bold text-danger">{{ number_format($report['total_wastage_qty']) }} Units</span>
                             </div>
                             <div class="mb-2">
                                 <label class="text-muted small">Slow Moving SKUs:</label>
@@ -203,12 +207,12 @@
                     </div>
                     <div class="row text-center pt-3 border-top">
                         <div class="col-6">
-                            <label class="text-muted small d-block">Manual Wastage</label>
-                            <span class="fw-bold text-danger">{{ number_format($report['wastage_entry_qty']) }} Units</span>
+                            <label class="text-muted small d-block">Wastage (Internal+Returns)</label>
+                            <span class="fw-bold text-danger">{{ number_format($report['total_wastage_qty']) }} Units</span>
                         </div>
                         <div class="col-6">
                             <label class="text-muted small d-block">Supplier Damaged (PO)</label>
-                            <span class="fw-bold">{{ number_format($report['damaged_plus_stock']) }} Units</span>
+                            <span class="fw-bold">{{ number_format($report['po_damaged_qty']) }} Units</span>
                         </div>
                     </div>
                 </div>

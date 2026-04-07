@@ -121,7 +121,7 @@ class InventoryService
                 $warehouseId,
                 $quantity,
                 'ALLOCATION',
-                'MOVE_TO_WAREHOUSE',
+                'MANUAL_WAREHOUSE_ALLOCATION',
                 'MANUAL'
             );
         });

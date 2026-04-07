@@ -57,13 +57,14 @@
                             <th class="ps-3">Warehouse</th>
                             <th class="text-center d-none d-print-table-cell-custom">Opening</th>
                             <th class="text-center d-none d-print-table-cell-custom">Received</th>
+                            <th class="text-center d-none d-print-table-cell-custom">PO Damaged</th>
                             <th class="text-center d-none d-print-table-cell-custom">Sold</th>
                             <th class="text-center d-none d-print-table-cell-custom">Returns</th>
                             <th class="text-center d-none d-print-table-cell-custom">Adjusted</th>
-                            <th class="text-center">Closing Stock</th>
-                            <th class="text-center">Fill Rate</th>
+                            <th class="text-center">Total Closing</th>
+                            <th class="text-center">Gross Fill %</th>
                             <th class="text-center d-none d-print-table-cell-custom">Net Fill %</th>
-                            <th class="text-center">Damage Rate</th>
+                            <th class="text-center">Total Wastage %</th>
                             <th class="text-center">Stock Turnover</th>
                             <th class="text-center d-none d-print-table-cell-custom">Value</th>
                             <th class="text-center text-muted">Slow %</th>
@@ -76,6 +77,7 @@
                                 <td class="ps-3 fw-bold">{{ $row['warehouse_name'] }}</td>
                                 <td class="text-center d-none d-print-table-cell-custom">{{ number_format($row['opening_stock']) }}</td>
                                 <td class="text-center d-none d-print-table-cell-custom">{{ number_format($row['received_qty']) }}</td>
+                                <td class="text-center d-none d-print-table-cell-custom">{{ number_format($row['po_damaged_qty']) }}</td>
                                 <td class="text-center d-none d-print-table-cell-custom">{{ number_format($row['sold_qty']) }}</td>
                                 <td class="text-center d-none d-print-table-cell-custom">{{ number_format($row['returns_qty']) }}</td>
                                 <td class="text-center d-none d-print-table-cell-custom">{{ number_format($row['adjusted_in']) }}</td>

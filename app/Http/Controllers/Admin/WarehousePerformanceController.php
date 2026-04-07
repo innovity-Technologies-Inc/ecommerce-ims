@@ -65,26 +65,26 @@ class WarehousePerformanceController extends Controller
                 'Warehouse' => $row['warehouse_name'],
                 'Opening Stock' => (int) ($row['opening_stock'] ?? 0),
                 'Received' => (int) ($row['received_qty'] ?? 0),
-                'Damaged (Inflow)' => (int) ($row['damaged_plus_stock'] ?? 0),
+                'Damaged (Supplier)' => (int) ($row['po_damaged_qty'] ?? 0),
                 'Sold' => (int) ($row['sold_qty'] ?? 0),
                 'Adjusted In' => (int) ($row['adjusted_in'] ?? 0),
                 'Returns' => (int) ($row['returns_qty'] ?? 0),
                 'RTV' => (int) ($row['rtv_qty'] ?? 0),
-                'Wastage (Outflow)' => (int) ($row['wastage_entry_qty'] ?? 0),
+                'Wastage (Total)' => (int) ($row['total_wastage_qty'] ?? 0),
                 'Closing Stock' => (int) ($row['total_closing_stock'] ?? 0),
                 'Inventory Value' => number_format($row['inventory_value'] ?? 0, 2),
-                'Gross Fill Rate (%)' => number_format($row['fill_rate'] ?? 0, 2) . '%',
-                'Net Fill Rate (%)' => number_format($row['net_fill_rate'] ?? 0, 2) . '%',
-                'Return Rate (%)' => number_format($row['return_rate'] ?? 0, 2) . '%',
-                'Wastage Rate (%)' => number_format($row['damage_rate'] ?? 0, 2) . '%',
-                'Stock Turnover' => number_format($row['stock_turnover'], 2) . 'x',
+                'Gross Fill Rate (%)' => number_format($row['fill_rate'] ?? 0, 2).'%',
+                'Net Fill Rate (%)' => number_format($row['net_fill_rate'] ?? 0, 2).'%',
+                'Return Rate (%)' => number_format($row['return_rate'] ?? 0, 2).'%',
+                'Wastage Rate (%)' => number_format($row['damage_rate'] ?? 0, 2).'%',
+                'Stock Turnover' => number_format($row['stock_turnover'], 2).'x',
             ];
         }
 
         $headings = [
-            'Warehouse', 'Opening Stock', 'Received', 'Damaged (Inflow)', 'Sold', 'Adjusted In',
-            'Returns', 'RTV', 'Wastage (Outflow)', 'Closing Stock', 'Inventory Value', 
-            'Gross Fill Rate (%)', 'Net Fill Rate (%)', 'Return Rate (%)', 'Wastage Rate (%)', 'Stock Turnover'
+            'Warehouse', 'Opening Stock', 'Received', 'Damaged (Supplier)', 'Sold', 'Adjusted In',
+            'Returns', 'RTV', 'Wastage (Total)', 'Closing Stock', 'Inventory Value',
+            'Gross Fill Rate (%)', 'Net Fill Rate (%)', 'Return Rate (%)', 'Wastage Rate (%)', 'Stock Turnover',
         ];
 
         $title = 'Warehouse Performance Report ('.$filters['start_date'].' to '.$filters['end_date'].')';

@@ -162,8 +162,8 @@ class SupplierRmaTest extends TestCase
 
         // 5. Verify Ledger
         $this->assertDatabaseHas('stock_ledgers', [
-            'transaction_type' => 'RTV_Dispatch',
-            'reason_code' => 'Supplier RMA',
+            'transaction_type' => 'RTV_DISPATCH',
+            'reason_code' => 'SUPPLIER_RMA',
             'change_qty' => -1,
         ]);
     }

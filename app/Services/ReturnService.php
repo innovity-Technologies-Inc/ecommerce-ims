@@ -234,9 +234,14 @@ class ReturnService
                             ]);
                         }
 
+                        // Get batch for warehouse_id
+                        $batch = $item->batch_id ? \App\Models\Batch::find($item->batch_id) : null;
+
                         Wastage::create([
                             'product_id' => $item->product_id,
                             'product_variant_id' => $item->product_variant_id,
+                            'warehouse_id' => $batch ? $batch->warehouse_id : null,
+                            'batch_id' => $item->batch_id,
                             'quantity' => $item->quantity,
                             'reason' => 'Damaged return ('.$returnRequest->return_id.')',
                             'return_id' => $returnRequest->id,
@@ -249,6 +254,28 @@ class ReturnService
                                 'product_id' => $item->product_id,
                                 'product_variant_id' => $item->product_variant_id,
                             ])->increment('damaged_qty', $item->quantity);
+
+                            // Also increment damaged_quantity in InventoryLevel
+                            if ($batch) {
+                                \App\Models\InventoryLevel::where([
+                                    'warehouse_id' => $batch->warehouse_id,
+                                    'batch_id' => $item->batch_id,
+                                    'product_id' => $item->product_id,
+                                    'product_variant_id' => $item->product_variant_id,
+                                ])->increment('damaged_quantity', $item->quantity);
+
+                                // Log to Stock Ledger as RETURN_DAMAGED
+                                $this->inventoryService->logStockChange(
+                                    productId: $item->product_id,
+                                    variantId: $item->product_variant_id,
+                                    warehouseId: $batch->warehouse_id,
+                                    changeQty: $item->quantity,
+                                    transactionType: 'RETURN_DAMAGED',
+                                    reasonCode: 'DAMAGED_RETURN',
+                                    referenceId: $returnRequest->return_id,
+                                    batchId: $item->batch_id
+                                );
+                            }
                         }
                     }
                 }

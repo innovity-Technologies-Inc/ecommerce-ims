@@ -3,10 +3,9 @@
 namespace App\Services;
 
 use App\Models\InventoryLevel;
-use App\Models\Order;
 use App\Models\Warehouse;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 
 class WarehousePerformanceService
 {
@@ -35,6 +34,7 @@ class WarehousePerformanceService
 
         if ($perPage) {
             $page = request()->get('page', 1);
+
             return new LengthAwarePaginator(
                 $reportData->forPage($page, $perPage),
                 $reportData->count(),
@@ -52,7 +52,7 @@ class WarehousePerformanceService
      */
     protected function calculateWarehouseMetrics(int $warehouseId, string $startDate, string $endDate): array
     {
-        // 1. Stock Movements from Ledgers
+        // 1. Stock Movements from Ledgers (Source of Truth)
         $movements = DB::table('stock_ledgers')
             ->where('warehouse_id', $warehouseId)
             ->whereDate('created_at', '>=', $startDate)
@@ -60,104 +60,98 @@ class WarehousePerformanceService
             ->selectRaw("
                 SUM(CASE WHEN transaction_type = 'PO_RECEIPT' THEN change_qty ELSE 0 END) as received_qty,
                 SUM(CASE WHEN transaction_type = 'SALE' THEN ABS(change_qty) ELSE 0 END) as sold_qty,
-                SUM(CASE WHEN transaction_type IN ('Manual_Adjustment', 'STOCK_ADJUSTMENT_IN', 'STOCK_ADJUSTMENT') AND change_qty > 0 THEN change_qty ELSE 0 END) as adjusted_in,
-                SUM(CASE WHEN transaction_type IN ('Manual_Adjustment', 'STOCK_ADJUSTMENT_OUT', 'STOCK_ADJUSTMENT') AND change_qty < 0 THEN ABS(change_qty) ELSE 0 END) as adjusted_out,
-                SUM(CASE WHEN transaction_type = 'warehouse_damage' THEN ABS(change_qty) ELSE 0 END) as wastage_entry_qty,
-                SUM(CASE WHEN transaction_type = 'DAMAGED' AND change_qty > 0 THEN change_qty ELSE 0 END) as damaged_plus_stock,
-                SUM(CASE WHEN transaction_type IN ('RTV_Dispatch', 'RTV_DISPATCH') THEN ABS(change_qty) ELSE 0 END) as rtv_qty,
-                SUM(CASE WHEN transaction_type = 'RETURN_INTACT' THEN change_qty ELSE 0 END) as returns_qty
+                SUM(CASE WHEN transaction_type = 'STOCK_ADJUSTMENT' AND change_qty > 0 THEN change_qty ELSE 0 END) as adjusted_in,
+                SUM(CASE WHEN transaction_type = 'STOCK_ADJUSTMENT' AND change_qty < 0 THEN ABS(change_qty) ELSE 0 END) as adjusted_out,
+                SUM(CASE WHEN transaction_type = 'WAREHOUSE_DAMAGE' THEN ABS(change_qty) ELSE 0 END) + 
+                SUM(CASE WHEN transaction_type = 'RETURN_DAMAGED' THEN ABS(change_qty) ELSE 0 END) as total_wastage_qty,
+                SUM(CASE WHEN transaction_type = 'DAMAGED' THEN change_qty ELSE 0 END) as po_damaged_qty,
+                SUM(CASE WHEN transaction_type = 'RTV_DISPATCH' THEN ABS(change_qty) ELSE 0 END) as rtv_qty,
+                SUM(CASE WHEN transaction_type IN ('RETURN_INTACT', 'RETURN_DAMAGED') THEN ABS(change_qty) ELSE 0 END) as total_returns_qty,
+                COUNT(DISTINCT CASE WHEN transaction_type = 'SALE' THEN reference_id END) as fulfillment_orders
             ")
             ->first();
 
-        // 2. Total Opening Stock (Sum of all changes BEFORE start date, including damaged)
+        // 2. Total Opening Stock (Cumulative history before period)
         $openingStock = DB::table('stock_ledgers')
             ->where('warehouse_id', $warehouseId)
             ->whereDate('created_at', '<', $startDate)
             ->sum('change_qty');
 
-        // 3. Closing Stock Snapshots (Live)
-        $saleableClosing = (int) InventoryLevel::where('warehouse_id', $warehouseId)->sum('current_quantity');
-        $damagedClosing = (int) InventoryLevel::where('warehouse_id', $warehouseId)->sum('damaged_quantity');
-        $totalClosingStock = $saleableClosing + $damagedClosing;
+        // 3. Closing Stock Snapshots (Ledger Based for perfect reconciliation)
+        // Saleable: All time (PO_RECEIPT + RETURN_INTACT + ADJ_IN) - (SALE)
+        $saleableClosing = (int) DB::table('stock_ledgers')
+            ->where('warehouse_id', $warehouseId)
+            ->where(function ($q) {
+                $q->whereIn('transaction_type', ['PO_RECEIPT', 'RETURN_INTACT', 'SALE'])
+                    ->orWhere('transaction_type', 'STOCK_ADJUSTMENT');
+            })
+            ->sum('change_qty');
+
+        // Damaged Pool: All time (DAMAGED) - (RTV_DISPATCH)
+        // Strictly stock that arrived damaged from supplier and is still on-hand.
+        $poDamagedClosing = (int) DB::table('stock_ledgers')
+            ->where('warehouse_id', $warehouseId)
+            ->whereIn('transaction_type', ['DAMAGED', 'RTV_DISPATCH'])
+            ->sum('change_qty');
+
+        // Current Wastage (Loss of value): Cumulative WAREHOUSE_DAMAGE + RETURN_DAMAGED
+        // Stock that was damaged internally or returned damaged by customers.
+        $wastageClosing = (int) DB::table('stock_ledgers')
+            ->where('warehouse_id', $warehouseId)
+            ->whereIn('transaction_type', ['WAREHOUSE_DAMAGE', 'RETURN_DAMAGED'])
+            ->sum(DB::raw('ABS(change_qty)'));
+
+        $totalClosingStock = $saleableClosing + $poDamagedClosing + $wastageClosing;
 
         // 4. Inventory Value (Live - Saleable only)
         $inventoryValue = DB::table('inventory_levels')
-            ->join('batch_products', function($join) {
+            ->join('batch_products', function ($join) {
                 $join->on('inventory_levels.batch_id', '=', 'batch_products.batch_id')
-                     ->on('inventory_levels.product_id', '=', 'batch_products.product_id')
-                     ->whereRaw('COALESCE(inventory_levels.product_variant_id, 0) = COALESCE(batch_products.product_variant_id, 0)');
+                    ->on('inventory_levels.product_id', '=', 'batch_products.product_id')
+                    ->whereRaw('COALESCE(inventory_levels.product_variant_id, 0) = COALESCE(batch_products.product_variant_id, 0)');
             })
             ->where('inventory_levels.warehouse_id', $warehouseId)
             ->sum(DB::raw('inventory_levels.current_quantity * batch_products.unit_cost'));
 
-        // 5. Returns (All conditions: Intact + Damaged)
-        $returns = DB::table('return_items')
-            ->join('batches', 'return_items.batch_id', '=', 'batches.id')
-            ->where('batches.warehouse_id', $warehouseId)
-            ->where('return_items.is_received', true)
-            ->whereDate('return_items.created_at', '>=', $startDate)
-            ->whereDate('return_items.created_at', '<=', $endDate)
-            ->sum('return_items.quantity');
+        // 5. Fill Rate Calculations
+        $unitsShipped = (int) ($movements->sold_qty ?? 0);
+        $totalReturns = (int) ($movements->total_returns_qty ?? 0);
 
-        // 6. Fulfillment KPIs (using ordered_product_batches for accurate warehouse attribution)
-        $fulfillment = DB::table('ordered_product_batches')
-            ->join('batches', 'ordered_product_batches.batch_id', '=', 'batches.id')
-            ->join('order_items', 'ordered_product_batches.order_item_id', '=', 'order_items.id')
-            ->where('batches.warehouse_id', $warehouseId)
-            ->whereDate('ordered_product_batches.created_at', '>=', $startDate)
-            ->whereDate('ordered_product_batches.created_at', '<=', $endDate)
-            ->selectRaw("
-                COUNT(DISTINCT order_items.order_id) as fulfillment_orders,
-                SUM(ordered_product_batches.quantity) as units_shipped
-            ")
-            ->first();
+        /**
+         * Gross Demand (Initial Shipment Quantity)
+         * In this system, the stock_ledger 'SALE' entries represent the initial units shipped from a specific warehouse.
+         * We use this as the primary source of truth for Gross Demand because it correctly handles split orders
+         * and avoids double-counting at the warehouse level.
+         */
+        $totalOrderedUnits = (int) $unitsShipped;
 
-        // 7. Fill Rate Calculations
-        $unitsShipped = (int) ($fulfillment->units_shipped ?? 0);
-        
-        // Total Ordered for this warehouse context
-        $totalOrderedUnits = DB::table('order_items')
-            ->whereExists(function($query) use ($warehouseId, $startDate, $endDate) {
-                $query->select(DB::raw(1))
-                    ->from('ordered_product_batches')
-                    ->join('batches', 'ordered_product_batches.batch_id', '=', 'batches.id')
-                    ->whereColumn('ordered_product_batches.order_item_id', 'order_items.id')
-                    ->where('batches.warehouse_id', $warehouseId)
-                    ->whereDate('ordered_product_batches.created_at', '>=', $startDate)
-                    ->whereDate('ordered_product_batches.created_at', '<=', $endDate);
-            })
-            ->sum('quantity');
-
-        // Gross Fill Rate: Shipped / Ordered
         $grossFillRate = $totalOrderedUnits > 0 ? ($unitsShipped / $totalOrderedUnits) * 100 : 100;
-        
-        // Net Fill Rate: (Shipped - Returned) / Ordered
-        $netShipped = $unitsShipped - $returns;
+
+        $netShipped = $unitsShipped - $totalReturns;
         $netFillRate = $totalOrderedUnits > 0 ? ($netShipped / $totalOrderedUnits) * 100 : 100;
+        $returnRate = $unitsShipped > 0 ? ($totalReturns / $unitsShipped) * 100 : 0;
 
-        // Return Rate: Returned / Shipped
-        $returnRate = $unitsShipped > 0 ? ($returns / $unitsShipped) * 100 : 0;
+        // 6. Damage Rate (Total Wastage / Total Inflows)
+        $wastageQty = (int) ($movements->total_wastage_qty ?? 0);
+        $totalInflows = (int) ($movements->received_qty ?? 0) +
+                        (int) ($movements->po_damaged_qty ?? 0) +
+                        (int) ($movements->adjusted_in ?? 0) +
+                        $totalReturns;
 
-        // 8. Damage Rate (Wastage Qty / Total Handled Qty)
-        // We use handledQty as the base (Good Received + Damaged Received + Returns)
-        $totalDamagedInPeriod = ($movements->wastage_entry_qty ?? 0) + ($movements->damaged_plus_stock ?? 0);
-        $handledQty = ($movements->received_qty ?? 0) + ($movements->returns_qty ?? 0) + ($movements->damaged_plus_stock ?? 0);
-        $wastageQty = (int) ($movements->wastage_entry_qty ?? 0);
-        $damageRate = $handledQty > 0 ? ($wastageQty / $handledQty) * 100 : 0;
+        $damageRate = $totalInflows > 0 ? ($wastageQty / $totalInflows) * 100 : 0;
 
-        // 9. Low Stock SKU Count
+        // 7. Health Metrics
         $lowStockCount = DB::table('inventory_levels')
             ->join('products', 'inventory_levels.product_id', '=', 'products.id')
-            ->leftJoin('warehouse_stock_limits', function($join) {
+            ->leftJoin('warehouse_stock_limits', function ($join) {
                 $join->on('inventory_levels.warehouse_id', '=', 'warehouse_stock_limits.warehouse_id')
-                     ->on('inventory_levels.product_id', '=', 'warehouse_stock_limits.product_id')
-                     ->whereRaw('COALESCE(inventory_levels.product_variant_id, 0) = COALESCE(warehouse_stock_limits.product_variant_id, 0)');
+                    ->on('inventory_levels.product_id', '=', 'warehouse_stock_limits.product_id')
+                    ->whereRaw('COALESCE(inventory_levels.product_variant_id, 0) = COALESCE(warehouse_stock_limits.product_variant_id, 0)');
             })
             ->where('inventory_levels.warehouse_id', $warehouseId)
             ->whereRaw('inventory_levels.current_quantity <= COALESCE(warehouse_stock_limits.min_stock, products.min_stock_global)')
             ->count();
 
-        // 10. Slow-Moving Stock % (SKUs with no sales in the period)
         $totalSKUs = InventoryLevel::where('warehouse_id', $warehouseId)->distinct('product_id', 'product_variant_id')->count();
         $soldSKUs = DB::table('stock_ledgers')
             ->where('warehouse_id', $warehouseId)
@@ -168,33 +162,31 @@ class WarehousePerformanceService
             ->count();
         $slowMovingPercent = $totalSKUs > 0 ? (($totalSKUs - $soldSKUs) / $totalSKUs) * 100 : 0;
 
-        // 11. Stock Turnover (COGS / Average Inventory Value)
         $cogs = DB::table('ordered_product_batches')
             ->join('batches', 'ordered_product_batches.batch_id', '=', 'batches.id')
             ->where('batches.warehouse_id', $warehouseId)
             ->whereDate('ordered_product_batches.created_at', '>=', $startDate)
             ->whereDate('ordered_product_batches.created_at', '<=', $endDate)
             ->sum('subtotal_cost');
-        
-        $avgInventoryValue = $inventoryValue;
-        $turnover = $avgInventoryValue > 0 ? ($cogs / $avgInventoryValue) : 0;
+
+        $turnover = $inventoryValue > 0 ? ($cogs / $inventoryValue) : 0;
 
         return [
             'opening_stock' => (int) $openingStock,
             'received_qty' => (int) ($movements->received_qty ?? 0),
-            'damaged_plus_stock' => (int) ($movements->damaged_plus_stock ?? 0),
-            'total_damaged_qty' => (int) $totalDamagedInPeriod,
+            'po_damaged_qty' => (int) ($movements->po_damaged_qty ?? 0),
+            'total_wastage_qty' => $wastageQty,
             'sold_qty' => (int) ($movements->sold_qty ?? 0),
-            'returns_qty' => (int) $returns, // Use accurate returns count
+            'returns_qty' => $totalReturns,
             'adjusted_in' => (int) ($movements->adjusted_in ?? 0),
             'adjusted_out' => (int) ($movements->adjusted_out ?? 0),
-            'wastage_entry_qty' => (int) ($movements->wastage_entry_qty ?? 0),
             'rtv_qty' => (int) ($movements->rtv_qty ?? 0),
             'saleable_closing' => $saleableClosing,
-            'damaged_closing' => $damagedClosing,
+            'po_damaged_closing' => $poDamagedClosing,
+            'wastage_closing' => $wastageClosing,
             'total_closing_stock' => $totalClosingStock,
             'inventory_value' => (float) $inventoryValue,
-            'fulfillment_orders' => (int) ($fulfillment->fulfillment_orders ?? 0),
+            'fulfillment_orders' => (int) ($movements->fulfillment_orders ?? 0),
             'units_shipped' => $unitsShipped,
             'fill_rate' => (float) $grossFillRate,
             'net_fill_rate' => (float) $netFillRate,

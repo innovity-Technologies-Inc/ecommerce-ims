@@ -147,8 +147,8 @@ class StockAdjustmentService
                     variantId: $item['product_variant_id'] ?? null,
                     warehouseId: $data['warehouse_id'],
                     changeQty: $qty,
-                    transactionType: 'Manual_Adjustment',
-                    reasonCode: 'Stock Adjustment',
+                    transactionType: 'STOCK_ADJUSTMENT',
+                    reasonCode: 'MANUAL_STOCK_ADJUSTMENT',
                     referenceId: $adjustment->adjustment_number,
                     batchId: $batch->id,
                     supplierId: null

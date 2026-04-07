@@ -148,20 +148,33 @@
 ### 3.11 Warehouse Performance Module
 - **What (Business Purpose):** Evaluates warehouse operational efficiency, quality control, and inventory health to optimize fulfillment and minimize losses.
 - **How it Works (Technical Flow):**
-    1. **Stock Reconciliation Logic:** Uses `stock_ledgers` to verify physical stock integrity.
-        *   **Formula:** `Opening Stock` + `Inflows (Receipts + Returns + Adjustments + Damaged PO)` - `Outflows (Sales + RTV + Manual Wastage)` = `Total Physical Closing Stock`.
+    1. **Stock Reconciliation Logic:** Uses `stock_ledgers` to verify physical stock integrity using standardized transaction types.
+        *   **Formula:** `Opening Stock` + `Total Inflows` - `Total Outflows` = `Total Physical Closing Stock`.
+        *   **Inflows (Physical Additions):**
+            *   **PO_RECEIPT:** Saleable units from Purchase Orders.
+            *   **DAMAGED:** Units arriving damaged from the supplier (added to Damaged Pool).
+            *   **STOCK_ADJUSTMENT:** Positive manual corrections (where `change_qty > 0`).
+            *   **RETURN_INTACT:** Saleable returns from customers.
+            *   **RETURN_DAMAGED:** Damaged returns from customers (added to Damaged Pool, then counted as Wastage).
+        *   **Outflows (Physical Removals/Losses):**
+            *   **SALE:** Units shipped to customers.
+            *   **RTV_DISPATCH:** Units returned to the supplier.
+            *   **WAREHOUSE_DAMAGE:** Units lost to internal handling issues.
+            *   **STOCK_ADJUSTMENT:** Negative manual corrections (where `change_qty < 0`).
     2. **Fulfillment Efficiency Metrics:**
         *   **Gross Fill Rate:** Measures stock availability and fulfillment capability.
-            *   **Formula:** `(Units Shipped / Units Ordered) * 100`.
-            *   **Business Insight:** A 100% rate indicates zero out-of-stock occurrences. Low rates suggest procurement delays or poor stock forecasting.
-            *   **Technical Detail:** `Units Shipped` is derived from `ordered_product_batches` (actual inventory subtracted), while `Units Ordered` is pulled from `order_items`.
+            *   **Formula:** `(Units Shipped / Initial Demand) * 100`.
+            *   **Technical Detail:** `Units Shipped` and `Initial Demand` are both derived from the `stock_ledger` 'SALE' entries to ensure accurate warehouse-level attribution and avoid double-counting in split orders.
         *   **Net Fill Rate:** Measures true fulfillment success by accounting for customer satisfaction and product quality.
-            *   **Formula:** `((Units Shipped - Units Returned) / Units Ordered) * 100`.
-            *   **Business Insight:** Highlights the "final" successful sale rate. A significant gap between Gross and Net fill rates indicates high return volumes, possibly due to shipping errors or damaged goods.
-        *   **Return Rate:** Percentage of shipped units that were sent back. `(Units Returned / Units Shipped) * 100`. Helps identify warehouses with potential quality control or picking/packing issues.
+            *   **Formula:** `((Units Shipped - Total Returns) / Initial Demand) * 100`.
+            *   **Logic:** `Total Returns` includes both `RETURN_INTACT` and `RETURN_DAMAGED`.
+        *   **Return Rate:** Percentage of shipped units that were sent back. `(Total Returns / Units Shipped) * 100`.
     3. **Quality & Wastage Metrics:**
-        *   **Wastage Rate (Warehouse):** Specifically measures internal handling quality. `(Manual Wastage Units / Total Handled Units) * 100`. Items damaged during transit from suppliers are excluded from this specific efficiency rate.
-        *   **Damaged (+Stock):** Identifies units that arrived damaged from the supplier but are physically present in the warehouse "Damaged Pool".
+        *   **Total Wastage Qty:** The sum of units lost due to internal errors or customer dissatisfaction.
+            *   **Formula:** `WAREHOUSE_DAMAGE` + `RETURN_DAMAGED`.
+        *   **Wastage Rate:** Measures warehouse operational quality. 
+            *   **Formula:** `(Total Wastage Qty / Total Inflows) * 100`.
+        *   **Supplier Damaged (PO):** Specifically tracks units arriving damaged from the vendor via the `DAMAGED` ledger type. These are accounted for in inflows but excluded from the internal *Wastage Rate* to ensure fair warehouse performance evaluation.
     4. **Inventory Health & Velocity:**
         *   **Stock Turnover:** Measures warehouse efficiency by calculating how many times inventory is "cycled" or sold during the period. 
             *   **Formula:** `Cost of Goods Sold (COGS) / Current Inventory Value`.
@@ -182,17 +195,33 @@
 
 ---
 
-## 4. Key Procedural Lifecycle: Stock Movement Ledger
+## 4. Key Procedural Lifecycle: Stock Movement Ledger (Source of Truth)
 
-To maintain 100% accuracy, the **Stock Ledger** is the ultimate source of truth. Every module that touches stock must follow this flow:
+To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` table) is the absolute source of truth for all movement-based reporting. Every physical change to inventory MUST log a ledger entry to ensure mathematically sound reports.
 
-1. **Trigger:** An action occurs (PO Received, Order Delivered, Return Received, Adjustment).
-2. **Atomic Update:** The service calculates the new stock levels.
-3. **Ledger Entry:** A record is created in `stock_ledgers`:
-    *   `change_qty`: The positive or negative change.
-    *   `transaction_type`: e.g., `PO_RECEIPT`, `SALE`, `RETURN_INTACT`, `ADJUSTMENT`.
-    *   `reference_id`: The ID of the related Order, PO, or Return.
-    *   `unit_cost`: The cost at the time of movement (sourced from `batch_products`).
+1. **Trigger:** An action occurs (PO Received, Order Delivered, Return Received, Adjustment, Damage Discovery).
+2. **Atomic Update:** The service updates the `inventory_levels` and `batch_products` tables.
+3. **Ledger Entry:** A record is created in `stock_ledgers` using standardized naming:
+    *   **Inflow Types:**
+        *   `PO_RECEIPT`: Saleable stock added from Purchase Orders.
+        *   `DAMAGED`: Stock arriving damaged from suppliers (Added to Damaged Pool).
+        *   `RETURN_INTACT`: Saleable units returned by customers.
+        *   `RETURN_DAMAGED`: Damaged units returned by customers (Added to Damaged Pool, then counted as Wastage).
+        *   `STOCK_ADJUSTMENT`: Positive manual corrections (`change_qty > 0`).
+    *   **Outflow Types:**
+        *   `SALE`: Units shipped and delivered to customers.
+        *   `RTV_DISPATCH`: Units returned to vendors (RTV).
+        *   `WAREHOUSE_DAMAGE`: Units lost due to internal handling (Wastage).
+        *   `STOCK_ADJUSTMENT`: Negative manual corrections (`change_qty < 0`).
+
+### 4.1 Reporting Strictness & Reconciliation
+*   **Source of Truth:** All operational KPIs AND physical stock snapshots in the Performance Module are derived by replaying the `stock_ledgers` history.
+*   **Standardized Balance:** The system enforces a perfect mathematical reconciliation: `Opening Stock (Ledger) + Total Inflows (Ledger) - Total Outflows (Ledger) = Current Closing Stock (Physical Snapshot)`.
+*   **Snapshot Categorization:**
+    *   **Saleable Snapshot:** Calculated as `Cumulative Inflows (Good) - Cumulative Outflows (Sales/RTV/Internal Loss)`.
+    *   **Damaged Snapshot:** Strictly tracks units that arrived damaged from the vendor (`DAMAGED`) and have not yet been RTV'd.
+    *   **Wastage Snapshot:** Tracks the total "Value Loss" pool, including internal warehouse damage and unsaleable returns.
+*   **Wastage Mapping:** For absolute accuracy, **Total Wastage** is defined as `WAREHOUSE_DAMAGE + RETURN_DAMAGED`. This ensures that internal errors and customer-caused damages are captured as a specific performance penalty, separate from vendor-side damage.
 
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*

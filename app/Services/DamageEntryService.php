@@ -82,8 +82,8 @@ class DamageEntryService
                 variantId: $variantId,
                 warehouseId: $warehouseId,
                 changeQty: -$qty,
-                transactionType: 'warehouse_damage',
-                reasonCode: 'Warehouse Damage',
+                transactionType: 'WAREHOUSE_DAMAGE',
+                reasonCode: 'WAREHOUSE_DAMAGE_ENTRY',
                 referenceId: 'WASTAGE-'.$wastage->id,
                 batchId: $batchId,
                 supplierId: null

@@ -34,9 +34,10 @@
                             <option value="PO_RECEIPT">PO Receipt</option>
                             <option value="SALE">Sale</option>
                             <option value="DAMAGED">Damage</option>
-                            <option value="Manual_Adjustment">Adjustment</option>
-                            <option value="warehouse_damage">Warehouse Damage</option>
-                            <option value="RTV_Dispatch">Supplier RMA</option>
+                            <option value="STOCK_ADJUSTMENT">Adjustment</option>
+                            <option value="WAREHOUSE_DAMAGE">Warehouse Damage</option>
+                            <option value="RTV_DISPATCH">Supplier RMA</option>
+                            <option value="RETURN_DAMAGED">Damaged Return</option>
                             <option value="ALLOCATION">Allocation</option>
                         </select>
                     </div>
