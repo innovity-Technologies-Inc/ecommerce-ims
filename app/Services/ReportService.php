@@ -220,14 +220,15 @@ class ReportService
                 'valuation' => $group->sum('valuation')
             ])->sortByDesc('valuation')->take(10),
 
-            'batch' => $dataWithStock->sortByDesc('batch_id')->take(10)->map(fn($item) => [
-                'name' => $item->batch_number,
-                'warehouse' => $item->warehouse_name,
-                'product' => $item->product_name,
-                'quantity' => $item->quantity,
-                'unit_cost' => $item->unit_cost,
-                'valuation' => $item->valuation
-            ])
+            'batch' => $dataWithStock->groupBy(fn($item) => $item->batch_id . '-' . $item->product_id)
+                ->map(fn($group) => [
+                    'name' => $group->first()->batch_number,
+                    'warehouse' => $group->first()->warehouse_name,
+                    'product' => $group->first()->product_name,
+                    'quantity' => $group->sum('quantity'),
+                    'unit_cost' => $group->avg('unit_cost'),
+                    'valuation' => $group->sum('valuation')
+                ])->sortByDesc('valuation')->take(10)
         ];
 
         return [
@@ -279,27 +280,27 @@ class ReportService
             )->groupBy('warehouses.id', 'warehouses.name')->orderBy('valuation', 'desc');
         } elseif ($groupBy === 'product') {
             $query->select(
-                DB::raw("CONCAT(products.name, IF(product_variants.variant_name IS NOT NULL, CONCAT(' (', product_variants.variant_name, ')'), '')) as name"),
+                'products.name as name',
                 DB::raw('SUM(inventory_levels.current_quantity) as quantity'),
                 DB::raw('SUM(inventory_levels.damaged_quantity) as damaged_quantity'),
                 DB::raw('SUM(inventory_levels.current_quantity * batch_products.unit_cost) as valuation')
-            )->groupBy('inventory_levels.product_id', 'inventory_levels.product_variant_id', 'products.name', 'product_variants.variant_name')->orderBy('valuation', 'desc');
+            )->groupBy('inventory_levels.product_id', 'products.name')->orderBy('valuation', 'desc');
         } else {
             $query->select(
                 'warehouses.name as warehouse_name',
                 'products.name as product_name',
-                'product_variants.variant_name',
-                DB::raw("COALESCE(product_variants.sku, 'N/A') as sku"),
+                DB::raw("'N/A' as variant_name"),
+                DB::raw("MAX(product_variants.sku) as sku"),
                 'batches.batch_number',
                 'suppliers.name as supplier_name',
-                'inventory_levels.current_quantity',
-                'inventory_levels.damaged_quantity',
-                'batch_products.unit_cost',
-                'movements.last_move',
-                DB::raw('COALESCE(warehouse_stock_limits.min_stock, products.min_stock_global) as min_threshold'),
-                DB::raw('(inventory_levels.current_quantity * batch_products.unit_cost) as inventory_value'),
-                DB::raw('IF(inventory_levels.current_quantity <= COALESCE(warehouse_stock_limits.min_stock, products.min_stock_global), 1, 0) as is_low_stock')
-            );
+                DB::raw('SUM(inventory_levels.current_quantity) as current_quantity'),
+                DB::raw('SUM(inventory_levels.damaged_quantity) as damaged_quantity'),
+                DB::raw('AVG(batch_products.unit_cost) as unit_cost'),
+                DB::raw('MAX(movements.last_move) as last_move'),
+                DB::raw('SUM(COALESCE(warehouse_stock_limits.min_stock, products.min_stock_global)) as min_threshold'),
+                DB::raw('SUM(inventory_levels.current_quantity * batch_products.unit_cost) as inventory_value'),
+                DB::raw('IF(SUM(inventory_levels.current_quantity) <= SUM(COALESCE(warehouse_stock_limits.min_stock, products.min_stock_global)), 1, 0) as is_low_stock')
+            )->groupBy('inventory_levels.warehouse_id', 'inventory_levels.product_id', 'inventory_levels.batch_id', 'warehouses.name', 'products.name', 'batches.batch_number', 'suppliers.name');
         }
 
         $this->applyStockFilters($query, $filters);
@@ -434,26 +435,27 @@ class ReportService
             )->groupBy('warehouses.id', 'warehouses.name')->orderBy('valuation', 'desc');
         } elseif ($entity === 'product') {
             $query->select(
-                DB::raw("CONCAT(products.name, IF(product_variants.variant_name IS NOT NULL, CONCAT(' (', product_variants.variant_name, ')'), '')) as name"),
+                'products.name as name',
                 DB::raw("SUM(batch_products.saleable_qty" . ($includeDamaged ? " + batch_products.damaged_qty" : "") . ") as quantity"),
                 DB::raw("SUM((batch_products.saleable_qty" . ($includeDamaged ? " + batch_products.damaged_qty" : "") . ") * batch_products.unit_cost) as valuation")
-            )->groupBy('batch_products.product_id', 'batch_products.product_variant_id', 'products.name', 'product_variants.variant_name')->orderBy('valuation', 'desc');
+            )->groupBy('batch_products.product_id', 'products.name')->orderBy('valuation', 'desc');
         } elseif ($entity === 'batch') {
             $query->select(
                 'batches.batch_number as name',
                 'warehouses.name as warehouse',
-                DB::raw("CONCAT(products.name, IF(product_variants.variant_name IS NOT NULL, CONCAT(' (', product_variants.variant_name, ')'), '')) as product"),
-                DB::raw("(batch_products.saleable_qty" . ($includeDamaged ? " + batch_products.damaged_qty" : "") . ") as quantity"),
-                'batch_products.unit_cost',
-                DB::raw("((batch_products.saleable_qty" . ($includeDamaged ? " + batch_products.damaged_qty" : "") . ") * batch_products.unit_cost) as valuation")
-            )->orderBy('batches.id', 'desc');
+                'products.name as product',
+                DB::raw("SUM(batch_products.saleable_qty" . ($includeDamaged ? " + batch_products.damaged_qty" : "") . ") as quantity"),
+                DB::raw("AVG(batch_products.unit_cost) as unit_cost"), // Weighted average would be better but AVG is simpler for now
+                DB::raw("SUM((batch_products.saleable_qty" . ($includeDamaged ? " + batch_products.damaged_qty" : "") . ") * batch_products.unit_cost) as valuation")
+            )->groupBy('batches.id', 'batches.batch_number', 'warehouses.name', 'batch_products.product_id', 'products.name')
+            ->orderBy('batches.id', 'desc');
         } else {
             $query->select(
                 'batch_products.product_id',
                 'batches.id as batch_id',
                 'batches.batch_number',
                 'warehouses.name as warehouse_name',
-                DB::raw("CONCAT(products.name, IF(product_variants.variant_name IS NOT NULL, CONCAT(' (', product_variants.variant_name, ')'), '')) as product_name"),
+                'products.name as product_name',
                 'batch_products.unit_cost',
                 DB::raw("batch_products.saleable_qty" . ($includeDamaged ? " + batch_products.damaged_qty" : "") . " as quantity"),
                 DB::raw("(batch_products.saleable_qty" . ($includeDamaged ? " + batch_products.damaged_qty" : "") . ") * batch_products.unit_cost as valuation")
@@ -500,26 +502,27 @@ class ReportService
             )->groupBy('warehouses.id', 'warehouses.name')->orderBy('valuation', 'desc');
         } elseif ($entity === 'product') {
             $query->select(
-                DB::raw("CONCAT(products.name, IF(product_variants.variant_name IS NOT NULL, CONCAT(' (', product_variants.variant_name, ')'), '')) as name"),
+                'products.name as name',
                 DB::raw("SUM(ledger_sums.historical_qty) as quantity"),
                 DB::raw("SUM(ledger_sums.historical_qty * batch_products.unit_cost) as valuation")
-            )->groupBy('batch_products.product_id', 'batch_products.product_variant_id', 'products.name', 'product_variants.variant_name')->orderBy('valuation', 'desc');
+            )->groupBy('batch_products.product_id', 'products.name')->orderBy('valuation', 'desc');
         } elseif ($entity === 'batch') {
             $query->select(
                 'batches.batch_number as name',
                 'warehouses.name as warehouse',
-                DB::raw("CONCAT(products.name, IF(product_variants.variant_name IS NOT NULL, CONCAT(' (', product_variants.variant_name, ')'), '')) as product"),
-                'ledger_sums.historical_qty as quantity',
-                'batch_products.unit_cost',
-                DB::raw("(ledger_sums.historical_qty * batch_products.unit_cost) as valuation")
-            )->orderBy('batches.id', 'desc');
+                'products.name as product',
+                DB::raw('SUM(ledger_sums.historical_qty) as quantity'),
+                DB::raw('AVG(batch_products.unit_cost) as unit_cost'),
+                DB::raw("SUM(ledger_sums.historical_qty * batch_products.unit_cost) as valuation")
+            )->groupBy('batches.id', 'batches.batch_number', 'warehouses.name', 'batch_products.product_id', 'products.name')
+            ->orderBy('batches.id', 'desc');
         } else {
             $query->select(
                 'batch_products.product_id',
                 'batches.id as batch_id',
                 'batches.batch_number',
                 'warehouses.name as warehouse_name',
-                DB::raw("CONCAT(products.name, IF(product_variants.variant_name IS NOT NULL, CONCAT(' (', product_variants.variant_name, ')'), '')) as product_name"),
+                'products.name as product_name',
                 'batch_products.unit_cost',
                 'ledger_sums.historical_qty as quantity',
                 DB::raw('(ledger_sums.historical_qty * batch_products.unit_cost) as valuation')
