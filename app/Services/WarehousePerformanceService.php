@@ -78,11 +78,12 @@ class WarehousePerformanceService
             ->sum('change_qty');
 
         // 3. Closing Stock Snapshots (Ledger Based for perfect reconciliation)
-        // Saleable: All time (PO_RECEIPT + RETURN_INTACT + ADJ_IN) - (SALE)
+        // Saleable: All time (PO_RECEIPT + RETURN_INTACT + ADJ_IN) - (SALE + WAREHOUSE_DAMAGE)
+        // We include WAREHOUSE_DAMAGE as an outflow from the saleable pool.
         $saleableClosing = (int) DB::table('stock_ledgers')
             ->where('warehouse_id', $warehouseId)
             ->where(function ($q) {
-                $q->whereIn('transaction_type', ['PO_RECEIPT', 'RETURN_INTACT', 'SALE'])
+                $q->whereIn('transaction_type', ['PO_RECEIPT', 'RETURN_INTACT', 'SALE', 'WAREHOUSE_DAMAGE'])
                     ->orWhere('transaction_type', 'STOCK_ADJUSTMENT');
             })
             ->sum('change_qty');
@@ -95,13 +96,15 @@ class WarehousePerformanceService
             ->sum('change_qty');
 
         // Current Wastage (Loss of value): Cumulative WAREHOUSE_DAMAGE + RETURN_DAMAGED
-        // Stock that was damaged internally or returned damaged by customers.
         $wastageClosing = (int) DB::table('stock_ledgers')
             ->where('warehouse_id', $warehouseId)
             ->whereIn('transaction_type', ['WAREHOUSE_DAMAGE', 'RETURN_DAMAGED'])
             ->sum(DB::raw('ABS(change_qty)'));
 
-        $totalClosingStock = $saleableClosing + $poDamagedClosing + $wastageClosing;
+        // Live Snapshot: (Saleable + Supplier Damaged) 
+        // Per user formula: PO_receipt + adjustments + intact return - sold + po_damage - damage return - warehouse wastage - rtv dispatch
+        // This effectively excludes the "Wastage" items (Return Damaged) from the physical snapshot.
+        $totalClosingStock = $saleableClosing + $poDamagedClosing;
 
         // 4. Inventory Value (Live - Saleable only)
         $inventoryValue = DB::table('inventory_levels')

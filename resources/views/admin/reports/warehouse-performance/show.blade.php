@@ -75,16 +75,16 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="card border-0 shadow-sm h-100 bg-dark text-white">
+                    <div class="card border-0 shadow-sm h-100 border-start border-4 border-primary">
                         <div class="card-body p-3 d-flex flex-column justify-content-center">
-                            <label class="text-white-50 small text-uppercase fw-bold mb-1">Live Warehouse Snapshot</label>
+                            <label class="text-muted small text-uppercase fw-bold mb-1">Live Warehouse Snapshot</label>
                             <div class="d-flex align-items-center justify-content-between">
-                                <h2 class="fw-bold mb-0 text-white">{{ number_format($report['total_closing_stock']) }}</h2>
-                                <div class="bg-white bg-opacity-10 p-2 rounded">
-                                    <i class="bx bx-package fs-3 text-white"></i>
+                                <h2 class="fw-bold mb-0 text-dark">{{ number_format($report['total_closing_stock']) }}</h2>
+                                <div class="bg-soft-primary p-2 rounded">
+                                    <i class="bx bx-package fs-3 text-primary"></i>
                                 </div>
                             </div>
-                            <span class="small text-white-50">Total Physical Units On-Hand</span>
+                            <span class="small text-muted">Total Physical Units On-Hand</span>
                         </div>
                     </div>
                 </div>

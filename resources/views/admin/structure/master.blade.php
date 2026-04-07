@@ -191,6 +191,43 @@
             --bs-tertiary-bg: #1d394d !important;
         }
 
+        /* Fix light backgrounds in dark mode */
+        [data-bs-theme=dark] .card-header.bg-white,
+        [data-bs-theme=dark] .card-footer.bg-white,
+        [data-bs-theme=dark] .bg-white:not(.btn):not(.badge):not(.progress-bar):not(.sticky-top),
+        [data-bs-theme=dark] .bg-light:not(.btn):not(.badge):not(.progress-bar) {
+            background-color: var(--bs-secondary-bg) !important;
+            color: var(--bs-body-color) !important;
+        }
+
+        [data-bs-theme=dark] .table-light,
+        [data-bs-theme=dark] .table-light > th,
+        [data-bs-theme=dark] .table-light > td {
+            background-color: var(--bs-tertiary-bg) !important;
+            color: var(--bs-body-color) !important;
+        }
+
+        [data-bs-theme=dark] .card {
+            background-color: var(--bs-secondary-bg);
+            color: var(--bs-body-color);
+        }
+
+        [data-bs-theme=dark] .text-dark {
+            color: var(--bs-body-color) !important;
+        }
+
+        [data-bs-theme=dark] .progress {
+            background-color: var(--bs-tertiary-bg) !important;
+        }
+
+        [data-bs-theme=dark] .bg-soft-primary {
+            background-color: rgba(16, 141, 255, 0.15) !important;
+        }
+
+        [data-bs-theme=dark] .border-light {
+            border-color: var(--bs-border-color) !important;
+        }
+
         html[data-menu-color=dark],
         html[data-bs-theme=dark][data-menu-color=light] {
             --bs-main-nav-bg: #0F212E !important;
