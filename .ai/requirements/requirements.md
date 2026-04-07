@@ -151,3 +151,4 @@ This document lists the high-level requirements for the modules implemented in t
  
  
  
+- [x] **REQ-131:** Warehouse Performance Report Export & Print: Implement "Excel Export" and "Print" functionality for the Warehouse Performance report (both index and detail views). Align UI and logic with existing Sales and Inventory reports, utilizing the `ReportService` and `WarehousePerformanceService`.

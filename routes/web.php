@@ -206,6 +206,7 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         // Warehouse Performance
         Route::prefix('warehouse-performance')->controller(\App\Http\Controllers\Admin\WarehousePerformanceController::class)->group(function () {
             Route::get('/', 'index')->name('admin.reports.warehouse-performance');
+            Route::get('/export', 'export')->name('admin.reports.warehouse-performance.export');
             Route::get('/{id}', 'show')->name('admin.reports.warehouse-performance.show');
         });
     });

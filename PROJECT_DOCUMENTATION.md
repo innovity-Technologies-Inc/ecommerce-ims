@@ -148,20 +148,34 @@
 ### 3.11 Warehouse Performance Module
 - **What (Business Purpose):** Evaluates warehouse operational efficiency, quality control, and inventory health to optimize fulfillment and minimize losses.
 - **How it Works (Technical Flow):**
-    1. **Stock Reconciliation:** Uses `stock_ledgers` to balance Opening Stock + Receipts + Returns + Adjustments - Outflows (Sales/RTV). Provides a mathematical audit of `closing_stock` accuracy.
-    2. **Efficiency Metrics:**
-        *   **Fill Rate:** Measures fulfillment success by comparing `units_shipped` (from `ordered_product_batches`) against the `total_ordered` quantity for the warehouse.
-        *   **Stock Turnover:** Calculates COGS / Current Inventory Value to determine how quickly stock is sold and replaced.
-    3. **Quality Metrics:**
-        *   **Damage Rate:** Percentage of items marked as damaged compared to total handled inventory (Receipts + Returns).
-        *   **Wastage Tracking:** Specifically tracks units moved to damaged status during the period.
-    4. **Inventory Health:**
-        *   **Slow-Moving SKUs:** Identifies the percentage of unique SKUs with zero sales movements during the reporting period.
-        *   **Low-Stock SKUs:** Real-time count of SKUs below their warehouse-specific or global minimum thresholds.
+    1. **Stock Reconciliation Logic:** Uses `stock_ledgers` to verify physical stock integrity.
+        *   **Formula:** `Opening Stock` + `Inflows (Receipts + Returns + Adjustments + Damaged PO)` - `Outflows (Sales + RTV + Manual Wastage)` = `Total Physical Closing Stock`.
+    2. **Fulfillment Efficiency Metrics:**
+        *   **Gross Fill Rate:** Measures stock availability and fulfillment capability.
+            *   **Formula:** `(Units Shipped / Units Ordered) * 100`.
+            *   **Business Insight:** A 100% rate indicates zero out-of-stock occurrences. Low rates suggest procurement delays or poor stock forecasting.
+            *   **Technical Detail:** `Units Shipped` is derived from `ordered_product_batches` (actual inventory subtracted), while `Units Ordered` is pulled from `order_items`.
+        *   **Net Fill Rate:** Measures true fulfillment success by accounting for customer satisfaction and product quality.
+            *   **Formula:** `((Units Shipped - Units Returned) / Units Ordered) * 100`.
+            *   **Business Insight:** Highlights the "final" successful sale rate. A significant gap between Gross and Net fill rates indicates high return volumes, possibly due to shipping errors or damaged goods.
+        *   **Return Rate:** Percentage of shipped units that were sent back. `(Units Returned / Units Shipped) * 100`. Helps identify warehouses with potential quality control or picking/packing issues.
+    3. **Quality & Wastage Metrics:**
+        *   **Wastage Rate (Warehouse):** Specifically measures internal handling quality. `(Manual Wastage Units / Total Handled Units) * 100`. Items damaged during transit from suppliers are excluded from this specific efficiency rate.
+        *   **Damaged (+Stock):** Identifies units that arrived damaged from the supplier but are physically present in the warehouse "Damaged Pool".
+    4. **Inventory Health & Velocity:**
+        *   **Stock Turnover:** Measures warehouse efficiency by calculating how many times inventory is "cycled" or sold during the period. 
+            *   **Formula:** `Cost of Goods Sold (COGS) / Current Inventory Value`.
+            *   **Logic:** COGS is derived from the `subtotal_cost` in `ordered_product_batches` (actual procurement cost), while Inventory Value is the sum of `current_quantity * unit_cost` for all saleable items on hand.
+        *   **Slow-Moving SKUs:** The percentage of unique SKUs that had zero sales activity during the selected period.
+        *   **Low-Stock SKUs:** Real-time count of items currently below their defined minimum thresholds.
+    5. **Reporting & Exporting:**
+        *   **Excel Export:** Generates multi-column spreadsheets including all movement types (Received, Sold, Returns, RTV, Adjustments) and efficiency KPIs. Uses `WarehousePerformanceExport` for consistent formatting.
+        *   **Print Functionality:** Implements custom `printReportCard` (summary) and `printFullReport` (detail) JS logic to provide clean, PDF-ready snapshots of warehouse performance data, excluding non-essential UI elements like filters and navigation buttons.
 - **Data & Storage (DB Connectivity):**
     *   `stock_ledgers`: Source for all historical movement trends.
-    *   `inventory_levels`: Source for live closing stock snapshots.
+    *   `inventory_levels`: Source for live closing stock snapshots (`total_closing_stock`).
     *   `ordered_product_batches`: Source for warehouse-specific fulfillment attribution and COGS calculation.
+    *   `return_items`: Source for calculating return-based efficiency penalties.
     *   `warehouse_stock_limits`: Source for localized alert thresholds.
 
 

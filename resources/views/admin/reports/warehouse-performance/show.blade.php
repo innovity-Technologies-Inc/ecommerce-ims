@@ -1,8 +1,8 @@
 @extends('admin.structure.app')
 
 @section('content')
-<div class="container-xxl">
-    <div class="d-flex align-items-center justify-content-between mb-4">
+<div class="container-xxl" id="performance-detail-report">
+    <div class="d-flex align-items-center justify-content-between mb-4 no-print-section">
         <div>
             <a href="{{ route('admin.reports.warehouse-performance', ['start_date' => $filters['start_date'], 'end_date' => $filters['end_date']]) }}" class="btn btn-sm btn-outline-secondary mb-2">
                 <i class="bx bx-arrow-back"></i> Back to Dashboard
@@ -10,12 +10,8 @@
             <h4 class="mb-0">Warehouse: {{ $warehouse->name }}</h4>
             <p class="text-muted small mb-0">Performance Period: {{ $filters['start_date'] }} to {{ $filters['end_date'] }}</p>
         </div>
-        <div class="btn-group">
-            <button type="button" class="btn btn-primary" onclick="window.print()">
-                <i class="bx bx-printer me-1"></i> Print Report
-            </button>
-        </div>
     </div>
+
 
     <div class="row g-4 mb-4">
         <!-- Stock Balance Card -->
@@ -37,7 +33,7 @@
                             <label class="text-muted small text-uppercase fw-semibold">Total Inflows</label>
                             <h3 class="fw-bold text-success mb-0">+{{ number_format($report['received_qty'] + $report['returns_qty'] + $report['adjusted_in'] + $report['damaged_plus_stock']) }}</h3>
                             <div class="small text-muted mt-1">
-                                Rcv: {{ $report['received_qty'] }} | Dmg: {{ $report['damaged_plus_stock'] }} | Ret: {{ $report['returns_qty'] }}
+                                Rcv: {{ $report['received_qty'] }} | Dmg: {{ $report['damaged_plus_stock'] }} | Ret: {{ $report['returns_qty'] }} | Adj: {{ $report['adjusted_in'] }}
                             </div>
                         </div>
                         <div class="col-md-1 text-center d-none d-md-flex align-items-center justify-content-center">
@@ -45,9 +41,9 @@
                         </div>
                         <div class="col-md-3">
                             <label class="text-muted small text-uppercase fw-semibold">Total Outflows</label>
-                            <h3 class="fw-bold text-danger mb-0">-{{ number_format($report['sold_qty'] + $report['adjusted_out'] + $report['rtv_qty']) }}</h3>
+                            <h3 class="fw-bold text-danger mb-0">-{{ number_format($report['sold_qty'] + $report['rtv_qty'] + $report['wastage_entry_qty']) }}</h3>
                             <div class="small text-muted mt-1">
-                                Sold: {{ $report['sold_qty'] }} | RTV: {{ $report['rtv_qty'] }} | Adj: {{ $report['adjusted_out'] }}
+                                Sold: {{ $report['sold_qty'] }} | RTV: {{ $report['rtv_qty'] }} | Wst: {{ $report['wastage_entry_qty'] }}
                             </div>
                         </div>
                     </div>
@@ -105,18 +101,21 @@
                         </div>
                     </div>
                     
-                    <div class="space-y-4">
-                        <div class="bg-light p-3 rounded mb-3 border-start border-3 border-info">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="text-muted small">Stock Turnover</span>
-                                <span class="badge bg-soft-info text-info">{{ number_format($report['stock_turnover'], 2) }}x</span>
+                    <div class="mt-2">
+                        <div class="bg-light p-3 rounded mb-3 border-start border-3 border-info shadow-sm">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted small fw-bold">Stock Turnover</span>
+                                <span class="badge bg-info text-white">{{ number_format($report['stock_turnover'], 2) }}x</span>
                             </div>
-                            <div class="progress" style="height: 4px;">
-                                <div class="progress-bar bg-info" style="width: {{ min($report['stock_turnover'] * 10, 100) }}%"></div>
+                            <div class="progress bg-white" style="height: 10px; border: 1px solid #dee2e6;">
+                                <div class="progress-bar bg-info progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{ min($report['stock_turnover'] * 20, 100) }}%"></div>
+                            </div>
+                            <div class="mt-1">
+                                <small class="text-muted x-small">Efficiency Target: 1.0x or higher</small>
                             </div>
                         </div>
 
-                        <div class="bg-light p-3 rounded border-start border-3 border-{{ $report['low_stock_count'] > 0 ? 'danger' : 'success' }}">
+                        <div class="bg-light p-3 rounded border-start border-3 border-{{ $report['low_stock_count'] > 0 ? 'danger' : 'success' }} shadow-sm">
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="text-muted small">Low Stock SKUs</span>
                                 <span class="h5 fw-bold mb-0 text-{{ $report['low_stock_count'] > 0 ? 'danger' : 'success' }}">

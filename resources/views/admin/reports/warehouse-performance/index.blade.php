@@ -7,7 +7,7 @@
     </div>
 
     <!-- Filters -->
-    <div class="card mb-4 border-0 shadow-sm filter-card">
+    <div class="card mb-4 border-0 shadow-sm filter-card no-print">
         <div class="card-body">
             <form action="{{ route('admin.reports.warehouse-performance') }}" method="GET" class="row g-3">
                 <div class="col-md-3">
@@ -37,11 +37,14 @@
     </div>
 
     <!-- Overview Table -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+    <div class="card border-0 shadow-sm" id="performance-table-card">
+        <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center no-print">
             <h5 class="card-title mb-0">Efficiency & Quality Metrics</h5>
             <div class="btn-group">
-                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="window.print()">
+                <a href="{{ route('admin.reports.warehouse-performance.export', request()->all()) }}" class="btn btn-sm btn-soft-success">
+                    <i class="bx bx-download me-1"></i> Export
+                </a>
+                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('performance-table-card', 'Warehouse Performance Summary')">
                     <i class="bx bx-printer"></i> Print
                 </button>
             </div>
@@ -52,35 +55,49 @@
                     <thead class="table-light">
                         <tr>
                             <th class="ps-3">Warehouse</th>
+                            <th class="text-center d-none d-print-table-cell-custom">Opening</th>
+                            <th class="text-center d-none d-print-table-cell-custom">Received</th>
+                            <th class="text-center d-none d-print-table-cell-custom">Sold</th>
+                            <th class="text-center d-none d-print-table-cell-custom">Returns</th>
+                            <th class="text-center d-none d-print-table-cell-custom">Adjusted</th>
                             <th class="text-center">Closing Stock</th>
                             <th class="text-center">Fill Rate</th>
+                            <th class="text-center d-none d-print-table-cell-custom">Net Fill %</th>
                             <th class="text-center">Damage Rate</th>
                             <th class="text-center">Stock Turnover</th>
-                            <th class="text-center">Slow SKUs %</th>
-                            <th class="text-end pe-3">Actions</th>
+                            <th class="text-center d-none d-print-table-cell-custom">Value</th>
+                            <th class="text-center text-muted">Slow %</th>
+                            <th class="text-end pe-3 actions-column">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($reportData as $row)
                             <tr>
                                 <td class="ps-3 fw-bold">{{ $row['warehouse_name'] }}</td>
-                                <td class="text-center fw-medium">{{ number_format($row['closing_stock']) }}</td>
+                                <td class="text-center d-none d-print-table-cell-custom">{{ number_format($row['opening_stock']) }}</td>
+                                <td class="text-center d-none d-print-table-cell-custom">{{ number_format($row['received_qty']) }}</td>
+                                <td class="text-center d-none d-print-table-cell-custom">{{ number_format($row['sold_qty']) }}</td>
+                                <td class="text-center d-none d-print-table-cell-custom">{{ number_format($row['returns_qty']) }}</td>
+                                <td class="text-center d-none d-print-table-cell-custom">{{ number_format($row['adjusted_in']) }}</td>
+                                <td class="text-center fw-medium">{{ number_format($row['total_closing_stock']) }}</td>
                                 <td class="text-center">
                                     <div class="d-flex align-items-center justify-content-center">
-                                        <div class="progress w-50 me-2" style="height: 6px;">
+                                        <div class="progress w-50 me-2 d-print-none" style="height: 6px;">
                                             <div class="progress-bar bg-success" style="width: {{ $row['fill_rate'] }}%"></div>
                                         </div>
                                         <span class="small fw-bold">{{ number_format($row['fill_rate'], 1) }}%</span>
                                     </div>
                                 </td>
+                                <td class="text-center d-none d-print-table-cell-custom">{{ number_format($row['net_fill_rate'], 1) }}%</td>
                                 <td class="text-center">
                                     <span class="badge {{ $row['damage_rate'] > 5 ? 'bg-soft-danger text-danger' : 'bg-soft-success text-success' }}">
                                         {{ number_format($row['damage_rate'], 2) }}%
                                     </span>
                                 </td>
                                 <td class="text-center fw-bold">{{ number_format($row['stock_turnover'], 2) }}x</td>
-                                <td class="text-center text-muted">{{ number_format($row['slow_moving_percent'], 1) }}%</td>
-                                <td class="text-end pe-3">
+                                <td class="text-center d-none d-print-table-cell-custom">${{ number_format($row['inventory_value'], 2) }}</td>
+                                <td class="text-center text-muted small">{{ number_format($row['slow_moving_percent'], 1) }}%</td>
+                                <td class="text-end pe-3 actions-column">
                                     <a href="{{ route('admin.reports.warehouse-performance.show', [$row['warehouse_id'], 'start_date' => $filters['start_date'], 'end_date' => $filters['end_date']]) }}" 
                                        class="btn btn-sm btn-soft-primary">
                                         <i class="bx bx-show me-1"></i> Details
@@ -101,4 +118,69 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    function printReportCard(cardId, reportTitle) {
+        var content = document.getElementById(cardId);
+        if (!content) return;
+
+        var clone = content.cloneNode(true);
+        // Hide elements that shouldn't be printed
+        var hideElements = clone.querySelectorAll('.btn-group, .btn, .bx, .no-print, .actions-column, .card-header, .card-footer, .d-print-none');
+        hideElements.forEach(function(el) {
+            el.style.display = 'none';
+        });
+
+        var printWin = window.open('', '_blank', 'width=1100,height=800');
+        if (!printWin) {
+            alert('Please allow popups to print reports.');
+            return;
+        }
+
+        var bName = "{{ \App\HelperClass::generalSettings()->business_name ?? 'Smart Ecom' }}";
+        var dateRange = "{{ $filters['start_date'] }} to {{ $filters['end_date'] }}";
+        var generatedAt = "{{ date('Y-m-d H:i') }}";
+
+        printWin.document.title = 'Report - ' + reportTitle;
+        
+        var style = printWin.document.createElement('style');
+        style.innerHTML = `
+            @page { size: landscape; margin: 1cm; }
+            body { font-family: sans-serif; padding: 20px; color: #000; }
+            .hdr { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; table-layout: fixed; }
+            th, td { border: 1px solid #000 !important; padding: 5px 3px; text-align: center; font-size: 9px; word-wrap: break-word; }
+            th { background-color: #f2f2f2 !important; font-weight: bold; -webkit-print-color-adjust: exact; }
+            .ps-3 { text-align: left !important; padding-left: 5px !important; }
+            .fw-bold { font-weight: bold !important; }
+            .text-muted { color: #666 !important; }
+            
+            /* Reveal hidden Excel columns for print */
+            .d-none.d-print-table-cell-custom { display: table-cell !important; }
+            
+            /* Ensure Actions and other UI are hidden */
+            .actions-column, .btn, .bx, .progress, .no-print, .card-header, .card-footer { display: none !important; }
+            
+            .card { border: none !important; }
+        `;
+        printWin.document.head.appendChild(style);
+
+        var header = printWin.document.createElement('div');
+        header.className = 'hdr';
+        header.innerHTML = '<h1>' + bName + '</h1><h3>' + reportTitle + '</h3><p>Period: ' + dateRange + ' | Generated: ' + generatedAt + '</p>';
+        printWin.document.body.appendChild(header);
+
+        var bodyContent = printWin.document.createElement('div');
+        bodyContent.innerHTML = clone.innerHTML;
+        printWin.document.body.appendChild(bodyContent);
+
+        setTimeout(function() {
+            printWin.focus();
+            printWin.print();
+            printWin.close();
+        }, 500);
+    }
+</script>
 @endsection
