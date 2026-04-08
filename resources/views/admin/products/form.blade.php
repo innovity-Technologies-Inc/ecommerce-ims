@@ -200,30 +200,55 @@
 
                             <!-- Image Upload Section -->
                             <div class="col-lg-12">
-                                <div class="mb-3">
-                                    <label for="images" class="form-label">{{ isset($product) ? 'Add More Images' : 'Product Images' }} (Multiple Selectable)</label>
-                                    <input type="file" name="images[]" id="images" class="filepond" multiple>
-                                    <p class="small text-danger mt-1 fw-bold">Individual image size must not exceed 600 KB. Allowed formats: JPEG, PNG, JPG, GIF, SVG, WEBP.</p>
-                                    <p class="small text-muted">Select one or more images. {{ !isset($product) ? 'The first image will be set as primary.' : '' }}</p>
-
-                                    @if(isset($product) && $product->images->count() > 0)
-                                        <div class="row mt-3">
-                                            @foreach($product->images as $image)
-                                                <div class="col-md-2 mb-3">
-                                                    <div class="position-relative">
-                                                        <img src="{{ asset('storage/'.$image->image_path) }}" class="img-thumbnail bg-light" style="height: 100px; width: 100%; object-fit: contain;">
-                                                        @if($image->is_primary)
-                                                            <span class="badge bg-primary position-absolute top-0 start-0">Primary</span>
-                                                        @endif
+                                <div class="row">
+                                    <!-- Primary Image -->
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label for="primary_image" class="form-label">Primary Image <span class="text-danger">*</span></label>
+                                            <input type="file" name="primary_image" id="primary_image" class="filepond" {{ !isset($product) ? 'required' : '' }}>
+                                            <p class="extra-small text-muted mt-1">This will be the main display image. (Max 2MB)</p>
+                                            
+                                            @if(isset($product))
+                                                @php $primaryImg = $product->images->where('is_primary', true)->first(); @endphp
+                                                @if($primaryImg)
+                                                    <div class="mt-2">
+                                                        <img src="{{ asset('storage/'.$primaryImg->image_path) }}" class="img-thumbnail" style="height: 100px; width: 100px; object-fit: contain;">
                                                     </div>
-                                                </div>
-                                            @endforeach
+                                                @endif
+                                            @endif
+                                            @error('primary_image')
+                                                <span class="small text-danger">{{$message}}</span>
+                                            @enderror
                                         </div>
-                                    @endif
+                                    </div>
 
-                                    @error('images')
-                                    <span class="small text-danger">{{$message}}</span>
-                                    @enderror
+                                    <!-- Gallery Images -->
+                                    <div class="col-md-8">
+                                        <div class="mb-3">
+                                            <label for="gallery_images" class="form-label">{{ isset($product) ? 'Add Gallery Images' : 'Gallery Images' }} (Max 5 at a time)</label>
+                                            <input type="file" name="gallery_images[]" id="gallery_images" class="filepond" data-allow-reorder="true" data-max-files="5" multiple>
+                                            <p class="extra-small text-muted mt-1">Select up to 5 additional images. Individual size must not exceed 2MB.</p>
+
+                                            @if(isset($product) && $product->images->where('is_primary', false)->count() > 0)
+                                                <div class="row mt-3">
+                                                    @foreach($product->images->where('is_primary', false) as $image)
+                                                        <div class="col-md-3 mb-3">
+                                                            <div class="position-relative">
+                                                                <img src="{{ asset('storage/'.$image->image_path) }}" class="img-thumbnail bg-light" style="height: 80px; width: 100%; object-fit: contain;">
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+
+                                            @error('gallery_images')
+                                                <span class="small text-danger">{{$message}}</span>
+                                            @enderror
+                                            @error('gallery_images.*')
+                                                <span class="small text-danger">{{$message}}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -251,14 +276,35 @@
                                             @foreach($oldVariants as $index => $variant)
                                                 @php
                                                     // Handle both array (old input) and model (edit)
-                                                    $vId = is_array($variant) ? ($variant['id'] ?? null) : $variant->id;
-                                                    $vName = is_array($variant) ? $variant['variant_name'] : $variant->variant_name;
-                                                    $vSku = is_array($variant) ? $variant['sku'] : $variant->sku;
-                                                    $vPrice = is_array($variant) ? $variant['regular_price'] : $variant->regular_price;
-                                                    $vDisc = is_array($variant) ? $variant['discount_percentage'] : $variant->discount_percentage;
-                                                    $vLimitGlobal = is_array($variant) ? ($variant['min_stock_global'] ?? 0) : $variant->min_stock_global;
-                                                    
-                                                    $vLimits = !is_array($variant) ? $variant->warehouseStockLimits : collect();
+                                                    if (is_array($variant)) {
+                                                        $vId = $variant['id'] ?? null;
+                                                        $vName = $variant['variant_name'] ?? '';
+                                                        $vSku = $variant['sku'] ?? '';
+                                                        $vPrice = $variant['regular_price'] ?? '';
+                                                        $vDisc = $variant['discount_percentage'] ?? '';
+                                                        $vLimitGlobal = $variant['min_stock_global'] ?? 0;
+                                                        
+                                                        $vLimits = collect();
+                                                        $rawLimits = $variant['warehouse_limits'] ?? [];
+                                                        foreach($rawLimits as $whId => $minStock) {
+                                                            $warehouse = \App\Models\Warehouse::find($whId);
+                                                            if ($warehouse) {
+                                                                $vLimits->push((object)[
+                                                                    'warehouse_id' => $whId,
+                                                                    'min_stock' => $minStock,
+                                                                    'warehouse' => (object)['name' => $warehouse->name]
+                                                                ]);
+                                                            }
+                                                        }
+                                                    } else {
+                                                        $vId = $variant->id;
+                                                        $vName = $variant->variant_name;
+                                                        $vSku = $variant->sku;
+                                                        $vPrice = $variant->regular_price;
+                                                        $vDisc = $variant->discount_percentage;
+                                                        $vLimitGlobal = $variant->min_stock_global;
+                                                        $vLimits = $variant->warehouseStockLimits;
+                                                    }
                                                 @endphp
                                                 <tr class="variant-row">
                                                     @if($vId)

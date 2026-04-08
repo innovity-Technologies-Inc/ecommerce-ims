@@ -132,9 +132,15 @@ class ProductService
                 }
             }
 
-            if (isset($data['images']) && is_array($data['images'])) {
-                foreach ($data['images'] as $index => $image) {
-                    $this->createProductImage($product->id, $image, $index === 0);
+            // Handle primary image
+            if (isset($data['primary_image'])) {
+                $this->createProductImage($product->id, $data['primary_image'], true);
+            }
+
+            // Handle gallery images
+            if (isset($data['gallery_images']) && is_array($data['gallery_images'])) {
+                foreach ($data['gallery_images'] as $image) {
+                    $this->createProductImage($product->id, $image, false);
                 }
             }
 
@@ -182,14 +188,14 @@ class ProductService
                 $keepVariantIds = [];
                 foreach ($data['variants'] as $variantData) {
                     $variant = null;
-                    
+
                     // 1. Try finding by ID
                     if (isset($variantData['id'])) {
                         $variant = ProductVariant::find($variantData['id']);
                     }
-                    
+
                     // 2. Fallback: Try finding by SKU if it belongs to this product
-                    if (!$variant && !empty($variantData['sku'])) {
+                    if (! $variant && ! empty($variantData['sku'])) {
                         $variant = ProductVariant::where('product_id', $product->id)
                             ->where('sku', $variantData['sku'])
                             ->first();
@@ -208,8 +214,20 @@ class ProductService
                 $product->variants()->delete();
             }
 
-            if (isset($data['images']) && is_array($data['images'])) {
-                foreach ($data['images'] as $image) {
+            // Handle primary image update
+            if (isset($data['primary_image'])) {
+                // Find and delete old primary image
+                $oldPrimary = $product->images()->where('is_primary', true)->first();
+                if ($oldPrimary) {
+                    HelperClass::file_delete($oldPrimary->image_path);
+                    $oldPrimary->delete();
+                }
+                $this->createProductImage($product->id, $data['primary_image'], true);
+            }
+
+            // Handle gallery images addition
+            if (isset($data['gallery_images']) && is_array($data['gallery_images'])) {
+                foreach ($data['gallery_images'] as $image) {
                     $this->createProductImage($product->id, $image, false);
                 }
             }
@@ -311,8 +329,8 @@ class ProductService
     {
         // First remove old limits for this product/variant
         \App\Models\WarehouseStockLimit::where('product_id', $productId)
-            ->when($variantId, fn($q) => $q->where('product_variant_id', $variantId))
-            ->when(!$variantId, fn($q) => $q->whereNull('product_variant_id'))
+            ->when($variantId, fn ($q) => $q->where('product_variant_id', $variantId))
+            ->when(! $variantId, fn ($q) => $q->whereNull('product_variant_id'))
             ->delete();
 
         foreach ($limits as $warehouseId => $minStock) {

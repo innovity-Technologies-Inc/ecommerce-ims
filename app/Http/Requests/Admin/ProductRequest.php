@@ -68,8 +68,9 @@ class ProductRequest extends FormRequest
             'variants.*.min_stock_type' => ['nullable', 'in:global,warehouse'],
             'variants.*.warehouse_limits' => ['nullable', 'array'],
             'variants.*.warehouse_limits.*' => ['nullable', 'integer', 'min:0'],
-            'images' => ['nullable', 'array'],
-            'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:600'],
+            'primary_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048'],
+            'gallery_images' => ['nullable', 'array', 'max:5'],
+            'gallery_images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048'],
         ];
     }
 
@@ -86,8 +87,10 @@ class ProductRequest extends FormRequest
             'variants.*.variant_name.required_with' => 'Each variant must have a name.',
             'variants.*.sku.unique' => 'The SKU has already been taken by another product or variant.',
             'variants.*.min_stock_global.integer' => 'Variant minimum stock must be a whole number.',
-            'images.*.image' => 'One or more files uploaded are not valid images.',
-            'images.*.max' => 'Each product image must be smaller than 600 KB.',
+            'primary_image.max' => 'The primary image must not be larger than 2MB.',
+            'gallery_images.max' => 'You can upload a maximum of 5 gallery images at a time.',
+            'gallery_images.*.image' => 'One or more files uploaded to the gallery are not valid images.',
+            'gallery_images.*.max' => 'Each gallery image must be smaller than 2MB.',
         ];
     }
 }
