@@ -8,9 +8,6 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class ProductTemplateExport implements FromCollection, WithHeadings
 {
-    /**
-     * @return Collection
-     */
     public function collection(): Collection
     {
         return collect([
@@ -23,19 +20,20 @@ class ProductTemplateExport implements FromCollection, WithHeadings
                 'Long description',
                 1000,
                 10, // 10% discount
-                50,
                 1,
                 1,
-                0,
                 0,
                 'active',
+                10, // min_stock_global
+                'global', // min_stock_type
                 '8GB/128GB',
                 'SAM-S21-8-128',
                 '8/128',
                 'Black',
                 1000,
                 10, // 10% discount for variant
-                20,
+                5, // variant_min_stock_global
+                'global', // variant_min_stock_type
             ],
             [
                 'Product 1',
@@ -58,7 +56,8 @@ class ProductTemplateExport implements FromCollection, WithHeadings
                 'Silver',
                 1100,
                 5, // 5% discount for variant
-                30,
+                5, // variant_min_stock_global
+                'global', // variant_min_stock_type
             ],
         ]);
     }
@@ -74,19 +73,20 @@ class ProductTemplateExport implements FromCollection, WithHeadings
             'description',
             'regular_price',
             'discount_percentage',
-            'stock',
             'is_new_arrival',
             'is_hot_deal',
             'is_featured',
-            'is_top_pick',
             'status',
+            'min_stock_global',
+            'min_stock_type',
             'variant_name',
             'variant_sku',
             'variant_size',
             'variant_color',
             'variant_regular_price',
             'variant_discount_percentage',
-            'variant_stock',
+            'variant_min_stock_global',
+            'variant_min_stock_type',
         ];
     }
 }

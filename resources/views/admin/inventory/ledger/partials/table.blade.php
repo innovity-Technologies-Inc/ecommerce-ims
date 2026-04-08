@@ -77,15 +77,6 @@
     </table>
 </div>
 
-@if($ledgers->hasPages())
-    <div class="card-footer border-top-0 bg-transparent">
-        <div class="d-flex justify-content-between align-items-center">
-            <div class="small text-muted">
-                Showing {{ $ledgers->firstItem() }} to {{ $ledgers->lastItem() }} of {{ $ledgers->total() }} Results
-            </div>
-            <div>
-                {{ $ledgers->appends(request()->all())->links() }}
-            </div>
-        </div>
-    </div>
-@endif
+<div class="card-footer border-top">
+    {{ $ledgers->appends(request()->all())->links() }}
+</div>

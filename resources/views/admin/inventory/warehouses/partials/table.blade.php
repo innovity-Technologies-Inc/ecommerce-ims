@@ -50,12 +50,5 @@
 </div>
 
 <div class="card-footer border-top">
-    <div class="d-flex align-items-center justify-content-between">
-        <div class="text-muted">
-            Showing <span class="fw-semibold">{{ $warehouses->firstItem() ?? 0 }}</span> to <span class="fw-semibold">{{ $warehouses->lastItem() ?? 0 }}</span> of <span class="fw-semibold">{{ $warehouses->total() }}</span> Results
-        </div>
-        <div>
-            {{ $warehouses->appends(request()->all())->links() }}
-        </div>
-    </div>
+    {{ $warehouses->appends(request()->all())->links() }}
 </div>

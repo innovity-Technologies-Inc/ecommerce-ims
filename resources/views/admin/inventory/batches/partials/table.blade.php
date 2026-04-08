@@ -55,12 +55,5 @@
 </div>
 
 <div class="card-footer border-top">
-    <div class="d-flex align-items-center justify-content-between">
-        <div>
-            Showing <span class="fw-semibold">{{ $batches->firstItem() ?? 0 }}</span> to <span class="fw-semibold">{{ $batches->lastItem() ?? 0 }}</span> of <span class="fw-semibold">{{ $batches->total() }}</span> Results
-        </div>
-        <div>
-            {{ $batches->appends(request()->all())->links() }}
-        </div>
-    </div>
+    {{ $batches->appends(request()->all())->links() }}
 </div>

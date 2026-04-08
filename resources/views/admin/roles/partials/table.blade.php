@@ -41,13 +41,6 @@
     </table>
 </div>
 
-@if($roles->hasPages())
-    <div class="card-footer border-top-0">
-        <div class="d-flex align-items-center justify-content-between">
-            <div class="text-muted">
-                Showing {{ $roles->firstItem() }} to {{ $roles->lastItem() }} of {{ $roles->total() }} Results
-            </div>
-            {{ $roles->appends(request()->query())->links('pagination::bootstrap-5') }}
-        </div>
-    </div>
-@endif
+<div class="card-footer border-top">
+    {{ $roles->appends(request()->query())->links() }}
+</div>

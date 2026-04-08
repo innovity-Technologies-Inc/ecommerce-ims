@@ -38,15 +38,6 @@
     </table>
 </div>
 
-@if($adjustments->hasPages())
-<div class="card-footer border-top-0">
-    <div class="d-flex align-items-center justify-content-between">
-        <div class="text-muted">
-            Showing {{ $adjustments->firstItem() }} to {{ $adjustments->lastItem() }} of {{ $adjustments->total() }} results
-        </div>
-        <div class="pagination-container">
-            {{ $adjustments->appends(request()->query())->links() }}
-        </div>
-    </div>
+<div class="card-footer border-top">
+    {{ $adjustments->appends(request()->query())->links() }}
 </div>
-@endif

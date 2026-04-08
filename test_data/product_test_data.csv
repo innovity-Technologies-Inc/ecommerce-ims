@@ -1,14 +1,14 @@
-product_name,category,subcategory,brand,short_description,description,regular_price,discount_percentage,stock,is_new_arrival,is_hot_deal,is_featured,is_top_pick,status,variant_name,variant_sku,variant_size,variant_color,variant_regular_price,variant_discount_percentage,variant_stock
-Mens Polo Shirt,Men's Fashion,Polo,Adidas,High quality polo shirt,Long description here,1200,15,100,1,1,1,0,active,Size M - Red,POLO-M-RED,M,Red,1200,15,50
-Mens Polo Shirt,,,,,,,,,,,,,,Size L - Blue,POLO-L-BLUE,L,Blue,1250,10,50
-Formal Cotton Shirt,Men's Fashion,Shirt,US Polo,Premium cotton shirt,Detailed description,1500,10,80,1,0,0,1,active,XL - White,SHIRT-XL-WHITE,XL,White,1500,10,80
-Designer Kamiz,Female Fashion,Kamiz,Adidas,Stylish kamiz,Description,2500,12,40,0,1,1,0,active,,,
-Luxury Watch,Female Fashion,Watch,Adidas,Elegant female watch,Long description,5000,10,20,1,1,0,1,active,Silver Edition,WATCH-SILVER,One Size,Silver,5000,10,10
-Luxury Watch,,,,,,,,,,,,,,Gold Edition,WATCH-GOLD,One Size,Gold,5500,10,10
-Fragrance No 5,Perfume,,Adidas,Fresh scent perfume,Description,3000,10,60,0,0,0,0,active,,,
-Mens Denim,Men's Fashion,Test,US Polo,Classic denim,Description,1800,11,100,1,0,1,0,active,Size 32,DENIM-32,32,Blue,1800,11,50
-Mens Denim,,,,,,,,,,,,,,Size 34,DENIM-34,34,Blue,1800,11,50
-Summer Polo,Men's Fashion,Polo,Adidas,Lightweight polo,Description,900,0,150,0,0,0,0,active,,,
-Old Stock Punjabi,Men's Fashion,Punjabi,US Polo,Discounted punjabi,Description,1100,20,10,0,0,0,0,inactive,,,
-Casual Kamiz,Female Fashion,Kamiz,Adidas,Daily wear kamiz,Description,1200,8,90,1,0,0,0,active,,,
-Sport Perfume,Perfume,,Adidas,Active lifestyle scent,Description,1500,15,45,0,1,0,0,active,,,
+product_name,category,subcategory,brand,short_description,description,regular_price,discount_percentage,is_new_arrival,is_hot_deal,is_featured,status,min_stock_global,min_stock_type,variant_name,variant_sku,variant_size,variant_color,variant_regular_price,variant_discount_percentage,variant_min_stock_global,variant_min_stock_type
+Mens Polo Shirt,Electronics,Laptops,Adidas,High quality polo shirt,Long description here,1200,15,1,1,1,active,10,global,Size M - Red,POLO-M-RED,M,Red,1200,15,5,global
+Mens Polo Shirt,,,,,,,,,,,,,,Size L - Blue,POLO-L-BLUE,L,Blue,1250,10,5,global
+Formal Cotton Shirt,Electronics,Smartphones,Dell,Premium cotton shirt,Detailed description,1500,10,1,0,0,active,15,global,XL - White,SHIRT-XL-WHITE,XL,White,1500,10,5,global
+Designer Kamiz,Fashion,T-Shirts,Adidas,Stylish kamiz,Description,2500,12,0,1,1,active,20,global,,,
+Luxury Watch,Fashion,Watches,Apple,Elegant female watch,Long description,5000,10,1,1,0,active,5,global,Silver Edition,WATCH-SILVER,One Size,Silver,5000,10,2,global
+Luxury Watch,,,,,,,,,,,,,,Gold Edition,WATCH-GOLD,One Size,Gold,5500,10,2,global
+Fragrance No 5,Beauty,Fragrance,Sony,Fresh scent perfume,Description,3000,10,0,0,0,active,10,global,,,
+Mens Denim,Fashion,Jeans,Dell,Classic denim,Description,1800,11,1,0,1,active,30,global,Size 32,DENIM-32,32,Blue,1800,11,10,global
+Mens Denim,,,,,,,,,,,,,,Size 34,DENIM-34,34,Blue,1800,11,10,global
+Summer Polo,Fashion,T-Shirts,Adidas,Lightweight polo,Description,900,0,0,0,0,active,50,global,,,
+Old Stock Punjabi,Fashion,T-Shirts,Dell,Discounted punjabi,Description,1100,20,0,0,0,inactive,5,global,,,
+Casual Kamiz,Fashion,T-Shirts,Adidas,Daily wear kamiz,Description,1200,8,1,0,0,active,10,global,,,
+Sport Perfume,Beauty,Fragrance,Sony,Active lifestyle scent,Description,1500,15,0,1,0,active,12,global,,,

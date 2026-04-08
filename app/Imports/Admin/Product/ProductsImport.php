@@ -51,12 +51,12 @@ class ProductsImport implements ToCollection, WithHeadingRow, WithValidation
                     'regular_price' => $regularPrice,
                     'discount_price' => $discountPrice,
                     'discount_percentage' => $discountPercentage,
-                    'stock' => $row['stock'] ?? 0,
                     'is_new_arrival' => (bool) ($row['is_new_arrival'] ?? false),
                     'is_hot_deal' => (bool) ($row['is_hot_deal'] ?? false),
                     'is_featured' => (bool) ($row['is_featured'] ?? false),
-                    'is_top_pick' => (bool) ($row['is_top_pick'] ?? false),
                     'status' => strtolower(trim($row['status'] ?? '')) === 'active' ? 1 : 0,
+                    'min_stock_global' => $row['min_stock_global'] ?? 0,
+                    'min_stock_type' => $row['min_stock_type'] ?? 'global',
                 ];
 
                 $this->lastProduct = Product::updateOrCreate(
@@ -81,7 +81,8 @@ class ProductsImport implements ToCollection, WithHeadingRow, WithValidation
                     'regular_price' => $vRegularPrice,
                     'discount_price' => $vDiscountPrice,
                     'discount_percentage' => $vDiscountPercentage,
-                    'stock' => $row['variant_stock'] ?? 0,
+                    'min_stock_global' => $row['variant_min_stock_global'] ?? 0,
+                    'min_stock_type' => $row['variant_min_stock_type'] ?? 'global',
                 ];
 
                 ProductVariant::updateOrCreate(
@@ -109,7 +110,8 @@ class ProductsImport implements ToCollection, WithHeadingRow, WithValidation
             '*.brand' => ['nullable', 'string'],
             '*.regular_price' => ['nullable', 'numeric'],
             '*.discount_percentage' => ['nullable', 'numeric', 'min:0', 'max:100'],
-            '*.stock' => ['nullable', 'integer'],
+            '*.min_stock_global' => ['nullable', 'integer', 'min:0'],
+            '*.variant_min_stock_global' => ['nullable', 'integer', 'min:0'],
         ];
     }
 }

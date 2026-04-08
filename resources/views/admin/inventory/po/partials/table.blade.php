@@ -88,12 +88,5 @@
 </div>
 
 <div class="card-footer border-top">
-    <div class="d-flex align-items-center justify-content-between">
-        <div>
-            Showing <span class="fw-semibold">{{ $pos->firstItem() ?? 0 }}</span> to <span class="fw-semibold">{{ $pos->lastItem() ?? 0 }}</span> of <span class="fw-semibold">{{ $pos->total() }}</span> Results
-        </div>
-        <div>
-            {{ $pos->appends(request()->all())->links() }}
-        </div>
-    </div>
+    {{ $pos->appends(request()->all())->links() }}
 </div>

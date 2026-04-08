@@ -76,12 +76,5 @@
 </div>
 
 <div class="card-footer border-top">
-    <div class="d-flex align-items-center justify-content-between">
-        <div class="text-muted">
-            Showing <span class="fw-semibold">{{ $products->firstItem() ?? 0 }}</span> to <span class="fw-semibold">{{ $products->lastItem() ?? 0 }}</span> of <span class="fw-semibold">{{ $products->total() }}</span> Results
-        </div>
-        <div>
-            {{ $products->appends(request()->all())->links() }}
-        </div>
-    </div>
+    {{ $products->appends(request()->all())->links() }}
 </div>

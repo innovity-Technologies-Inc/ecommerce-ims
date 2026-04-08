@@ -81,14 +81,5 @@
 </div>
 
 <div class="card-footer border-top">
-    <div class="d-flex align-items-center justify-content-between">
-        <div>
-            <p class="mb-0 text-muted">
-                Showing {{ $coupons->firstItem() ?? 0 }} to {{ $coupons->lastItem() ?? 0 }} of {{ $coupons->total() }} results
-            </p>
-        </div>
-        <div class="pagination-container">
-            {{ $coupons->appends(request()->query())->links() }}
-        </div>
-    </div>
+    {{ $coupons->appends(request()->query())->links() }}
 </div>

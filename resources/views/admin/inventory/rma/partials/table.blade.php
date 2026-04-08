@@ -53,15 +53,6 @@
     </table>
 </div>
 
-@if($rmas->hasPages())
-<div class="card-footer border-top-0">
-    <div class="d-flex align-items-center justify-content-between">
-        <div class="text-muted">
-            Showing {{ $rmas->firstItem() }} to {{ $rmas->lastItem() }} of {{ $rmas->total() }} results
-        </div>
-        <div class="pagination-container">
-            {{ $rmas->appends(request()->query())->links() }}
-        </div>
-    </div>
+<div class="card-footer border-top">
+    {{ $rmas->appends(request()->query())->links() }}
 </div>
-@endif

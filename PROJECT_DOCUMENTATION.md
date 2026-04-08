@@ -266,6 +266,26 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     *   **Route:** `admin.inventory.check-low-stock` (URL: `/admin/inventory/check-low-stock`).
     *   **Usage:** Can be used as a webhook for external cron services if required.
 
+### 3.13 Bulk Product Upload (REQ-51, REQ-134)
+**Business Purpose:** To enable rapid, high-volume catalog onboarding and updates through Excel/CSV imports, ensuring consistency with the system's architectural standards.
+
+**How it Works:**
+*   **Template Generation:** Admins can download standardized CSV/XLSX templates via `ProductTemplateExport`. These templates define the exact column structure required for a successful import.
+*   **Idempotent Import:** The `ProductsImport` logic uses `updateOrCreate` based on the **Product Name**, allowing for both the creation of new items and the updating of existing ones without duplication.
+*   **Variant Handling:** Supports multi-row product definitions where variant details (Size, Color, SKU) are linked to the parent product identified in the same or preceding rows.
+*   **Service Alignment:** The import process is strictly aligned with the `ProductService::storeProduct` logic, ensuring that all marketing flags (`is_featured`, etc.) and minimum stock thresholds are correctly populated.
+*   **Ledger Consistency:** In line with the system's inventory architecture, bulk-uploaded products are initialized with `0` stock. Physical inventory must subsequently be added via the *Purchase Order* or *Stock Adjustment* modules to maintain ledger integrity.
+
+### 3.14 Admin UI Standardization
+- **What (Business Purpose):** Ensures a clean, consistent, and professional appearance across all administrative data tables by removing redundant UI elements.
+- **How it Works (Technical Flow):**
+    1. **Pagination Refactoring:** Manual "Showing X to Y of Z Results" text blocks were removed from all admin table partials.
+    2. **Laravel Integration:** The system now relies exclusively on Laravel's native Bootstrap 5 pagination `links()` method.
+    3. **Layout Consistency:** This change leverages the built-in Bootstrap 5 pagination template, which automatically includes the "Showing..." text and provides a responsive `d-flex` layout.
+    4. **Simplification:** The `card-footer` in all table partials is simplified to a single line: `{{ $data->links() }}`, reducing code duplication and maintenance overhead.
+- **Data & Storage (Files Updated):**
+    *   Updated 15+ partial files in `resources/views/admin/*/partials/table.blade.php`.
+
 ## 4. Technical Architecture
 
 ### 4.1 Database Seeding & Data Integrity (REQ-134)
