@@ -165,16 +165,55 @@ class OrderService
                                     'stock_status' => 'in_stock',
                                 ]);
 
-                            // Assign new serials and mark as shipped
+                            // Assign new serials and mark as sold (since stock is being deducted now)
                             \App\Models\BatchSerial::whereIn('id', $alloc['serials'])->update([
                                 'order_item_id' => $item->id,
-                                'stock_status' => 'shipped',
+                                'stock_status' => 'sold',
                             ]);
-                        } else {
-                            // If NO serials provided, we should check if this product/batch REQUIRES serials.
-                            // However, based on requirements: "if any batch products dont have serials than it can be nullable"
-                            // So we just proceed without serial linkage.
                         }
+
+                        // --- Deduct Stock Immediately on Shipping ---
+                        $warehouseId = $alloc['batch_id'] ? \App\Models\Batch::find($alloc['batch_id'])->warehouse_id : null;
+
+                        // Deduct from Warehouse and Batch Inventory Levels
+                        $inventoryLevel = \App\Models\InventoryLevel::where([
+                            'warehouse_id' => $warehouseId,
+                            'batch_id' => $alloc['batch_id'],
+                            'product_id' => $item->product_id,
+                            'product_variant_id' => $item->product_variant_id,
+                        ])->first();
+
+                        if ($inventoryLevel) {
+                            $inventoryLevel->decrement('current_quantity', $alloc['quantity']);
+                        }
+
+                        // Update BatchProduct totals
+                        if ($batchProduct) {
+                            $batchProduct->decrement('saleable_qty', $alloc['quantity']);
+                        }
+
+                        // Update Batch totals
+                        \App\Models\Batch::where('id', $alloc['batch_id'])->decrement('total_saleable_qty', $alloc['quantity']);
+
+                        // Log to Stock Ledger (Aggregate entry per batch)
+                        $this->inventoryService->logStockChange(
+                            productId: $item->product_id,
+                            variantId: $item->product_variant_id,
+                            warehouseId: $warehouseId,
+                            changeQty: -$alloc['quantity'],
+                            transactionType: 'SALE',
+                            reasonCode: 'ORDER_SHIPPED',
+                            referenceId: $order->order_id,
+                            batchId: $alloc['batch_id'],
+                            supplierId: $batchProduct->batch->supplier_id ?? null
+                        );
+                    }
+
+                    // Global Stock Deduction (Moved to Shipped)
+                    if ($item->product_variant_id) {
+                        $item->productVariant->decrement('stock', $item->quantity);
+                    } else {
+                        $item->product->decrement('stock', $item->quantity);
                     }
 
                     // Update item total cost
@@ -187,70 +226,7 @@ class OrderService
             }
 
             if ($status === 'Delivered') {
-                foreach ($order->orderItems as $item) {
-                    $allocations = $item->orderedProductBatches;
-
-                    if ($allocations->isEmpty()) {
-                        throw new \Exception("No inventory allocation found for {$item->product_name}. Please ensure the order was Shipped correctly.");
-                    }
-
-                    foreach ($allocations as $alloc) {
-                        $warehouseId = $alloc->batch->warehouse_id;
-
-                        // Update assigned serials to 'sold' for this item/batch
-                        \App\Models\BatchSerial::where('order_item_id', $item->id)
-                            ->where('batch_id', $alloc->batch_id)
-                            ->update([
-                                'stock_status' => 'sold',
-                            ]);
-
-                        // Deduct from Warehouse and Batch Inventory Levels
-                        $inventoryLevel = \App\Models\InventoryLevel::where([
-                            'warehouse_id' => $warehouseId,
-                            'batch_id' => $alloc->batch_id,
-                            'product_id' => $item->product_id,
-                            'product_variant_id' => $item->product_variant_id,
-                        ])->first();
-
-                        if ($inventoryLevel) {
-                            $inventoryLevel->decrement('current_quantity', $alloc->quantity);
-                        }
-
-                        // Update BatchProduct totals
-                        $batchProduct = \App\Models\BatchProduct::where([
-                            'batch_id' => $alloc->batch_id,
-                            'product_id' => $item->product_id,
-                            'product_variant_id' => $item->product_variant_id,
-                        ])->first();
-
-                        if ($batchProduct) {
-                            $batchProduct->decrement('saleable_qty', $alloc->quantity);
-                        }
-
-                        // Update Batch totals
-                        $alloc->batch->decrement('total_saleable_qty', $alloc->quantity);
-
-                        // Log to Stock Ledger (Aggregate entry per batch)
-                        $this->inventoryService->logStockChange(
-                            productId: $item->product_id,
-                            variantId: $item->product_variant_id,
-                            warehouseId: $warehouseId,
-                            changeQty: -$alloc->quantity,
-                            transactionType: 'SALE',
-                            reasonCode: 'ORDER_DELIVERED',
-                            referenceId: $order->order_id,
-                            batchId: $alloc->batch_id,
-                            supplierId: $alloc->batch->supplier_id ?? null
-                        );
-                    }
-
-                    // Global Stock Deduction (Only on Delivered)
-                    if ($item->product_variant_id) {
-                        $item->productVariant->decrement('stock', $item->quantity);
-                    } else {
-                        $item->product->decrement('stock', $item->quantity);
-                    }
-                }
+                // Payment and Sales Count logic remains here
             }
 
             // Define statuses that are considered "Active" (stock is deducted)
@@ -270,13 +246,11 @@ class OrderService
                 $this->adjustStock($order, 'increase');
             }
 
-            // Note: We don't deduct stock on 'Pending' anymore because we do it on 'Delivered' granularly.
+            // Note: We don't deduct stock on 'Pending' anymore because we do it on 'Shipped' granularly.
             // But we keep the overall products.stock sync for compatibility.
-            if ($status === 'Delivered') {
-                // The adjustStock(decrease) was called on ORDER_PLACED in placeOrder().
-                // To keep consistency, we should ensure the global product stock reflects reality.
-                // However, the user said: "it will not decrease the saleable stock value ... until the status is delivered"
-                // This means I need to REMOVE the decrement from placeOrder() and only do it on Delivered.
+            if ($status === 'Shipped') {
+                // The adjustStock(decrease) was called on ORDER_PLACED in older versions.
+                // Now, it is handled granularly within the 'Shipped' block above.
             }
 
             $order->order_status = $status;
@@ -494,7 +468,7 @@ class OrderService
                 ]);
 
                 // We NO LONGER deduct stock here.
-                // Stock will be deducted only when status changes to 'Delivered'.
+                // Stock will be deducted only when status changes to 'Shipped'.
             }
 
             // Record Coupon Usage
