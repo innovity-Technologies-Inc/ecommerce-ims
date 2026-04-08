@@ -18,9 +18,8 @@
                                     <th>Variant</th>
                                     <th>Type</th>
                                     <th>Location</th>
-                                    <th>Stock</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
+                                    <th class="text-center">Current Stock</th>
+                                    <th class="text-center">Suggested Restock</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -39,28 +38,23 @@
                                     </td>
                                     <td>{{ $item['variant_name'] }}</td>
                                     <td>
-                                        <span class="badge {{ $item['type'] === 'Global' ? 'badge-soft-primary' : 'badge-soft-warning' }}">
+                                        <span class="badge {{ $item['type'] === 'Global' ? 'bg-soft-primary text-primary' : 'bg-soft-warning text-warning' }}">
                                             {{ $item['type'] }}
                                         </span>
                                     </td>
                                     <td>
                                         <small class="text-muted">{{ $item['location'] }}</small>
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         <span class="fw-bold text-danger">{{ $item['stock'] }}</span>
                                     </td>
-                                    <td>
-                                        <span class="badge bg-soft-danger text-danger">Low Stock</span>
-                                    </td>
-                                    <td>
-                                        <a href="{{ route('admin.products.edit', $item['product_id']) }}" class="btn btn-sm btn-soft-primary">
-                                            <i class="bx bx-edit-alt"></i> Restock
-                                        </a>
+                                    <td class="text-center">
+                                        <span class="fw-bold text-success">+{{ $item['suggested_restock'] }}</span>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="7" class="text-center py-4">No low stock products found.</td>
+                                    <td colspan="6" class="text-center py-4">No low stock products found.</td>
                                 </tr>
                                 @endforelse
                             </tbody>

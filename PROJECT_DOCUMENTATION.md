@@ -258,7 +258,9 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
 *   **Email Reports:** For all flagged items, the system generates an email report that includes:
     *   **Product/Variant Details:** Name, variant, and SKU.
     *   **Current Inventory:** Live stock levels at the specific warehouse or global level.
-    *   **Suggested Restock:** An intelligent suggestion for reordering, calculated as `(Min Threshold * 2) - Current Quantity` (with a floor of 10 units).
+    *   **Suggested Restock:** An intelligent suggestion for reordering to restore inventory to a safe buffer level.
+        *   **Formula:** `(Minimum Threshold * 2) - Current Quantity`.
+        *   **Replenishment Floor:** A hard floor of 10 units is enforced to ensure restock suggestions are procurement-viable for items with very low thresholds.
 *   **Anti-Spam Logic:** To prevent alert fatigue, the system tracks the `last_alert_sent` timestamp on individual inventory levels. It only sends a new notification for the same item if at least 24 hours have passed since the last alert.
 *   **Manual Trigger:** Admins can manually initiate a scan and notification sequence directly from the *Dashboard* using the "Check & Notify Now" action.
     *   **Route:** `admin.inventory.check-low-stock` (URL: `/admin/inventory/check-low-stock`).

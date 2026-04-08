@@ -260,7 +260,7 @@
                             <i class="bx bx-mail-send me-1"></i> Check & Notify Now
                         </a>
                         <span class="badge bg-soft-danger text-danger">Total Issues: {{ $summary['lowStockCount'] }}</span>
-                        <a href="{{ route('admin.reports.stock') }}?low_stock=1" class="btn btn-sm btn-soft-primary">View Report</a>
+                        <a href="{{ route('admin.products.low-stock') }}" class="btn btn-sm btn-soft-primary">View All</a>
                     </div>
                 </div>
                 <div class="card-body p-0">
@@ -274,7 +274,6 @@
                                     <th>Location</th>
                                     <th class="text-center">Current Stock</th>
                                     <th class="text-center">Suggested Restock</th>
-                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -305,9 +304,6 @@
                                     </td>
                                     <td class="text-center">
                                         <span class="fw-bold text-success">+{{ $item['suggested_restock'] }}</span>
-                                    </td>
-                                    <td>
-                                        <a href="{{ route('admin.inventory.po.create', ['product_id' => $item['product_id']]) }}" class="btn btn-sm btn-soft-primary">Restock</a>
                                     </td>
                                 </tr>
                                 @endforeach
