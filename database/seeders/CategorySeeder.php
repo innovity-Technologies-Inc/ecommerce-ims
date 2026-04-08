@@ -14,27 +14,43 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            'Electronics' => ['Laptops', 'Smartphones', 'Accessories'],
-            'Fashion' => ['T-Shirts', 'Jeans', 'Shoes'],
-            'Home & Garden' => ['Furniture', 'Decor', 'Kitchen'],
+            [
+                'name' => 'Electronics',
+                'subcategories' => ['Laptops', 'Smartphones', 'Cameras', 'Accessories'],
+            ],
+            [
+                'name' => 'Fashion',
+                'subcategories' => ['T-Shirts', 'Jeans', 'Shoes', 'Watches'],
+            ],
+            [
+                'name' => 'Home & Garden',
+                'subcategories' => ['Furniture', 'Kitchen', 'Decor', 'Lighting'],
+            ],
+            [
+                'name' => 'Beauty',
+                'subcategories' => ['Skincare', 'Makeup', 'Fragrance', 'Haircare'],
+            ],
         ];
 
-        foreach ($categories as $parentName => $subCategories) {
-            $parent = Category::create([
-                'name' => $parentName,
-                'slug' => Str::slug($parentName),
-                'icon' => 'client/assets/images/categories/'.Str::slug($parentName).'.png',
-                'status' => true,
-            ]);
+        foreach ($categories as $catData) {
+            $parent = Category::updateOrCreate(
+                ['slug' => Str::slug($catData['name'])],
+                [
+                    'name' => $catData['name'],
+                    'status' => 1,
+                    'parent_id' => null,
+                ]
+            );
 
-            foreach ($subCategories as $subName) {
-                Category::create([
-                    'name' => $subName,
-                    'slug' => Str::slug($subName),
-                    'parent_id' => $parent->id,
-                    'icon' => 'client/assets/images/categories/'.Str::slug($subName).'.png',
-                    'status' => true,
-                ]);
+            foreach ($catData['subcategories'] as $subName) {
+                Category::updateOrCreate(
+                    ['slug' => Str::slug($subName)],
+                    [
+                        'name' => $subName,
+                        'status' => 1,
+                        'parent_id' => $parent->id,
+                    ]
+                );
             }
         }
     }

@@ -52,7 +52,10 @@ class SectionSettingSeeder extends Seeder
         ];
 
         foreach ($sections as $section) {
-            SectionSetting::create($section);
+            SectionSetting::updateOrCreate(
+                ['section_name' => $section['section_name']],
+                $section
+            );
         }
     }
 }

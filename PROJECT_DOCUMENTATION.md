@@ -267,3 +267,14 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     *   **Usage:** Can be used as a webhook for external cron services if required.
 
 ## 4. Technical Architecture
+
+### 4.1 Database Seeding & Data Integrity (REQ-134)
+**Business Purpose:** To provide a reliable way to populate the system with consistent, mathematically sound test data for development and demonstration.
+
+**Key Seeder Standards:**
+*   **Idempotency:** All seeders (Brand, Category, User, Admin, etc.) use `updateOrCreate` or `firstOrCreate` logic. This allows the command `php artisan db:seed` to be run multiple times without causing duplicate entry errors or unique constraint violations.
+*   **Product Service Alignment:** The `ProductSeeder` is strictly aligned with the `ProductService::storeProduct` method. It creates products and variants with marketing flags and minimum thresholds while maintaining ledger-based inventory logic (initial stock is always 0).
+*   **Hierarchical Integrity:** The `CategorySeeder` correctly maps parent-child relationships using slugs, ensuring the catalog hierarchy is properly preserved.
+
+---
+*Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Product;
 use App\Services\ProductService;
 use Illuminate\Database\Seeder;
 
@@ -14,9 +15,14 @@ class ProductSeeder extends Seeder
      */
     public function run(ProductService $productService): void
     {
+        // Clean up existing products to ensure a fresh start
+        Product::query()->delete();
+
         $electronics = Category::where('slug', 'electronics')->first();
         $laptops = Category::where('slug', 'laptops')->first();
+        $smartphones = Category::where('slug', 'smartphones')->first();
         $apple = Brand::where('slug', 'apple')->first();
+        $samsung = Brand::where('slug', 'samsung')->first();
 
         $fashion = Category::where('slug', 'fashion')->first();
         $tshirts = Category::where('slug', 't-shirts')->first();
@@ -32,21 +38,43 @@ class ProductSeeder extends Seeder
             'description' => 'Powerful laptop from Apple with M2 chip, 16GB RAM, 512GB SSD.',
             'regular_price' => 1999.99,
             'is_featured' => true,
+            'status' => true,
+            'min_stock_global' => 5,
+            'min_stock_type' => 'global',
             'variants' => [
                 [
                     'variant_name' => '14-inch Space Gray',
                     'size' => '14-inch',
                     'color' => 'Space Gray',
                     'regular_price' => 1999.99,
-                    'stock' => 10,
+                    'min_stock_global' => 2,
                 ],
                 [
                     'variant_name' => '16-inch Silver',
                     'size' => '16-inch',
                     'color' => 'Silver',
                     'regular_price' => 2499.99,
-                    'stock' => 5,
+                    'min_stock_global' => 2,
                 ],
+            ],
+        ]);
+
+        // Galaxy S23
+        $productService->storeProduct([
+            'category_id' => $electronics->id,
+            'sub_category_id' => $smartphones->id,
+            'brand_id' => $samsung->id,
+            'name' => 'Samsung Galaxy S23',
+            'short_description' => 'The next generation of Galaxy.',
+            'description' => 'Premium smartphone with high-end camera and performance.',
+            'regular_price' => 899.99,
+            'is_hot_deal' => true,
+            'status' => true,
+            'min_stock_global' => 10,
+            'min_stock_type' => 'global',
+            'variants' => [
+                ['variant_name' => 'Phantom Black / 256GB', 'color' => 'Black', 'regular_price' => 899.99, 'min_stock_global' => 5],
+                ['variant_name' => 'Cream / 512GB', 'color' => 'Cream', 'regular_price' => 999.99, 'min_stock_global' => 5],
             ],
         ]);
 
@@ -61,10 +89,13 @@ class ProductSeeder extends Seeder
             'regular_price' => 25.00,
             'discount_percentage' => 20,
             'is_new_arrival' => true,
+            'status' => true,
+            'min_stock_global' => 20,
+            'min_stock_type' => 'global',
             'variants' => [
-                ['variant_name' => 'Black / S', 'size' => 'S', 'color' => 'Black', 'regular_price' => 25.00, 'stock' => 50],
-                ['variant_name' => 'Black / M', 'size' => 'M', 'color' => 'Black', 'regular_price' => 25.00, 'stock' => 50],
-                ['variant_name' => 'White / S', 'size' => 'S', 'color' => 'White', 'regular_price' => 25.00, 'stock' => 50],
+                ['variant_name' => 'Black / S', 'size' => 'S', 'color' => 'Black', 'regular_price' => 25.00, 'min_stock_global' => 10],
+                ['variant_name' => 'Black / M', 'size' => 'M', 'color' => 'Black', 'regular_price' => 25.00, 'min_stock_global' => 10],
+                ['variant_name' => 'White / S', 'size' => 'S', 'color' => 'White', 'regular_price' => 25.00, 'min_stock_global' => 10],
             ],
         ]);
     }
