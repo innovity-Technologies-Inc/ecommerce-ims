@@ -92,7 +92,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @php($gs = \App\HelperClass::generalSettings())
+                                @php $gs = \App\HelperClass::generalSettings(); @endphp
                                 @foreach($batch->batchProducts as $bp)
                                     <tr>
                                         <td>
@@ -115,12 +115,13 @@
                                         <td>
                                             @php
                                                 $itemSerials = $batch->serials->where('product_id', $bp->product_id)->where('product_variant_id', $bp->product_variant_id);
+                                                $serialCount = $itemSerials->count();
                                             @endphp
-                                            @if($itemSerials->count() > 0)
+                                            @if($serialCount > 0)
                                                 <button type="button" class="btn btn-soft-primary btn-sm view-serials-btn" 
-                                                        data-product="{{ $bp->product->name }} {{ $bp->variant ? '(' . $bp->variant->variant_name . ')' : '' }}"
-                                                        data-serials='@json($itemSerials->values())'>
-                                                    <iconify-icon icon="solar: eye-bold-duotone"></iconify-icon> View ({{ $itemSerials->count() }})
+                                                        data-product="{{ $bp->product->name }}"
+                                                        data-serials="{{ $itemSerials->values()->toJson() }}">
+                                                    View ({{ $serialCount }})
                                                 </button>
                                             @else
                                                 <span class="text-muted small italic">No serials tracked</span>

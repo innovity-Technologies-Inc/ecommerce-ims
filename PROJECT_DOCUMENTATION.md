@@ -290,22 +290,20 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
 **Business Purpose:** To provide administrators with real-time financial visibility and performance tracking directly from the dashboard.
 
 **How it Works:**
-*   **Metric Calculation:** The system calculates key financial indicators by aggregating data from the `orders` table for orders with a 'Delivered' status.
-    *   **Revenue:** Sum of `total_amount` (Gross Sale).
-    *   **Cost:** Sum of `total_cost` (Procurement/Inventory Cost).
+*   **Metric Calculation:** The system calculates key financial indicators by aggregating data from the `orders` table (for Revenue/Cost/Profit) and `purchase_orders` (for Procurement volume).
+    *   **Revenue:** Sum of `total_amount` (Gross Sale) for 'Delivered' orders.
+    *   **Cost:** Sum of `total_cost` (Procurement Cost) for 'Delivered' orders.
     *   **Profit:** `Revenue - Cost`.
-*   **Time-Series Tracking:** Metrics are grouped into four primary periods:
-    *   **Daily:** Current day's performance.
-    *   **Weekly:** Last 7 days rolling aggregate.
-    *   **Monthly:** Current calendar month performance.
-    *   **Yearly:** Current calendar year performance.
-*   **Interactive Visualization:**
-    *   **Revenue vs. Cost Chart:** A multi-series line chart (ApexCharts) comparing monthly Revenue, Cost, and Profit for the current year.
-    *   **Daily Revenue Chart:** An area chart showing the daily sales trend for the current month.
+*   **Time-Series Tracking:** Metrics are grouped into Daily, Monthly, and Yearly periods for deep historical analysis.
+*   **Analytical Visualization:**
+    *   **Revenue vs. Cost Charts:** Multi-series charts (Area for Monthly, Bar for Yearly) comparing **Revenue, Cost, and Profit** side-by-side to track margin health.
+    *   **Profit Charts:** Dedicated Monthly (Area) and Yearly (Bar) charts to focus purely on net earnings.
+    *   **Orders Tracking:** Line and Bar charts showing the volume of customer orders (excluding cancelled/rejected).
+    *   **Purchases Tracking:** Line and Bar charts showing the frequency and volume of supplier purchase orders.
 *   **Architecture:**
-    *   **Service Layer:** `DashboardService` handles all aggregation logic using raw SQL expressions for performance.
-    *   **Thin Controller:** `DashboardController` passes pre-aggregated data to the view.
-    *   **Dynamic UI:** Bootstrap 5 cards with consistent iconography and color-coding (e.g., green for profit, red for cost).
+    *   **Service Layer:** `DashboardService` handles complex SQL aggregations for both sales (`orders`) and procurement (`purchase_orders`).
+    *   **Thin Controller:** `DashboardController` prepares data for ApexCharts visualization.
+    *   **Optimized UI:** A streamlined 3-column summary layout focused on high-level Revenue and Profit KPIs.
 
 ## 4. Technical Architecture
 
