@@ -286,6 +286,27 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
 - **Data & Storage (Files Updated):**
     *   Updated 15+ partial files in `resources/views/admin/*/partials/table.blade.php`.
 
+### 3.15 Dashboard Revenue Analytics (REQ-136)
+**Business Purpose:** To provide administrators with real-time financial visibility and performance tracking directly from the dashboard.
+
+**How it Works:**
+*   **Metric Calculation:** The system calculates key financial indicators by aggregating data from the `orders` table for orders with a 'Delivered' status.
+    *   **Revenue:** Sum of `total_amount` (Gross Sale).
+    *   **Cost:** Sum of `total_cost` (Procurement/Inventory Cost).
+    *   **Profit:** `Revenue - Cost`.
+*   **Time-Series Tracking:** Metrics are grouped into four primary periods:
+    *   **Daily:** Current day's performance.
+    *   **Weekly:** Last 7 days rolling aggregate.
+    *   **Monthly:** Current calendar month performance.
+    *   **Yearly:** Current calendar year performance.
+*   **Interactive Visualization:**
+    *   **Revenue vs. Cost Chart:** A multi-series line chart (ApexCharts) comparing monthly Revenue, Cost, and Profit for the current year.
+    *   **Daily Revenue Chart:** An area chart showing the daily sales trend for the current month.
+*   **Architecture:**
+    *   **Service Layer:** `DashboardService` handles all aggregation logic using raw SQL expressions for performance.
+    *   **Thin Controller:** `DashboardController` passes pre-aggregated data to the view.
+    *   **Dynamic UI:** Bootstrap 5 cards with consistent iconography and color-coding (e.g., green for profit, red for cost).
+
 ## 4. Technical Architecture
 
 ### 4.1 Database Seeding & Data Integrity (REQ-134)

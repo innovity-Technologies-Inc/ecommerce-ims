@@ -14,16 +14,27 @@ class DashboardController extends Controller
     public function index()
     {
         $summary = $this->dashboardService->getSummaryMetrics();
-        $chartData = $this->dashboardService->getMonthlySalesData();
-        $yearlyChartData = $this->dashboardService->getYearlySalesData();
+        $yearlyRevenueVsCostData = $this->dashboardService->getYearlyRevenueVsCostData();
+        $revenueVsCostData = $this->dashboardService->getRevenueVsCostData();
+        
+        // Orders & Purchases data
+        $monthlyOrderData = $this->dashboardService->getMonthlyOrderData();
+        $yearlyOrderData = $this->dashboardService->getYearlyOrderData();
+        $monthlyPurchaseData = $this->dashboardService->getMonthlyPurchaseData();
+        $yearlyPurchaseData = $this->dashboardService->getYearlyPurchaseData();
+
         $monthlyBestSellingProducts = $this->dashboardService->getMonthlyBestSellingProducts(10);
         $yearlyBestSellingProducts = $this->dashboardService->getYearlyBestSellingProducts(10);
         $lowStockProducts = $this->dashboardService->getLowStockProducts(5); // Only show few on dashboard
 
         return view('admin.dashboard', compact(
             'summary',
-            'chartData',
-            'yearlyChartData',
+            'yearlyRevenueVsCostData',
+            'revenueVsCostData',
+            'monthlyOrderData',
+            'yearlyOrderData',
+            'monthlyPurchaseData',
+            'yearlyPurchaseData',
             'monthlyBestSellingProducts',
             'yearlyBestSellingProducts',
             'lowStockProducts'

@@ -3,30 +3,45 @@
 
 <div class="container-xxl">
     <div class="row">
-        <div class="col-md-6 col-xl-3">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="text-muted fw-medium text-truncate mb-2">Today's Revenue</p>
+                            <h4 class="mb-0 text-dark">{{ config('app.currency', '$') }}{{ number_format($summary['todaySales'], 2) }}</h4>
+                        </div>
+                        <div class="avatar-md bg-soft-primary rounded">
+                            <i class="bx bx-dollar-circle avatar-title fs-24 text-primary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
             <a href="{{ route('admin.orders.index', ['date_from' => now()->startOfMonth()->format('Y-m-d'), 'date_to' => now()->endOfMonth()->format('Y-m-d'), 'order_status' => 'Delivered']) }}" class="text-decoration-none">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between">
                             <div>
-                                <p class="text-muted fw-medium text-truncate mb-2">This Month's Sales</p>
+                                <p class="text-muted fw-medium text-truncate mb-2">This Month's Revenue</p>
                                 <h4 class="mb-0 text-dark">{{ config('app.currency', '$') }}{{ number_format($summary['thisMonthSales'], 2) }}</h4>
                             </div>
                             <div class="avatar-md bg-soft-primary rounded">
-                                <i class="bx bx-dollar-circle avatar-title fs-24 text-primary"></i>
+                                <i class="bx bx-cart avatar-title fs-24 text-primary"></i>
                             </div>
                         </div>
                     </div>
                 </div>
             </a>
         </div>
-        <div class="col-md-6 col-xl-3">
+        <div class="col-md-4">
             <a href="{{ route('admin.orders.index', ['date_from' => now()->startOfYear()->format('Y-m-d'), 'date_to' => now()->endOfYear()->format('Y-m-d'), 'order_status' => 'Delivered']) }}" class="text-decoration-none">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between">
                             <div>
-                                <p class="text-muted fw-medium text-truncate mb-2">This Year's Sales</p>
+                                <p class="text-muted fw-medium text-truncate mb-2">This Year's Revenue</p>
                                 <h4 class="mb-0 text-dark">{{ config('app.currency', '$') }}{{ number_format($summary['thisYearSales'], 2) }}</h4>
                             </div>
                             <div class="avatar-md bg-soft-success rounded">
@@ -37,39 +52,53 @@
                 </div>
             </a>
         </div>
-        <div class="col-md-6 col-xl-3">
-            <a href="{{ route('admin.orders.index', ['order_status' => 'Delivered']) }}" class="text-decoration-none">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <p class="text-muted fw-medium text-truncate mb-2">Total Sales Amount</p>
-                                <h4 class="mb-0 text-dark">{{ config('app.currency', '$') }}{{ number_format($summary['totalSalesAmount'], 2) }}</h4>
-                            </div>
-                            <div class="avatar-md bg-soft-info rounded">
-                                <i class="bx bx-wallet avatar-title fs-24 text-info"></i>
-                            </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="text-muted fw-medium text-truncate mb-2">Today's Profit</p>
+                            <h4 class="mb-0 text-dark">{{ config('app.currency', '$') }}{{ number_format($summary['todayProfit'], 2) }}</h4>
+                        </div>
+                        <div class="avatar-md bg-soft-success rounded">
+                            <i class="bx bx-trending-up avatar-title fs-24 text-success"></i>
                         </div>
                     </div>
                 </div>
-            </a>
+            </div>
         </div>
-        <div class="col-md-6 col-xl-3">
-            <a href="{{ route('admin.orders.index', ['order_status' => 'Delivered']) }}" class="text-decoration-none">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <p class="text-muted fw-medium text-truncate mb-2">Product Sales Number</p>
-                                <h4 class="mb-0 text-dark">{{ number_format($summary['totalProductSalesCount']) }}</h4>
-                            </div>
-                            <div class="avatar-md bg-soft-warning rounded">
-                                <i class="bx bx-shopping-bag avatar-title fs-24 text-warning"></i>
-                            </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="text-muted fw-medium text-truncate mb-2">This Month's Profit</p>
+                            <h4 class="mb-0 text-dark">{{ config('app.currency', '$') }}{{ number_format($summary['thisMonthProfit'], 2) }}</h4>
+                        </div>
+                        <div class="avatar-md bg-soft-success rounded">
+                            <i class="bx bx-money avatar-title fs-24 text-success"></i>
                         </div>
                     </div>
                 </div>
-            </a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="text-muted fw-medium text-truncate mb-2">This Year's Profit</p>
+                            <h4 class="mb-0 text-dark">{{ config('app.currency', '$') }}{{ number_format($summary['thisYearProfit'], 2) }}</h4>
+                        </div>
+                        <div class="avatar-md bg-soft-success rounded">
+                            <i class="bx bx-rocket avatar-title fs-24 text-success"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -144,15 +173,15 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row mt-4">
         <div class="col-xl-6">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Monthly Sales Review ({{ date('Y') }})</h4>
+                    <h4 class="card-title">Monthly Revenue vs Cost ({{ date('Y') }})</h4>
                 </div>
                 <div class="card-body">
                     <div dir="ltr">
-                        <div id="sales-chart" class="apex-charts"></div>
+                        <div id="revenue-cost-chart" class="apex-charts"></div>
                     </div>
                 </div>
             </div>
@@ -161,11 +190,95 @@
         <div class="col-xl-6">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Yearly Sales Review</h4>
+                    <h4 class="card-title">Yearly Revenue vs Cost</h4>
                 </div>
                 <div class="card-body">
                     <div dir="ltr">
-                        <div id="yearly-sales-chart" class="apex-charts"></div>
+                        <div id="yearly-revenue-cost-chart" class="apex-charts"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="card-title">Monthly Profit Review ({{ date('Y') }})</h4>
+                </div>
+                <div class="card-body">
+                    <div dir="ltr">
+                        <div id="monthly-profit-chart" class="apex-charts"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="card-title">Yearly Profit Review</h4>
+                </div>
+                <div class="card-body">
+                    <div dir="ltr">
+                        <div id="yearly-profit-chart" class="apex-charts"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="card-title">Monthly Orders ({{ date('Y') }})</h4>
+                </div>
+                <div class="card-body">
+                    <div dir="ltr">
+                        <div id="monthly-orders-chart" class="apex-charts"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="card-title">Yearly Orders Review</h4>
+                </div>
+                <div class="card-body">
+                    <div dir="ltr">
+                        <div id="yearly-orders-chart" class="apex-charts"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="card-title">Monthly Purchases ({{ date('Y') }})</h4>
+                </div>
+                <div class="card-body">
+                    <div dir="ltr">
+                        <div id="monthly-purchases-chart" class="apex-charts"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="card-title">Yearly Purchases Review</h4>
+                </div>
+                <div class="card-body">
+                    <div dir="ltr">
+                        <div id="yearly-purchases-chart" class="apex-charts"></div>
                     </div>
                 </div>
             </div>
@@ -322,29 +435,27 @@
 <script src="{{ asset('admin_assets/assets/vendor/apexcharts/apexcharts.min.js') }}"></script>
 <script src="{{ asset('admin_assets/assets/js/pages/dashboard.js') }}"></script>
 <script>
-    // Monthly Chart
-    var options = {
+    // Monthly Revenue vs Cost Chart
+    var revenueCostOptions = {
         series: [{
-            name: "Sales",
-            data: @json($chartData['data'])
+            name: 'Revenue',
+            data: @json($revenueVsCostData['revenue'])
+        }, {
+            name: 'Cost',
+            data: @json($revenueVsCostData['cost'])
+        }, {
+            name: 'Profit',
+            data: @json($revenueVsCostData['profit'])
         }],
         chart: {
             height: 350,
             type: 'area',
-            toolbar: {
-                show: false
-            }
+            toolbar: { show: false }
         },
-        dataLabels: {
-            enabled: false
-        },
-        stroke: {
-            curve: 'smooth',
-            width: 3
-        },
-        xaxis: {
-            categories: @json($chartData['labels']),
-        },
+        dataLabels: { enabled: false },
+        stroke: { curve: 'smooth', width: [3, 3, 2], dashArray: [0, 0, 5] },
+        colors: ['#7f56da', '#ff6c2f', '#22c55e'],
+        xaxis: { categories: @json($revenueVsCostData['labels']) },
         yaxis: {
             labels: {
                 formatter: function (value) {
@@ -352,7 +463,93 @@
                 }
             }
         },
-        colors: ['#7f56da'],
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.5,
+                opacityTo: 0.1,
+                stops: [0, 90, 100]
+            }
+        },
+        tooltip: {
+            y: {
+                formatter: function (value) {
+                    return "{{ config('app.currency', '$') }}" + value.toLocaleString();
+                }
+            }
+        }
+    };
+    new ApexCharts(document.querySelector("#revenue-cost-chart"), revenueCostOptions).render();
+
+    // Yearly Revenue vs Cost Chart
+    var yearlyRevCostOptions = {
+        series: [{
+            name: 'Revenue',
+            data: @json($yearlyRevenueVsCostData['revenue'])
+        }, {
+            name: 'Cost',
+            data: @json($yearlyRevenueVsCostData['cost'])
+        }, {
+            name: 'Profit',
+            data: @json($yearlyRevenueVsCostData['profit'])
+        }],
+        chart: {
+            height: 350,
+            type: 'bar',
+            toolbar: { show: false }
+        },
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                columnWidth: '55%',
+                borderRadius: 4
+            },
+        },
+        dataLabels: { enabled: false },
+        stroke: { show: true, width: 2, colors: ['transparent'] },
+        xaxis: { categories: @json($yearlyRevenueVsCostData['labels']) },
+        yaxis: {
+            labels: {
+                formatter: function (value) {
+                    return "{{ config('app.currency', '$') }}" + value.toLocaleString();
+                }
+            }
+        },
+        colors: ['#7f56da', '#ff6c2f', '#22c55e'],
+        fill: { opacity: 1 },
+        tooltip: {
+            y: {
+                formatter: function (value) {
+                    return "{{ config('app.currency', '$') }}" + value.toLocaleString();
+                }
+            }
+        }
+    };
+    new ApexCharts(document.querySelector("#yearly-revenue-cost-chart"), yearlyRevCostOptions).render();
+
+    // Monthly Profit Chart
+    var monthlyProfitOptions = {
+        series: [{
+            name: 'Profit',
+            data: @json($revenueVsCostData['profit'])
+        }],
+        chart: {
+            height: 350,
+            type: 'area',
+            toolbar: { show: false }
+        },
+        dataLabels: { enabled: false },
+        stroke: { curve: 'smooth', width: 3 },
+        colors: ['#22c55e'],
+        xaxis: { categories: @json($revenueVsCostData['labels']) },
+        yaxis: {
+            labels: {
+                formatter: function (value) {
+                    return "{{ config('app.currency', '$') }}" + value.toLocaleString();
+                }
+            }
+        },
         fill: {
             type: 'gradient',
             gradient: {
@@ -370,36 +567,27 @@
             }
         }
     };
+    new ApexCharts(document.querySelector("#monthly-profit-chart"), monthlyProfitOptions).render();
 
-    var chart = new ApexCharts(document.querySelector("#sales-chart"), options);
-    chart.render();
-
-    // Yearly Chart
-    var yearlyOptions = {
+    // Yearly Profit Chart
+    var yearlyProfitOptions = {
         series: [{
-            name: "Yearly Sales",
-            data: @json($yearlyChartData['data'])
+            name: 'Profit',
+            data: @json($yearlyRevenueVsCostData['profit'])
         }],
         chart: {
             height: 350,
             type: 'bar',
-            toolbar: {
-                show: false
-            }
+            toolbar: { show: false }
         },
         plotOptions: {
             bar: {
-                columnWidth: '40%',
                 borderRadius: 4,
-                distributed: true
+                columnWidth: '50%',
             }
         },
-        dataLabels: {
-            enabled: false
-        },
-        xaxis: {
-            categories: @json($yearlyChartData['labels']),
-        },
+        colors: ['#22c55e'],
+        xaxis: { categories: @json($yearlyRevenueVsCostData['labels']) },
         yaxis: {
             labels: {
                 formatter: function (value) {
@@ -407,20 +595,112 @@
                 }
             }
         },
-        colors: ['#7f56da', '#108dff', '#22c55e', '#ff6c2f', '#f5b759'],
         tooltip: {
             y: {
                 formatter: function (value) {
                     return "{{ config('app.currency', '$') }}" + value.toLocaleString();
                 }
             }
-        },
-        legend: {
-            show: false
         }
     };
+    new ApexCharts(document.querySelector("#yearly-profit-chart"), yearlyProfitOptions).render();
 
-    var yearlyChart = new ApexCharts(document.querySelector("#yearly-sales-chart"), yearlyOptions);
-    yearlyChart.render();
+    // Monthly Orders Chart
+    var monthlyOrdersOptions = {
+        series: [{
+            name: 'Orders',
+            data: @json($monthlyOrderData['data'])
+        }],
+        chart: {
+            height: 350,
+            type: 'line',
+            toolbar: { show: false }
+        },
+        stroke: { width: 3, curve: 'smooth' },
+        colors: ['#7f56da'],
+        xaxis: { categories: @json($monthlyOrderData['labels']) },
+        markers: { size: 4 },
+        tooltip: {
+            y: {
+                formatter: function (value) {
+                    return value.toLocaleString() + " Orders";
+                }
+            }
+        }
+    };
+    new ApexCharts(document.querySelector("#monthly-orders-chart"), monthlyOrdersOptions).render();
+
+    // Yearly Orders Chart
+    var yearlyOrdersOptions = {
+        series: [{
+            name: 'Orders',
+            data: @json($yearlyOrderData['data'])
+        }],
+        chart: {
+            height: 350,
+            type: 'bar',
+            toolbar: { show: false }
+        },
+        plotOptions: { bar: { borderRadius: 4, columnWidth: '50%' } },
+        colors: ['#7f56da'],
+        xaxis: { categories: @json($yearlyOrderData['labels']) },
+        tooltip: {
+            y: {
+                formatter: function (value) {
+                    return value.toLocaleString() + " Orders";
+                }
+            }
+        }
+    };
+    new ApexCharts(document.querySelector("#yearly-orders-chart"), yearlyOrdersOptions).render();
+
+    // Monthly Purchases Chart
+    var monthlyPurchasesOptions = {
+        series: [{
+            name: 'Purchases',
+            data: @json($monthlyPurchaseData['data'])
+        }],
+        chart: {
+            height: 350,
+            type: 'line',
+            toolbar: { show: false }
+        },
+        stroke: { width: 3, curve: 'smooth' },
+        colors: ['#108dff'],
+        xaxis: { categories: @json($monthlyPurchaseData['labels']) },
+        markers: { size: 4 },
+        tooltip: {
+            y: {
+                formatter: function (value) {
+                    return value.toLocaleString() + " Purchases";
+                }
+            }
+        }
+    };
+    new ApexCharts(document.querySelector("#monthly-purchases-chart"), monthlyPurchasesOptions).render();
+
+    // Yearly Purchases Chart
+    var yearlyPurchasesOptions = {
+        series: [{
+            name: 'Purchases',
+            data: @json($yearlyPurchaseData['data'])
+        }],
+        chart: {
+            height: 350,
+            type: 'bar',
+            toolbar: { show: false }
+        },
+        plotOptions: { bar: { borderRadius: 4, columnWidth: '50%' } },
+        colors: ['#108dff'],
+        xaxis: { categories: @json($yearlyPurchaseData['labels']) },
+        tooltip: {
+            y: {
+                formatter: function (value) {
+                    return value.toLocaleString() + " Purchases";
+                }
+            }
+        }
+    };
+    new ApexCharts(document.querySelector("#yearly-purchases-chart"), yearlyPurchasesOptions).render();
 </script>
 @endsection

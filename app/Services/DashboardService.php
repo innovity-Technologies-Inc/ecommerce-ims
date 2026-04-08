@@ -20,16 +20,38 @@ class DashboardService
     public function getSummaryMetrics(): array
     {
         $now = Carbon::now();
+        $today = $now->copy()->startOfDay();
+        $startOfWeek = $now->copy()->subDays(6)->startOfDay(); // Last 7 days
         $startOfMonth = $now->copy()->startOfMonth();
         $startOfYear = $now->copy()->startOfYear();
 
-        $thisMonthSales = Order::where('created_at', '>=', $startOfMonth)
-            ->where('order_status', 'Delivered')
-            ->sum('total_amount');
+        // Today's Sales
+        $todayOrderQuery = Order::where('created_at', '>=', $today)
+            ->where('order_status', 'Delivered');
+        $todaySales = $todayOrderQuery->sum('total_amount');
+        $todayCost = $todayOrderQuery->sum('total_cost');
+        $todayProfit = $todaySales - $todayCost;
 
-        $thisYearSales = Order::where('created_at', '>=', $startOfYear)
-            ->where('order_status', 'Delivered')
-            ->sum('total_amount');
+        // Weekly Sales (Last 7 Days)
+        $weeklyOrderQuery = Order::where('created_at', '>=', $startOfWeek)
+            ->where('order_status', 'Delivered');
+        $weeklySales = $weeklyOrderQuery->sum('total_amount');
+        $weeklyCost = $weeklyOrderQuery->sum('total_cost');
+        $weeklyProfit = $weeklySales - $weeklyCost;
+
+        // Monthly Sales
+        $thisMonthOrderQuery = Order::where('created_at', '>=', $startOfMonth)
+            ->where('order_status', 'Delivered');
+        $thisMonthSales = $thisMonthOrderQuery->sum('total_amount');
+        $thisMonthCost = $thisMonthOrderQuery->sum('total_cost');
+        $thisMonthProfit = $thisMonthSales - $thisMonthCost;
+
+        // Yearly Sales
+        $thisYearOrderQuery = Order::where('created_at', '>=', $startOfYear)
+            ->where('order_status', 'Delivered');
+        $thisYearSales = $thisYearOrderQuery->sum('total_amount');
+        $thisYearCost = $thisYearOrderQuery->sum('total_cost');
+        $thisYearProfit = $thisYearSales - $thisYearCost;
 
         $totalSalesAmount = Order::where('order_status', 'Delivered')
             ->sum('total_amount');
@@ -83,8 +105,18 @@ class DashboardService
         $lowStockCount = $globalLowStockCount + $warehouseLowStockCount;
 
         return [
+            'todaySales' => $todaySales,
+            'todayCost' => $todayCost,
+            'todayProfit' => $todayProfit,
+            'weeklySales' => $weeklySales,
+            'weeklyCost' => $weeklyCost,
+            'weeklyProfit' => $weeklyProfit,
             'thisMonthSales' => $thisMonthSales,
+            'thisMonthCost' => $thisMonthCost,
+            'thisMonthProfit' => $thisMonthProfit,
             'thisYearSales' => $thisYearSales,
+            'thisYearCost' => $thisYearCost,
+            'thisYearProfit' => $thisYearProfit,
             'totalSalesAmount' => $totalSalesAmount,
             'totalProductSalesCount' => (int) $totalProductSalesCount,
             'totalProducts' => $totalProducts,
@@ -196,6 +228,219 @@ class DashboardService
             ->orderBy('period_sales_count', 'desc')
             ->limit($limit)
             ->get();
+    }
+
+    /**
+     * Get yearly revenue vs cost data for the last 10 years.
+     */
+    public function getYearlyRevenueVsCostData(): array
+    {
+        $currentYear = Carbon::now()->year;
+        $startYear = $currentYear - 9; // Last 10 years
+
+        $metrics = Order::select(
+            DB::raw('YEAR(created_at) as year'),
+            DB::raw('SUM(total_amount) as revenue'),
+            DB::raw('SUM(total_cost) as cost')
+        )
+            ->whereYear('created_at', '>=', $startYear)
+            ->where('order_status', 'Delivered')
+            ->groupBy('year')
+            ->orderBy('year')
+            ->get()
+            ->keyBy('year')
+            ->toArray();
+
+        $revenue = [];
+        $cost = [];
+        $profit = [];
+        $labels = [];
+
+        for ($i = $startYear; $i <= $currentYear; $i++) {
+            $labels[] = (string) $i;
+            $rev = (float) ($metrics[$i]['revenue'] ?? 0);
+            $cst = (float) ($metrics[$i]['cost'] ?? 0);
+            $revenue[] = $rev;
+            $cost[] = $cst;
+            $profit[] = $rev - $cst;
+        }
+
+        return [
+            'labels' => $labels,
+            'revenue' => $revenue,
+            'cost' => $cost,
+            'profit' => $profit,
+        ];
+    }
+
+    /**
+     * Get revenue vs cost data for each month of the current year.
+     */
+    public function getRevenueVsCostData(): array
+    {
+        $year = Carbon::now()->year;
+
+        $metrics = Order::select(
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('SUM(total_amount) as revenue'),
+            DB::raw('SUM(total_cost) as cost')
+        )
+            ->whereYear('created_at', $year)
+            ->where('order_status', 'Delivered')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->keyBy('month')
+            ->toArray();
+
+        $revenue = [];
+        $cost = [];
+        $profit = [];
+        $labels = [];
+
+        for ($i = 1; $i <= 12; $i++) {
+            $labels[] = Carbon::create()->month($i)->format('M');
+            $rev = (float) ($metrics[$i]['revenue'] ?? 0);
+            $cst = (float) ($metrics[$i]['cost'] ?? 0);
+            $revenue[] = $rev;
+            $cost[] = $cst;
+            $profit[] = $rev - $cst;
+        }
+
+        return [
+            'labels' => $labels,
+            'revenue' => $revenue,
+            'cost' => $cost,
+            'profit' => $profit,
+        ];
+    }
+
+    /**
+     * Get order count data for each month of the current year.
+     */
+    public function getMonthlyOrderData(): array
+    {
+        $year = Carbon::now()->year;
+
+        $orders = Order::select(
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('COUNT(*) as total')
+        )
+            ->whereYear('created_at', $year)
+            ->whereNotIn('order_status', ['Cancelled', 'Rejected'])
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->pluck('total', 'month')
+            ->toArray();
+
+        $data = [];
+        $labels = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $labels[] = Carbon::create()->month($i)->format('M');
+            $data[] = $orders[$i] ?? 0;
+        }
+
+        return [
+            'labels' => $labels,
+            'data' => $data,
+        ];
+    }
+
+    /**
+     * Get order count data for the last 10 years.
+     */
+    public function getYearlyOrderData(): array
+    {
+        $currentYear = Carbon::now()->year;
+        $startYear = $currentYear - 9;
+
+        $orders = Order::select(
+            DB::raw('YEAR(created_at) as year'),
+            DB::raw('COUNT(*) as total')
+        )
+            ->whereYear('created_at', '>=', $startYear)
+            ->whereNotIn('order_status', ['Cancelled', 'Rejected'])
+            ->groupBy('year')
+            ->orderBy('year')
+            ->get()
+            ->pluck('total', 'year')
+            ->toArray();
+
+        $data = [];
+        $labels = [];
+        for ($i = $startYear; $i <= $currentYear; $i++) {
+            $labels[] = (string) $i;
+            $data[] = $orders[$i] ?? 0;
+        }
+
+        return [
+            'labels' => $labels,
+            'data' => $data,
+        ];
+    }
+
+    /**
+     * Get purchase order count data for each month of the current year.
+     */
+    public function getMonthlyPurchaseData(): array
+    {
+        $year = Carbon::now()->year;
+
+        $purchases = DB::table('purchase_orders')->select(
+            DB::raw('MONTH(order_date) as month'),
+            DB::raw('COUNT(*) as total')
+        )
+            ->whereYear('order_date', $year)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->pluck('total', 'month')
+            ->toArray();
+
+        $data = [];
+        $labels = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $labels[] = Carbon::create()->month($i)->format('M');
+            $data[] = $purchases[$i] ?? 0;
+        }
+
+        return [
+            'labels' => $labels,
+            'data' => $data,
+        ];
+    }
+
+    /**
+     * Get purchase order count data for the last 10 years.
+     */
+    public function getYearlyPurchaseData(): array
+    {
+        $currentYear = Carbon::now()->year;
+        $startYear = $currentYear - 9;
+
+        $purchases = DB::table('purchase_orders')->select(
+            DB::raw('YEAR(order_date) as year'),
+            DB::raw('COUNT(*) as total')
+        )
+            ->whereYear('order_date', '>=', $startYear)
+            ->groupBy('year')
+            ->orderBy('year')
+            ->get()
+            ->pluck('total', 'year')
+            ->toArray();
+
+        $data = [];
+        $labels = [];
+        for ($i = $startYear; $i <= $currentYear; $i++) {
+            $labels[] = (string) $i;
+            $data[] = $purchases[$i] ?? 0;
+        }
+
+        return [
+            'labels' => $labels,
+            'data' => $data,
+        ];
     }
 
     /**
