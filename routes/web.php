@@ -212,6 +212,16 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     });
 
     Route::prefix('inventory')->group(function () {
+        // Automation
+        Route::get('/check-low-stock', function (\App\Services\NotificationService $service) {
+            $count = $service->checkAndNotifyLowStock();
+
+            return back()->with([
+                'message' => "Low stock check completed. Alerts sent for {$count} items.",
+                'alert-type' => 'success',
+            ]);
+        })->name('admin.inventory.check-low-stock');
+
         Route::prefix('warehouses')->middleware('permission:warehouse.view')->controller(\App\Http\Controllers\Admin\WarehouseController::class)->group(function () {
             Route::get('/', 'index')->name('admin.warehouses.index');
             Route::get('/create', 'create')->name('admin.warehouses.create')->middleware('permission:warehouse.create');

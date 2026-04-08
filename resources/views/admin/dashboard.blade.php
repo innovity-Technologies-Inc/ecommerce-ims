@@ -254,10 +254,13 @@
         <div class="col-xl-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Low Stock Products</h4>
+                    <h4 class="card-title">Low Stock Alerts</h4>
                     <div class="d-flex align-items-center gap-2">
-                        <span class="badge bg-soft-danger text-danger">Total: {{ $summary['lowStockCount'] }}</span>
-                        <a href="{{ route('admin.products.low-stock') }}" class="btn btn-sm btn-soft-primary">View All</a>
+                        <a href="{{ route('admin.inventory.check-low-stock') }}" class="btn btn-sm btn-outline-danger">
+                            <i class="bx bx-mail-send me-1"></i> Check & Notify Now
+                        </a>
+                        <span class="badge bg-soft-danger text-danger">Total Issues: {{ $summary['lowStockCount'] }}</span>
+                        <a href="{{ route('admin.reports.stock') }}?low_stock=1" class="btn btn-sm btn-soft-primary">View Report</a>
                     </div>
                 </div>
                 <div class="card-body p-0">
@@ -269,7 +272,8 @@
                                     <th>Variant</th>
                                     <th>Type</th>
                                     <th>Location</th>
-                                    <th>Stock</th>
+                                    <th class="text-center">Current Stock</th>
+                                    <th class="text-center">Suggested Restock</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -280,7 +284,7 @@
                                         <div class="d-flex align-items-center">
                                             <img src="{{ asset('storage/' . ($item['image'] ?? '')) }}" alt="" class="avatar-sm rounded me-2">
                                             <div>
-                                                <h5 class="fs-14 my-1 text-truncate" style="max-width: 150px;">
+                                                <h5 class="fs-14 my-1 text-truncate" style="max-width: 200px;">
                                                     <a href="{{ route('admin.products.show', $item['product_id']) }}" class="text-reset">{{ $item['name'] }}</a>
                                                 </h5>
                                                 <span class="text-muted fs-12">{{ $item['category'] }}</span>
@@ -289,18 +293,21 @@
                                     </td>
                                     <td>{{ $item['variant_name'] }}</td>
                                     <td>
-                                        <span class="badge {{ $item['type'] === 'Global' ? 'badge-soft-primary' : 'badge-soft-warning' }}">
+                                        <span class="badge {{ $item['type'] === 'Global' ? 'bg-soft-primary text-primary' : 'bg-soft-warning text-warning' }}">
                                             {{ $item['type'] }}
                                         </span>
                                     </td>
                                     <td>
                                         <small class="text-muted">{{ $item['location'] }}</small>
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         <span class="fw-bold text-danger">{{ $item['stock'] }}</span>
                                     </td>
+                                    <td class="text-center">
+                                        <span class="fw-bold text-success">+{{ $item['suggested_restock'] }}</span>
+                                    </td>
                                     <td>
-                                        <a href="{{ route('admin.inventory.po.create') }}" class="btn btn-sm btn-soft-primary">Restock</a>
+                                        <a href="{{ route('admin.inventory.po.create', ['product_id' => $item['product_id']]) }}" class="btn btn-sm btn-soft-primary">Restock</a>
                                     </td>
                                 </tr>
                                 @endforeach

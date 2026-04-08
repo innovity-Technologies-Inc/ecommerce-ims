@@ -19,11 +19,19 @@
                                     @error('business_name') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
                             </div>
-                            <div class="col-lg-6">
+                            <div class="col-lg-4">
                                 <div class="mb-3">
                                     <label for="currency" class="form-label">Currency (e.g. $, €)</label>
                                     <input type="text" name="currency" id="currency" class="form-control" value="{{ old('currency', $setting->currency ?? '') }}">
                                     @error('currency') <span class="text-danger small">{{ $message }}</span> @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                    <label for="notify_email" class="form-label">Notification Email (Low Stock Alerts)</label>
+                                    <input type="email" name="notify_email" id="notify_email" class="form-control" value="{{ old('notify_email', $setting->notify_email ?? '') }}" placeholder="alerts@example.com">
+                                    @error('notify_email') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
                             </div>
 

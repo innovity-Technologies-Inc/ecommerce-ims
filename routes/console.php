@@ -24,3 +24,15 @@ Artisan::command('flash-sale:check-expiry', function (FlashSaleService $service)
 
 // Schedule the command to run every minute
 Schedule::command('flash-sale:check-expiry')->everyMinute();
+
+/**
+ * Check for low stock items and send automated email alerts.
+ */
+Artisan::command('inventory:check-low-stock', function (\App\Services\NotificationService $service) {
+    $this->info('Starting low stock monitoring...');
+    $alertCount = $service->checkAndNotifyLowStock();
+    $this->info("Low stock check completed. Alerts sent for {$alertCount} items.");
+})->purpose('Check for low stock and notify the designated email');
+
+// Schedule low stock check daily
+Schedule::command('inventory:check-low-stock')->dailyAt('09:00');

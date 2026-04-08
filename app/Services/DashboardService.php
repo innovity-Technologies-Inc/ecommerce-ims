@@ -66,16 +66,16 @@ class DashboardService
         // Count Warehouse Low Stock
         // Join inventory_levels with warehouse_stock_limits to check thresholds
         $warehouseLowStockCount = DB::table('inventory_levels')
-            ->join('warehouse_stock_limits', function($join) {
+            ->join('warehouse_stock_limits', function ($join) {
                 $join->on('inventory_levels.product_id', '=', 'warehouse_stock_limits.product_id')
-                     ->on('inventory_levels.warehouse_id', '=', 'warehouse_stock_limits.warehouse_id')
-                     ->where(function($q) {
-                         $q->whereColumn('inventory_levels.product_variant_id', '=', 'warehouse_stock_limits.product_variant_id')
-                           ->orWhere(function($sq) {
-                               $sq->whereNull('inventory_levels.product_variant_id')
-                                  ->whereNull('warehouse_stock_limits.product_variant_id');
-                           });
-                     });
+                    ->on('inventory_levels.warehouse_id', '=', 'warehouse_stock_limits.warehouse_id')
+                    ->where(function ($q) {
+                        $q->whereColumn('inventory_levels.product_variant_id', '=', 'warehouse_stock_limits.product_variant_id')
+                            ->orWhere(function ($sq) {
+                                $sq->whereNull('inventory_levels.product_variant_id')
+                                    ->whereNull('warehouse_stock_limits.product_variant_id');
+                            });
+                    });
             })
             ->whereColumn('inventory_levels.current_quantity', '<=', 'warehouse_stock_limits.min_stock')
             ->count();
@@ -254,7 +254,7 @@ class DashboardService
         $allLowStock = collect();
 
         // 1. Check Global Stock Levels (Saleable)
-        
+
         // 1a. Simple Products - only if min_stock_global > 0
         $globalLowProducts = Product::with(['primaryImage', 'category'])
             ->whereDoesntHave('variants')
@@ -273,6 +273,7 @@ class DashboardService
                 'sku' => 'N/A',
                 'stock' => $product->stock,
                 'location' => 'All Warehouses',
+                'suggested_restock' => max($product->min_stock_global * 2 - $product->stock, 10),
             ]);
         }
 
@@ -293,24 +294,25 @@ class DashboardService
                 'sku' => $variant->sku,
                 'stock' => $variant->stock,
                 'location' => 'All Warehouses',
+                'suggested_restock' => max($variant->min_stock_global * 2 - $variant->stock, 10),
             ]);
         }
 
         // 2. Check Warehouse-specific Stock Levels
         $warehouseLowStock = InventoryLevel::with(['product.primaryImage', 'product.category', 'variant', 'warehouse'])
-            ->join('warehouse_stock_limits', function($join) {
+            ->join('warehouse_stock_limits', function ($join) {
                 $join->on('inventory_levels.product_id', '=', 'warehouse_stock_limits.product_id')
-                     ->on('inventory_levels.warehouse_id', '=', 'warehouse_stock_limits.warehouse_id')
-                     ->where(function($q) {
-                         $q->whereColumn('inventory_levels.product_variant_id', '=', 'warehouse_stock_limits.product_variant_id')
-                           ->orWhere(function($sq) {
-                               $sq->whereNull('inventory_levels.product_variant_id')
-                                  ->whereNull('warehouse_stock_limits.product_variant_id');
-                           });
-                     });
+                    ->on('inventory_levels.warehouse_id', '=', 'warehouse_stock_limits.warehouse_id')
+                    ->where(function ($q) {
+                        $q->whereColumn('inventory_levels.product_variant_id', '=', 'warehouse_stock_limits.product_variant_id')
+                            ->orWhere(function ($sq) {
+                                $sq->whereNull('inventory_levels.product_variant_id')
+                                    ->whereNull('warehouse_stock_limits.product_variant_id');
+                            });
+                    });
             })
             ->whereColumn('inventory_levels.current_quantity', '<=', 'warehouse_stock_limits.min_stock')
-            ->select('inventory_levels.*')
+            ->select('inventory_levels.*', 'warehouse_stock_limits.min_stock as warehouse_min')
             ->get();
 
         foreach ($warehouseLowStock as $level) {
@@ -324,6 +326,7 @@ class DashboardService
                 'sku' => $level->variant?->sku ?? 'N/A',
                 'stock' => $level->current_quantity,
                 'location' => $level->warehouse?->name ?? 'Unknown',
+                'suggested_restock' => max($level->warehouse_min * 2 - $level->current_quantity, 10),
             ]);
         }
 

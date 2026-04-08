@@ -197,6 +197,10 @@
 
 ## 4. Key Procedural Lifecycle: Stock Movement Ledger (Source of Truth)
 
+### 3.11 Warehouse Performance Report (REQ-129, REQ-132)
+**Business Purpose:** To monitor and improve warehouse operational quality by tracking efficiency, accuracy, and stock health metrics.
+
+**Stock Reconciliation (Source of Truth):**
 To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` table) is the absolute source of truth for all movement-based reporting. Every physical change to inventory MUST log a ledger entry to ensure mathematically sound reports.
 
 1. **Trigger:** An action occurs (PO Received, Order Delivered, Return Received, Adjustment, Damage Discovery).
@@ -214,14 +218,50 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
         *   `WAREHOUSE_DAMAGE`: Units lost due to internal handling (Wastage).
         *   `STOCK_ADJUSTMENT`: Negative manual corrections (`change_qty < 0`).
 
-### 4.1 Reporting Strictness & Reconciliation
-*   **Source of Truth:** All operational KPIs AND physical stock snapshots in the Performance Module are derived by replaying the `stock_ledgers` history.
-*   **Standardized Balance:** The system enforces a perfect mathematical reconciliation: `Opening Stock (Ledger) + Total Inflows (Ledger) - Total Outflows (Ledger) = Current Closing Stock (Physical Snapshot)`.
-*   **Snapshot Categorization:**
-    *   **Saleable Snapshot:** Calculated as `Cumulative Inflows (Good) - Cumulative Outflows (Sales/RTV/Internal Loss)`.
-    *   **Damaged Snapshot:** Strictly tracks units that arrived damaged from the vendor (`DAMAGED`) and have not yet been RTV'd.
-    *   **Wastage Snapshot:** Tracks the total "Value Loss" pool, including internal warehouse damage and unsaleable returns.
-*   **Wastage Mapping:** For absolute accuracy, **Total Wastage** is defined as `WAREHOUSE_DAMAGE + RETURN_DAMAGED`. This ensures that internal errors and customer-caused damages are captured as a specific performance penalty, separate from vendor-side damage.
+**Key Performance Indicators (KPIs):**
+1. **Fulfillment Efficiency Metrics:**
+    *   **Gross Fill Rate:** Measures stock availability and fulfillment capability.
+        *   **Formula:** `(Units Shipped / Initial Demand) * 100`.
+        *   **Technical Detail:** `Units Shipped` and `Initial Demand` are both derived from the `stock_ledger` 'SALE' entries to ensure accurate warehouse-level attribution and avoid double-counting in split orders.
+    *   **Net Fill Rate:** Measures true fulfillment success by accounting for customer satisfaction and product quality.
+        *   **Formula:** `((Units Shipped - Total Returns) / Initial Demand) * 100`.
+        *   **Logic:** `Total Returns` includes both `RETURN_INTACT` and `RETURN_DAMAGED`.
+    *   **Return Rate:** Percentage of shipped units that were sent back. `(Total Returns / Units Shipped) * 100`.
 
----
-*Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*
+2. **Quality & Wastage Metrics:**
+    *   **Total Wastage Qty:** The sum of units lost due to internal errors or customer dissatisfaction.
+        *   **Formula:** `WAREHOUSE_DAMAGE` + `RETURN_DAMAGED`.
+    *   **Wastage Rate:** Measures warehouse operational quality. 
+        *   **Formula:** `(Total Wastage Qty / Total Inflows) * 100`.
+    *   **Supplier Damaged (PO):** Specifically tracks units arriving damaged from the vendor via the `DAMAGED` ledger type. These are accounted for in inflows but excluded from the internal *Wastage Rate* to ensure fair warehouse performance evaluation.
+
+3. **Inventory Health & Velocity:**
+    *   **Stock Turnover:** Measures warehouse efficiency by calculating how many times inventory is "cycled" or sold during the period. 
+        *   **Formula:** `Cost of Goods Sold (COGS) / Current Inventory Value`.
+        *   **Logic:** COGS is derived from the `subtotal_cost` in `ordered_product_batches` (actual procurement cost), while Inventory Value is the sum of `current_quantity * unit_cost` for all saleable items on hand.
+    *   **Slow-Moving SKUs:** The percentage of unique SKUs that had zero sales activity during the selected period.
+    *   **Low-Stock SKUs:** Real-time count of items currently below their defined minimum thresholds.
+
+4. **Reporting & Exporting:**
+    *   **Excel Export:** Generates multi-column spreadsheets including all movement types (Received, Sold, Returns, RTV, Adjustments) and efficiency KPIs. Uses `WarehousePerformanceExport` for consistent formatting.
+    *   **Printable View:** Securely prints the performance table with consistent headers and branding using client-side JavaScript.
+
+### 3.12 Low Stock Notifications & Automation (REQ-133)
+**Business Purpose:** To proactively manage inventory levels and prevent stockouts by automating the identification and communication of low-stock items.
+
+**How it Works:**
+*   **Threshold Monitoring:** The system continuously monitors stock levels at both the **Global** (product-wide) and **Warehouse** (location-specific) levels.
+*   **Notification Settings:** A "Notification Email" field in the *General Settings* module defines the recipient for automated stock alerts.
+*   **Automated Scheduling:** A daily background task scans for items that have reached or dropped below their minimum thresholds. 
+    *   **Artisan Command:** `php artisan inventory:check-low-stock`
+    *   **Schedule:** Runs daily at 09:00 (configured in `routes/console.php`).
+*   **Email Reports:** For all flagged items, the system generates an email report that includes:
+    *   **Product/Variant Details:** Name, variant, and SKU.
+    *   **Current Inventory:** Live stock levels at the specific warehouse or global level.
+    *   **Suggested Restock:** An intelligent suggestion for reordering, calculated as `(Min Threshold * 2) - Current Quantity` (with a floor of 10 units).
+*   **Anti-Spam Logic:** To prevent alert fatigue, the system tracks the `last_alert_sent` timestamp on individual inventory levels. It only sends a new notification for the same item if at least 24 hours have passed since the last alert.
+*   **Manual Trigger:** Admins can manually initiate a scan and notification sequence directly from the *Dashboard* using the "Check & Notify Now" action.
+    *   **Route:** `admin.inventory.check-low-stock` (URL: `/admin/inventory/check-low-stock`).
+    *   **Usage:** Can be used as a webhook for external cron services if required.
+
+## 4. Technical Architecture

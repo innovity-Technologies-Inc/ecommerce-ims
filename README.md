@@ -89,3 +89,25 @@ php artisan serve
 ```
 
 The application will be accessible at `http://127.0.0.1:8000`.
+
+## Automation & Cron Jobs
+
+For the system to function correctly, especially regarding stock notifications and promotions, the following tasks should be automated.
+
+### 1. Standard Laravel Scheduler
+The application uses the built-in Laravel Scheduler for background tasks. To enable this, add the following entry to your server's crontab:
+
+```bash
+* * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+```
+
+### 2. Web-based Cron Jobs (Alternative)
+If you are using a web-based cron service (like EasyCron), you can use the following URLs:
+
+- **Flash Sale Expiry Check:** `/check-flash-sale-expiry`
+  - *Purpose:* Deactivates expired flash sales and resets product discounts.
+  - *Suggested Frequency:* Every minute.
+
+- **Low Stock Notification Check:** `/admin/inventory/check-low-stock`
+  - *Purpose:* Scans for products below minimum thresholds and sends email alerts.
+  - *Suggested Frequency:* Once daily.
