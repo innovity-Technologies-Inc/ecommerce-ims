@@ -20,11 +20,6 @@
                 <img class="first-img" src="{{ asset('admin_assets/assets/images/no-image.png') }}" alt="{{ $product->name }}">
             @endif
         </a>
-        <div class="quick-view">
-            <a class="quick_view" href="#" data-link-action="quickview" title="Quick view" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                <i class="ion-ios-search-strong"></i>
-            </a>
-        </div>
     </div>
 
     <ul class="product-flag">

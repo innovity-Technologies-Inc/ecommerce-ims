@@ -149,6 +149,7 @@
                                     @if(Auth::guard('web')->check())
                                         <li><a href="{{ route('user.account') }}">My Account</a></li>
                                         <li><a href="{{ route('user.orders') }}">My Orders</a></li>
+                                        <li><a href="{{ route('client.track_order') }}">Track Order</a></li>
                                         <li><a href="{{ route('client.returns.index') }}">Returns</a></li>
                                         <li><a href="{{ route('user.wishlist.index') }}">Wishlist</a></li>
                                     @else
@@ -158,12 +159,6 @@
                                         <li><a href="{{ route('client.returns.index') }}">Returns</a></li>
                                     @endif
                                 </ul>
-                            </li>
-                            <li>
-                                <a href="{{ route('client.track_order') }}">Track Order</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('client.returns.index') }}">Returns</a>
                             </li>
                             <li><a href="{{ route('client.contact') }}">Contact Us</a></li>
                         </ul>
@@ -309,8 +304,6 @@
         <div class="offcanvas-menu mb-4">
             <ul>
                 <li><a href="{{ route('home') }}"><span class="menu-text">Home</span></a></li>
-                <li><a href="{{ route('client.track_order') }}"><span class="menu-text">Track Order</span></a></li>
-                <li><a href="{{ route('client.returns.index') }}"><span class="menu-text">Returns</span></a></li>
                 <li><a href="{{ route('client.products.index') }}"><span class="menu-text">Products</span></a></li>
                 <li><a href="{{ route('client.products.index') }}"><span class="menu-text">Shop</span></a>
                     <ul class="sub-menu">

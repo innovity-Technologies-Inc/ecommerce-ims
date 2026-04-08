@@ -1,5 +1,7 @@
 @extends('client.structure.app')
 @section('content')
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
     <style>
         @media (max-width: 767px) {
@@ -9,6 +11,62 @@
                 margin-bottom: 15px !important;
             }
         }
+
+        /* Swiper Custom Styles */
+        .main-swiper {
+            height: 450px;
+            width: 100%;
+        }
+        .main-swiper .swiper-slide {
+            overflow: hidden; /* For zoom */
+        }
+        .main-swiper .swiper-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            cursor: zoom-in;
+        }
+        .thumbs-swiper {
+            height: 100px;
+            box-sizing: border-box;
+            padding: 10px 0;
+        }
+        .thumbs-swiper .swiper-slide {
+            width: 25%;
+            height: 100%;
+            opacity: 0.4;
+            cursor: pointer;
+        }
+        .thumbs-swiper .swiper-slide-thumb-active {
+            opacity: 1;
+        }
+        .thumb-img-wrapper {
+            height: 80px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .thumb-img-wrapper img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .swiper-button-next, .swiper-button-prev {
+            transform: scale(0.7);
+            background: rgba(255,255,255,0.8);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .swiper-button-next:after, .swiper-button-prev:after {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .transition-all {
+            transition: all 0.3s ease;
+        }
     </style>
 
     <!-- Shop details Area start -->
@@ -16,24 +74,37 @@
         <div class="container">
             <div class="row">
                 <div class="col-xl-6 col-lg-6 col-md-12">
-                    <div class="product-details-img product-details-tab">
-                        <div class="zoompro-wrap zoompro-2">
-                            <div class="zoompro-border zoompro-span">
-                                @if($product->primaryImage)
-                                    <img id="main-product-image" src="{{ asset('storage/'.$product->primaryImage->image_path) }}" alt="{{ $product->name }}" style="width: 100%;">
-                                @else
-                                    <img id="main-product-image" src="{{ asset('client/assets/images/product-image/organic/product-1.jpg') }}" alt="No Image" style="width: 100%;">
-                                @endif
+                    <div class="product-details-img">
+                        <!-- Main Swiper -->
+                        <div class="swiper main-swiper rounded border shadow-sm bg-white mb-3">
+                            <div class="swiper-wrapper">
+                                @forelse($product->images->sortByDesc('is_primary') as $image)
+                                    <div class="swiper-slide">
+                                        <div class="swiper-zoom-container">
+                                            <img src="{{ asset('storage/'.$image->image_path) }}" alt="{{ $product->name }}">
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="swiper-slide">
+                                        <img src="{{ asset('admin_assets/assets/images/no-image.png') }}" alt="No Image">
+                                    </div>
+                                @endforelse
                             </div>
+                            <div class="swiper-button-next text-primary"></div>
+                            <div class="swiper-button-prev text-primary"></div>
                         </div>
-                        <div id="gallery" class="product-dec-slider-2">
-                            @foreach($product->images as $image)
-                                <a class="{{ $image->is_primary ? 'active' : '' }}" 
-                                   href="javascript:void(0)"
-                                   data-image="{{ asset('storage/'.$image->image_path) }}">
-                                    <img src="{{ asset('storage/'.$image->image_path) }}" alt="{{ $product->name }}">
-                                </a>
-                            @endforeach
+
+                        <!-- Thumbs Swiper -->
+                        <div class="swiper thumbs-swiper">
+                            <div class="swiper-wrapper">
+                                @foreach($product->images->sortByDesc('is_primary') as $image)
+                                    <div class="swiper-slide">
+                                        <div class="thumb-img-wrapper border rounded p-1 shadow-sm transition-all">
+                                            <img src="{{ asset('storage/'.$image->image_path) }}" alt="{{ $product->name }}">
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -146,17 +217,6 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="pro-details-social-info">
-                            <span>Share</span>
-                            <div class="social-info">
-                                <ul>
-                                    <li><a href="#"><i class="ion-social-facebook"></i></a></li>
-                                    <li><a href="#"><i class="ion-social-twitter"></i></a></li>
-                                    <li><a href="#"><i class="ion-social-google"></i></a></li>
-                                    <li><a href="#"><i class="ion-social-instagram"></i></a></li>
-                                </ul>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -234,23 +294,33 @@
         </div>
     </section>
 
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
     <script>
         window.addEventListener('load', function() {
             const currency = "{{ $gs->currency ?? '$' }}";
-            const mainImg = $('#main-product-image');
 
-            // Manual Thumbnail Switch Logic
-            $(document).on('click', '#gallery a', function(e) {
-                e.preventDefault();
-                
-                const newImage = $(this).attr('data-image');
-                
-                // Swap image source
-                mainImg.attr('src', newImage);
-                
-                // Active class management
-                $('#gallery a').removeClass('active');
-                $(this).addClass('active');
+            // Initialize Swiper Thumbs
+            var swiperThumbs = new Swiper(".thumbs-swiper", {
+                spaceBetween: 10,
+                slidesPerView: 4,
+                freeMode: true,
+                watchSlidesProgress: true,
+                watchSlidesVisibility: true,
+            });
+
+            // Initialize Main Swiper
+            var swiperMain = new Swiper(".main-swiper", {
+                spaceBetween: 10,
+                zoom: true,
+                navigation: {
+                    nextEl: ".swiper-button-next",
+                    prevEl: ".swiper-button-prev",
+                },
+                thumbs: {
+                    swiper: swiperThumbs,
+                },
             });
 
             $('#variant-selector').on('change', function() {
