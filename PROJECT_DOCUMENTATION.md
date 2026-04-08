@@ -305,17 +305,22 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     *   **Thin Controller:** `DashboardController` prepares data for ApexCharts visualization.
     *   **Optimized UI:** A streamlined 3-column summary layout focused on high-level Revenue and Profit KPIs.
 
-### 3.16 Aesthetic Admin Login UI (REQ-137)
-**Business Purpose:** To provide a premium, modern, and professional first impression for administrators, aligning with high-end e-commerce standards.
+### 3.16 Aesthetic Admin Theme Synchronization (REQ-137)
+**Business Purpose:** To provide a premium, cohesive, and modern dark-emerald aesthetic across the entire administrative interface, ensuring consistency from login to the internal dashboard.
 
 **How it Works:**
-*   **Visual Style:** Implements a sophisticated **Dark Theme** aesthetic using a deep indigo/black palette.
-*   **Glassmorphism:** The login card features a semi-transparent background with a high-intensity backdrop-blur effect (`12px`), creating a layered depth look.
-*   **Glowing Accents:** Dynamic radial gradients in the background provide subtle "glow" spots, and the primary login button uses a vibrant linear gradient with hover elevation and shadow effects.
-*   **Interactive Elements:** 
-    *   Form controls feature subtle transparency and guided focus states with glowing borders.
-    *   Responsive design ensures the "centered card" layout scales perfectly from mobile to ultra-wide displays.
-*   **Architecture:** The UI is self-contained within the `resources/views/auth/login.blade.php` view using embedded scoped CSS to ensure zero impact on other administrative pages.
+*   **Aesthetic Palette:** Transitioned from standard dark-blue to a sophisticated **Emerald Dark Theme** (`#040d0a` background with `#10b981` emerald accents).
+*   **Sidebar Refinement:**
+    *   **Background:** Deep emerald-black with subtle right-side glow borders.
+    *   **Navigation:** Items feature smooth translateX hover effects, glowing active indicators, and high-contrast readable typography.
+    *   **Hierarchy:** Menu titles are capitalized with increased letter spacing and subtle emerald tinting.
+*   **Topbar Enhancement:**
+    *   Integrated backdrop-blur effects and emerald-tinted button interactions.
+    *   Badges and notification icons use the primary emerald glow.
+*   **Global Components:**
+    *   Cards, tables, and buttons are synchronized with the emerald palette.
+    *   Primary action buttons use high-intensity linear gradients (Emerald to Forest Green).
+*   **Architecture:** Styles are injected via the `admin.structure.master` layout using high-specificity CSS overrides to ensure a seamless transition between pages without breaking standard Bootstrap 5 functionality.
 
 ## 4. Technical Architecture
 

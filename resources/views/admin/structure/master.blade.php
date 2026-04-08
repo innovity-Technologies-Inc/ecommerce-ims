@@ -191,6 +191,94 @@
             --bs-tertiary-bg: #1d394d !important;
         }
 
+        /* Sidebar Specific Emerald Overrides */
+        .main-nav {
+            background-color: var(--bs-main-nav-bg) !important;
+            border-right: 1px solid rgba(16, 185, 129, 0.08) !important;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .main-nav .nav-link {
+            color: rgba(255, 255, 255, 0.55) !important;
+            margin: 2px 12px !important;
+            border-radius: 10px !important;
+            padding: 10px 15px !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+
+        .main-nav .nav-link:hover {
+            color: #10b981 !important;
+            background-color: rgba(16, 185, 129, 0.06) !important;
+            transform: translateX(4px);
+        }
+
+        .main-nav .nav-link.active,
+        .main-nav .nav-item.active > .nav-link {
+            color: #10b981 !important;
+            background-color: rgba(16, 185, 129, 0.12) !important;
+            font-weight: 600;
+            box-shadow: inset 0 0 10px rgba(16, 185, 129, 0.05);
+        }
+
+        .main-nav .nav-link.active::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: 20%;
+            height: 60%;
+            width: 3px;
+            background-color: #10b981;
+            border-radius: 3px 0 0 3px;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+        }
+
+        .main-nav .nav-icon {
+            margin-right: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-nav .nav-icon iconify-icon {
+            font-size: 19px !important;
+            color: inherit !important;
+            filter: drop-shadow(0 0 2px rgba(0,0,0,0.3));
+        }
+
+        .main-nav .menu-title {
+            color: rgba(16, 185, 129, 0.45) !important;
+            padding: 15px 25px 8px !important;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 800;
+            font-size: 10px;
+        }
+
+        .logo-box {
+            background-color: #0F212E !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+            height: 70px !important;
+            display: flex !important;
+            align-items: center;
+            padding: 0 20px !important;
+        }
+
+        /* Sub-navbar emerald styling */
+        .sub-navbar-nav .sub-nav-link {
+            color: rgba(255, 255, 255, 0.5) !important;
+        }
+
+        .sub-navbar-nav .sub-nav-link:hover,
+        .sub-navbar-nav .sub-nav-link.active {
+            color: #10b981 !important;
+        }
+
+        /* Header / Topbar alignment */
+        html[data-topbar-color=dark] .topbar,
+        html[data-bs-theme=dark] .topbar {
+            background-color: #0F212E !important;
+        }
+
         /* Fix light backgrounds in dark mode */
         [data-bs-theme=dark] .card-header.bg-white,
         [data-bs-theme=dark] .card-footer.bg-white,
