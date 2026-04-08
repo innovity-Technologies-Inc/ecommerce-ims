@@ -305,6 +305,18 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     *   **Thin Controller:** `DashboardController` prepares data for ApexCharts visualization.
     *   **Optimized UI:** A streamlined 3-column summary layout focused on high-level Revenue and Profit KPIs.
 
+### 3.16 Aesthetic Admin Login UI (REQ-137)
+**Business Purpose:** To provide a premium, modern, and professional first impression for administrators, aligning with high-end e-commerce standards.
+
+**How it Works:**
+*   **Visual Style:** Implements a sophisticated **Dark Theme** aesthetic using a deep indigo/black palette.
+*   **Glassmorphism:** The login card features a semi-transparent background with a high-intensity backdrop-blur effect (`12px`), creating a layered depth look.
+*   **Glowing Accents:** Dynamic radial gradients in the background provide subtle "glow" spots, and the primary login button uses a vibrant linear gradient with hover elevation and shadow effects.
+*   **Interactive Elements:** 
+    *   Form controls feature subtle transparency and guided focus states with glowing borders.
+    *   Responsive design ensures the "centered card" layout scales perfectly from mobile to ultra-wide displays.
+*   **Architecture:** The UI is self-contained within the `resources/views/auth/login.blade.php` view using embedded scoped CSS to ensure zero impact on other administrative pages.
+
 ## 4. Technical Architecture
 
 ### 4.1 Database Seeding & Data Integrity (REQ-134)

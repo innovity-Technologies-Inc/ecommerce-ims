@@ -157,6 +157,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-134:** Seeder Fixes & Product Alignment: Fix all existing seeders to ensure they run without errors (e.g., duplicate entries, missing fields) and align the `ProductSeeder` logic with the current product creation form and service.
 - [x] **REQ-135:** Product Image Upload Refinement: Update image upload logic to allow max 2MB per image, limit gallery uploads to 5 images at a time, and introduce a dedicated "Primary Image" field separate from the "Gallery Images" field.
 - [ ] **REQ-136:** Dashboard Revenue Analytics: Implement revenue tracking cards (Daily, Weekly, Monthly, Yearly) and interactive charts (Revenue vs Cost, Daily Sales) on the admin dashboard. Revenue is calculated from the `orders` table using `total_amount` (Sale), `total_cost` (Cost), and derived profit.
+- [ ] **REQ-137:** Aesthetic Admin Login UI: Redesign the admin login page with a stunning, modern dark theme aesthetic, featuring glassmorphism, glowing accents, and high-quality visual elements.
 
 R E Q - 9 9 :   R e m o v e   m a n u a l   p a g i n a t i o n   i n f o   b l o c k s   f r o m   a d m i n   t a b l e   p a r t i a l s   t o   a v o i d   d u p l i c a t i o n   w i t h   L a r a v e l ' s   l i n k s ( )   m e t h o d .  
  
