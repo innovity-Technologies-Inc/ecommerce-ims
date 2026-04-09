@@ -162,7 +162,7 @@
                     <a href="{{ route('admin.reports.inventory.export', array_merge(request()->all(), ['type' => $view])) }}" class="btn btn-sm btn-soft-success">
                         <i class="bx bx-download me-1"></i> Export
                     </a>
-                    <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('detailed-table-container', '{{ $title }}')">
+                    <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printFullReport()">
                         <i class="bx bx-printer"></i>
                     </button>
                 </div>
@@ -365,6 +365,42 @@
 
 @section('scripts')
 <script>
+    // Auto-print logic for full data view
+    $(document).ready(function() {
+        if (new URLSearchParams(window.location.search).has('is_print')) {
+            // Hide non-essential elements for the full-page print
+            $('.no-print, .btn-group, .btn, .bx, iconify-icon, .card-header, .card-footer, .pagination').hide();
+            
+            // Add a header for the print
+            const bName = "{{ \App\HelperClass::generalSettings()->business_name ?? 'Smart Ecom' }}";
+            const dateStr = new Date().toLocaleString();
+            const reportTitle = "{{ $title ?? 'Inventory Report' }}";
+            const asOfDate = "{{ $filters['end_date'] ?? 'Current' }}";
+            
+            $('body').prepend(`
+                <div class="text-center mb-4 border-bottom pb-3">
+                    <h1>${bName}</h1>
+                    <h3>${reportTitle}</h3>
+                    <p>Snapshot Date: ${asOfDate} | Generated: ${dateStr}</p>
+                </div>
+            `);
+
+            // Apply print styles
+            $('<style>')
+                .prop('type', 'text/css')
+                .html('body{background:white !important; color:black !important; padding: 20px !important;} table{width:100% !important; border-collapse:collapse !important;} th,td{border:1px solid #ddd !important; padding:8px !important; font-size:12px !important;} .card{border:none !important; shadow:none !important;}')
+                .appendTo('head');
+
+            window.print();
+        }
+    });
+
+    function printFullReport() {
+        const url = new URL(window.location.href);
+        url.searchParams.set('is_print', '1');
+        window.open(url.toString(), '_blank');
+    }
+
     function printReportCard(cardId, reportTitle) {
         var content = document.getElementById(cardId);
         if (!content) return;

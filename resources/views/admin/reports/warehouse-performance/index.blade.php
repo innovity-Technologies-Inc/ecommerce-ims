@@ -44,7 +44,7 @@
                 <a href="{{ route('admin.reports.warehouse-performance.export', request()->all()) }}" class="btn btn-sm btn-soft-success">
                     <i class="bx bx-download me-1"></i> Export
                 </a>
-                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('performance-table-card', 'Warehouse Performance Summary')">
+                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printFullReport()">
                     <i class="bx bx-printer"></i> Print
                 </button>
             </div>
@@ -124,6 +124,53 @@
 
 @section('scripts')
 <script>
+    // Auto-print logic for full data view
+    $(document).ready(function() {
+        if (new URLSearchParams(window.location.search).has('is_print')) {
+            // Hide non-essential elements for the full-page print
+            $('.no-print, .btn-group, .btn, .bx, iconify-icon, .card-header, .card-footer, .pagination, .actions-column').hide();
+            
+            // Reveal hidden Excel columns for print
+            $('.d-none.d-print-table-cell-custom').removeClass('d-none');
+
+            // Add a header for the print
+            const bName = "{{ \App\HelperClass::generalSettings()->business_name ?? 'Smart Ecom' }}";
+            const dateRange = "{{ $filters['start_date'] }} to {{ $filters['end_date'] }}";
+            const generatedAt = "{{ date('Y-m-d H:i') }}";
+            
+            $('body').prepend(`
+                <div class="text-center mb-4 border-bottom pb-3">
+                    <h1>${bName}</h1>
+                    <h3>Warehouse Performance Summary</h3>
+                    <p>Period: ${dateRange} | Generated: ${generatedAt}</p>
+                </div>
+            `);
+
+            // Apply print styles
+            $('<style>')
+                .prop('type', 'text/css')
+                .html(`
+                    @page { size: landscape; margin: 1cm; }
+                    body { background: white !important; color: black !important; padding: 20px !important; font-family: sans-serif; }
+                    table { width: 100% !important; border-collapse: collapse !important; table-layout: fixed; }
+                    th, td { border: 1px solid #ddd !important; padding: 5px 2px !important; font-size: 10px !important; text-align: center !important; word-wrap: break-word; }
+                    th { background: #f2f2f2 !important; font-weight: bold; }
+                    .ps-3 { text-align: left !important; padding-left: 5px !important; }
+                    .card { border: none !important; box-shadow: none !important; }
+                    .progress { display: none !important; }
+                `)
+                .appendTo('head');
+
+            window.print();
+        }
+    });
+
+    function printFullReport() {
+        const url = new URL(window.location.href);
+        url.searchParams.set('is_print', '1');
+        window.open(url.toString(), '_blank');
+    }
+
     function printReportCard(cardId, reportTitle) {
         var content = document.getElementById(cardId);
         if (!content) return;

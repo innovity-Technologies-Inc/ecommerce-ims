@@ -3,7 +3,7 @@
     <!-- START Wrapper -->
     <div class="wrapper">
 
-        @if(Route::currentRouteNamed('login'))
+        @if(Route::currentRouteNamed('login') || request()->has('is_print'))
         @else
         @include('admin.structure.partials.header')
         @include('admin.structure.partials.sidebar')
@@ -11,11 +11,13 @@
         <!-- ==================================================== -->
         <!-- Start right Content here -->
         <!-- ==================================================== -->
-        <div class="page-content">
+        <div class="{{ request()->has('is_print') ? '' : 'page-content' }}">
 
             @yield('content')
 
-            @include('admin.structure.partials.footer')
+            @if(!request()->has('is_print'))
+                @include('admin.structure.partials.footer')
+            @endif
 
         </div>
         <!-- ==================================================== -->

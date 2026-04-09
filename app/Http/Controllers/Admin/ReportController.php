@@ -49,10 +49,11 @@ class ReportController extends Controller
             $summary = $this->reportService->getSalesSummary($filters); // For Summary Cards
             $title = '';
             $data = null;
+            $perPage = $request->has('is_print') ? null : 20;
 
             if ($view === 'trends') {
                 $title = 'Sales Trends';
-                $reportData = $this->reportService->getSalesSummary($filters, 20);
+                $reportData = $this->reportService->getSalesSummary($filters, $perPage);
                 $data = $reportData['grouped_data'];
             } else {
                 $title = match ($view) {
@@ -63,7 +64,14 @@ class ReportController extends Controller
                     'payment_method' => 'Payment Methods Breakdown',
                     default => 'Report Details'
                 };
-                $data = $this->reportService->getSalesByEntity($view, $filters, 20);
+                $data = $this->reportService->getSalesByEntity($view, $filters, $perPage);
+            }
+
+            if ($request->has('is_print')) {
+                return view('admin.reports.sales', compact(
+                    'summary', 'filters', 'view', 'title', 'data',
+                    'warehouses', 'categories', 'brands', 'products'
+                ));
             }
 
             return view('admin.reports.sales', compact(
@@ -111,7 +119,8 @@ class ReportController extends Controller
                 'batch' => 'Batch-wise Inventory Breakdown',
                 default => 'Inventory Details'
             };
-            $reportData = $this->reportService->getInventoryReport($filters, $view, 20);
+            $perPage = $request->has('is_print') ? null : 20;
+            $reportData = $this->reportService->getInventoryReport($filters, $view, $perPage);
             $data = $reportData['data'];
 
             return view('admin.reports.inventory', compact(
@@ -147,43 +156,44 @@ class ReportController extends Controller
         if ($view) {
             $data = null;
             $title = '';
+            $perPage = $request->has('is_print') ? null : 20;
 
             switch ($view) {
                 case 'warehouse':
                     $title = 'Stock by Warehouse';
-                    $data = $this->reportService->getStockReport(array_merge($filters, ['group_by' => 'warehouse']), 20);
+                    $data = $this->reportService->getStockReport(array_merge($filters, ['group_by' => 'warehouse']), $perPage);
                     break;
                 case 'product':
                     $title = 'Stock by Product';
-                    $data = $this->reportService->getStockReport(array_merge($filters, ['group_by' => 'product']), 20);
+                    $data = $this->reportService->getStockReport(array_merge($filters, ['group_by' => 'product']), $perPage);
                     break;
                 case 'batch':
                     $title = 'Stock by Batch';
-                    $data = $this->reportService->getStockReport($filters, 20);
+                    $data = $this->reportService->getStockReport($filters, $perPage);
                     break;
                 case 'movement':
                     $title = 'Stock Movement History';
-                    $data = $this->reportService->getStockMovements($filters, 20);
+                    $data = $this->reportService->getStockMovements($filters, $perPage ?? 1000);
                     break;
                 case 'aging':
                     $title = 'Batch Aging (Stagnant Stock)';
-                    $data = $this->reportService->getBatchAging($filters, 50); // Total limit 50 as requested
+                    $data = $this->reportService->getBatchAging($filters, $perPage ?? 1000); // Total limit 1000 if printing
                     break;
                 case 'wastage_product':
                     $title = 'Wastage by Product';
-                    $data = $this->reportService->getWastageBreakdown('product', $filters, 20);
+                    $data = $this->reportService->getWastageBreakdown('product', $filters, $perPage);
                     break;
                 case 'wastage_warehouse':
                     $title = 'Wastage by Warehouse';
-                    $data = $this->reportService->getWastageBreakdown('warehouse', $filters, 20);
+                    $data = $this->reportService->getWastageBreakdown('warehouse', $filters, $perPage);
                     break;
                 case 'wastage_batch':
                     $title = 'Wastage by Batch';
-                    $data = $this->reportService->getWastageBreakdown('batch', $filters, 20);
+                    $data = $this->reportService->getWastageBreakdown('batch', $filters, $perPage);
                     break;
                 case 'serial':
                     $title = 'Serial Number Trace';
-                    $data = $this->reportService->getSerialTrace($filters, 20);
+                    $data = $this->reportService->getSerialTrace($filters, $perPage);
                     break;
             }
 

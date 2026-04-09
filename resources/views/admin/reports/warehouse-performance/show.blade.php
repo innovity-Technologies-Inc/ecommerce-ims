@@ -1,14 +1,30 @@
 @extends('admin.structure.app')
 
 @section('content')
+<style>
+    @media print {
+        .no-print { display: none !important; }
+        body { background: white !important; padding: 0 !important; }
+        .container-xxl { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+        .card { border: 1px solid #eee !important; box-shadow: none !important; margin-bottom: 15px !important; }
+        .card-header { background-color: #f8f9fa !important; border-bottom: 1px solid #eee !important; }
+        .display-5 { font-size: 2.5rem !important; }
+        .border-start { border-left: 4px solid #eee !important; }
+    }
+</style>
 <div class="container-xxl" id="performance-detail-report">
     <div class="d-flex align-items-center justify-content-between mb-4 no-print-section">
         <div>
-            <a href="{{ route('admin.reports.warehouse-performance', ['start_date' => $filters['start_date'], 'end_date' => $filters['end_date']]) }}" class="btn btn-sm btn-outline-secondary mb-2">
+            <a href="{{ route('admin.reports.warehouse-performance', ['start_date' => $filters['start_date'], 'end_date' => $filters['end_date']]) }}" class="btn btn-sm btn-outline-secondary mb-2 no-print">
                 <i class="bx bx-arrow-back"></i> Back to Dashboard
             </a>
             <h4 class="mb-0">Warehouse: {{ $warehouse->name }}</h4>
             <p class="text-muted small mb-0">Performance Period: {{ $filters['start_date'] }} to {{ $filters['end_date'] }}</p>
+        </div>
+        <div class="no-print">
+            <button type="button" class="btn btn-sm btn-soft-secondary" onclick="window.print()">
+                <i class="bx bx-printer"></i> Print Report
+            </button>
         </div>
     </div>
 

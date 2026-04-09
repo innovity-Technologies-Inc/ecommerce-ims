@@ -33,7 +33,8 @@ class WarehousePerformanceController extends Controller
         }
 
         $warehouses = Warehouse::orderBy('name')->get();
-        $reportData = $this->performanceService->getPerformanceReport($filters, 15);
+        $perPage = $request->has('is_print') ? null : 15;
+        $reportData = $this->performanceService->getPerformanceReport($filters, $perPage);
 
         if ($request->ajax()) {
             return view('admin.reports.warehouse-performance.partials.table', compact('reportData', 'filters'));
