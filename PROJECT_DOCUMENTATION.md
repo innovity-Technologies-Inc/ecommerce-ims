@@ -322,6 +322,21 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     *   Primary action buttons use high-intensity linear gradients (Emerald to Forest Green).
 *   **Architecture:** Styles are injected via the `admin.structure.master` layout using high-specificity CSS overrides to ensure a seamless transition between pages without breaking standard Bootstrap 5 functionality.
 
+### 3.17 Homepage Section Product Selector UI (REQ-138)
+**Business Purpose:** To provide a highly efficient, user-friendly, and searchable interface for manually selecting products for homepage sections, replacing the limited standard dropdown with a paginated AJAX-driven selector.
+
+**How it Works:**
+*   **Dual-Column Interface:** When "Custom" mode is selected for a homepage section (e.g., Bestsellers, Top Picks), the UI splits into two main functional areas:
+    *   **Selected Products (Left):** A real-time table showing all products currently assigned to the section, including their images and prices, with instant removal capability.
+    *   **Product Selector (Right):** A comprehensive search and filter panel allowing admins to find products by name, SKU, Category, Sub-Category, and Brand.
+*   **AJAX-Driven Searching:** Results are loaded dynamically without page refreshes, supporting deep filtering and pagination for large product catalogs.
+*   **Instant Interaction:** Adding a product from the selector instantly updates the selection table and increments the total product count badge.
+*   **Unified UX:** This implementation standardizes the product selection experience across the entire admin panel, matching the advanced UI used in the Flash Sale module.
+*   **Architecture:**
+    *   **Controller:** `HomepageSectionController` now includes a `searchProducts` method to serve AJAX requests.
+    *   **Service Integration:** Reuses `FlashSaleService` logic for consistent filtering and `ProductService` for dropdown data.
+    *   **View Layer:** Uses a shared partial `admin.sections.partials.product_list` for consistent rendering of search results.
+
 ## 4. Technical Architecture
 
 ### 4.1 Database Seeding & Data Integrity (REQ-134)

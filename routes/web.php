@@ -189,6 +189,7 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
 
     Route::prefix('sections')->middleware('permission:homepage_sections.view')->group(function () {
         Route::get('/bestsellers', [\App\Http\Controllers\Admin\HomepageSectionController::class, 'bestsellers'])->name('admin.sections.bestsellers');
+        Route::get('/search-products', [\App\Http\Controllers\Admin\HomepageSectionController::class, 'searchProducts'])->name('admin.sections.search_products');
         Route::get('/{sectionName}', [\App\Http\Controllers\Admin\HomepageSectionController::class, 'editSection'])->name('admin.sections.edit');
         Route::post('/{sectionName}/update', [\App\Http\Controllers\Admin\HomepageSectionController::class, 'updateSection'])->name('admin.sections.update')->middleware('permission:homepage_sections.edit');
     });

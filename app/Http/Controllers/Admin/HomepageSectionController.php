@@ -10,9 +10,16 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
+use App\Services\FlashSaleService;
+use App\Services\ProductService;
+
 class HomepageSectionController extends Controller
 {
-    public function __construct(protected HomepageService $homepageService) {}
+    public function __construct(
+        protected HomepageService $homepageService,
+        protected ProductService $productService,
+        protected FlashSaleService $flashSaleService
+    ) {}
 
     /**
      * Show the bestsellers configuration page.
@@ -30,13 +37,15 @@ class HomepageSectionController extends Controller
             ]
         );
 
-        $selectedProducts = $section->products()->get();
-        $products = Product::all();
+        $selectedProducts = $section->products()->with('primaryImage')->get();
+        $categories = $this->productService->getCategoriesForDropdown();
+        $brands = $this->productService->getBrandsForDropdown();
 
         return view('admin.sections.form', [
             'section' => $section,
             'selectedProducts' => $selectedProducts,
-            'products' => $products,
+            'categories' => $categories,
+            'brands' => $brands,
             'title' => 'Bestsellers Section Settings'
         ]);
     }
@@ -77,23 +86,31 @@ class HomepageSectionController extends Controller
             ])
         );
 
-        $selectedProducts = $section->products()->get();
-        
-        $productsQuery = Product::query();
-        if ($sectionName === 'hot_deals') {
-            $productsQuery->where('is_hot_deal', true);
-        } elseif ($sectionName === 'featured') {
-            $productsQuery->where('is_featured', true);
-        }
-        
-        $products = $productsQuery->get();
+        $selectedProducts = $section->products()->with('primaryImage')->get();
+        $categories = $this->productService->getCategoriesForDropdown();
+        $brands = $this->productService->getBrandsForDropdown();
 
         return view('admin.sections.form', [
             'section' => $section,
             'selectedProducts' => $selectedProducts,
-            'products' => $products,
+            'categories' => $categories,
+            'brands' => $brands,
             'title' => ucwords(str_replace('_', ' ', $sectionName)) . ' Section Settings'
         ]);
+    }
+
+    /**
+     * Search products for AJAX product list in the form.
+     */
+    public function searchProducts(Request $request)
+    {
+        $products = $this->flashSaleService->searchProducts($request->all());
+
+        if ($request->ajax()) {
+            return view('admin.sections.partials.product_list', compact('products'))->render();
+        }
+
+        return $products;
     }
 
     /**
