@@ -35,6 +35,25 @@ class PurchaseOrderReceiveRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('items') && is_array($this->items)) {
+            $items = $this->items;
+            foreach ($items as $key => $item) {
+                if (isset($item['received_quantity'])) {
+                    $items[$key]['received_quantity'] = (int) $item['received_quantity'];
+                }
+                if (isset($item['damaged_quantity'])) {
+                    $items[$key]['damaged_quantity'] = (int) $item['damaged_quantity'];
+                }
+            }
+            $this->merge(['items' => $items]);
+        }
+    }
+
+    /**
      * Custom error messages for validation.
      */
     public function messages(): array

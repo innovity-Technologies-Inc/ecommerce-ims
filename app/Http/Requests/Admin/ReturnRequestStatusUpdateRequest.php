@@ -33,6 +33,26 @@ class ReturnRequestStatusUpdateRequest extends FormRequest
         ];
     }
 
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('items') && is_array($this->items)) {
+            $items = $this->items;
+            foreach ($items as $itemKey => $item) {
+                if (isset($item['allocations']) && is_array($item['allocations'])) {
+                    foreach ($item['allocations'] as $allocKey => $alloc) {
+                        if (isset($alloc['quantity'])) {
+                            $items[$itemKey]['allocations'][$allocKey]['quantity'] = (int) $alloc['quantity'];
+                        }
+                    }
+                }
+            }
+            $this->merge(['items' => $items]);
+        }
+    }
+
     public function messages(): array
     {
         return [

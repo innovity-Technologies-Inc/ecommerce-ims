@@ -118,6 +118,10 @@ class HomepageSectionController extends Controller
      */
     public function updateSection(Request $request, string $sectionName): RedirectResponse
     {
+        if ($request->has('limit')) {
+            $request->merge(['limit' => (int) $request->limit]);
+        }
+
         $data = $request->validate([
             'section_title' => 'required|string|max:255',
             'section_subtitle' => 'nullable|string|max:255',

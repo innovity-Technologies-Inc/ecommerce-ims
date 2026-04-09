@@ -40,6 +40,18 @@ class SliderRequest extends FormRequest
         return $rules;
     }
 
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('position')) {
+            $this->merge([
+                'position' => (int) $this->position,
+            ]);
+        }
+    }
+
     public function messages(): array
     {
         return [

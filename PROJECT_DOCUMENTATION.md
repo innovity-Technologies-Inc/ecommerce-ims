@@ -347,5 +347,17 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
 *   **Product Service Alignment:** The `ProductSeeder` is strictly aligned with the `ProductService::storeProduct` method. It creates products and variants with marketing flags and minimum thresholds while maintaining ledger-based inventory logic (initial stock is always 0).
 *   **Hierarchical Integrity:** The `CategorySeeder` correctly maps parent-child relationships using slugs, ensuring the catalog hierarchy is properly preserved.
 
+### 4.2 Input Normalization & Validation
+**Business Purpose:** To ensure that user-provided data is correctly interpreted and stored, preventing validation failures caused by formatting inconsistencies (e.g., leading zeros in numeric fields).
+
+**Implementation Details:**
+*   **Integer Casting:** Crucial integer fields (Quantities, Limits, Percentages, Stock Thresholds) in Form Requests implement normalization logic via the `prepareForValidation()` method.
+*   **Leading Zero Handling:** Inputs like "04" are explicitly cast to integers (e.g., `(int) $value`) before validation rules are applied. This ensures compatibility with the `integer` validation rule while maintaining numerical accuracy.
+*   **System-Wide Coverage:** This pattern is enforced across:
+    *   **Procurement:** PO Receiving, Damage Entry, Stock Adjustments.
+    *   **Catalog:** Product/Variant Creation (Discount %, Min Stock).
+    *   **Marketing:** Coupon Usage Limits, Homepage Section Limits.
+    *   **Fulfillment:** Order Status Updates and Return Allocations.
+
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*

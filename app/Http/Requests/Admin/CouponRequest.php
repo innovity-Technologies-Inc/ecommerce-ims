@@ -37,6 +37,18 @@ class CouponRequest extends FormRequest
         ];
     }
 
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('usage_limit')) {
+            $this->merge([
+                'usage_limit' => (int) $this->usage_limit,
+            ]);
+        }
+    }
+
     public function messages(): array
     {
         return [

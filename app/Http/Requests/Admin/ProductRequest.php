@@ -74,6 +74,44 @@ class ProductRequest extends FormRequest
         ];
     }
 
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        $input = $this->all();
+
+        if (isset($input['discount_percentage'])) {
+            $input['discount_percentage'] = (int) $input['discount_percentage'];
+        }
+        if (isset($input['min_stock_global'])) {
+            $input['min_stock_global'] = (int) $input['min_stock_global'];
+        }
+        if (isset($input['warehouse_limits']) && is_array($input['warehouse_limits'])) {
+            foreach ($input['warehouse_limits'] as $key => $val) {
+                $input['warehouse_limits'][$key] = (int) $val;
+            }
+        }
+
+        if (isset($input['variants']) && is_array($input['variants'])) {
+            foreach ($input['variants'] as $key => $variant) {
+                if (isset($variant['discount_percentage'])) {
+                    $input['variants'][$key]['discount_percentage'] = (int) $variant['discount_percentage'];
+                }
+                if (isset($variant['min_stock_global'])) {
+                    $input['variants'][$key]['min_stock_global'] = (int) $variant['min_stock_global'];
+                }
+                if (isset($variant['warehouse_limits']) && is_array($variant['warehouse_limits'])) {
+                    foreach ($variant['warehouse_limits'] as $wKey => $wVal) {
+                        $input['variants'][$key]['warehouse_limits'][$wKey] = (int) $wVal;
+                    }
+                }
+            }
+        }
+
+        $this->merge($input);
+    }
+
     public function messages(): array
     {
         return [

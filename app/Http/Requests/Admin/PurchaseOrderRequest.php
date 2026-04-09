@@ -36,4 +36,20 @@ class PurchaseOrderRequest extends FormRequest
             'items.*.unit_cost' => 'required|numeric|min:0',
         ];
     }
+
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('items') && is_array($this->items)) {
+            $items = $this->items;
+            foreach ($items as $key => $item) {
+                if (isset($item['order_quantity'])) {
+                    $items[$key]['order_quantity'] = (int) $item['order_quantity'];
+                }
+            }
+            $this->merge(['items' => $items]);
+        }
+    }
 }

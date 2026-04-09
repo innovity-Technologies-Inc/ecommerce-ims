@@ -34,6 +34,22 @@ class StockAdjustmentRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('items') && is_array($this->items)) {
+            $items = $this->items;
+            foreach ($items as $key => $item) {
+                if (isset($item['quantity'])) {
+                    $items[$key]['quantity'] = (int) $item['quantity'];
+                }
+            }
+            $this->merge(['items' => $items]);
+        }
+    }
+
+    /**
      * Get custom messages for validator errors.
      */
     public function messages(): array

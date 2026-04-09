@@ -32,6 +32,18 @@ class DamageEntryRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('quantity')) {
+            $this->merge([
+                'quantity' => (int) $this->quantity,
+            ]);
+        }
+    }
+
+    /**
      * Get custom messages for validator errors.
      */
     public function messages(): array
