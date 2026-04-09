@@ -19,6 +19,8 @@ class GeneralSettingRequest extends FormRequest
             'meta_description' => ['nullable', 'string'],
             'currency' => ['nullable', 'string', 'max:10'],
             'notify_email' => ['nullable', 'email', 'max:255'],
+            'primary_color' => ['nullable', 'string', 'max:20'],
+            'secondary_color' => ['nullable', 'string', 'max:20'],
             'dark_logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048'],
             'light_logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048'],
             'breadcrumb_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048'],

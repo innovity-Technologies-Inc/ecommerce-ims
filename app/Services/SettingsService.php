@@ -21,6 +21,8 @@ class SettingsService
             'meta_description',
             'currency',
             'notify_email',
+            'primary_color',
+            'secondary_color',
         ])->toArray();
 
         if (isset($data['dark_logo'])) {

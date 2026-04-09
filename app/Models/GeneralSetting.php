@@ -16,5 +16,7 @@ class GeneralSetting extends Model
         'favicon',
         'currency',
         'notify_email',
+        'primary_color',
+        'secondary_color',
     ];
 }

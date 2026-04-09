@@ -155,7 +155,7 @@
     }
 
     .form-check-label {
-        color: rgba(255, 255, 255, 0.55);
+        color: rgba(255, 255, 255, 0.55) !important;
         font-size: 0.85rem;
         cursor: pointer;
     }
@@ -216,56 +216,56 @@
     <div class="shape shape-2"></div>
 
     <div class="auth-container">
-    <div class="login-card">
-        <div class="text-center mb-4">
-            @php($gs = \App\HelperClass::generalSettings())
-            <div class="auth-logo mb-4">
-                <a href="{{route('admin.login')}}">
-                    <img src="{{ ($gs && $gs->dark_logo) ? asset('storage/'.$gs->dark_logo) : asset('admin_assets/assets/images/logo-dark.png') }}" height="45" alt="logo">
-                </a>
-            </div>
-            <h3 class="text-white fw-bold mb-1">Welcome Back</h3>
-            <p class="text-muted small">Enter your credentials to access the admin portal</p>
-        </div>
-
-        <form action="{{route('admin.login')}}" method="post" class="mt-4">
-            @csrf
-            <div class="mb-4">
-                <label class="form-label" for="email">Email Address</label>
-                <div class="input-group">
-                    <input type="email" id="email" name="email" class="form-control" placeholder="admin@example.com" value="{{ old('email') }}" required>
+        <div class="login-card">
+            <div class="text-center mb-4">
+                @php($gs = \App\HelperClass::generalSettings())
+                <div class="auth-logo mb-4">
+                    <a href="{{route('admin.login')}}">
+                        <img src="{{ ($gs && $gs->dark_logo) ? asset('storage/'.$gs->dark_logo) : asset('admin_assets/assets/images/logo-dark.png') }}" height="45" alt="logo">
+                    </a>
                 </div>
-                @error('email')
-                    <span class="error-msg">{{ $message }}</span>
-                @enderror
+                <h3 class="text-white fw-bold mb-1">Welcome Back</h3>
+                <p class="text-muted small">Enter your credentials to access the admin portal</p>
             </div>
 
-            <div class="mb-4">
-                <label class="form-label" for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
-                @error('password')
-                    <span class="error-msg">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <div class="d-flex align-items-center justify-content-between mb-4">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="checkbox-signin" name="remember" {{ old('remember') ? 'checked' : '' }}>
-                    <label class="form-check-label" for="checkbox-signin">Keep me logged in</label>
+            <form action="{{route('admin.login')}}" method="post" class="mt-4">
+                @csrf
+                <div class="mb-4">
+                    <label class="form-label" for="email">Email Address</label>
+                    <div class="input-group">
+                        <input type="email" id="email" name="email" class="form-control" placeholder="admin@example.com" value="{{ old('email') }}" required>
+                    </div>
+                    @error('email')
+                        <span class="error-msg">{{ $message }}</span>
+                    @enderror
                 </div>
-            </div>
 
-            <div class="d-grid">
-                <button class="btn btn-login" type="submit">
-                    Sign In to Dashboard
-                </button>
-            </div>
-        </form>
+                <div class="mb-4">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+                    @error('password')
+                        <span class="error-msg">{{ $message }}</span>
+                    @enderror
+                </div>
 
-        <div class="footer-text">
-            &copy; {{ date('Y') }} {{ $gs->business_name ?? 'Smart Ecom' }}. All rights reserved.
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="checkbox-signin" name="remember" {{ old('remember') ? 'checked' : '' }}>
+                        <label class="form-check-label" for="checkbox-signin">Keep me logged in</label>
+                    </div>
+                </div>
+
+                <div class="d-grid">
+                    <button class="btn btn-login" type="submit">
+                        Sign In to Dashboard
+                    </button>
+                </div>
+            </form>
+
+            <div class="footer-text">
+                &copy; {{ date('Y') }} {{ $gs->business_name ?? 'Smart Ecom' }}. All rights reserved.
+            </div>
         </div>
     </div>
-</div>
 </div>
 @endsection
