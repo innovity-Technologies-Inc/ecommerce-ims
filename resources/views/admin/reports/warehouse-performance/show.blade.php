@@ -4,229 +4,220 @@
 <div class="container-xxl" id="performance-detail-report">
     <div class="d-flex align-items-center justify-content-between mb-4 no-print">
         <div>
-            <a href="{{ route('admin.reports.warehouse-performance', ['start_date' => $filters['start_date'], 'end_date' => $filters['end_date']]) }}" class="btn btn-sm btn-outline-secondary mb-2 no-print">
+            <a href="{{ route('admin.reports.warehouse-performance', ['start_date' => $filters['start_date'], 'end_date' => $filters['end_date']]) }}" class="btn btn-sm btn-outline-secondary mb-2 hover-lift">
                 <i class="bx bx-arrow-back"></i> Back to Dashboard
             </a>
-            <h4 class="mb-0">Warehouse: {{ $warehouse->name }}</h4>
-            <p class="text-muted small mb-0">Performance Period: {{ $filters['start_date'] }} to {{ $filters['end_date'] }}</p>
+            <h4 class="mb-0 fw-bold text-dark">Warehouse: <span class="text-primary">{{ $warehouse->name }}</span></h4>
+            <p class="text-muted small mb-0"><i class="bx bx-calendar me-1"></i>Performance Period: <strong>{{ $filters['start_date'] }}</strong> to <strong>{{ $filters['end_date'] }}</strong></p>
         </div>
-        <div class="no-print">
-            <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printDetailedReport()">
-                <i class="bx bx-printer"></i> Print Full Report
+        <div class="no-print d-flex gap-2">
+            <button type="button" class="btn btn-sm btn-soft-secondary hover-lift" onclick="printDetailedReport()">
+                <i class="bx bx-printer me-1"></i> Print Full Report
             </button>
         </div>
     </div>
 
-    <!-- Print Header (Hidden on screen) -->
-    <div class="d-none d-print-block">
-        <div class="text-center mb-4 border-bottom pb-3">
-            <h1 class="fw-bold mb-1">{{ \App\HelperClass::generalSettings()->business_name ?? 'Smart Ecom' }}</h1>
-            <h3 class="mb-2">Warehouse Performance Detail: {{ $warehouse->name }}</h3>
-            <p class="mb-0 text-muted small">Period: {{ $filters['start_date'] }} to {{ $filters['end_date'] }} | Generated: {{ date('Y-m-d H:i') }}</p>
-        </div>
-    </div>
-
-
-    <div class="row g-4 mb-4">
-        <!-- Stock Balance Card -->
-        <div class="col-md-8">
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-white py-3 border-0">
-                    <h5 class="card-title mb-0">Stock Reconciliation</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row g-4 text-center">
-                        <div class="col-md-3">
-                            <label class="text-muted small text-uppercase fw-semibold">Opening Stock</label>
-                            <h3 class="fw-bold mb-0">{{ number_format($report['opening_stock']) }}</h3>
-                        </div>
-                        <div class="col-md-1 text-center d-none d-md-flex align-items-center justify-content-center">
-                            <i class="bx bx-plus text-muted fs-4"></i>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="text-muted small text-uppercase fw-semibold">Total Inflows</label>
-                            <h3 class="fw-bold text-success mb-0">+{{ number_format($report['received_qty'] + $report['returns_qty'] + $report['adjusted_in'] + $report['po_damaged_qty']) }}</h3>
-                            <div class="small text-muted mt-1">
-                                Rcv: {{ $report['received_qty'] }} | Dmg: {{ $report['po_damaged_qty'] }} | Ret: {{ $report['returns_qty'] }} | Adj: {{ $report['adjusted_in'] }}
+    <div id="printable-area">
+        <!-- Summary Statistics Top Row -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm border-start border-primary border-4 aesthetic-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted small text-uppercase fw-bold mb-1">Opening Stock</h6>
+                                <h3 class="mb-0 fw-bold text-dark">{{ number_format($report['opening_stock'] ?? 0) }}</h3>
                             </div>
-                        </div>
-                        <div class="col-md-1 text-center d-none d-md-flex align-items-center justify-content-center">
-                            <i class="bx bx-minus text-muted fs-4"></i>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="text-muted small text-uppercase fw-semibold">Total Outflows</label>
-                            <h3 class="fw-bold text-danger mb-0">-{{ number_format($report['sold_qty'] + $report['rtv_qty'] + $report['total_wastage_qty']) }}</h3>
-                            <div class="small text-muted mt-1">
-                                Sold: {{ $report['sold_qty'] }} | RTV: {{ $report['rtv_qty'] }} | Wst: {{ $report['total_wastage_qty'] }}
+                            <div class="avatar-sm bg-soft-primary rounded">
+                                <i class="bx bx-door-open fs-3 text-primary mt-1"></i>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Side-by-Side Composition & Snapshot -->
-            <div class="row g-4">
-                <div class="col-md-6">
-                    <div class="card border-0 shadow-sm h-100 border-start border-4 border-info">
-                        <div class="card-body p-3">
-                            <label class="text-muted small text-uppercase fw-bold mb-2 d-block">Stock Composition</label>
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="text-secondary"><i class="bx bxs-circle text-success me-1 small"></i> Saleable:</span>
-                                <span class="fw-bold h5 mb-0">{{ number_format($report['saleable_closing']) }}</span>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm border-start border-success border-4 aesthetic-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted small text-uppercase fw-bold mb-1">Total Inflows (+)</h6>
+                                <h3 class="mb-0 fw-bold text-success">{{ number_format(($report['received_qty'] ?? 0) + ($report['returns_qty'] ?? 0) + ($report['adjusted_in'] ?? 0) + ($report['po_damaged_qty'] ?? 0)) }}</h3>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="text-secondary"><i class="bx bxs-circle text-danger me-1 small"></i> Damaged:</span>
-                                <span class="fw-bold h5 mb-0">{{ number_format($report['po_damaged_closing']) }}</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="text-secondary"><i class="bx bxs-circle text-warning me-1 small"></i> Wastage:</span>
-                                <span class="fw-bold h5 mb-0">{{ number_format($report['wastage_closing']) }}</span>
-                            </div>
-                            <div class="mt-3 pt-2 border-top">
-                                <span class="small text-muted italic">Total Inflow Damaged: {{ $report['po_damaged_qty'] }} units</span>
+                            <div class="avatar-sm bg-soft-success rounded">
+                                <i class="bx bx-trending-up fs-3 text-success mt-1"></i>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="card border-0 shadow-sm h-100 border-start border-4 border-primary">
-                        <div class="card-body p-3 d-flex flex-column justify-content-center">
-                            <label class="text-muted small text-uppercase fw-bold mb-1">Live Warehouse Snapshot</label>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <h2 class="fw-bold mb-0 text-dark">{{ number_format($report['total_closing_stock']) }}</h2>
-                                <div class="bg-soft-primary p-2 rounded">
-                                    <i class="bx bx-package fs-3 text-primary"></i>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm border-start border-danger border-4 aesthetic-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted small text-uppercase fw-bold mb-1">Total Outflows (-)</h6>
+                                <h3 class="mb-0 fw-bold text-danger">{{ number_format(($report['sold_qty'] ?? 0) + ($report['rtv_qty'] ?? 0) + ($report['total_wastage_qty'] ?? 0)) }}</h3>
+                            </div>
+                            <div class="avatar-sm bg-soft-danger rounded">
+                                <i class="bx bx-trending-down fs-3 text-danger mt-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm border-start border-info border-4 aesthetic-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted small text-uppercase fw-bold mb-1">Closing Snapshot</h6>
+                                <h3 class="mb-0 fw-bold text-info">{{ number_format($report['total_closing_stock'] ?? 0) }}</h3>
+                            </div>
+                            <div class="avatar-sm bg-soft-info rounded">
+                                <i class="bx bx-package fs-3 text-info mt-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Stock Details Table -->
+            <div class="col-md-8">
+                <div class="card border-0 shadow-sm aesthetic-card h-100 overflow-hidden">
+                    <div class="card-header bg-white py-3 border-0">
+                        <h5 class="card-title mb-0 fw-bold text-dark"><i class="bx bx-list-ul me-2 text-primary"></i>Stock Movement Breakdown</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0 custom-table">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th class="ps-4 py-3 border-0 text-uppercase small fw-bold">Category</th>
+                                        <th class="text-center py-3 border-0 text-uppercase small fw-bold">Units</th>
+                                        <th class="py-3 border-0 text-uppercase small fw-bold">Description / Breakdown</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="table-row-hover">
+                                        <td class="ps-4 fw-bold text-dark">Opening Balance</td>
+                                        <td class="text-center fw-bold">{{ number_format($report['opening_stock'] ?? 0) }}</td>
+                                        <td class="text-muted small">Physical stock before {{ $filters['start_date'] }}</td>
+                                    </tr>
+                                    <tr class="table-row-hover">
+                                        <td class="ps-4 text-success fw-semibold">Units Received</td>
+                                        <td class="text-center text-success fw-bold">+{{ number_format($report['received_qty'] ?? 0) }}</td>
+                                        <td class="text-muted small">New stock from verified Purchase Orders</td>
+                                    </tr>
+                                    <tr class="table-row-hover">
+                                        <td class="ps-4 text-success fw-semibold">Customer Returns</td>
+                                        <td class="text-center text-success fw-bold">+{{ number_format($report['returns_qty'] ?? 0) }}</td>
+                                        <td class="text-muted small">Items returned by customers (Saleable + Damaged)</td>
+                                    </tr>
+                                    <tr class="table-row-hover">
+                                        <td class="ps-4 text-success fw-semibold">Supplier Damaged</td>
+                                        <td class="text-center text-success fw-bold">+{{ number_format($report['po_damaged_qty'] ?? 0) }}</td>
+                                        <td class="text-muted small">Units received damaged (Damaged Pool)</td>
+                                    </tr>
+                                    <tr class="table-row-hover">
+                                        <td class="ps-4 text-success fw-semibold">Adjusted In</td>
+                                        <td class="text-center text-success fw-bold">+{{ number_format($report['adjusted_in'] ?? 0) }}</td>
+                                        <td class="text-muted small">Manual positive corrections</td>
+                                    </tr>
+                                    <tr class="bg-light-soft"><td colspan="3" style="height: 8px;"></td></tr>
+                                    <tr class="table-row-hover">
+                                        <td class="ps-4 text-danger fw-semibold">Units Sold</td>
+                                        <td class="text-center text-danger fw-bold">-{{ number_format($report['sold_qty'] ?? 0) }}</td>
+                                        <td class="text-muted small">Orders shipped and delivered</td>
+                                    </tr>
+                                    <tr class="table-row-hover">
+                                        <td class="ps-4 text-danger fw-semibold">RTV Dispatch</td>
+                                        <td class="text-center text-danger fw-bold">-{{ number_format($report['rtv_qty'] ?? 0) }}</td>
+                                        <td class="text-muted small">Returns sent back to suppliers</td>
+                                    </tr>
+                                    <tr class="table-row-hover">
+                                        <td class="ps-4 text-danger fw-semibold">Internal Wastage</td>
+                                        <td class="text-center text-danger fw-bold">-{{ number_format($report['total_wastage_qty'] ?? 0) }}</td>
+                                        <td class="text-muted small">Warehouse damage and return damage</td>
+                                    </tr>
+                                    <tr class="bg-primary text-white fw-bold">
+                                        <td class="ps-4 py-3 text-white">Closing Physical Balance</td>
+                                        <td class="text-center py-3 text-white">{{ number_format($report['total_closing_stock'] ?? 0) }}</td>
+                                        <td class="py-3 text-white">Live Units on-hand in warehouse</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI Side Cards -->
+            <div class="col-md-4">
+                <!-- Valuation Card -->
+                <div class="card border-0 shadow-sm mb-4 border-top border-primary border-4 aesthetic-card">
+                    <div class="card-body p-4 text-center">
+                        <div class="avatar-lg bg-soft-primary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                            <i class="bx bx-dollar-circle fs-1 text-primary"></i>
+                        </div>
+                        <h6 class="text-muted text-uppercase fw-bold small mb-2">Live Inventory Value</h6>
+                        <h2 class="fw-bold text-dark mb-3">${{ number_format($report['inventory_value'] ?? 0, 2) }}</h2>
+                        <div class="bg-light p-2 px-3 rounded-pill d-inline-block">
+                            <span class="small text-muted me-2">Stock Turnover:</span>
+                            <span class="fw-bold text-primary">{{ number_format($report['stock_turnover'] ?? 0, 2) }}x</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Efficiency Card -->
+                <div class="card border-0 shadow-sm mb-4 aesthetic-card">
+                    <div class="card-header bg-white border-0 py-3">
+                        <h6 class="card-title mb-0 fw-bold text-dark"><i class="bx bx-rocket me-2 text-success"></i>Fulfillment Efficiency</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between small mb-2">
+                                <span class="text-secondary fw-semibold">Gross Fill Rate</span>
+                                <span class="fw-bold text-success">{{ number_format($report['fill_rate'] ?? 0, 1) }}%</span>
+                            </div>
+                            <div class="progress shadow-sm" style="height: 10px; border-radius: 5px;">
+                                <div class="progress-bar bg-success progress-bar-striped" style="width: {{ $report['fill_rate'] ?? 0 }}%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between small mb-2">
+                                <span class="text-secondary fw-semibold">Net Fulfillment</span>
+                                <span class="fw-bold text-primary">{{ number_format($report['net_fill_rate'] ?? 0, 1) }}%</span>
+                            </div>
+                            <div class="progress shadow-sm" style="height: 10px; border-radius: 5px;">
+                                <div class="progress-bar bg-primary progress-bar-striped" style="width: {{ $report['net_fill_rate'] ?? 0 }}%"></div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center bg-soft-danger p-2 px-3 rounded-3 mt-2">
+                            <span class="small fw-semibold text-danger">Return Rate</span>
+                            <span class="h6 fw-bold text-danger mb-0">{{ number_format($report['return_rate'] ?? 0, 1) }}%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Health Card -->
+                <div class="card border-0 shadow-sm border-bottom border-warning border-4 aesthetic-card">
+                    <div class="card-body p-4">
+                        <h6 class="card-title mb-4 fw-bold small text-uppercase text-muted"><i class="bx bx-heart me-2 text-warning"></i>Inventory Health</h6>
+                        <div class="row text-center">
+                            <div class="col-6 border-end">
+                                <div class="p-2">
+                                    <h3 class="mb-0 fw-bold {{ ($report['low_stock_count'] ?? 0) > 0 ? 'text-danger' : 'text-success' }}">{{ $report['low_stock_count'] ?? 0 }}</h3>
+                                    <span class="text-muted x-small fw-bold">LOW STOCK SKUs</span>
                                 </div>
                             </div>
-                            <span class="small text-muted">Total Physical Units On-Hand</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Valuation Card -->
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm h-100 overflow-hidden" style="border-top: 4px solid #0d6efd !important;">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center mb-4">
-                        <div class="flex-shrink-0 bg-soft-primary p-3 rounded-circle me-3">
-                            <i class="bx bx-wallet text-primary fs-3"></i>
-                        </div>
-                        <div>
-                            <h6 class="text-muted text-uppercase small fw-bold mb-1">Inventory Valuation</h6>
-                            <h2 class="fw-bold text-dark mb-0">${{ number_format($report['inventory_value'], 2) }}</h2>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-2">
-                        <div class="bg-light p-3 rounded mb-3 border-start border-3 border-info shadow-sm">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="text-muted small fw-bold">Stock Turnover</span>
-                                <span class="badge bg-info text-white">{{ number_format($report['stock_turnover'], 2) }}x</span>
+                            <div class="col-6">
+                                <div class="p-2">
+                                    <h3 class="mb-0 fw-bold text-warning">{{ number_format($report['slow_moving_percent'] ?? 0, 1) }}%</h3>
+                                    <span class="text-muted x-small fw-bold">SLOW MOVING %</span>
+                                </div>
                             </div>
-                            <div class="progress bg-white" style="height: 10px; border: 1px solid #dee2e6;">
-                                <div class="progress-bar bg-info progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{ min($report['stock_turnover'] * 20, 100) }}%"></div>
-                            </div>
-                            <div class="mt-1">
-                                <small class="text-muted x-small">Efficiency Target: 1.0x or higher</small>
-                            </div>
-                        </div>
-
-                        <div class="bg-light p-3 rounded border-start border-3 border-{{ $report['low_stock_count'] > 0 ? 'danger' : 'success' }} shadow-sm">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="text-muted small">Low Stock SKUs</span>
-                                <span class="h5 fw-bold mb-0 text-{{ $report['low_stock_count'] > 0 ? 'danger' : 'success' }}">
-                                    {{ $report['low_stock_count'] }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 text-center border-top pt-3">
-                        <p class="text-muted small mb-0">
-                            <i class="bx bx-info-circle me-1"></i> Based on Procurement Cost
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Fulfillment Metrics -->
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white py-3 border-0">
-                    <h5 class="card-title mb-0">Fulfillment Efficiency</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row align-items-center mb-4">
-                        <div class="col-md-6 text-center border-end">
-                            <h1 class="display-5 fw-bold text-success mb-0">{{ number_format($report['net_fill_rate'], 1) }}%</h1>
-                            <span class="text-muted small text-uppercase">Net Fill Rate</span>
-                            <div class="progress mt-2 mx-auto" style="height: 6px; width: 80%;">
-                                <div class="progress-bar bg-success" style="width: {{ $report['net_fill_rate'] }}%"></div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 ps-4">
-                            <div class="mb-2">
-                                <label class="text-muted small">Gross Fill Rate:</label>
-                                <span class="fw-bold">{{ number_format($report['fill_rate'], 1) }}%</span>
-                            </div>
-                            <div class="mb-2">
-                                <label class="text-muted small">Return Rate:</label>
-                                <span class="fw-bold text-danger">{{ number_format($report['return_rate'], 1) }}%</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row text-center pt-3 border-top">
-                        <div class="col-4">
-                            <label class="text-muted small d-block">Fulfilled</label>
-                            <span class="fw-bold">{{ number_format($report['fulfillment_orders']) }} Orders</span>
-                        </div>
-                        <div class="col-4">
-                            <label class="text-muted small d-block">Shipped</label>
-                            <span class="fw-bold">{{ number_format($report['units_shipped']) }} Units</span>
-                        </div>
-                        <div class="col-4">
-                            <label class="text-muted small d-block">Returned</label>
-                            <span class="fw-bold text-danger">{{ number_format($report['returns_qty']) }} Units</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Quality Metrics -->
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white py-3 border-0">
-                    <h5 class="card-title mb-0">Quality Control (Warehouse)</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row align-items-center mb-4">
-                        <div class="col-md-6 text-center border-end">
-                            <h1 class="display-5 fw-bold {{ $report['damage_rate'] > 2 ? 'text-danger' : 'text-success' }} mb-0">{{ number_format($report['damage_rate'], 2) }}%</h1>
-                            <span class="text-muted small text-uppercase">Wastage Rate</span>
-                        </div>
-                        <div class="col-md-6 ps-4">
-                            <div class="mb-2">
-                                <label class="text-muted small">Total Wastage:</label>
-                                <span class="fw-bold text-danger">{{ number_format($report['total_wastage_qty']) }} Units</span>
-                            </div>
-                            <div class="mb-2">
-                                <label class="text-muted small">Slow Moving SKUs:</label>
-                                <span class="fw-bold text-warning">{{ number_format($report['slow_moving_percent'], 1) }}%</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row text-center pt-3 border-top">
-                        <div class="col-6">
-                            <label class="text-muted small d-block">Wastage (Internal+Returns)</label>
-                            <span class="fw-bold text-danger">{{ number_format($report['total_wastage_qty']) }} Units</span>
-                        </div>
-                        <div class="col-6">
-                            <label class="text-muted small d-block">Supplier Damaged (PO)</label>
-                            <span class="fw-bold">{{ number_format($report['po_damaged_qty']) }} Units</span>
                         </div>
                     </div>
                 </div>
@@ -234,49 +225,153 @@
         </div>
     </div>
 </div>
-@section('scripts')
-<script>
-    function printDetailedReport() {
-        window.print();
-    }
-</script>
+@endsection
 
+@push('styles')
 <style>
+    /* Aesthetic Animations & Effects */
+    .aesthetic-card {
+        transition: all 0.3s ease-in-out;
+        border-radius: 12px !important;
+    }
+    .aesthetic-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.12) !important;
+    }
+    .hover-lift {
+        transition: transform 0.2s ease;
+    }
+    .hover-lift:hover {
+        transform: scale(1.05);
+    }
+    .avatar-sm {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .x-small { font-size: 10px; }
+    .bg-light-soft { background-color: #fcfdfe; }
+    .table-row-hover:hover { background-color: rgba(13, 110, 253, 0.03); }
+    .custom-table th { font-size: 11px; letter-spacing: 0.5px; }
+    
+    /* Soft Backgrounds */
+    .bg-soft-primary { background-color: rgba(13, 110, 253, 0.1); }
+    .bg-soft-success { background-color: rgba(25, 135, 84, 0.1); }
+    .bg-soft-danger { background-color: rgba(220, 53, 69, 0.1); }
+    .bg-soft-info { background-color: rgba(13, 202, 240, 0.1); }
+    .bg-soft-warning { background-color: rgba(255, 193, 7, 0.1); }
+
     @media print {
-        @page { size: portrait; margin: 1.5cm; }
+        @page { size: landscape; margin: 1cm; }
         .no-print { display: none !important; }
         body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; font-family: sans-serif; }
         .container-xxl { max-width: 100% !important; width: 100% !important; padding: 0 !important; margin: 0 !important; }
-        
-        .card { 
-            border: 1px solid #000 !important; 
-            box-shadow: none !important; 
-            margin-bottom: 20px !important; 
-            break-inside: avoid;
-        }
-        
-        .card-header { 
-            background-color: #f8f9fa !important; 
-            border-bottom: 1px solid #000 !important; 
-            -webkit-print-color-adjust: exact;
-        }
-        
+        .card { border: 1px solid #ddd !important; box-shadow: none !important; margin-bottom: 15px !important; break-inside: avoid; border-radius: 0 !important; }
+        .card-header { background-color: #f8f9fa !important; border-bottom: 1px solid #ddd !important; -webkit-print-color-adjust: exact; }
+        .table-light th { background-color: #f8f9fa !important; -webkit-print-color-adjust: exact; }
+        .row { display: flex !important; flex-wrap: wrap !important; }
+        .col-md-8 { width: 65% !important; }
+        .col-md-4 { width: 35% !important; }
+        .col-md-3 { width: 25% !important; }
         .text-success { color: #198754 !important; }
         .text-danger { color: #dc3545 !important; }
         .text-primary { color: #0d6efd !important; }
         .text-info { color: #0dcaf0 !important; }
         .text-warning { color: #ffc107 !important; }
+        .bg-success { background-color: #198754 !important; }
+        .bg-primary { background-color: #0d6efd !important; }
+        .bg-info { background-color: #0dcaf0 !important; }
+        .bg-danger { background-color: #dc3545 !important; }
         .badge { border: 1px solid #000; color: #000 !important; background: transparent !important; }
-        
-        .progress { border: 1px solid #000 !important; background: #fff !important; }
-        .progress-bar { background-color: #000 !important; }
-        
-        /* Ensure layout columns work in print */
-        .row { display: flex !important; flex-wrap: wrap !important; }
-        .col-md-8 { width: 66.66% !important; }
-        .col-md-4 { width: 33.33% !important; }
-        .col-md-6 { width: 50% !important; }
-        .col-md-3 { width: 25% !important; }
     }
 </style>
+@endpush
+
+@section('scripts')
+<script>
+    function printDetailedReport() {
+        var content = document.getElementById('printable-area');
+        if (!content) return;
+
+        var clone = content.cloneNode(true);
+        // Remove interactive elements from clone
+        var extras = clone.querySelectorAll('.btn-group, .btn, .bx, iconify-icon');
+        for (var i = 0; i < extras.length; i++) {
+            extras[i].remove();
+        }
+
+        var printWin = window.open('', '_blank', 'width=1200,height=800');
+        if (!printWin) {
+            alert('Please allow popups to print reports.');
+            return;
+        }
+
+        var bName = "{{ \App\HelperClass::generalSettings()->business_name ?? 'Smart Ecom' }}";
+        var dateStr = new Date().toLocaleString();
+        var reportTitle = "Warehouse Performance Detail: {{ $warehouse->name }}";
+        var periodStr = "Period: {{ $filters['start_date'] }} to {{ $filters['end_date'] }}";
+
+        printWin.document.title = reportTitle;
+        
+        var style = printWin.document.createElement('style');
+        style.innerHTML = `
+            body { font-family: sans-serif; padding: 30px; color: #000; background: #fff; }
+            .hdr { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000; padding-bottom: 10px; }
+            .hdr h1 { margin: 0; font-size: 24px; }
+            .hdr h3 { margin: 5px 0; font-size: 18px; }
+            .hdr p { margin: 0; font-size: 12px; color: #666; }
+            .row { display: flex; flex-wrap: wrap; margin-right: -10px; margin-left: -10px; }
+            .col-md-3 { width: 25%; padding: 0 10px; box-sizing: border-box; }
+            .col-md-8 { width: 65%; padding: 0 10px; box-sizing: border-box; }
+            .col-md-4 { width: 35%; padding: 0 10px; box-sizing: border-box; }
+            .card { border: 1px solid #ddd; margin-bottom: 20px; border-radius: 5px; overflow: hidden; background: #fff; }
+            .card-body { padding: 15px; }
+            .card-header { background: #f8f9fa; padding: 10px 15px; border-bottom: 1px solid #ddd; font-weight: bold; }
+            .border-start { border-left-width: 4px !important; }
+            .border-primary { border-left-color: #0d6efd !important; }
+            .border-success { border-left-color: #198754 !important; }
+            .border-danger { border-left-color: #dc3545 !important; }
+            .border-info { border-left-color: #0dcaf0 !important; }
+            .text-success { color: #198754 !important; }
+            .text-danger { color: #dc3545 !important; }
+            .text-muted { color: #6c757d !important; }
+            .small { font-size: 12px; }
+            .text-uppercase { text-transform: uppercase; }
+            .fw-bold { font-weight: bold; }
+            h3, h4, h2 { margin-top: 0; margin-bottom: 5px; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid #eee; padding: 8px; text-align: left; font-size: 12px; }
+            .table-light th { background: #f8f9fa; }
+            .text-center { text-align: center; }
+            .bg-light { background: #f8f9fa; }
+            .bg-primary { background: #0d6efd; color: #fff !important; }
+            .progress { height: 10px; background: #eee; border-radius: 5px; overflow: hidden; margin: 5px 0; }
+            .progress-bar { height: 100%; }
+            .bg-success { background: #198754; }
+            .badge { padding: 2px 8px; border-radius: 10px; font-size: 10px; background: #eee; }
+            @media print {
+                body { padding: 0; }
+                .card { break-inside: avoid; }
+            }
+        `;
+        printWin.document.head.appendChild(style);
+
+        var header = printWin.document.createElement('div');
+        header.className = 'hdr';
+        header.innerHTML = '<h1>' + bName + '</h1><h3>' + reportTitle + '</h3><p>' + periodStr + ' | Generated: ' + dateStr + '</p>';
+        printWin.document.body.appendChild(header);
+
+        var bodyContent = printWin.document.createElement('div');
+        bodyContent.innerHTML = clone.innerHTML;
+        printWin.document.body.appendChild(bodyContent);
+
+        setTimeout(function() {
+            printWin.focus();
+            printWin.print();
+            printWin.close();
+        }, 500);
+    }
+</script>
 @endsection

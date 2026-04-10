@@ -101,7 +101,7 @@ class WarehousePerformanceService
             ->whereIn('transaction_type', ['WAREHOUSE_DAMAGE', 'RETURN_DAMAGED'])
             ->sum(DB::raw('ABS(change_qty)'));
 
-        // Live Snapshot: (Saleable + Supplier Damaged) 
+        // Live Snapshot: (Saleable + Supplier Damaged)
         // Per user formula: PO_receipt + adjustments + intact return - sold + po_damage - damage return - warehouse wastage - rtv dispatch
         // This effectively excludes the "Wastage" items (Return Damaged) from the physical snapshot.
         $totalClosingStock = $saleableClosing + $poDamagedClosing;
@@ -175,29 +175,29 @@ class WarehousePerformanceService
         $turnover = $inventoryValue > 0 ? ($cogs / $inventoryValue) : 0;
 
         return [
-            'opening_stock' => (int) $openingStock,
+            'opening_stock' => (int) ($openingStock ?? 0),
             'received_qty' => (int) ($movements->received_qty ?? 0),
             'po_damaged_qty' => (int) ($movements->po_damaged_qty ?? 0),
-            'total_wastage_qty' => $wastageQty,
+            'total_wastage_qty' => (int) ($wastageQty ?? 0),
             'sold_qty' => (int) ($movements->sold_qty ?? 0),
-            'returns_qty' => $totalReturns,
+            'returns_qty' => (int) ($totalReturns ?? 0),
             'adjusted_in' => (int) ($movements->adjusted_in ?? 0),
             'adjusted_out' => (int) ($movements->adjusted_out ?? 0),
             'rtv_qty' => (int) ($movements->rtv_qty ?? 0),
-            'saleable_closing' => $saleableClosing,
-            'po_damaged_closing' => $poDamagedClosing,
-            'wastage_closing' => $wastageClosing,
-            'total_closing_stock' => $totalClosingStock,
-            'inventory_value' => (float) $inventoryValue,
+            'saleable_closing' => (int) ($saleableClosing ?? 0),
+            'po_damaged_closing' => (int) ($poDamagedClosing ?? 0),
+            'wastage_closing' => (int) ($wastageClosing ?? 0),
+            'total_closing_stock' => (int) ($totalClosingStock ?? 0),
+            'inventory_value' => (float) ($inventoryValue ?? 0),
             'fulfillment_orders' => (int) ($movements->fulfillment_orders ?? 0),
-            'units_shipped' => $unitsShipped,
-            'fill_rate' => (float) $grossFillRate,
-            'net_fill_rate' => (float) $netFillRate,
-            'return_rate' => (float) $returnRate,
-            'damage_rate' => (float) $damageRate,
-            'low_stock_count' => $lowStockCount,
-            'slow_moving_percent' => (float) $slowMovingPercent,
-            'stock_turnover' => (float) $turnover,
+            'units_shipped' => (int) ($unitsShipped ?? 0),
+            'fill_rate' => (float) ($grossFillRate ?? 0),
+            'net_fill_rate' => (float) ($netFillRate ?? 0),
+            'return_rate' => (float) ($returnRate ?? 0),
+            'damage_rate' => (float) ($damageRate ?? 0),
+            'low_stock_count' => (int) ($lowStockCount ?? 0),
+            'slow_moving_percent' => (float) ($slowMovingPercent ?? 0),
+            'stock_turnover' => (float) ($turnover ?? 0),
         ];
     }
 }

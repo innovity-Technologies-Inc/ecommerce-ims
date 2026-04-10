@@ -157,6 +157,8 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-140:** Stock Report View-All Refinement: Implement full-data "Print" and "Excel Export" for all detailed stock report views (Warehouse, Product, Batch, Movement, Aging, Wastage, Serial). Ensure Excel exports match the current view's data and filters instead of defaulting to the main stock report. Remove redundant filters and include proper headers in printed versions.
 - [x] **REQ-141:** Fix Excel Exports: Ensure all Excel exports in ReportController retrieve full data regardless of the active UI page by explicitly passing `null` for `perPage` limits and updating default pagination values in ReportService.
 - [x] **REQ-142:** Report Filter Preservation: Update Sales, Inventory, and Stock report filter forms to include a hidden `view` parameter, ensuring users remain on the "View All" detailed page when applying filters instead of being redirected back to the dashboard.
+- [x] **REQ-143:** Excel Report Blank Normalization: Ensure all Excel reports (Sales, Stock, Inventory, Warehouse Performance) replace null or empty values (including whitespace-only strings) with a literal `0` in the exported file to prevent any blank cells from appearing in Excel.
+- [x] **REQ-144:** Report View Data Normalization: Ensure all UI-based reports (Warehouse Performance, Sales, Stock, Inventory) replace null or empty values with `0` (for numeric fields) or appropriate placeholders (for text fields) to ensure no blank cells appear in the browser.
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.

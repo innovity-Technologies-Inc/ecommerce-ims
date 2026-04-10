@@ -17,7 +17,18 @@ class WarehousePerformanceExport implements FromArray, ShouldAutoSize, WithHeadi
 
     public function array(): array
     {
-        return $this->data;
+        return collect($this->data)->map(function ($row) {
+            // Convert row to collection if it's an object or array
+            return collect($row)->map(function ($value) {
+                // Robust check for 'empty' values that should be 0 in Excel
+                // This covers: null, false, empty strings, and strings with only whitespace
+                if ($value === null || $value === false || trim((string) $value) === '') {
+                    return 0;
+                }
+
+                return $value;
+            })->toArray();
+        })->toArray();
     }
 
     public function headings(): array
