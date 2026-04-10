@@ -33,30 +33,30 @@ class ReportService
             return [
                 'grouped_data' => collect(),
                 'totals' => $this->getEmptyTotals(),
-                'group_by' => $filters['group_by'] ?? 'daily'
+                'group_by' => $filters['group_by'] ?? 'daily',
             ];
         }
 
         // 2. Calculate Order-Level Totals (Shipping, Orders Count)
         $orderTotals = Order::whereIn('id', $orderIds)
-            ->selectRaw("
+            ->selectRaw('
                 COUNT(id) as orders_count,
                 SUM(shipping_charge) as shipping_revenue
-            ")
+            ')
             ->first();
 
         // 3. Calculate Item-Level Totals (Sales, Cost, Units)
         $itemTotalsQuery = OrderItem::whereIn('order_items.order_id', $orderIds);
         $this->applyItemFilters($itemTotalsQuery, $filters);
 
-        $itemTotals = $itemTotalsQuery->selectRaw("
+        $itemTotals = $itemTotalsQuery->selectRaw('
             SUM(order_items.quantity) as units_sold,
             SUM(order_items.total_price) as net_sales,
             SUM(order_items.regular_price * order_items.quantity) as gross_sales,
             SUM((order_items.product_discount + order_items.coupon_discount) * order_items.quantity) as discount_amount,
             SUM(order_items.total_cost) as total_cost,
             SUM(order_items.total_price - order_items.total_cost) as gross_profit
-        ")->first();
+        ')->first();
 
         // 4. Calculate Grouped Data for Trend Table
         $grouping = $filters['group_by'] ?? 'daily';
@@ -97,7 +97,7 @@ class ReportService
         return [
             'grouped_data' => $groupedData,
             'totals' => $totals,
-            'group_by' => $grouping
+            'group_by' => $grouping,
         ];
     }
 
@@ -114,14 +114,14 @@ class ReportService
 
         switch ($entity) {
             case 'product':
-                $query->selectRaw("
+                $query->selectRaw('
                     order_items.product_name as name,
                     SUM(order_items.quantity) as units_sold,
                     SUM(order_items.total_price) as net_sales,
                     SUM(order_items.total_cost) as total_cost,
                     SUM(order_items.total_price - order_items.total_cost) as gross_profit
-                ")
-                ->groupBy('order_items.product_id', 'order_items.product_name');
+                ')
+                    ->groupBy('order_items.product_id', 'order_items.product_name');
                 break;
 
             case 'variant':
@@ -132,43 +132,43 @@ class ReportService
                     SUM(order_items.total_cost) as total_cost,
                     SUM(order_items.total_price - order_items.total_cost) as gross_profit
                 ")
-                ->groupBy('order_items.product_id', 'order_items.product_variant_id', 'order_items.product_name', 'order_items.variant_name');
+                    ->groupBy('order_items.product_id', 'order_items.product_variant_id', 'order_items.product_name', 'order_items.variant_name');
                 break;
 
             case 'warehouse':
                 $query->join('ordered_product_batches', 'order_items.id', '=', 'ordered_product_batches.order_item_id')
                     ->join('batches', 'ordered_product_batches.batch_id', '=', 'batches.id')
                     ->join('warehouses', 'batches.warehouse_id', '=', 'warehouses.id')
-                    ->selectRaw("
+                    ->selectRaw('
                         warehouses.name as name,
                         SUM(ordered_product_batches.quantity) as units_sold,
                         SUM(ordered_product_batches.quantity * order_items.unit_price) as net_sales,
                         SUM(ordered_product_batches.subtotal_cost) as total_cost,
                         SUM((ordered_product_batches.quantity * order_items.unit_price) - ordered_product_batches.subtotal_cost) as gross_profit
-                    ")
+                    ')
                     ->groupBy('warehouses.id', 'warehouses.name');
                 break;
 
             case 'batch':
                 $query->join('ordered_product_batches', 'order_items.id', '=', 'ordered_product_batches.order_item_id')
                     ->join('batches', 'ordered_product_batches.batch_id', '=', 'batches.id')
-                    ->selectRaw("
+                    ->selectRaw('
                         batches.batch_number as name,
                         SUM(ordered_product_batches.quantity) as units_sold,
                         SUM(ordered_product_batches.quantity * order_items.unit_price) as net_sales,
                         SUM(ordered_product_batches.subtotal_cost) as total_cost,
                         SUM((ordered_product_batches.quantity * order_items.unit_price) - ordered_product_batches.subtotal_cost) as gross_profit
-                    ")
+                    ')
                     ->groupBy('batches.id', 'batches.batch_number');
                 break;
 
             case 'payment_method':
-                $query->selectRaw("
+                $query->selectRaw('
                     orders.payment_method as name,
                     COUNT(DISTINCT orders.id) as orders_count,
                     SUM(order_items.total_price) as net_sales
-                ")
-                ->groupBy('orders.payment_method');
+                ')
+                    ->groupBy('orders.payment_method');
                 break;
         }
 
@@ -177,12 +177,9 @@ class ReportService
         return $perPage ? $query->paginate($perPage)->withQueryString() : $query->get();
     }
 
-    /**
-     * Get Inventory Report with valuation and filters.
-     */
     public function getInventoryReport(array $filters, ?string $entity = null, ?int $perPage = null): array
     {
-        $endDate = !empty($filters['end_date']) ? $filters['end_date'] : null;
+        $endDate = ! empty($filters['end_date']) ? $filters['end_date'] : null;
         $includeDamaged = ($filters['include_damaged'] ?? 'no') === 'yes';
 
         // 1. Core Query for Current or Historical Stock
@@ -192,8 +189,8 @@ class ReportService
             $data = $this->getCurrentInventory($filters, $includeDamaged, $entity, $perPage);
         }
 
-        // If we are in paginated entity mode, we return the data directly
-        if ($entity && $perPage) {
+        // If we are in entity mode (Detailed View), we return the data directly
+        if ($entity) {
             return ['data' => $data];
         }
 
@@ -205,36 +202,36 @@ class ReportService
         ];
 
         // Entity Breakdowns (limited to 10 for dashboard)
-        $dataWithStock = $data->filter(fn($item) => $item->quantity > 0);
+        $dataWithStock = $data->filter(fn ($item) => $item->quantity > 0);
 
         $breakdowns = [
-            'warehouse' => $dataWithStock->groupBy('warehouse_name')->map(fn($group) => [
+            'warehouse' => $dataWithStock->groupBy('warehouse_name')->map(fn ($group) => [
                 'name' => $group->first()->warehouse_name,
                 'quantity' => $group->sum('quantity'),
-                'valuation' => $group->sum('valuation')
+                'valuation' => $group->sum('valuation'),
             ])->sortByDesc('valuation')->take(10),
 
-            'product' => $dataWithStock->groupBy('product_name')->map(fn($group) => [
+            'product' => $dataWithStock->groupBy('product_name')->map(fn ($group) => [
                 'name' => $group->first()->product_name,
                 'quantity' => $group->sum('quantity'),
-                'valuation' => $group->sum('valuation')
+                'valuation' => $group->sum('valuation'),
             ])->sortByDesc('valuation')->take(10),
 
-            'batch' => $dataWithStock->groupBy(fn($item) => $item->batch_id . '-' . $item->product_id)
-                ->map(fn($group) => [
+            'batch' => $dataWithStock->groupBy(fn ($item) => $item->batch_id.'-'.$item->product_id)
+                ->map(fn ($group) => [
                     'name' => $group->first()->batch_number,
                     'warehouse' => $group->first()->warehouse_name,
                     'product' => $group->first()->product_name,
                     'quantity' => $group->sum('quantity'),
                     'unit_cost' => $group->avg('unit_cost'),
-                    'valuation' => $group->sum('valuation')
-                ])->sortByDesc('valuation')->take(10)
+                    'valuation' => $group->sum('valuation'),
+                ])->sortByDesc('valuation')->take(10),
         ];
 
         return [
             'totals' => $totals,
             'breakdowns' => $breakdowns,
-            'raw_data' => $data
+            'raw_data' => $data,
         ];
     }
 
@@ -277,20 +274,20 @@ class ReportService
                 DB::raw('SUM(inventory_levels.current_quantity) as quantity'),
                 DB::raw('SUM(inventory_levels.damaged_quantity) as damaged_quantity'),
                 DB::raw('SUM(inventory_levels.current_quantity * batch_products.unit_cost) as valuation')
-            )->groupBy('warehouses.id', 'warehouses.name')->orderBy('valuation', 'desc');
+            )->groupBy('warehouses.id', 'warehouses.name')->orderBy('valuation', 'desc')->orderBy('warehouses.id', 'desc');
         } elseif ($groupBy === 'product') {
             $query->select(
                 'products.name as name',
                 DB::raw('SUM(inventory_levels.current_quantity) as quantity'),
                 DB::raw('SUM(inventory_levels.damaged_quantity) as damaged_quantity'),
                 DB::raw('SUM(inventory_levels.current_quantity * batch_products.unit_cost) as valuation')
-            )->groupBy('inventory_levels.product_id', 'products.name')->orderBy('valuation', 'desc');
+            )->groupBy('inventory_levels.product_id', 'products.name')->orderBy('valuation', 'desc')->orderBy('inventory_levels.product_id', 'desc');
         } else {
             $query->select(
                 'warehouses.name as warehouse_name',
                 'products.name as product_name',
                 DB::raw("'N/A' as variant_name"),
-                DB::raw("MAX(product_variants.sku) as sku"),
+                DB::raw('MAX(product_variants.sku) as sku'),
                 'batches.batch_number',
                 'suppliers.name as supplier_name',
                 DB::raw('SUM(inventory_levels.current_quantity) as current_quantity'),
@@ -300,12 +297,14 @@ class ReportService
                 DB::raw('SUM(COALESCE(warehouse_stock_limits.min_stock, products.min_stock_global)) as min_threshold'),
                 DB::raw('SUM(inventory_levels.current_quantity * batch_products.unit_cost) as inventory_value'),
                 DB::raw('IF(SUM(inventory_levels.current_quantity) <= SUM(COALESCE(warehouse_stock_limits.min_stock, products.min_stock_global)), 1, 0) as is_low_stock')
-            )->groupBy('inventory_levels.warehouse_id', 'inventory_levels.product_id', 'inventory_levels.batch_id', 'warehouses.name', 'products.name', 'batches.batch_number', 'suppliers.name');
+            )->groupBy('inventory_levels.warehouse_id', 'inventory_levels.product_id', 'inventory_levels.batch_id', 'warehouses.name', 'products.name', 'batches.batch_number', 'suppliers.name')
+                ->orderBy('inventory_value', 'desc')
+                ->orderBy('inventory_levels.batch_id', 'desc');
         }
 
         $this->applyStockFilters($query, $filters);
 
-        if (!empty($filters['low_stock_only']) && $filters['low_stock_only'] === 'yes') {
+        if (! empty($filters['low_stock_only']) && $filters['low_stock_only'] === 'yes') {
             $query->whereRaw('inventory_levels.current_quantity <= COALESCE(warehouse_stock_limits.min_stock, products.min_stock_global)');
         }
 
@@ -328,17 +327,17 @@ class ReportService
             $query->select(
                 'products.name as name',
                 DB::raw('COUNT(batch_serials.id) as quantity')
-            )->groupBy('batch_serials.product_id', 'products.name')->orderBy('quantity', 'desc');
+            )->groupBy('batch_serials.product_id', 'products.name')->orderBy('quantity', 'desc')->orderBy('batch_serials.product_id', 'desc');
         } elseif ($entity === 'warehouse') {
             $query->select(
                 'warehouses.name as name',
                 DB::raw('COUNT(batch_serials.id) as quantity')
-            )->groupBy('batch_serials.warehouse_id', 'warehouses.name')->orderBy('quantity', 'desc');
+            )->groupBy('batch_serials.warehouse_id', 'warehouses.name')->orderBy('quantity', 'desc')->orderBy('batch_serials.warehouse_id', 'desc');
         } else {
             $query->select(
                 'batches.batch_number as name',
                 DB::raw('COUNT(batch_serials.id) as quantity')
-            )->groupBy('batch_serials.batch_id', 'batches.batch_number')->orderBy('quantity', 'desc');
+            )->groupBy('batch_serials.batch_id', 'batches.batch_number')->orderBy('quantity', 'desc')->orderBy('batch_serials.batch_id', 'desc');
         }
 
         if ($perPage) {
@@ -348,7 +347,7 @@ class ReportService
         return $query->get();
     }
 
-    public function getStockMovements(array $filters, int $perPage = 20)
+    public function getStockMovements(array $filters, ?int $perPage = null)
     {
         $query = DB::table('stock_ledgers')
             ->join('products', 'stock_ledgers.product_id', '=', 'products.id')
@@ -363,15 +362,25 @@ class ReportService
                 'batches.batch_number'
             );
 
-        if (!empty($filters['start_date'])) $query->whereDate('stock_ledgers.created_at', '>=', $filters['start_date']);
-        if (!empty($filters['end_date'])) $query->whereDate('stock_ledgers.created_at', '<=', $filters['end_date']);
-        if (!empty($filters['warehouse_id'])) $query->where('stock_ledgers.warehouse_id', $filters['warehouse_id']);
-        if (!empty($filters['product_id'])) $query->where('stock_ledgers.product_id', $filters['product_id']);
+        if (! empty($filters['start_date'])) {
+            $query->whereDate('stock_ledgers.created_at', '>=', $filters['start_date']);
+        }
+        if (! empty($filters['end_date'])) {
+            $query->whereDate('stock_ledgers.created_at', '<=', $filters['end_date']);
+        }
+        if (! empty($filters['warehouse_id'])) {
+            $query->where('stock_ledgers.warehouse_id', $filters['warehouse_id']);
+        }
+        if (! empty($filters['product_id'])) {
+            $query->where('stock_ledgers.product_id', $filters['product_id']);
+        }
 
-        return $query->orderBy('stock_ledgers.created_at', 'desc')->paginate($perPage)->withQueryString();
+        $query->orderBy('stock_ledgers.created_at', 'desc')->orderBy('stock_ledgers.id', 'desc');
+
+        return $perPage ? $query->paginate($perPage)->withQueryString() : $query->get();
     }
 
-    public function getBatchAging(array $filters, int $perPage = 20)
+    public function getBatchAging(array $filters, ?int $perPage = null)
     {
         $query = DB::table('batches')
             ->leftJoin('suppliers', 'batches.supplier_id', '=', 'suppliers.id')
@@ -386,13 +395,19 @@ class ReportService
             )
             ->groupBy('batches.id');
 
-        if (!empty($filters['warehouse_id'])) $query->where('batches.warehouse_id', $filters['warehouse_id']);
-        if (!empty($filters['supplier_id'])) $query->where('batches.supplier_id', $filters['supplier_id']);
+        if (! empty($filters['warehouse_id'])) {
+            $query->where('batches.warehouse_id', $filters['warehouse_id']);
+        }
+        if (! empty($filters['supplier_id'])) {
+            $query->where('batches.supplier_id', $filters['supplier_id']);
+        }
 
-        return $query->orderBy('batches.created_at', 'asc')->paginate($perPage)->withQueryString();
+        $query->orderBy('batches.created_at', 'asc')->orderBy('batches.id', 'asc');
+
+        return $perPage ? $query->paginate($perPage)->withQueryString() : $query->get();
     }
 
-    public function getSerialTrace(array $filters, int $perPage = 20)
+    public function getSerialTrace(array $filters, ?int $perPage = null)
     {
         $query = DB::table('batch_serials')
             ->join('products', 'batch_serials.product_id', '=', 'products.id')
@@ -403,20 +418,47 @@ class ReportService
                 'batches.batch_number'
             );
 
-        if (!empty($filters['batch_id'])) $query->where('batch_serials.batch_id', $filters['batch_id']);
-        if (!empty($filters['serial_no'])) $query->where('batch_serials.serial_no', 'like', '%'.$filters['serial_no'].'%');
+        if (! empty($filters['batch_id'])) {
+            $query->where('batch_serials.batch_id', $filters['batch_id']);
+        }
+        if (! empty($filters['warehouse_id'])) {
+            $query->where('batches.warehouse_id', $filters['warehouse_id']);
+        }
+        if (! empty($filters['supplier_id'])) {
+            $query->where('batches.supplier_id', $filters['supplier_id']);
+        }
+        if (! empty($filters['product_id'])) {
+            $query->where('batch_serials.product_id', $filters['product_id']);
+        }
+        if (! empty($filters['serial_no'])) {
+            $query->where('batch_serials.serial_no', 'like', '%'.$filters['serial_no'].'%');
+        }
 
-        return $query->orderBy('batch_serials.updated_at', 'desc')->paginate($perPage)->withQueryString();
+        $query->orderBy('batch_serials.updated_at', 'desc')->orderBy('batch_serials.id', 'desc');
+
+        return $perPage ? $query->paginate($perPage)->withQueryString() : $query->get();
     }
 
     protected function applyStockFilters($query, array $filters)
     {
-        if (!empty($filters['warehouse_id'])) $query->where('inventory_levels.warehouse_id', $filters['warehouse_id']);
-        if (!empty($filters['supplier_id'])) $query->where('batches.supplier_id', $filters['supplier_id']);
-        if (!empty($filters['product_id'])) $query->where('inventory_levels.product_id', $filters['product_id']);
-        if (!empty($filters['category_id'])) $query->where('products.category_id', $filters['category_id']);
-        if (!empty($filters['brand_id'])) $query->where('products.brand_id', $filters['brand_id']);
-        if (!empty($filters['batch_number'])) $query->where('batches.batch_number', 'like', '%'.$filters['batch_number'].'%');
+        if (! empty($filters['warehouse_id'])) {
+            $query->where('inventory_levels.warehouse_id', $filters['warehouse_id']);
+        }
+        if (! empty($filters['supplier_id'])) {
+            $query->where('batches.supplier_id', $filters['supplier_id']);
+        }
+        if (! empty($filters['product_id'])) {
+            $query->where('inventory_levels.product_id', $filters['product_id']);
+        }
+        if (! empty($filters['category_id'])) {
+            $query->where('products.category_id', $filters['category_id']);
+        }
+        if (! empty($filters['brand_id'])) {
+            $query->where('products.brand_id', $filters['brand_id']);
+        }
+        if (! empty($filters['batch_number'])) {
+            $query->where('batches.batch_number', 'like', '%'.$filters['batch_number'].'%');
+        }
     }
 
     protected function getCurrentInventory(array $filters, bool $includeDamaged, ?string $entity = null, ?int $perPage = null)
@@ -430,25 +472,25 @@ class ReportService
         if ($entity === 'warehouse') {
             $query->select(
                 'warehouses.name as name',
-                DB::raw("SUM(batch_products.saleable_qty" . ($includeDamaged ? " + batch_products.damaged_qty" : "") . ") as quantity"),
-                DB::raw("SUM((batch_products.saleable_qty" . ($includeDamaged ? " + batch_products.damaged_qty" : "") . ") * batch_products.unit_cost) as valuation")
+                DB::raw('SUM(batch_products.saleable_qty'.($includeDamaged ? ' + batch_products.damaged_qty' : '').') as quantity'),
+                DB::raw('SUM((batch_products.saleable_qty'.($includeDamaged ? ' + batch_products.damaged_qty' : '').') * batch_products.unit_cost) as valuation')
             )->groupBy('warehouses.id', 'warehouses.name')->orderBy('valuation', 'desc');
         } elseif ($entity === 'product') {
             $query->select(
                 'products.name as name',
-                DB::raw("SUM(batch_products.saleable_qty" . ($includeDamaged ? " + batch_products.damaged_qty" : "") . ") as quantity"),
-                DB::raw("SUM((batch_products.saleable_qty" . ($includeDamaged ? " + batch_products.damaged_qty" : "") . ") * batch_products.unit_cost) as valuation")
+                DB::raw('SUM(batch_products.saleable_qty'.($includeDamaged ? ' + batch_products.damaged_qty' : '').') as quantity'),
+                DB::raw('SUM((batch_products.saleable_qty'.($includeDamaged ? ' + batch_products.damaged_qty' : '').') * batch_products.unit_cost) as valuation')
             )->groupBy('batch_products.product_id', 'products.name')->orderBy('valuation', 'desc');
         } elseif ($entity === 'batch') {
             $query->select(
                 'batches.batch_number as name',
                 'warehouses.name as warehouse',
                 'products.name as product',
-                DB::raw("SUM(batch_products.saleable_qty" . ($includeDamaged ? " + batch_products.damaged_qty" : "") . ") as quantity"),
-                DB::raw("AVG(batch_products.unit_cost) as unit_cost"), // Weighted average would be better but AVG is simpler for now
-                DB::raw("SUM((batch_products.saleable_qty" . ($includeDamaged ? " + batch_products.damaged_qty" : "") . ") * batch_products.unit_cost) as valuation")
+                DB::raw('SUM(batch_products.saleable_qty'.($includeDamaged ? ' + batch_products.damaged_qty' : '').') as quantity'),
+                DB::raw('AVG(batch_products.unit_cost) as unit_cost'), // Weighted average would be better but AVG is simpler for now
+                DB::raw('SUM((batch_products.saleable_qty'.($includeDamaged ? ' + batch_products.damaged_qty' : '').') * batch_products.unit_cost) as valuation')
             )->groupBy('batches.id', 'batches.batch_number', 'warehouses.name', 'batch_products.product_id', 'products.name')
-            ->orderBy('batches.id', 'desc');
+                ->orderBy('batches.id', 'desc');
         } else {
             $query->select(
                 'batch_products.product_id',
@@ -457,16 +499,17 @@ class ReportService
                 'warehouses.name as warehouse_name',
                 'products.name as product_name',
                 'batch_products.unit_cost',
-                DB::raw("batch_products.saleable_qty" . ($includeDamaged ? " + batch_products.damaged_qty" : "") . " as quantity"),
-                DB::raw("(batch_products.saleable_qty" . ($includeDamaged ? " + batch_products.damaged_qty" : "") . ") * batch_products.unit_cost as valuation")
+                DB::raw('batch_products.saleable_qty'.($includeDamaged ? ' + batch_products.damaged_qty' : '').' as quantity'),
+                DB::raw('(batch_products.saleable_qty'.($includeDamaged ? ' + batch_products.damaged_qty' : '').') * batch_products.unit_cost as valuation')
             );
         }
 
         $this->applyInventoryFilters($query, $filters);
 
-        if ($entity && $perPage) {
-            $query->where(DB::raw("batch_products.saleable_qty" . ($includeDamaged ? " + batch_products.damaged_qty" : "")), '>', 0);
-            return $query->paginate($perPage)->withQueryString();
+        if ($entity) {
+            $query->where(DB::raw('batch_products.saleable_qty'.($includeDamaged ? ' + batch_products.damaged_qty' : '')), '>', 0);
+
+            return $perPage ? $query->paginate($perPage)->withQueryString() : $query->get();
         }
 
         return $query->get();
@@ -480,7 +523,7 @@ class ReportService
                 'batch_id',
                 'product_id',
                 'product_variant_id',
-                DB::raw("SUM(change_qty) as historical_qty")
+                DB::raw('SUM(change_qty) as historical_qty')
             )
             ->groupBy('batch_id', 'product_id', 'product_variant_id');
 
@@ -497,14 +540,14 @@ class ReportService
         if ($entity === 'warehouse') {
             $query->select(
                 'warehouses.name as name',
-                DB::raw("SUM(ledger_sums.historical_qty) as quantity"),
-                DB::raw("SUM(ledger_sums.historical_qty * batch_products.unit_cost) as valuation")
+                DB::raw('SUM(ledger_sums.historical_qty) as quantity'),
+                DB::raw('SUM(ledger_sums.historical_qty * batch_products.unit_cost) as valuation')
             )->groupBy('warehouses.id', 'warehouses.name')->orderBy('valuation', 'desc');
         } elseif ($entity === 'product') {
             $query->select(
                 'products.name as name',
-                DB::raw("SUM(ledger_sums.historical_qty) as quantity"),
-                DB::raw("SUM(ledger_sums.historical_qty * batch_products.unit_cost) as valuation")
+                DB::raw('SUM(ledger_sums.historical_qty) as quantity'),
+                DB::raw('SUM(ledger_sums.historical_qty * batch_products.unit_cost) as valuation')
             )->groupBy('batch_products.product_id', 'products.name')->orderBy('valuation', 'desc');
         } elseif ($entity === 'batch') {
             $query->select(
@@ -513,9 +556,9 @@ class ReportService
                 'products.name as product',
                 DB::raw('SUM(ledger_sums.historical_qty) as quantity'),
                 DB::raw('AVG(batch_products.unit_cost) as unit_cost'),
-                DB::raw("SUM(ledger_sums.historical_qty * batch_products.unit_cost) as valuation")
+                DB::raw('SUM(ledger_sums.historical_qty * batch_products.unit_cost) as valuation')
             )->groupBy('batches.id', 'batches.batch_number', 'warehouses.name', 'batch_products.product_id', 'products.name')
-            ->orderBy('batches.id', 'desc');
+                ->orderBy('batches.id', 'desc');
         } else {
             $query->select(
                 'batch_products.product_id',
@@ -531,9 +574,10 @@ class ReportService
 
         $this->applyInventoryFilters($query, $filters);
 
-        if ($entity && $perPage) {
+        if ($entity) {
             $query->where('ledger_sums.historical_qty', '>', 0);
-            return $query->paginate($perPage)->withQueryString();
+
+            return $perPage ? $query->paginate($perPage)->withQueryString() : $query->get();
         }
 
         return $query->get();
@@ -541,24 +585,24 @@ class ReportService
 
     protected function applyOrderFilters($query, array $filters, string $prefix = ''): void
     {
-        if (!empty($filters['start_date'])) {
-            $query->whereDate($prefix . 'created_at', '>=', $filters['start_date']);
+        if (! empty($filters['start_date'])) {
+            $query->whereDate($prefix.'created_at', '>=', $filters['start_date']);
         }
-        if (!empty($filters['end_date'])) {
-            $query->whereDate($prefix . 'created_at', '<=', $filters['end_date']);
+        if (! empty($filters['end_date'])) {
+            $query->whereDate($prefix.'created_at', '<=', $filters['end_date']);
         }
-        if (!empty($filters['order_status'])) {
-            $query->where($prefix . 'order_status', $filters['order_status']);
+        if (! empty($filters['order_status'])) {
+            $query->where($prefix.'order_status', $filters['order_status']);
         }
-        if (!empty($filters['payment_status'])) {
-            $query->where($prefix . 'payment_status', $filters['payment_status']);
+        if (! empty($filters['payment_status'])) {
+            $query->where($prefix.'payment_status', $filters['payment_status']);
         }
-        if (!empty($filters['payment_method'])) {
-            $query->where($prefix . 'payment_method', $filters['payment_method']);
+        if (! empty($filters['payment_method'])) {
+            $query->where($prefix.'payment_method', $filters['payment_method']);
         }
 
         // Entity level filters
-        if (!empty($filters['warehouse_id'])) {
+        if (! empty($filters['warehouse_id'])) {
             $sql = $query->toSql();
             if (str_contains($sql, 'ordered_product_batches')) {
                 $query->where('batches.warehouse_id', $filters['warehouse_id']);
@@ -567,7 +611,7 @@ class ReportService
                     $q->select(DB::raw(1))
                         ->from('ordered_product_batches')
                         ->join('batches', 'ordered_product_batches.batch_id', '=', 'batches.id')
-                        ->whereColumn('ordered_product_batches.order_id', '=', (!empty($prefix) ? $prefix . 'id' : 'orders.id'))
+                        ->whereColumn('ordered_product_batches.order_id', '=', (! empty($prefix) ? $prefix.'id' : 'orders.id'))
                         ->where('batches.warehouse_id', $filters['warehouse_id']);
                 });
             }
@@ -576,20 +620,20 @@ class ReportService
 
     protected function applyItemFilters($query, array $filters): void
     {
-        if (!empty($filters['product_id'])) {
+        if (! empty($filters['product_id'])) {
             $query->where('order_items.product_id', $filters['product_id']);
         }
-        if (!empty($filters['product_variant_id'])) {
+        if (! empty($filters['product_variant_id'])) {
             $query->where('order_items.product_variant_id', $filters['product_variant_id']);
         }
-        if (!empty($filters['category_id'])) {
-            if (!str_contains($query->toSql(), 'products')) {
+        if (! empty($filters['category_id'])) {
+            if (! str_contains($query->toSql(), 'products')) {
                 $query->join('products', 'order_items.product_id', '=', 'products.id');
             }
             $query->where('products.category_id', $filters['category_id']);
         }
-        if (!empty($filters['brand_id'])) {
-            if (!str_contains($query->toSql(), 'products')) {
+        if (! empty($filters['brand_id'])) {
+            if (! str_contains($query->toSql(), 'products')) {
                 $query->join('products', 'order_items.product_id', '=', 'products.id');
             }
             $query->where('products.brand_id', $filters['brand_id']);
@@ -598,10 +642,10 @@ class ReportService
 
     protected function hasItemFilters(array $filters): bool
     {
-        return !empty($filters['product_id']) || 
-               !empty($filters['product_variant_id']) || 
-               !empty($filters['category_id']) || 
-               !empty($filters['brand_id']);
+        return ! empty($filters['product_id']) ||
+               ! empty($filters['product_variant_id']) ||
+               ! empty($filters['category_id']) ||
+               ! empty($filters['brand_id']);
     }
 
     protected function getEmptyTotals(): array

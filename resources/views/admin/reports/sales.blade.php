@@ -7,7 +7,7 @@
     </div>
 
     <!-- Filters -->
-    <div class="card mb-4 border-0 shadow-sm filter-card">
+    <div class="card mb-4 border-0 shadow-sm filter-card no-print">
         <div class="card-body">
             <form action="{{ route('admin.reports.sales') }}" method="GET" class="row g-3">
                 <div class="col-md-2">
@@ -101,7 +101,7 @@
     </div>
 
     <!-- Summary Metrics -->
-    <div class="row g-3 mb-4">
+    <div class="row g-3 mb-4 no-print">
         <div class="col-md-6">
             <div class="card border-0 shadow-sm border-start border-primary border-4 h-100">
                 <div class="card-body">
@@ -285,7 +285,11 @@
                 </div>
             </div>
             <div class="card-footer bg-white border-0 py-3">
-                {{ $data->links() }}
+            @if($data instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                <div class="mt-3">
+                    {{ $data->links() }}
+                </div>
+            @endif
             </div>
         </div>
     @else
@@ -561,35 +565,60 @@
     // Auto-print logic for full data view
     $(document).ready(function() {
         if (new URLSearchParams(window.location.search).has('is_print')) {
-            // Hide non-essential elements for the full-page print
-            $('.no-print, .btn-group, .btn, .bx, iconify-icon, .card-header, .card-footer, .pagination').hide();
+            // Hide everything first
+            $('body > *').hide();
             
-            // Add a header for the print
+            // Create a print container
+            const printContainer = $('<div class="print-container"></div>').appendTo('body');
+            
+            // Add business header
             const bName = "{{ \App\HelperClass::generalSettings()->business_name ?? 'Smart Ecom' }}";
             const dateStr = new Date().toLocaleString();
             const reportTitle = "{{ $title ?? 'Sales Report' }}";
             
-            $('body').prepend(`
+            printContainer.append(`
                 <div class="text-center mb-4 border-bottom pb-3">
-                    <h1>${bName}</h1>
-                    <h3>${reportTitle}</h3>
-                    <p>Generated: ${dateStr}</p>
+                    <h1 class="fw-bold mb-1">${bName}</h1>
+                    <h3 class="mb-2">${reportTitle}</h3>
+                    <p class="mb-0 text-muted">Generated on: ${dateStr}</p>
                 </div>
             `);
 
-            // Apply print styles
+            // Clone the table and clean it
+            const tableClone = $('#detailed-table-container').clone();
+            tableClone.find('.btn-group, .btn, .bx, iconify-icon').remove();
+            printContainer.append(tableClone);
+
+            // Apply print-specific styles
             $('<style>')
                 .prop('type', 'text/css')
-                .html('body{background:white !important; color:black !important; padding: 20px !important;} table{width:100% !important; border-collapse:collapse !important;} th,td{border:1px solid #ddd !important; padding:8px !important; font-size:12px !important;} .card{border:none !important; shadow:none !important;}')
+                .html(`
+                    @media print {
+                        body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; }
+                        .print-container { padding: 40px !important; }
+                        table { width: 100% !important; border-collapse: collapse !important; margin-top: 20px !important; }
+                        th, td { border: 1px solid #000 !important; padding: 10px !important; font-size: 12px !important; color: black !important; }
+                        th { background-color: #f8f9fa !important; font-weight: bold !important; -webkit-print-color-adjust: exact; }
+                        .text-end { text-align: right !important; }
+                        .text-center { text-align: center !important; }
+                        .fw-bold { font-weight: bold !important; }
+                        .text-muted { color: #6c757d !important; }
+                    }
+                `)
                 .appendTo('head');
 
             window.print();
+            
+            setTimeout(() => {
+                if (confirm('Close this print tab?')) window.close();
+            }, 500);
         }
     });
 
     function printFullReport() {
         const url = new URL(window.location.href);
         url.searchParams.set('is_print', '1');
+        url.searchParams.delete('page');
         window.open(url.toString(), '_blank');
     }
 

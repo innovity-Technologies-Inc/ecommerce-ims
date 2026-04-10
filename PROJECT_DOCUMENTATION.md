@@ -138,6 +138,9 @@
         *   **Stagnant:** 91+ days old (flagged for immediate review/promotion).
     5. **Stock Movement Trace:** Provides a chronological audit trail of all transactions for specific products, warehouses, or batches via `stock_ledgers`.
     6. **Serial Tracing:** Allows administrators to track the lifecycle of individual physical units (serials) from receipt to sale or wastage.
+    7. **Reporting & Exporting (REQ-140, REQ-141):** 
+        *   **Full-Data Excel Export (REQ-141):** Generates multi-column spreadsheets for all detailed views (Warehouse, Product, Batch, Movement, Aging, Wastage, Serial). Backend logic is explicitly configured to bypass UI-driven pagination parameters (by passing `null` for `perPage` limits), ensuring the exported file contains the *full* dataset matching the active filters regardless of which page the user is viewing.
+        *   **High-Fidelity Printing:** Implements a specialized `printFullReport` JS logic that captures all records (bypassing pagination) and renders a clean, professional PDF-ready snapshot with business branding, report headers, and consistent table formatting.
 - **Data & Storage (DB Connectivity):**
     *   `inventory_levels`: The primary source for current quantity snapshots.
     *   `batch_products`: Linked to provide `unit_cost` for valuation metrics.

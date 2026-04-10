@@ -16,7 +16,7 @@ class DashboardController extends Controller
         $summary = $this->dashboardService->getSummaryMetrics();
         $yearlyRevenueVsCostData = $this->dashboardService->getYearlyRevenueVsCostData();
         $revenueVsCostData = $this->dashboardService->getRevenueVsCostData();
-        
+
         // Orders & Purchases data
         $monthlyOrderData = $this->dashboardService->getMonthlyOrderData();
         $yearlyOrderData = $this->dashboardService->getYearlyOrderData();
@@ -43,7 +43,8 @@ class DashboardController extends Controller
 
     public function bestSellingProducts(\Illuminate\Http\Request $request)
     {
-        $products = $this->dashboardService->getBestSellingProductsPaged($request->all(), 20);
+        $perPage = $request->has('is_print') ? null : 20;
+        $products = $this->dashboardService->getBestSellingProductsPaged($request->all(), $perPage);
         $categories = $this->productService->getCategoriesForDropdown();
         $brands = $this->productService->getBrandsForDropdown();
 
@@ -54,9 +55,10 @@ class DashboardController extends Controller
         return view('admin.products.best-selling', compact('products', 'categories', 'brands'));
     }
 
-    public function lowStockProducts()
+    public function lowStockProducts(\Illuminate\Http\Request $request)
     {
-        $lowStockProducts = $this->dashboardService->getLowStockProducts(50);
+        $limit = $request->has('is_print') ? 500 : 50;
+        $lowStockProducts = $this->dashboardService->getLowStockProducts($limit);
 
         return view('admin.products.low-stock', compact('lowStockProducts'));
     }

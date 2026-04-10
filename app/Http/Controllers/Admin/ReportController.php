@@ -214,7 +214,7 @@ class ReportController extends Controller
 
         // 2. Dashboard Mode (Show top 10 for all)
         $rawReport = $this->reportService->getStockReport($filters);
-        
+
         $summary = [
             'total_qty' => $rawReport->sum('current_quantity'),
             'damaged_qty' => $rawReport->sum('damaged_quantity'),
@@ -246,49 +246,128 @@ class ReportController extends Controller
     public function exportStock(Request $request): BinaryFileResponse
     {
         $filters = $request->all();
-        $tab = $request->get('tab', 'main');
+        $view = $request->get('view', 'main');
         $headings = [];
         $exportData = [];
         $title = 'Stock Report';
 
-        switch ($tab) {
+        switch ($view) {
+            case 'warehouse':
+                $title = 'Stock by Warehouse';
+                $headings = ['Warehouse', 'Total Quantity', 'Damaged Quantity', 'Valuation'];
+                $data = $this->reportService->getStockReport(array_merge($filters, ['group_by' => 'warehouse']));
+                foreach ($data as $item) {
+                    $exportData[] = [
+                        $item->name,
+                        $item->quantity,
+                        $item->damaged_quantity,
+                        number_format($item->valuation, 2, '.', ''),
+                    ];
+                }
+                break;
+            case 'product':
+                $title = 'Stock by Product';
+                $headings = ['Product', 'Total Quantity', 'Damaged Quantity', 'Valuation'];
+                $data = $this->reportService->getStockReport(array_merge($filters, ['group_by' => 'product']));
+                foreach ($data as $item) {
+                    $exportData[] = [
+                        $item->name,
+                        $item->quantity,
+                        $item->damaged_quantity,
+                        number_format($item->valuation, 2, '.', ''),
+                    ];
+                }
+                break;
+            case 'batch':
+                $title = 'Stock by Batch';
+                $headings = ['Batch #', 'SKU', 'Product', 'Warehouse', 'Current Qty', 'Damaged Qty', 'Valuation'];
+                $data = $this->reportService->getStockReport($filters);
+                foreach ($data as $item) {
+                    $exportData[] = [
+                        $item->batch_number,
+                        $item->sku,
+                        $item->product_name,
+                        $item->warehouse_name,
+                        $item->current_quantity,
+                        $item->damaged_quantity,
+                        number_format($item->inventory_value, 2, '.', ''),
+                    ];
+                }
+                break;
             case 'movement':
                 $title = 'Stock Movements';
                 $headings = ['Date', 'Product', 'Warehouse', 'Batch', 'Change Qty', 'Type'];
-                $data = $this->reportService->getStockMovements($filters, 1000); // Higher limit for export
+                $data = $this->reportService->getStockMovements($filters, null); // null for full export
                 foreach ($data as $item) {
                     $exportData[] = [
-                        $item->created_at, $item->product_name, $item->warehouse_name,
-                        $item->batch_number, $item->change_qty, $item->transaction_type,
+                        $item->created_at,
+                        $item->product_name,
+                        $item->warehouse_name,
+                        $item->batch_number,
+                        $item->change_qty,
+                        str_replace('_', ' ', $item->transaction_type),
                     ];
                 }
                 break;
             case 'aging':
                 $title = 'Batch Aging';
-                $headings = ['Batch #', 'Product', 'Warehouse', 'Supplier', 'Receipt Date', 'Age (Days)'];
-                $data = $this->reportService->getBatchAging($filters, 1000);
+                $headings = ['Batch #', 'Warehouse', 'Supplier', 'Age (Days)'];
+                $data = $this->reportService->getBatchAging($filters, null); // null for full export
                 foreach ($data as $item) {
                     $exportData[] = [
-                        $item->batch_number, 'N/A', $item->warehouse_name,
-                        $item->supplier_name, $item->created_at, $item->age_days,
+                        $item->batch_number,
+                        $item->warehouse_name,
+                        $item->supplier_name,
+                        $item->age_days,
+                    ];
+                }
+                break;
+            case 'wastage_product':
+            case 'wastage_warehouse':
+            case 'wastage_batch':
+                $type = str_replace('wastage_', '', $view);
+                $title = 'Wastage by '.ucfirst($type);
+                $headings = [ucfirst($type), 'Wastage Quantity'];
+                $data = $this->reportService->getWastageBreakdown($type, $filters);
+                foreach ($data as $item) {
+                    $exportData[] = [
+                        $item->name,
+                        $item->quantity,
+                    ];
+                }
+                break;
+            case 'serial':
+                $title = 'Serial Trace Report';
+                $headings = ['Serial #', 'Product', 'Status', 'Last Updated'];
+                $data = $this->reportService->getSerialTrace($filters, null); // null for full export
+                foreach ($data as $item) {
+                    $exportData[] = [
+                        $item->serial_no,
+                        $item->product_name,
+                        ucfirst($item->stock_status),
+                        $item->updated_at,
                     ];
                 }
                 break;
             default:
-                $title = 'Stock Status';
+                $title = 'Full Stock Status';
                 $headings = ['Warehouse', 'Product', 'SKU', 'Batch', 'Qty', 'Damaged', 'Valuation'];
                 $data = $this->reportService->getStockReport($filters);
                 foreach ($data as $item) {
                     $exportData[] = [
-                        $item->warehouse_name, $item->product_name, $item->sku,
-                        $item->batch_number, $item->current_quantity, $item->damaged_quantity,
+                        $item->warehouse_name,
+                        $item->product_name,
+                        $item->sku,
+                        $item->batch_number,
+                        $item->current_quantity,
+                        $item->damaged_quantity,
                         number_format($item->inventory_value, 2, '.', ''),
                     ];
                 }
                 break;
         }
 
-        return Excel::download(new SalesExport($exportData, $headings, $title), 'stock_report_'.$tab.'_'.now()->format('Ymd_His').'.xlsx');
+        return Excel::download(new SalesExport($exportData, $headings, $title), 'stock_report_'.$view.'_'.now()->format('Ymd_His').'.xlsx');
     }
 
     /**
@@ -298,41 +377,54 @@ class ReportController extends Controller
     {
         $filters = $request->all();
         $type = $request->get('type', 'product');
-        $report = $this->reportService->getInventoryReport($filters);
 
         $headings = [];
         $exportData = [];
         $title = 'Inventory Report';
 
-        switch ($type) {
-            case 'warehouse':
-                $title = 'Inventory by Warehouse';
-                $headings = ['Warehouse', 'Quantity', 'Valuation'];
-                foreach ($report['breakdowns']['warehouse'] as $item) {
-                    $exportData[] = [$item['name'], $item['quantity'], number_format($item['valuation'], 2, '.', '')];
-                }
-                break;
-            case 'product':
-                $title = 'Inventory by Product';
-                $headings = ['Product', 'Quantity', 'Valuation'];
-                foreach ($report['breakdowns']['product'] as $item) {
-                    $exportData[] = [$item['name'], $item['quantity'], number_format($item['valuation'], 2, '.', '')];
-                }
-                break;
-            case 'batch':
-                $title = 'Inventory by Batch';
-                $headings = ['Batch #', 'Warehouse', 'Product', 'Quantity', 'Unit Cost', 'Valuation'];
-                foreach ($report['breakdowns']['batch'] as $item) {
-                    $exportData[] = [
-                        $item['name'],
-                        $item['warehouse'],
-                        $item['product'],
-                        $item['quantity'],
-                        number_format($item['unit_cost'], 2, '.', ''),
-                        number_format($item['valuation'], 2, '.', ''),
-                    ];
-                }
-                break;
+        // Use the detailed data fetching if 'type' is one of the view types
+        if (in_array($type, ['warehouse', 'product', 'batch'])) {
+            $reportData = $this->reportService->getInventoryReport($filters, $type, null); // null perPage for full export
+            $data = $reportData['data'];
+
+            switch ($type) {
+                case 'warehouse':
+                    $title = 'Inventory by Warehouse';
+                    $headings = ['Warehouse', 'Quantity', 'Valuation'];
+                    foreach ($data as $item) {
+                        $exportData[] = [$item->name, $item->quantity, number_format($item->valuation, 2, '.', '')];
+                    }
+                    break;
+                case 'product':
+                    $title = 'Inventory by Product';
+                    $headings = ['Product', 'Quantity', 'Valuation'];
+                    foreach ($data as $item) {
+                        $exportData[] = [$item->name, $item->quantity, number_format($item->valuation, 2, '.', '')];
+                    }
+                    break;
+                case 'batch':
+                    $title = 'Inventory by Batch';
+                    $headings = ['Batch #', 'Warehouse', 'Product', 'Quantity', 'Unit Cost', 'Valuation'];
+                    foreach ($data as $item) {
+                        $exportData[] = [
+                            $item->name,
+                            $item->warehouse,
+                            $item->product,
+                            $item->quantity,
+                            number_format($item->unit_cost, 2, '.', ''),
+                            number_format($item->valuation, 2, '.', ''),
+                        ];
+                    }
+                    break;
+            }
+        } else {
+            // Dashboard mode fallback
+            $report = $this->reportService->getInventoryReport($filters);
+            $title = 'Inventory Overview';
+            $headings = ['Product', 'Quantity', 'Valuation'];
+            foreach ($report['breakdowns']['product'] as $item) {
+                $exportData[] = [$item['name'], $item['quantity'], number_format($item['valuation'], 2, '.', '')];
+            }
         }
 
         return Excel::download(new SalesExport($exportData, $headings, $title), 'inventory_'.$type.'_'.now()->format('Ymd_His').'.xlsx');
@@ -361,28 +453,72 @@ class ReportController extends Controller
                 number_format($item->gross_profit, 2, '.', ''),
             ])->toArray();
         } else {
-            $data = $this->reportService->getSalesByEntity($type, $filters);
+            // Fetch all records for export (null perPage)
+            $data = $this->reportService->getSalesByEntity($type, $filters, null);
 
             switch ($type) {
                 case 'product':
                     $title = 'Top Products by Sales';
                     $headings = ['Product', 'Units Sold', 'Net Sales', 'Total Cost', 'Gross Profit'];
-                    $exportData = $data->map(fn ($item) => [$item->name, $item->units_sold, $item->net_sales, $item->total_cost, $item->gross_profit])->toArray();
+                    foreach ($data as $item) {
+                        $exportData[] = [
+                            $item->name,
+                            $item->units_sold,
+                            number_format($item->net_sales, 2, '.', ''),
+                            number_format($item->total_cost, 2, '.', ''),
+                            number_format($item->gross_profit, 2, '.', ''),
+                        ];
+                    }
                     break;
                 case 'warehouse':
                     $title = 'Sales by Warehouse';
                     $headings = ['Warehouse', 'Units Sold', 'Net Sales', 'Total Cost', 'Gross Profit'];
-                    $exportData = $data->map(fn ($item) => [$item->name, $item->units_sold, $item->net_sales, $item->total_cost, $item->gross_profit])->toArray();
+                    foreach ($data as $item) {
+                        $exportData[] = [
+                            $item->name,
+                            $item->units_sold,
+                            number_format($item->net_sales, 2, '.', ''),
+                            number_format($item->total_cost, 2, '.', ''),
+                            number_format($item->gross_profit, 2, '.', ''),
+                        ];
+                    }
                     break;
                 case 'batch':
                     $title = 'Sales by Batch';
                     $headings = ['Batch #', 'Units Sold', 'Net Sales', 'Total Cost', 'Gross Profit'];
-                    $exportData = $data->map(fn ($item) => [$item->name, $item->units_sold, $item->net_sales, $item->total_cost, $item->gross_profit])->toArray();
+                    foreach ($data as $item) {
+                        $exportData[] = [
+                            $item->name,
+                            $item->units_sold,
+                            number_format($item->net_sales, 2, '.', ''),
+                            number_format($item->total_cost, 2, '.', ''),
+                            number_format($item->gross_profit, 2, '.', ''),
+                        ];
+                    }
+                    break;
+                case 'variant':
+                    $title = 'Sales by Variant';
+                    $headings = ['Variant', 'Units Sold', 'Net Sales', 'Total Cost', 'Gross Profit'];
+                    foreach ($data as $item) {
+                        $exportData[] = [
+                            $item->name,
+                            $item->units_sold,
+                            number_format($item->net_sales, 2, '.', ''),
+                            number_format($item->total_cost, 2, '.', ''),
+                            number_format($item->gross_profit, 2, '.', ''),
+                        ];
+                    }
                     break;
                 case 'payment_method':
                     $title = 'Payment Method Breakdown';
                     $headings = ['Method', 'Orders', 'Net Sales'];
-                    $exportData = $data->map(fn ($item) => [$item->name, $item->orders_count, $item->net_sales])->toArray();
+                    foreach ($data as $item) {
+                        $exportData[] = [
+                            $item->name,
+                            $item->orders_count,
+                            number_format($item->net_sales, 2, '.', ''),
+                        ];
+                    }
                     break;
             }
         }

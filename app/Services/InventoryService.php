@@ -159,7 +159,7 @@ class InventoryService
     /**
      * Get all warehouses with search and sorting.
      */
-    public function getAllWarehouses(array $params = [], int $perPage = 10): LengthAwarePaginator
+    public function getAllWarehouses(array $params = [], ?int $perPage = 10): \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection
     {
         $query = Warehouse::query();
 
@@ -187,13 +187,13 @@ class InventoryService
                 break;
         }
 
-        return $query->paginate($perPage);
+        return $perPage ? $query->paginate($perPage) : $query->get();
     }
 
     /**
      * Get Stock Report (Inventory Levels).
      */
-    public function getStockReport(array $params = [], int $perPage = 15): LengthAwarePaginator
+    public function getStockReport(array $params = [], ?int $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection
     {
         $query = InventoryLevel::with(['product', 'variant', 'warehouse', 'batch']);
 
@@ -228,13 +228,13 @@ class InventoryService
                 break;
         }
 
-        return $query->paginate($perPage);
+        return $perPage ? $query->paginate($perPage) : $query->get();
     }
 
     /**
      * Get Damaged/Quarantine Products Report.
      */
-    public function getDamagedReport(array $params = [], int $perPage = 15): LengthAwarePaginator
+    public function getDamagedReport(array $params = [], ?int $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection
     {
         // Focus on items where damaged_quantity > 0
         $query = InventoryLevel::with(['product', 'variant', 'warehouse', 'batch'])
@@ -272,13 +272,13 @@ class InventoryService
                 break;
         }
 
-        return $query->paginate($perPage);
+        return $perPage ? $query->paginate($perPage) : $query->get();
     }
 
     /**
      * Get Batch Report.
      */
-    public function getBatchReport(array $params = [], int $perPage = 15): LengthAwarePaginator
+    public function getBatchReport(array $params = [], ?int $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection
     {
         $query = Batch::with(['purchaseOrder', 'warehouse', 'supplier']);
 
@@ -300,7 +300,7 @@ class InventoryService
                 break;
         }
 
-        return $query->paginate($perPage);
+        return $perPage ? $query->paginate($perPage) : $query->get();
     }
 
     /**
@@ -413,10 +413,10 @@ class InventoryService
     /**
      * Get a specific supplier with its paginated purchase orders.
      */
-    public function getSupplierWithOrders(int $id, int $perPage = 10): array
+    public function getSupplierWithOrders(int $id, ?int $perPage = 10): array
     {
         $supplier = Supplier::findOrFail($id);
-        $purchaseOrders = $supplier->purchaseOrders()->latest()->paginate($perPage);
+        $purchaseOrders = $perPage ? $supplier->purchaseOrders()->latest()->paginate($perPage) : $supplier->purchaseOrders()->latest()->get();
 
         return [
             'supplier' => $supplier,

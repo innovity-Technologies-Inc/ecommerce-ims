@@ -145,12 +145,6 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-128:** Stock Report Calculation Fix: Correct the stock calculation discrepancy in the Stock Report by ensuring the join between `inventory_levels` and `batch_products` includes `product_variant_id` to prevent row duplication. Align with Inventory Valuation logic.
 - [x] **REQ-129:** Warehouse Performance Report: Implement a comprehensive warehouse efficiency and quality metrics report. KPIs include stock movements (Opening, Received, Sold, Adjusted, Damaged, RTV, Closing), Inventory Value, Fulfillment metrics (Fill rate, Damage rate, Stock turnover), and Operational metrics (Slow-moving stock %, Low-stock SKU count). Requires integration with `stock_ledgers`, `inventory_levels`, and `order_items`.
 - [x] **REQ-130:** Standardize Product Variant Stock Defaults: Update `product_variants` table to ensure the `stock` column has a default value of `0` and is `NOT NULL`, matching the `products` table schema for consistency and to prevent calculation errors.
-
- 
- 
- 
- 
- 
 - [x] **REQ-131:** Warehouse Performance Report Export & Print: Implement "Excel Export" and "Print" functionality for the Warehouse Performance report (both index and detail views). Align UI and logic with existing Sales and Inventory reports, utilizing the `ReportService` and `WarehousePerformanceService`.
 - [ ] **REQ-132:** Warehouse Performance Gross Fill Rate Logic Update: Update the calculation logic for "Gross Fill Rate" in the Warehouse Performance Report to use the `stock_ledger` table as the primary source of truth for total units ordered and fulfilled.
 - [ ] **REQ-133:** Low Stock Notifications & Automation: Implement a system to monitor low stock at global and warehouse levels, display alerts in the dashboard, and send automated email notifications to a designated address configured in General Settings. Includes a background scheduler and restock quantity suggestions.
@@ -160,6 +154,8 @@ This document lists the high-level requirements for the modules implemented in t
 - [ ] **REQ-137:** Aesthetic Admin Login UI: Redesign the admin login page with a stunning, modern dark theme aesthetic, featuring glassmorphism, glowing accents, and high-quality visual elements.
 - [ ] **REQ-138:** Homepage Section Product Selector UI: Standardize the product selection interface for homepage sections (Best Sellers, Hot Deals, etc.) to match the AJAX-driven, dual-column UI used in the Flash Sale module.
 - [ ] **REQ-139:** Full Data Report Printing: Update the print functionality in all administrative reports (Sales, Inventory, Stock, Warehouse Performance) to ensure that clicking "Print" captures all available data rows instead of just the currently paginated page.
+- [x] **REQ-140:** Stock Report View-All Refinement: Implement full-data "Print" and "Excel Export" for all detailed stock report views (Warehouse, Product, Batch, Movement, Aging, Wastage, Serial). Ensure Excel exports match the current view's data and filters instead of defaulting to the main stock report. Remove redundant filters and include proper headers in printed versions.
+- [x] **REQ-141:** Fix Excel Exports: Ensure all Excel exports in ReportController retrieve full data regardless of the active UI page by explicitly passing `null` for `perPage` limits and updating default pagination values in ReportService.
 
-R E Q - 9 9 :   R e m o v e   m a n u a l   p a g i n a t i o n   i n f o   b l o c k s   f r o m   a d m i n   t a b l e   p a r t i a l s   t o   a v o i d   d u p l i c a t i o n   w i t h   L a r a v e l ' s   l i n k s ( )   m e t h o d .  
- 
+## Other
+- [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.

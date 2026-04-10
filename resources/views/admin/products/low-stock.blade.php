@@ -7,7 +7,12 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="card-title">All Low Stock Products (Global & Warehouse)</h4>
-                    <span class="badge bg-soft-danger text-danger">Total Alerts: {{ count($lowStockProducts) }}</span>
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" class="btn btn-sm btn-soft-secondary no-print" onclick="printFullReport()">
+                            <i class="bx bx-printer"></i> Print Report
+                        </button>
+                        <span class="badge bg-soft-danger text-danger">Total Alerts: {{ count($lowStockProducts) }}</span>
+                    </div>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -66,4 +71,40 @@
     </div>
 </div>
 
+@endsection
+
+@section('scripts')
+<script>
+$(document).ready(function() {
+    // Auto-print logic for full data view
+    if (new URLSearchParams(window.location.search).has('is_print')) {
+        $('.no-print, .btn-group, .btn, .bx, iconify-icon, .card-header, .card-footer, .pagination').hide();
+        
+        const bName = "{{ \App\HelperClass::generalSettings()->business_name ?? 'Smart Ecom' }}";
+        const dateStr = new Date().toLocaleString();
+        const reportTitle = "Low Stock Alerts Report";
+        
+        $('body').prepend(`
+            <div class="text-center mb-4 border-bottom pb-3">
+                <h1>${bName}</h1>
+                <h3>${reportTitle}</h3>
+                <p>Generated: ${dateStr}</p>
+            </div>
+        `);
+
+        $('<style>')
+            .prop('type', 'text/css')
+            .html('body{background:white !important; color:black !important; padding: 20px !important;} table{width:100% !important; border-collapse:collapse !important;} th,td{border:1px solid #ddd !important; padding:8px !important; font-size:12px !important;} .card{border:none !important; shadow:none !important;}')
+            .appendTo('head');
+
+        window.print();
+    }
+});
+
+function printFullReport() {
+    const url = new URL(window.location.href);
+    url.searchParams.set('is_print', '1');
+    window.open(url.toString(), '_blank');
+}
+</script>
 @endsection

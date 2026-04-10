@@ -49,7 +49,6 @@ class WarehousePerformanceController extends Controller
     public function export(Request $request): BinaryFileResponse
     {
         $filters = $request->all();
-        $warehouseId = $filters['warehouse_id'] ?? null;
 
         if (empty($filters['start_date'])) {
             $filters['start_date'] = now()->subDays(30)->format('Y-m-d');
@@ -58,27 +57,28 @@ class WarehousePerformanceController extends Controller
             $filters['end_date'] = now()->format('Y-m-d');
         }
 
+        // Pass null for perPage to get all records
         $data = $this->performanceService->getPerformanceReport($filters, null);
 
         $exportData = [];
         foreach ($data as $row) {
             $exportData[] = [
-                'Warehouse' => $row['warehouse_name'],
-                'Opening Stock' => (int) ($row['opening_stock'] ?? 0),
-                'Received' => (int) ($row['received_qty'] ?? 0),
-                'Damaged (Supplier)' => (int) ($row['po_damaged_qty'] ?? 0),
-                'Sold' => (int) ($row['sold_qty'] ?? 0),
-                'Adjusted In' => (int) ($row['adjusted_in'] ?? 0),
-                'Returns' => (int) ($row['returns_qty'] ?? 0),
-                'RTV' => (int) ($row['rtv_qty'] ?? 0),
-                'Wastage (Total)' => (int) ($row['total_wastage_qty'] ?? 0),
-                'Closing Stock' => (int) ($row['total_closing_stock'] ?? 0),
-                'Inventory Value' => number_format($row['inventory_value'] ?? 0, 2),
-                'Gross Fill Rate (%)' => number_format($row['fill_rate'] ?? 0, 2).'%',
-                'Net Fill Rate (%)' => number_format($row['net_fill_rate'] ?? 0, 2).'%',
-                'Return Rate (%)' => number_format($row['return_rate'] ?? 0, 2).'%',
-                'Wastage Rate (%)' => number_format($row['damage_rate'] ?? 0, 2).'%',
-                'Stock Turnover' => number_format($row['stock_turnover'], 2).'x',
+                $row['warehouse_name'],
+                (int) ($row['opening_stock'] ?? 0),
+                (int) ($row['received_qty'] ?? 0),
+                (int) ($row['po_damaged_qty'] ?? 0),
+                (int) ($row['sold_qty'] ?? 0),
+                (int) ($row['adjusted_in'] ?? 0),
+                (int) ($row['returns_qty'] ?? 0),
+                (int) ($row['rtv_qty'] ?? 0),
+                (int) ($row['total_wastage_qty'] ?? 0),
+                (int) ($row['total_closing_stock'] ?? 0),
+                number_format($row['inventory_value'] ?? 0, 2, '.', ''),
+                number_format($row['fill_rate'] ?? 0, 2, '.', ''),
+                number_format($row['net_fill_rate'] ?? 0, 2, '.', ''),
+                number_format($row['return_rate'] ?? 0, 2, '.', ''),
+                number_format($row['damage_rate'] ?? 0, 2, '.', ''),
+                number_format($row['stock_turnover'], 2, '.', ''),
             ];
         }
 

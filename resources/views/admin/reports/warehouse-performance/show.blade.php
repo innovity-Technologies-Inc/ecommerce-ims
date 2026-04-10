@@ -1,19 +1,8 @@
 @extends('admin.structure.app')
 
 @section('content')
-<style>
-    @media print {
-        .no-print { display: none !important; }
-        body { background: white !important; padding: 0 !important; }
-        .container-xxl { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
-        .card { border: 1px solid #eee !important; box-shadow: none !important; margin-bottom: 15px !important; }
-        .card-header { background-color: #f8f9fa !important; border-bottom: 1px solid #eee !important; }
-        .display-5 { font-size: 2.5rem !important; }
-        .border-start { border-left: 4px solid #eee !important; }
-    }
-</style>
 <div class="container-xxl" id="performance-detail-report">
-    <div class="d-flex align-items-center justify-content-between mb-4 no-print-section">
+    <div class="d-flex align-items-center justify-content-between mb-4 no-print">
         <div>
             <a href="{{ route('admin.reports.warehouse-performance', ['start_date' => $filters['start_date'], 'end_date' => $filters['end_date']]) }}" class="btn btn-sm btn-outline-secondary mb-2 no-print">
                 <i class="bx bx-arrow-back"></i> Back to Dashboard
@@ -22,9 +11,18 @@
             <p class="text-muted small mb-0">Performance Period: {{ $filters['start_date'] }} to {{ $filters['end_date'] }}</p>
         </div>
         <div class="no-print">
-            <button type="button" class="btn btn-sm btn-soft-secondary" onclick="window.print()">
-                <i class="bx bx-printer"></i> Print Report
+            <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printDetailedReport()">
+                <i class="bx bx-printer"></i> Print Full Report
             </button>
+        </div>
+    </div>
+
+    <!-- Print Header (Hidden on screen) -->
+    <div class="d-none d-print-block">
+        <div class="text-center mb-4 border-bottom pb-3">
+            <h1 class="fw-bold mb-1">{{ \App\HelperClass::generalSettings()->business_name ?? 'Smart Ecom' }}</h1>
+            <h3 class="mb-2">Warehouse Performance Detail: {{ $warehouse->name }}</h3>
+            <p class="mb-0 text-muted small">Period: {{ $filters['start_date'] }} to {{ $filters['end_date'] }} | Generated: {{ date('Y-m-d H:i') }}</p>
         </div>
     </div>
 
@@ -236,4 +234,49 @@
         </div>
     </div>
 </div>
+@section('scripts')
+<script>
+    function printDetailedReport() {
+        window.print();
+    }
+</script>
+
+<style>
+    @media print {
+        @page { size: portrait; margin: 1.5cm; }
+        .no-print { display: none !important; }
+        body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; font-family: sans-serif; }
+        .container-xxl { max-width: 100% !important; width: 100% !important; padding: 0 !important; margin: 0 !important; }
+        
+        .card { 
+            border: 1px solid #000 !important; 
+            box-shadow: none !important; 
+            margin-bottom: 20px !important; 
+            break-inside: avoid;
+        }
+        
+        .card-header { 
+            background-color: #f8f9fa !important; 
+            border-bottom: 1px solid #000 !important; 
+            -webkit-print-color-adjust: exact;
+        }
+        
+        .text-success { color: #198754 !important; }
+        .text-danger { color: #dc3545 !important; }
+        .text-primary { color: #0d6efd !important; }
+        .text-info { color: #0dcaf0 !important; }
+        .text-warning { color: #ffc107 !important; }
+        .badge { border: 1px solid #000; color: #000 !important; background: transparent !important; }
+        
+        .progress { border: 1px solid #000 !important; background: #fff !important; }
+        .progress-bar { background-color: #000 !important; }
+        
+        /* Ensure layout columns work in print */
+        .row { display: flex !important; flex-wrap: wrap !important; }
+        .col-md-8 { width: 66.66% !important; }
+        .col-md-4 { width: 33.33% !important; }
+        .col-md-6 { width: 50% !important; }
+        .col-md-3 { width: 25% !important; }
+    }
+</style>
 @endsection
