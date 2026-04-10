@@ -10,6 +10,7 @@
     <div class="card mb-4 border-0 shadow-sm filter-card no-print">
         <div class="card-body">
             <form action="{{ route('admin.reports.stock') }}" method="GET" class="row g-3">
+                <input type="hidden" name="view" value="{{ $view ?? '' }}">
                 <div class="col-md-2">
                     <label class="form-label small fw-bold">Start Date</label>
                     <input type="date" name="start_date" class="form-control" value="{{ $filters['start_date'] ?? '' }}">

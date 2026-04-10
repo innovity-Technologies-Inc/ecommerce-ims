@@ -10,6 +10,7 @@
     <div class="card mb-4 border-0 shadow-sm filter-card no-print">
         <div class="card-body">
             <form action="{{ route('admin.reports.sales') }}" method="GET" class="row g-3">
+                <input type="hidden" name="view" value="{{ $view ?? '' }}">
                 <div class="col-md-2">
                     <label class="form-label small fw-bold">Group By</label>
                     <select name="group_by" class="form-select">
