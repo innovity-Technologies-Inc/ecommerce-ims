@@ -17,18 +17,21 @@ class SalesExport implements FromArray, ShouldAutoSize, WithHeadings, WithTitle
 
     public function array(): array
     {
-        return collect($this->data)->map(function ($row) {
-            // Convert row to collection if it's an object or array
-            return collect($row)->map(function ($value) {
-                // Robust check for 'empty' values that should be 0 in Excel
-                // This covers: null, false, empty strings, and strings with only whitespace
-                if ($value === null || $value === false || trim((string) $value) === '') {
-                    return 0;
+        $exportData = [];
+        foreach ($this->data as $row) {
+            $newRow = [];
+            foreach ($row as $value) {
+                // Ensure null, false, empty strings, or whitespace-only strings become string '0'
+                if ($value === null || $value === '' || $value === false || (is_string($value) && trim($value) === '')) {
+                    $newRow[] = '0';
+                } else {
+                    $newRow[] = $value;
                 }
+            }
+            $exportData[] = $newRow;
+        }
 
-                return $value;
-            })->toArray();
-        })->toArray();
+        return $exportData;
     }
 
     public function headings(): array

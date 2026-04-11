@@ -300,12 +300,12 @@ class ReportController extends Controller
                 $data = $this->reportService->getStockMovements($filters, null); // null for full export
                 foreach ($data as $item) {
                     $exportData[] = [
-                        $item->created_at,
-                        $item->product_name,
-                        $item->warehouse_name,
-                        $item->batch_number,
-                        $item->change_qty,
-                        str_replace('_', ' ', $item->transaction_type),
+                        $item->created_at ?? 'N/A',
+                        $item->product_name ?? 'N/A',
+                        $item->warehouse_name ?? 'N/A',
+                        $item->batch_number ?? 'N/A',
+                        number_format($item->change_qty ?? 0, 0, '.', ''),
+                        str_replace('_', ' ', $item->transaction_type ?? 'N/A'),
                     ];
                 }
                 break;
@@ -315,10 +315,10 @@ class ReportController extends Controller
                 $data = $this->reportService->getBatchAging($filters, null); // null for full export
                 foreach ($data as $item) {
                     $exportData[] = [
-                        $item->batch_number,
-                        $item->warehouse_name,
-                        $item->supplier_name,
-                        $item->age_days,
+                        $item->batch_number ?? 'N/A',
+                        $item->warehouse_name ?? 'N/A',
+                        $item->supplier_name ?? 'N/A',
+                        number_format($item->age_days ?? 0, 0, '.', ''),
                     ];
                 }
                 break;
@@ -331,8 +331,8 @@ class ReportController extends Controller
                 $data = $this->reportService->getWastageBreakdown($type, $filters);
                 foreach ($data as $item) {
                     $exportData[] = [
-                        $item->name,
-                        $item->quantity,
+                        $item->name ?? 'N/A',
+                        number_format($item->quantity ?? 0, 0, '.', ''),
                     ];
                 }
                 break;
@@ -342,10 +342,10 @@ class ReportController extends Controller
                 $data = $this->reportService->getSerialTrace($filters, null); // null for full export
                 foreach ($data as $item) {
                     $exportData[] = [
-                        $item->serial_no,
-                        $item->product_name,
-                        ucfirst($item->stock_status),
-                        $item->updated_at,
+                        $item->serial_no ?? 'N/A',
+                        $item->product_name ?? 'N/A',
+                        ucfirst($item->stock_status ?? 'N/A'),
+                        $item->updated_at ?? 'N/A',
                     ];
                 }
                 break;
@@ -355,13 +355,13 @@ class ReportController extends Controller
                 $data = $this->reportService->getStockReport($filters);
                 foreach ($data as $item) {
                     $exportData[] = [
-                        $item->warehouse_name,
-                        $item->product_name,
-                        $item->sku,
-                        $item->batch_number,
-                        $item->current_quantity,
-                        $item->damaged_quantity,
-                        number_format($item->inventory_value, 2, '.', ''),
+                        $item->warehouse_name ?? 'N/A',
+                        $item->product_name ?? 'N/A',
+                        $item->sku ?? 'N/A',
+                        $item->batch_number ?? 'N/A',
+                        number_format($item->current_quantity ?? 0, 0, '.', ''),
+                        number_format($item->damaged_quantity ?? 0, 0, '.', ''),
+                        number_format($item->inventory_value ?? 0, 2, '.', ''),
                     ];
                 }
                 break;
@@ -399,7 +399,11 @@ class ReportController extends Controller
                     $title = 'Inventory by Product';
                     $headings = ['Product', 'Quantity', 'Valuation'];
                     foreach ($data as $item) {
-                        $exportData[] = [$item->name, $item->quantity, number_format($item->valuation, 2, '.', '')];
+                        $exportData[] = [
+                            $item->name ?? 'N/A',
+                            number_format($item->quantity ?? 0, 0, '.', ''),
+                            number_format($item->valuation ?? 0, 2, '.', ''),
+                        ];
                     }
                     break;
                 case 'batch':
@@ -407,12 +411,12 @@ class ReportController extends Controller
                     $headings = ['Batch #', 'Warehouse', 'Product', 'Quantity', 'Unit Cost', 'Valuation'];
                     foreach ($data as $item) {
                         $exportData[] = [
-                            $item->name,
-                            $item->warehouse,
-                            $item->product,
-                            $item->quantity,
-                            number_format($item->unit_cost, 2, '.', ''),
-                            number_format($item->valuation, 2, '.', ''),
+                            $item->name ?? 'N/A',
+                            $item->warehouse ?? 'N/A',
+                            $item->product ?? 'N/A',
+                            number_format($item->quantity ?? 0, 0, '.', ''),
+                            number_format($item->unit_cost ?? 0, 2, '.', ''),
+                            number_format($item->valuation ?? 0, 2, '.', ''),
                         ];
                     }
                     break;
@@ -423,7 +427,11 @@ class ReportController extends Controller
             $title = 'Inventory Overview';
             $headings = ['Product', 'Quantity', 'Valuation'];
             foreach ($report['breakdowns']['product'] as $item) {
-                $exportData[] = [$item['name'], $item['quantity'], number_format($item['valuation'], 2, '.', '')];
+                $exportData[] = [
+                    $item['name'] ?? 'N/A',
+                    number_format($item['quantity'] ?? 0, 0, '.', ''),
+                    number_format($item['valuation'] ?? 0, 2, '.', ''),
+                ];
             }
         }
 
@@ -446,11 +454,11 @@ class ReportController extends Controller
             $title = 'Sales Trends - '.ucfirst($summary['group_by']);
             $headings = ['Period', 'Orders', 'Net Sales', 'Total Cost', 'Gross Profit'];
             $exportData = $summary['grouped_data']->map(fn ($item) => [
-                $item->period,
-                $item->orders_count,
-                number_format($item->net_sales, 2, '.', ''),
-                number_format($item->total_cost, 2, '.', ''),
-                number_format($item->gross_profit, 2, '.', ''),
+                $item->period ?? 'N/A',
+                number_format($item->orders_count ?? 0, 0, '.', ''),
+                number_format($item->net_sales ?? 0, 2, '.', ''),
+                number_format($item->total_cost ?? 0, 2, '.', ''),
+                number_format($item->gross_profit ?? 0, 2, '.', ''),
             ])->toArray();
         } else {
             // Fetch all records for export (null perPage)
@@ -462,11 +470,11 @@ class ReportController extends Controller
                     $headings = ['Product', 'Units Sold', 'Net Sales', 'Total Cost', 'Gross Profit'];
                     foreach ($data as $item) {
                         $exportData[] = [
-                            $item->name,
-                            $item->units_sold,
-                            number_format($item->net_sales, 2, '.', ''),
-                            number_format($item->total_cost, 2, '.', ''),
-                            number_format($item->gross_profit, 2, '.', ''),
+                            $item->name ?? 'N/A',
+                            number_format($item->units_sold ?? 0, 0, '.', ''),
+                            number_format($item->net_sales ?? 0, 2, '.', ''),
+                            number_format($item->total_cost ?? 0, 2, '.', ''),
+                            number_format($item->gross_profit ?? 0, 2, '.', ''),
                         ];
                     }
                     break;
@@ -475,11 +483,11 @@ class ReportController extends Controller
                     $headings = ['Warehouse', 'Units Sold', 'Net Sales', 'Total Cost', 'Gross Profit'];
                     foreach ($data as $item) {
                         $exportData[] = [
-                            $item->name,
-                            $item->units_sold,
-                            number_format($item->net_sales, 2, '.', ''),
-                            number_format($item->total_cost, 2, '.', ''),
-                            number_format($item->gross_profit, 2, '.', ''),
+                            $item->name ?? 'N/A',
+                            number_format($item->units_sold ?? 0, 0, '.', ''),
+                            number_format($item->net_sales ?? 0, 2, '.', ''),
+                            number_format($item->total_cost ?? 0, 2, '.', ''),
+                            number_format($item->gross_profit ?? 0, 2, '.', ''),
                         ];
                     }
                     break;
@@ -488,11 +496,11 @@ class ReportController extends Controller
                     $headings = ['Batch #', 'Units Sold', 'Net Sales', 'Total Cost', 'Gross Profit'];
                     foreach ($data as $item) {
                         $exportData[] = [
-                            $item->name,
-                            $item->units_sold,
-                            number_format($item->net_sales, 2, '.', ''),
-                            number_format($item->total_cost, 2, '.', ''),
-                            number_format($item->gross_profit, 2, '.', ''),
+                            $item->name ?? 'N/A',
+                            number_format($item->units_sold ?? 0, 0, '.', ''),
+                            number_format($item->net_sales ?? 0, 2, '.', ''),
+                            number_format($item->total_cost ?? 0, 2, '.', ''),
+                            number_format($item->gross_profit ?? 0, 2, '.', ''),
                         ];
                     }
                     break;
@@ -501,11 +509,11 @@ class ReportController extends Controller
                     $headings = ['Variant', 'Units Sold', 'Net Sales', 'Total Cost', 'Gross Profit'];
                     foreach ($data as $item) {
                         $exportData[] = [
-                            $item->name,
-                            $item->units_sold,
-                            number_format($item->net_sales, 2, '.', ''),
-                            number_format($item->total_cost, 2, '.', ''),
-                            number_format($item->gross_profit, 2, '.', ''),
+                            $item->name ?? 'N/A',
+                            number_format($item->units_sold ?? 0, 0, '.', ''),
+                            number_format($item->net_sales ?? 0, 2, '.', ''),
+                            number_format($item->total_cost ?? 0, 2, '.', ''),
+                            number_format($item->gross_profit ?? 0, 2, '.', ''),
                         ];
                     }
                     break;
@@ -514,9 +522,9 @@ class ReportController extends Controller
                     $headings = ['Method', 'Orders', 'Net Sales'];
                     foreach ($data as $item) {
                         $exportData[] = [
-                            $item->name,
-                            $item->orders_count,
-                            number_format($item->net_sales, 2, '.', ''),
+                            $item->name ?? 'N/A',
+                            number_format($item->orders_count ?? 0, 0, '.', ''),
+                            number_format($item->net_sales ?? 0, 2, '.', ''),
                         ];
                     }
                     break;

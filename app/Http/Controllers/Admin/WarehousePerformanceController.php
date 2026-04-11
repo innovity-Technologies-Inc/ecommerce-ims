@@ -63,22 +63,22 @@ class WarehousePerformanceController extends Controller
         $exportData = [];
         foreach ($data as $row) {
             $exportData[] = [
-                $row['warehouse_name'],
-                (int) ($row['opening_stock'] ?? 0),
-                (int) ($row['received_qty'] ?? 0),
-                (int) ($row['po_damaged_qty'] ?? 0),
-                (int) ($row['sold_qty'] ?? 0),
-                (int) ($row['adjusted_in'] ?? 0),
-                (int) ($row['returns_qty'] ?? 0),
-                (int) ($row['rtv_qty'] ?? 0),
-                (int) ($row['total_wastage_qty'] ?? 0),
-                (int) ($row['total_closing_stock'] ?? 0),
+                $row['warehouse_name'] ?? 'N/A',
+                number_format($row['opening_stock'] ?? 0, 0, '.', ''),
+                number_format($row['received_qty'] ?? 0, 0, '.', ''),
+                number_format($row['po_damaged_qty'] ?? 0, 0, '.', ''),
+                number_format($row['sold_qty'] ?? 0, 0, '.', ''),
+                number_format($row['adjusted_in'] ?? 0, 0, '.', ''),
+                number_format($row['returns_qty'] ?? 0, 0, '.', ''),
+                number_format($row['rtv_qty'] ?? 0, 0, '.', ''),
+                number_format($row['total_wastage_qty'] ?? 0, 0, '.', ''),
+                number_format($row['total_closing_stock'] ?? 0, 0, '.', ''),
                 number_format($row['inventory_value'] ?? 0, 2, '.', ''),
                 number_format($row['fill_rate'] ?? 0, 2, '.', ''),
                 number_format($row['net_fill_rate'] ?? 0, 2, '.', ''),
                 number_format($row['return_rate'] ?? 0, 2, '.', ''),
                 number_format($row['damage_rate'] ?? 0, 2, '.', ''),
-                number_format($row['stock_turnover'], 2, '.', ''),
+                number_format($row['stock_turnover'] ?? 0, 2, '.', ''),
             ];
         }
 

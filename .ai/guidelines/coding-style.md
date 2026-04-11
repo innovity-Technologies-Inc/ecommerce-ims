@@ -65,9 +65,19 @@ You MUST strictly follow this sequence for **EVERY** request:
 - AJAX-driven live searching and sorting with URL synchronization (`window.history.pushState`) is the project standard.
 
 ### **Frontend Actions (Mandatory Standards)**
+
 - **MANDATORY:** All delete buttons **MUST** use the `confirmDelete` class.
 - The system uses a global SweetAlert2 handler for all elements with the `confirmDelete` class to provide a consistent deletion experience.
 - Example: `<button type="submit" class="btn btn-soft-danger btn-sm confirmDelete">...</button>`
+
+### **Data Export Standards (Excel/CSV)**
+
+- **MANDATORY:** All data exported to Excel or CSV **MUST** be normalized to prevent blank cells.
+- **Null Handling:** Use the null-coalescing operator (`??`) to provide fallbacks for all fields (`?? 0` for numeric, `?? 'N/A'` for text).
+- **Forced Numeric Display:** Numeric values **MUST** be converted to strings using `number_format($value, $decimals, '.', '')` in the Controller/Service before being passed to the Export class. This ensures Excel displays `0` or `0.00` correctly instead of an empty cell.
+- **Export Class Normalization:** Export classes **MUST** implement a final pass in the `array()` method to convert any remaining `null`, `false`, or empty strings to a literal string `'0'`.
+- Example (Controller): `number_format($row['qty'] ?? 0, 0, '.', '')`
+- Example (Export Class): `($value === null || $value === '' || $value === false) ? '0' : $value`
 
 ### **Frontend JavaScript & Scripts (STRICT)**
 - **Script Sections:** Always use `@section('scripts')` for including JavaScript in Blade views. Do NOT use `@push('scripts')` as the master layout utilizes `@yield('scripts')`.
