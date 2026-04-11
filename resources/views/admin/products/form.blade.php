@@ -96,6 +96,7 @@
                                 <div class="mb-3">
                                     <label for="editor1" class="form-label">Main Description</label>
                                     <textarea name="description" id="editor1" class="form-control summernote">{{ old('description', $product->description ?? '') }}</textarea>
+                                    <p class="text-muted extra-small mt-1"><i class="bx bx-info-circle me-1"></i>Note: For optimal formatting and clean HTML, it is recommended to prepare your content in <strong>Google Docs</strong> or <strong>Microsoft Word</strong> before pasting.</p>
                                     @error('description')
                                     <span class="small text-danger">{{$message}}</span>
                                     @enderror

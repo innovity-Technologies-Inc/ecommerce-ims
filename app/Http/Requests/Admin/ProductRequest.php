@@ -125,10 +125,10 @@ class ProductRequest extends FormRequest
             'variants.*.variant_name.required_with' => 'Each variant must have a name.',
             'variants.*.sku.unique' => 'The SKU has already been taken by another product or variant.',
             'variants.*.min_stock_global.integer' => 'Variant minimum stock must be a whole number.',
-            'primary_image.max' => 'The primary image must not be larger than 2MB.',
+            'primary_image.max' => 'The primary image is too large. Maximum allowed size is 2MB.',
             'gallery_images.max' => 'You can upload a maximum of 5 gallery images at a time.',
             'gallery_images.*.image' => 'One or more files uploaded to the gallery are not valid images.',
-            'gallery_images.*.max' => 'Each gallery image must be smaller than 2MB.',
+            'gallery_images.*.max' => 'One of the gallery images exceeds the 2MB size limit. Please compress and try again.',
         ];
     }
 }

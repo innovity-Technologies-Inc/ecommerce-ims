@@ -160,6 +160,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-143:** Excel Report Blank Normalization: Ensure all Excel reports (Sales, Stock, Inventory, Warehouse Performance) replace null or empty values (including whitespace-only strings) with a literal `0` in the exported file to prevent any blank cells from appearing in Excel.
 - [x] **REQ-144:** Report View Data Normalization: Ensure all UI-based reports (Warehouse Performance, Sales, Stock, Inventory) replace null or empty values with `0` (for numeric fields) or appropriate placeholders (for text fields) to ensure no blank cells appear in the browser.
 - [x] **REQ-145:** Dashboard & Report Tooltips: Add Bootstrap 5 tooltips to all metric cards and table headers across the main dashboard and reporting modules, providing clear "what" and "how" (calculation logic) explanations for every KPI.
+- [ ] **REQ-146:** Product Form UX Improvements: Customize image upload error messages for better clarity when files exceed 2MB. Add a guidance note under the "Main Description" (SummerNote) field advising administrators to use content from Google Docs or Microsoft Word for optimal formatting.
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.
