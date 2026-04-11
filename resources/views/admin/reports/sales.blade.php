@@ -104,7 +104,7 @@
     <!-- Summary Metrics -->
     <div class="row g-3 mb-4 no-print">
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm border-start border-primary border-4 h-100">
+            <div class="card border-0 shadow-sm border-start border-primary border-4 h-100" data-bs-toggle="tooltip" title="Total amount received after all discounts from delivered orders">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
@@ -113,7 +113,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1">
-                            <h6 class="text-muted small text-uppercase mb-1">Net Sales</h6>
+                            <h6 class="text-muted small text-uppercase mb-1">Net Sales <i class="bx bx-info-circle small"></i></h6>
                             <h3 class="mb-0 fw-bold text-primary">${{ number_format($summary['totals']['net_sales'], 2) }}</h3>
                             <div class="small text-muted">Gross: ${{ number_format($summary['totals']['gross_sales'], 2) }}</div>
                         </div>
@@ -122,7 +122,7 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm border-start border-success border-4 h-100">
+            <div class="card border-0 shadow-sm border-start border-success border-4 h-100" data-bs-toggle="tooltip" title="Total earnings after deducting procurement costs (captured during fulfillment)">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
@@ -131,7 +131,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1">
-                            <h6 class="text-muted small text-uppercase mb-1">Gross Profit</h6>
+                            <h6 class="text-muted small text-uppercase mb-1">Gross Profit <i class="bx bx-info-circle small"></i></h6>
                             <h3 class="mb-0 fw-bold text-success">${{ number_format($summary['totals']['gross_profit'], 2) }}</h3>
                             <div class="small text-muted">Margin: {{ number_format($summary['totals']['gross_margin_percent'], 1) }}%</div>
                         </div>
@@ -143,7 +143,7 @@
 
     <div class="row g-3 mb-4">
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm border-start border-info border-4 h-100">
+            <div class="card border-0 shadow-sm border-start border-info border-4 h-100" data-bs-toggle="tooltip" title="Average Order Value: Net Sales divided by total orders">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-2">
@@ -152,7 +152,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1">
-                            <h6 class="text-muted small text-uppercase mb-1">AOV</h6>
+                            <h6 class="text-muted small text-uppercase mb-1">AOV <i class="bx bx-info-circle small"></i></h6>
                             <h3 class="mb-0 fw-bold">${{ number_format($summary['totals']['aov'], 2) }}</h3>
                         </div>
                     </div>
@@ -160,7 +160,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm border-start border-warning border-4 h-100">
+            <div class="card border-0 shadow-sm border-start border-warning border-4 h-100" data-bs-toggle="tooltip" title="Total number of delivered orders within the selected period">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-2">
@@ -169,7 +169,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1">
-                            <h6 class="text-muted small text-uppercase mb-1">Orders</h6>
+                            <h6 class="text-muted small text-uppercase mb-1">Orders <i class="bx bx-info-circle small"></i></h6>
                             <h3 class="mb-0 fw-bold">{{ number_format($summary['totals']['orders_count']) }}</h3>
                         </div>
                     </div>
@@ -177,7 +177,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm border-start border-danger border-4 h-100">
+            <div class="card border-0 shadow-sm border-start border-danger border-4 h-100" data-bs-toggle="tooltip" title="Total physical units sold across all delivered orders">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-2">
@@ -186,7 +186,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1">
-                            <h6 class="text-muted small text-uppercase mb-1">Units</h6>
+                            <h6 class="text-muted small text-uppercase mb-1">Units <i class="bx bx-info-circle small"></i></h6>
                             <h3 class="mb-0 fw-bold">{{ number_format($summary['totals']['units_sold']) }}</h3>
                         </div>
                     </div>
@@ -374,7 +374,7 @@
                                     <td class="text-end pe-3 py-3 fw-bold">${{ number_format($summary['totals']['shipping_revenue'], 2) }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="ps-3 py-3">Total Cost (COGS)</td>
+                                    <td class="ps-3 py-3">Total Cost (Cost of Goods Sold)</td>
                                     <td class="text-end pe-3 py-3 text-muted fw-bold">-${{ number_format($summary['totals']['total_cost'], 2) }}</td>
                                 </tr>
                                 <tr class="bg-soft-success">

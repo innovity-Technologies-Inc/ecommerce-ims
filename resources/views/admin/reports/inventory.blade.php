@@ -97,7 +97,7 @@
     <!-- Summary Metrics -->
     <div class="row g-3 mb-4 no-print">
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm border-start border-primary border-4">
+            <div class="card border-0 shadow-sm border-start border-primary border-4" data-bs-toggle="tooltip" title="Total number of unique products and variants currently in stock">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
@@ -106,7 +106,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1">
-                            <h6 class="text-muted small text-uppercase mb-1">Total Items Types</h6>
+                            <h6 class="text-muted small text-uppercase mb-1">Total Items Types <i class="bx bx-info-circle small"></i></h6>
                             <h3 class="mb-0 fw-bold">{{ number_format($report['totals']['total_items']) }}</h3>
                         </div>
                     </div>
@@ -114,7 +114,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm border-start border-success border-4">
+            <div class="card border-0 shadow-sm border-start border-success border-4" data-bs-toggle="tooltip" title="Total physical units across all saleable batches and warehouses">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
@@ -123,7 +123,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1">
-                            <h6 class="text-muted small text-uppercase mb-1">Total Units In-Stock</h6>
+                            <h6 class="text-muted small text-uppercase mb-1">Total Units In-Stock <i class="bx bx-info-circle small"></i></h6>
                             <h3 class="mb-0 fw-bold">{{ number_format($report['totals']['total_quantity']) }}</h3>
                         </div>
                     </div>
@@ -131,7 +131,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm border-start border-info border-4">
+            <div class="card border-0 shadow-sm border-start border-info border-4" data-bs-toggle="tooltip" title="Total procurement value: Sum of (Current Quantity * Unit Cost) for all batches">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
@@ -140,7 +140,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1">
-                            <h6 class="text-muted small text-uppercase mb-1">Total Inventory Valuation</h6>
+                            <h6 class="text-muted small text-uppercase mb-1">Total Inventory Valuation <i class="bx bx-info-circle small"></i></h6>
                             <h3 class="mb-0 fw-bold">${{ number_format($report['totals']['total_valuation'], 2) }}</h3>
                         </div>
                     </div>

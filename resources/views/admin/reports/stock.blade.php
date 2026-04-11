@@ -97,7 +97,7 @@
     <!-- Summary Metrics -->
     <div class="row g-3 mb-4 no-print">
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm border-start border-primary border-4">
+            <div class="card border-0 shadow-sm border-start border-primary border-4" data-bs-toggle="tooltip" title="Total physical units currently available for sale across all warehouses">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
@@ -106,7 +106,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1">
-                            <h6 class="text-muted small text-uppercase mb-1">In-Stock Units</h6>
+                            <h6 class="text-muted small text-uppercase mb-1">In-Stock Units <i class="bx bx-info-circle small"></i></h6>
                             <h3 class="mb-0 fw-bold text-primary">{{ number_format($summary['total_qty']) }}</h3>
                         </div>
                     </div>
@@ -114,7 +114,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm border-start border-danger border-4">
+            <div class="card border-0 shadow-sm border-start border-danger border-4" data-bs-toggle="tooltip" title="Total units marked as damaged (from Supplier POs or Customer Returns) currently in the Damaged Pool">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
@@ -123,7 +123,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1">
-                            <h6 class="text-muted small text-uppercase mb-1">Damaged Units</h6>
+                            <h6 class="text-muted small text-uppercase mb-1">Damaged Units <i class="bx bx-info-circle small"></i></h6>
                             <h3 class="mb-0 fw-bold text-danger">{{ number_format($summary['damaged_qty']) }}</h3>
                         </div>
                     </div>
@@ -131,7 +131,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm border-start border-warning border-4">
+            <div class="card border-0 shadow-sm border-start border-warning border-4" data-bs-toggle="tooltip" title="Number of items whose current stock is at or below their defined minimum thresholds">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
@@ -140,7 +140,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1">
-                            <h6 class="text-muted small text-uppercase mb-1">Low Stock Alerts</h6>
+                            <h6 class="text-muted small text-uppercase mb-1">Low Stock Alerts <i class="bx bx-info-circle small"></i></h6>
                             <h3 class="mb-0 fw-bold text-warning">{{ number_format($summary['low_stock_count']) }}</h3>
                         </div>
                     </div>
@@ -148,7 +148,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm border-start border-success border-4">
+            <div class="card border-0 shadow-sm border-start border-success border-4" data-bs-toggle="tooltip" title="Total procurement value: Sum of (Physical Quantity * Unit Cost) for all batches">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
@@ -157,7 +157,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1">
-                            <h6 class="text-muted small text-uppercase mb-1">Inventory Value</h6>
+                            <h6 class="text-muted small text-uppercase mb-1">Inventory Value <i class="bx bx-info-circle small"></i></h6>
                             <h3 class="mb-0 fw-bold text-success">${{ number_format($summary['total_value'], 2) }}</h3>
                         </div>
                     </div>

@@ -21,11 +21,11 @@
         <!-- Summary Statistics Top Row -->
         <div class="row g-3 mb-4">
             <div class="col-md-3">
-                <div class="card border-0 shadow-sm border-start border-primary border-4 aesthetic-card">
+                <div class="card border-0 shadow-sm border-start border-primary border-4 aesthetic-card" data-bs-toggle="tooltip" title="Physical stock available in this warehouse before the selected start date">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="text-muted small text-uppercase fw-bold mb-1">Opening Stock</h6>
+                                <h6 class="text-muted small text-uppercase fw-bold mb-1">Opening Stock <i class="bx bx-info-circle small"></i></h6>
                                 <h3 class="mb-0 fw-bold text-dark">{{ number_format($report['opening_stock'] ?? 0) }}</h3>
                             </div>
                             <div class="avatar-sm bg-soft-primary rounded">
@@ -36,11 +36,11 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card border-0 shadow-sm border-start border-success border-4 aesthetic-card">
+                <div class="card border-0 shadow-sm border-start border-success border-4 aesthetic-card" data-bs-toggle="tooltip" title="Total additions to stock (Received + Returns + Adjustments + PO Damaged) during this period">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="text-muted small text-uppercase fw-bold mb-1">Total Inflows (+)</h6>
+                                <h6 class="text-muted small text-uppercase fw-bold mb-1">Total Inflows (+) <i class="bx bx-info-circle small"></i></h6>
                                 <h3 class="mb-0 fw-bold text-success">{{ number_format(($report['received_qty'] ?? 0) + ($report['returns_qty'] ?? 0) + ($report['adjusted_in'] ?? 0) + ($report['po_damaged_qty'] ?? 0)) }}</h3>
                             </div>
                             <div class="avatar-sm bg-soft-success rounded">
@@ -51,11 +51,11 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card border-0 shadow-sm border-start border-danger border-4 aesthetic-card">
+                <div class="card border-0 shadow-sm border-start border-danger border-4 aesthetic-card" data-bs-toggle="tooltip" title="Total physical stock removals (Sold + RTV + Internal Wastage) during this period">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="text-muted small text-uppercase fw-bold mb-1">Total Outflows (-)</h6>
+                                <h6 class="text-muted small text-uppercase fw-bold mb-1">Total Outflows (-) <i class="bx bx-info-circle small"></i></h6>
                                 <h3 class="mb-0 fw-bold text-danger">{{ number_format(($report['sold_qty'] ?? 0) + ($report['rtv_qty'] ?? 0) + ($report['total_wastage_qty'] ?? 0)) }}</h3>
                             </div>
                             <div class="avatar-sm bg-soft-danger rounded">
@@ -66,11 +66,11 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card border-0 shadow-sm border-start border-info border-4 aesthetic-card">
+                <div class="card border-0 shadow-sm border-start border-info border-4 aesthetic-card" data-bs-toggle="tooltip" title="Actual live physical balance on-hand at the end of the period (matches ledger reconciliation)">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="text-muted small text-uppercase fw-bold mb-1">Closing Snapshot</h6>
+                                <h6 class="text-muted small text-uppercase fw-bold mb-1">Closing Snapshot <i class="bx bx-info-circle small"></i></h6>
                                 <h3 class="mb-0 fw-bold text-info">{{ number_format($report['total_closing_stock'] ?? 0) }}</h3>
                             </div>
                             <div class="avatar-sm bg-soft-info rounded">
@@ -156,16 +156,16 @@
             <!-- KPI Side Cards -->
             <div class="col-md-4">
                 <!-- Valuation Card -->
-                <div class="card border-0 shadow-sm mb-4 border-top border-primary border-4 aesthetic-card">
+                <div class="card border-0 shadow-sm mb-4 border-top border-primary border-4 aesthetic-card" data-bs-toggle="tooltip" title="Total procurement value of all saleable units currently in this warehouse">
                     <div class="card-body p-4 text-center">
                         <div class="avatar-lg bg-soft-primary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
                             <i class="bx bx-dollar-circle fs-1 text-primary"></i>
                         </div>
-                        <h6 class="text-muted text-uppercase fw-bold small mb-2">Live Inventory Value</h6>
+                        <h6 class="text-muted text-uppercase fw-bold small mb-2">Live Inventory Value <i class="bx bx-info-circle small"></i></h6>
                         <h2 class="fw-bold text-dark mb-3">${{ number_format($report['inventory_value'] ?? 0, 2) }}</h2>
-                        <div class="bg-light p-2 px-3 rounded-pill d-inline-block">
+                        <div class="bg-light p-2 px-3 rounded-pill d-inline-block" data-bs-toggle="tooltip" title="How many times the average inventory was sold during this period (Cost of Goods Sold / Inventory Value)">
                             <span class="small text-muted me-2">Stock Turnover:</span>
-                            <span class="fw-bold text-primary">{{ number_format($report['stock_turnover'] ?? 0, 2) }}x</span>
+                            <span class="fw-bold text-primary">{{ number_format($report['stock_turnover'] ?? 0, 2) }}x <i class="bx bx-info-circle x-small"></i></span>
                         </div>
                     </div>
                 </div>
@@ -176,26 +176,26 @@
                         <h6 class="card-title mb-0 fw-bold text-dark"><i class="bx bx-rocket me-2 text-success"></i>Fulfillment Efficiency</h6>
                     </div>
                     <div class="card-body">
-                        <div class="mb-4">
+                        <div class="mb-4" data-bs-toggle="tooltip" title="Percentage of units shipped versus initial customer demand">
                             <div class="d-flex justify-content-between small mb-2">
-                                <span class="text-secondary fw-semibold">Gross Fill Rate</span>
+                                <span class="text-secondary fw-semibold">Gross Fill Rate <i class="bx bx-info-circle x-small"></i></span>
                                 <span class="fw-bold text-success">{{ number_format($report['fill_rate'] ?? 0, 1) }}%</span>
                             </div>
                             <div class="progress shadow-sm" style="height: 10px; border-radius: 5px;">
                                 <div class="progress-bar bg-success progress-bar-striped" style="width: {{ $report['fill_rate'] ?? 0 }}%"></div>
                             </div>
                         </div>
-                        <div class="mb-4">
+                        <div class="mb-4" data-bs-toggle="tooltip" title="Actual fulfillment success rate after subtracting returned units">
                             <div class="d-flex justify-content-between small mb-2">
-                                <span class="text-secondary fw-semibold">Net Fulfillment</span>
+                                <span class="text-secondary fw-semibold">Net Fulfillment <i class="bx bx-info-circle x-small"></i></span>
                                 <span class="fw-bold text-primary">{{ number_format($report['net_fill_rate'] ?? 0, 1) }}%</span>
                             </div>
                             <div class="progress shadow-sm" style="height: 10px; border-radius: 5px;">
                                 <div class="progress-bar bg-primary progress-bar-striped" style="width: {{ $report['net_fill_rate'] ?? 0 }}%"></div>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center bg-soft-danger p-2 px-3 rounded-3 mt-2">
-                            <span class="small fw-semibold text-danger">Return Rate</span>
+                        <div class="d-flex justify-content-between align-items-center bg-soft-danger p-2 px-3 rounded-3 mt-2" data-bs-toggle="tooltip" title="Percentage of units returned by customers relative to units shipped">
+                            <span class="small fw-semibold text-danger">Return Rate <i class="bx bx-info-circle x-small"></i></span>
                             <span class="h6 fw-bold text-danger mb-0">{{ number_format($report['return_rate'] ?? 0, 1) }}%</span>
                         </div>
                     </div>
@@ -206,16 +206,16 @@
                     <div class="card-body p-4">
                         <h6 class="card-title mb-4 fw-bold small text-uppercase text-muted"><i class="bx bx-heart me-2 text-warning"></i>Inventory Health</h6>
                         <div class="row text-center">
-                            <div class="col-6 border-end">
+                            <div class="col-6 border-end" data-bs-toggle="tooltip" title="Number of items at or below their assigned minimum stock levels">
                                 <div class="p-2">
                                     <h3 class="mb-0 fw-bold {{ ($report['low_stock_count'] ?? 0) > 0 ? 'text-danger' : 'text-success' }}">{{ $report['low_stock_count'] ?? 0 }}</h3>
-                                    <span class="text-muted x-small fw-bold">LOW STOCK SKUs</span>
+                                    <span class="text-muted x-small fw-bold">LOW STOCK SKUs <i class="bx bx-info-circle x-small"></i></span>
                                 </div>
                             </div>
-                            <div class="col-6">
+                            <div class="col-6" data-bs-toggle="tooltip" title="Percentage of unique items that had zero sales activity during this period">
                                 <div class="p-2">
                                     <h3 class="mb-0 fw-bold text-warning">{{ number_format($report['slow_moving_percent'] ?? 0, 1) }}%</h3>
-                                    <span class="text-muted x-small fw-bold">SLOW MOVING %</span>
+                                    <span class="text-muted x-small fw-bold">SLOW MOVING % <i class="bx bx-info-circle x-small"></i></span>
                                 </div>
                             </div>
                         </div>

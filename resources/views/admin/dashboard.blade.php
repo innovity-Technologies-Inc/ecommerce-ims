@@ -4,11 +4,11 @@
 <div class="container-xxl">
     <div class="row">
         <div class="col-md-4">
-            <div class="card">
+            <div class="card" data-bs-toggle="tooltip" data-bs-placement="top" title="Total revenue from 'Delivered' orders today (after discounts)">
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <p class="text-muted fw-medium text-truncate mb-2">Today's Revenue</p>
+                            <p class="text-muted fw-medium text-truncate mb-2">Today's Revenue <i class="bx bx-info-circle small"></i></p>
                             <h4 class="mb-0 text-dark">{{ config('app.currency', '$') }}{{ number_format($summary['todaySales'], 2) }}</h4>
                         </div>
                         <div class="avatar-md bg-soft-primary rounded">
@@ -20,11 +20,11 @@
         </div>
         <div class="col-md-4">
             <a href="{{ route('admin.orders.index', ['date_from' => now()->startOfMonth()->format('Y-m-d'), 'date_to' => now()->endOfMonth()->format('Y-m-d'), 'order_status' => 'Delivered']) }}" class="text-decoration-none">
-                <div class="card">
+                <div class="card" data-bs-toggle="tooltip" data-bs-placement="top" title="Total revenue from 'Delivered' orders this month">
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between">
                             <div>
-                                <p class="text-muted fw-medium text-truncate mb-2">This Month's Revenue</p>
+                                <p class="text-muted fw-medium text-truncate mb-2">This Month's Revenue <i class="bx bx-info-circle small"></i></p>
                                 <h4 class="mb-0 text-dark">{{ config('app.currency', '$') }}{{ number_format($summary['thisMonthSales'], 2) }}</h4>
                             </div>
                             <div class="avatar-md bg-soft-primary rounded">
@@ -37,11 +37,11 @@
         </div>
         <div class="col-md-4">
             <a href="{{ route('admin.orders.index', ['date_from' => now()->startOfYear()->format('Y-m-d'), 'date_to' => now()->endOfYear()->format('Y-m-d'), 'order_status' => 'Delivered']) }}" class="text-decoration-none">
-                <div class="card">
+                <div class="card" data-bs-toggle="tooltip" data-bs-placement="top" title="Total revenue from 'Delivered' orders this year">
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between">
                             <div>
-                                <p class="text-muted fw-medium text-truncate mb-2">This Year's Revenue</p>
+                                <p class="text-muted fw-medium text-truncate mb-2">This Year's Revenue <i class="bx bx-info-circle small"></i></p>
                                 <h4 class="mb-0 text-dark">{{ config('app.currency', '$') }}{{ number_format($summary['thisYearSales'], 2) }}</h4>
                             </div>
                             <div class="avatar-md bg-soft-success rounded">
@@ -56,11 +56,11 @@
 
     <div class="row">
         <div class="col-md-4">
-            <div class="card">
+            <div class="card" data-bs-toggle="tooltip" data-bs-placement="top" title="Revenue minus Procurement Cost for today's delivered orders">
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <p class="text-muted fw-medium text-truncate mb-2">Today's Profit</p>
+                            <p class="text-muted fw-medium text-truncate mb-2">Today's Profit <i class="bx bx-info-circle small"></i></p>
                             <h4 class="mb-0 text-dark">{{ config('app.currency', '$') }}{{ number_format($summary['todayProfit'], 2) }}</h4>
                         </div>
                         <div class="avatar-md bg-soft-success rounded">
@@ -71,11 +71,11 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card">
+            <div class="card" data-bs-toggle="tooltip" data-bs-placement="top" title="Revenue minus Procurement Cost for this month's delivered orders">
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <p class="text-muted fw-medium text-truncate mb-2">This Month's Profit</p>
+                            <p class="text-muted fw-medium text-truncate mb-2">This Month's Profit <i class="bx bx-info-circle small"></i></p>
                             <h4 class="mb-0 text-dark">{{ config('app.currency', '$') }}{{ number_format($summary['thisMonthProfit'], 2) }}</h4>
                         </div>
                         <div class="avatar-md bg-soft-success rounded">
@@ -86,11 +86,11 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card">
+            <div class="card" data-bs-toggle="tooltip" data-bs-placement="top" title="Revenue minus Procurement Cost for this year's delivered orders">
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
-                            <p class="text-muted fw-medium text-truncate mb-2">This Year's Profit</p>
+                            <p class="text-muted fw-medium text-truncate mb-2">This Year's Profit <i class="bx bx-info-circle small"></i></p>
                             <h4 class="mb-0 text-dark">{{ config('app.currency', '$') }}{{ number_format($summary['thisYearProfit'], 2) }}</h4>
                         </div>
                         <div class="avatar-md bg-soft-success rounded">
@@ -105,11 +105,11 @@
     <div class="row">
         <div class="col-md-6 col-xl-3">
             <a href="{{ route('admin.products.index') }}" class="text-decoration-none">
-                <div class="card">
+                <div class="card" data-bs-toggle="tooltip" data-bs-placement="top" title="Total unique products currently in the system catalog">
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between">
                             <div>
-                                <p class="text-muted fw-medium text-truncate mb-2">Total Products</p>
+                                <p class="text-muted fw-medium text-truncate mb-2">Total Products <i class="bx bx-info-circle small"></i></p>
                                 <h4 class="mb-0 text-dark">{{ number_format($summary['totalProducts']) }}</h4>
                             </div>
                             <div class="avatar-md bg-soft-primary rounded">
@@ -122,11 +122,11 @@
         </div>
         <div class="col-md-6 col-xl-3">
             <a href="{{ route('admin.orders.index', ['date_from' => now()->startOfMonth()->format('Y-m-d'), 'date_to' => now()->endOfMonth()->format('Y-m-d')]) }}" class="text-decoration-none">
-                <div class="card">
+                <div class="card" data-bs-toggle="tooltip" data-bs-placement="top" title="Total number of orders (all statuses) placed this month">
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between">
                             <div>
-                                <p class="text-muted fw-medium text-truncate mb-2">Orders This Month</p>
+                                <p class="text-muted fw-medium text-truncate mb-2">Orders This Month <i class="bx bx-info-circle small"></i></p>
                                 <h4 class="mb-0 text-dark">{{ number_format($summary['thisMonthOrdersCount']) }}</h4>
                             </div>
                             <div class="avatar-md bg-soft-success rounded">
@@ -139,11 +139,11 @@
         </div>
         <div class="col-md-6 col-xl-3">
             <a href="{{ route('admin.customers.index') }}" class="text-decoration-none">
-                <div class="card">
+                <div class="card" data-bs-toggle="tooltip" data-bs-placement="top" title="Total registered customers in the system">
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between">
                             <div>
-                                <p class="text-muted fw-medium text-truncate mb-2">Total Customers</p>
+                                <p class="text-muted fw-medium text-truncate mb-2">Total Customers <i class="bx bx-info-circle small"></i></p>
                                 <h4 class="mb-0 text-dark">{{ number_format($summary['totalCustomers']) }}</h4>
                             </div>
                             <div class="avatar-md bg-soft-info rounded">
@@ -156,11 +156,11 @@
         </div>
         <div class="col-md-6 col-xl-3">
             <a href="{{ route('admin.orders.index', ['order_status' => 'Pending']) }}" class="text-decoration-none">
-                <div class="card">
+                <div class="card" data-bs-toggle="tooltip" data-bs-placement="top" title="Orders currently awaiting processing or confirmation">
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between">
                             <div>
-                                <p class="text-muted fw-medium text-truncate mb-2">Pending Orders</p>
+                                <p class="text-muted fw-medium text-truncate mb-2">Pending Orders <i class="bx bx-info-circle small"></i></p>
                                 <h4 class="mb-0 text-dark">{{ number_format($summary['pendingOrdersCount']) }}</h4>
                             </div>
                             <div class="avatar-md bg-soft-danger rounded">
@@ -177,7 +177,7 @@
         <div class="col-xl-6">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Monthly Revenue vs Cost ({{ date('Y') }})</h4>
+                    <h4 class="card-title" data-bs-toggle="tooltip" title="Monthly comparison of Gross Revenue vs Procurement Cost for delivered orders">Monthly Revenue vs Cost ({{ date('Y') }}) <i class="bx bx-info-circle small"></i></h4>
                 </div>
                 <div class="card-body">
                     <div dir="ltr">
@@ -190,7 +190,7 @@
         <div class="col-xl-6">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Yearly Revenue vs Cost</h4>
+                    <h4 class="card-title" data-bs-toggle="tooltip" title="Historical breakdown of annual revenue and procurement expenditure">Yearly Revenue vs Cost <i class="bx bx-info-circle small"></i></h4>
                 </div>
                 <div class="card-body">
                     <div dir="ltr">
@@ -205,7 +205,7 @@
         <div class="col-xl-6">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Monthly Profit Review ({{ date('Y') }})</h4>
+                    <h4 class="card-title" data-bs-toggle="tooltip" title="Monthly trend of net profit calculated from delivered orders">Monthly Profit Review ({{ date('Y') }}) <i class="bx bx-info-circle small"></i></h4>
                 </div>
                 <div class="card-body">
                     <div dir="ltr">
@@ -218,7 +218,7 @@
         <div class="col-xl-6">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Yearly Profit Review</h4>
+                    <h4 class="card-title" data-bs-toggle="tooltip" title="Historical analysis of annual net profit growth">Yearly Profit Review <i class="bx bx-info-circle small"></i></h4>
                 </div>
                 <div class="card-body">
                     <div dir="ltr">
@@ -233,7 +233,7 @@
         <div class="col-xl-6">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Monthly Orders ({{ date('Y') }})</h4>
+                    <h4 class="card-title" data-bs-toggle="tooltip" title="Monthly volume of customer orders (excluding cancelled/rejected)">Monthly Orders ({{ date('Y') }}) <i class="bx bx-info-circle small"></i></h4>
                 </div>
                 <div class="card-body">
                     <div dir="ltr">
@@ -246,7 +246,7 @@
         <div class="col-xl-6">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Yearly Orders Review</h4>
+                    <h4 class="card-title" data-bs-toggle="tooltip" title="Long-term trend of annual order volume">Yearly Orders Review <i class="bx bx-info-circle small"></i></h4>
                 </div>
                 <div class="card-body">
                     <div dir="ltr">
@@ -261,7 +261,7 @@
         <div class="col-xl-6">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Monthly Purchases ({{ date('Y') }})</h4>
+                    <h4 class="card-title" data-bs-toggle="tooltip" title="Monthly count of confirmed Purchase Orders from suppliers">Monthly Purchases ({{ date('Y') }}) <i class="bx bx-info-circle small"></i></h4>
                 </div>
                 <div class="card-body">
                     <div dir="ltr">
@@ -274,7 +274,7 @@
         <div class="col-xl-6">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Yearly Purchases Review</h4>
+                    <h4 class="card-title" data-bs-toggle="tooltip" title="Annual growth of procurement activities">Yearly Purchases Review <i class="bx bx-info-circle small"></i></h4>
                 </div>
                 <div class="card-body">
                     <div dir="ltr">
@@ -367,7 +367,7 @@
         <div class="col-xl-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">Low Stock Alerts</h4>
+                    <h4 class="card-title" data-bs-toggle="tooltip" title="List of products that have reached or dropped below their minimum stock thresholds">Low Stock Alerts <i class="bx bx-info-circle small"></i></h4>
                     <div class="d-flex align-items-center gap-2">
                         <a href="{{ route('admin.inventory.check-low-stock') }}" class="btn btn-sm btn-outline-danger">
                             <i class="bx bx-mail-send me-1"></i> Check & Notify Now

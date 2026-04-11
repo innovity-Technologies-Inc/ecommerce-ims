@@ -55,19 +55,19 @@
                     <thead class="table-light">
                         <tr>
                             <th class="ps-3">Warehouse</th>
-                            <th class="text-center d-none d-print-table-cell-custom">Opening</th>
-                            <th class="text-center d-none d-print-table-cell-custom">Received</th>
-                            <th class="text-center d-none d-print-table-cell-custom">PO Damaged</th>
-                            <th class="text-center d-none d-print-table-cell-custom">Sold</th>
-                            <th class="text-center d-none d-print-table-cell-custom">Returns</th>
-                            <th class="text-center d-none d-print-table-cell-custom">Adjusted</th>
-                            <th class="text-center">Total Closing</th>
-                            <th class="text-center">Gross Fill %</th>
-                            <th class="text-center d-none d-print-table-cell-custom">Net Fill %</th>
-                            <th class="text-center">Total Wastage %</th>
-                            <th class="text-center">Stock Turnover</th>
-                            <th class="text-center d-none d-print-table-cell-custom">Value</th>
-                            <th class="text-center text-muted">Slow %</th>
+                            <th class="text-center d-none d-print-table-cell-custom" data-bs-toggle="tooltip" title="Physical stock available before the selected start date">Opening <i class="bx bx-info-circle small"></i></th>
+                            <th class="text-center d-none d-print-table-cell-custom" data-bs-toggle="tooltip" title="Total units received from Purchase Orders during this period">Received <i class="bx bx-info-circle small"></i></th>
+                            <th class="text-center d-none d-print-table-cell-custom" data-bs-toggle="tooltip" title="Units that arrived damaged from the supplier">PO Damaged <i class="bx bx-info-circle small"></i></th>
+                            <th class="text-center d-none d-print-table-cell-custom" data-bs-toggle="tooltip" title="Total units shipped and delivered to customers">Sold <i class="bx bx-info-circle small"></i></th>
+                            <th class="text-center d-none d-print-table-cell-custom" data-bs-toggle="tooltip" title="Total units returned by customers (Saleable + Damaged)">Returns <i class="bx bx-info-circle small"></i></th>
+                            <th class="text-center d-none d-print-table-cell-custom" data-bs-toggle="tooltip" title="Manual stock adjustments (Positive/Negative)">Adjusted <i class="bx bx-info-circle small"></i></th>
+                            <th class="text-center" data-bs-toggle="tooltip" title="Final physical stock balance at the end of the period">Total Closing <i class="bx bx-info-circle small"></i></th>
+                            <th class="text-center" data-bs-toggle="tooltip" title="Percentage of units shipped vs initial customer demand">Gross Fill % <i class="bx bx-info-circle small"></i></th>
+                            <th class="text-center d-none d-print-table-cell-custom" data-bs-toggle="tooltip" title="Fulfillment success rate after accounting for customer returns">Net Fill % <i class="bx bx-info-circle small"></i></th>
+                            <th class="text-center" data-bs-toggle="tooltip" title="Percentage of units lost to internal damage or return defects">Total Wastage % <i class="bx bx-info-circle small"></i></th>
+                            <th class="text-center" data-bs-toggle="tooltip" title="How many times inventory was 'cycled' or sold (Cost of Goods Sold / Avg Inventory)">Stock Turnover <i class="bx bx-info-circle small"></i></th>
+                            <th class="text-center d-none d-print-table-cell-custom" data-bs-toggle="tooltip" title="Total procurement value of on-hand stock">Value <i class="bx bx-info-circle small"></i></th>
+                            <th class="text-center text-muted" data-bs-toggle="tooltip" title="Percentage of unique items with zero sales in this period">Slow % <i class="bx bx-info-circle small"></i></th>
                             <th class="text-end pe-3 actions-column">Actions</th>
                         </tr>
                     </thead>
