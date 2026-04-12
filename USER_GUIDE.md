@@ -48,19 +48,36 @@ When a customer places an order on your website, follow this lifecycle in the `O
 
 ---
 
-## 5. Handling Returns (RMA)
-If a customer wants to return an item, go to the `Returns` section:
+## 5. Returns & RMA (Handling Goods Sent Back)
+The system handles two types of returns: from your customers and back to your suppliers.
 
-1.  **Return Requests:** Review the customer's request, reason, and photos. Click "Approve" to tell the customer they can send it back.
+### A. Customer Returns
+When a customer wants to return an item, use the `Returns` section:
+1.  **Return Requests:** Review the request, reason, and proof photos. Click "Approve" to tell the customer they can ship it back.
 2.  **Physical Receiving:** When the item arrives at your warehouse:
     *   Open the request and click **"Mark as Received"**.
-    *   Inspect the item:
-        *   **Intact:** The item is perfect and goes back into your "Saleable" stock.
-        *   **Damaged:** The item is recorded as "Wastage" (Loss) and is kept out of your saleable stock.
+    *   **Condition Inspection:** 
+        *   **Intact:** The item is perfect and goes back into your **Saleable** stock.
+        *   **Damaged:** The item is recorded as **Wastage** (Loss) and is kept out of your saleable stock.
+
+### B. Supplier RMA (Return to Vendor)
+If you need to send damaged or incorrect items back to your vendor, use the `Inventory` section:
+1.  **Supplier RMA:** Create a new RMA by selecting the Supplier and the original Purchase Order.
+2.  **Item Selection:** Select the specific items (and serial numbers) you are returning.
+3.  **Completion:** Once the supplier receives the items, close the RMA. The stock is permanently removed from your system records.
 
 ---
 
-## 6. Marketing & Promotions
+## 6. Inventory Maintenance (Adjustments & Wastage)
+Use these tools under the `Inventory` and `Returns` menus to keep your stock accurate.
+
+1.  **Stock Adjustment:** If you find a discrepancy (e.g., extra items found or missing items), go to `Inventory -> Stock Adjustment`. You can manually increase or decrease stock for any batch.
+2.  **Damaged Products:** View a list of all items currently marked as "Damaged" across your warehouses at `Inventory -> Damaged Products`.
+3.  **Wastages:** View a history of all internal losses or customer-returned damaged goods at `Returns -> Wastages`. You can also manually record internal damage here using the "Add Damage Entry" button.
+
+---
+
+## 7. Marketing & Promotions
 Found under the `Promotions` section in the sidebar:
 
 1.  **Coupons:** Create discount codes (e.g., "SAVE10"). You can set a minimum spend requirement.
@@ -68,7 +85,7 @@ Found under the `Promotions` section in the sidebar:
 
 ---
 
-## 7. Business Intelligence (Reports)
+## 8. Business Intelligence (Reports)
 Use the `Reports` section to understand your business health:
 
 1.  **Sales Reports:** See your total revenue, profit, and top-selling products. *Note: Only 'Delivered' orders are counted as revenue.*
@@ -78,7 +95,7 @@ Use the `Reports` section to understand your business health:
 
 ---
 
-## 8. System Settings
+## 9. System Settings
 Go to the `Settings` section to:
 *   **General Settings:** Change your Business Name, Logos, **Currency Symbol**, and the **Notification Email** for Low Stock Alerts.
 *   **Contact Settings:** Update your office address, phone numbers, and social media links.
