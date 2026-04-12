@@ -137,7 +137,7 @@
                             <div class="coupon-area mt-20 mb-40px p-3 bg-white border">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <label class="mb-0 fw-bold">Have a coupon?</label>
-                                    <button type="button" class="btn btn-sm px-3 rounded-pill shadow-sm" data-bs-toggle="modal" data-bs-target="#availableCouponsModal" style="background: linear-gradient(135deg, #2e7d32, #43a047); color: #fff; border: none; font-weight: 600; font-size: 12px; letter-spacing: 0.5px;">
+                                    <button type="button" class="btn btn-sm px-3 rounded-pill shadow-sm" data-bs-toggle="modal" data-bs-target="#availableCouponsModal" style="background: linear-gradient(135deg, #7AAACE, #9CC2E2); color: #fff; border: none; font-weight: 600; font-size: 12px; letter-spacing: 0.5px;">
                                         <i class="fa fa-ticket me-1"></i> View Coupons
                                     </button>
                                 </div>
@@ -216,12 +216,12 @@
         overflow: hidden;
     }
     .coupon-card.eligible {
-        border: 2px dashed #2e7d32;
-        box-shadow: 0 4px 15px rgba(46, 125, 50, 0.1);
+        border: 2px dashed #7AAACE;
+        box-shadow: 0 4px 15px rgba(122, 170, 206, 0.1);
     }
     .coupon-card.eligible:hover {
         transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(46, 125, 50, 0.2);
+        box-shadow: 0 8px 25px rgba(122, 170, 206, 0.2);
     }
     .coupon-card.ineligible {
         border: 1px solid #ffcdd2;
@@ -242,8 +242,8 @@
         min-width: 100px;
     }
     .coupon-card.eligible .coupon-right {
-        background: rgba(46, 125, 50, 0.05);
-        border-left-color: #2e7d32;
+        background: rgba(122, 170, 206, 0.05);
+        border-left-color: #7AAACE;
     }
     .coupon-card.ineligible .coupon-right {
         background: #ffebee;
@@ -261,9 +261,9 @@
         margin-bottom: 8px;
     }
     .coupon-card.eligible .coupon-code-badge {
-        background: #e8f5e9;
-        color: #2e7d32;
-        border-color: #2e7d32;
+        background: #eef6ff;
+        color: #7AAACE;
+        border-color: #7AAACE;
     }
     .coupon-card.ineligible .coupon-code-badge {
         background: #ffebee;
