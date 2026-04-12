@@ -23,8 +23,8 @@ class ReturnReceiveRequest extends FormRequest
     {
         return [
             'items' => 'required|array',
-            'items.*.condition' => 'required|in:damage,intact',
             'items.*.allocations' => 'required|array',
+            'items.*.allocations.*.condition' => 'required|in:damage,intact',
             'items.*.allocations.*.batch_id' => 'required|exists:batches,id',
             'items.*.allocations.*.quantity' => 'required|integer|min:1',
             'items.*.allocations.*.batch_serial_ids' => 'nullable|array',

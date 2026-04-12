@@ -210,26 +210,17 @@
                                         </div>
                                         <div class="card-body p-4">
                                             <div class="row g-4">
-                                                <div class="col-lg-3 border-end">
-                                                    <div class="mb-4">
-                                                        <label class="form-label small fw-bold text-uppercase text-muted mb-2">Item Condition <span class="text-danger">*</span></label>
-                                                        <select name="items[{{ $item->id }}][condition]" class="form-select shadow-sm" required>
-                                                            <option value="intact">Intact (Restock)</option>
-                                                            <option value="damage">Damage (Wastage)</option>
-                                                        </select>
-                                                        <div class="form-text small">Select 'Intact' to return items to saleable stock.</div>
-                                                    </div>
-                                                    
-                                                    <button type="button" class="btn btn-sm btn-soft-success add-allocation-row-btn w-100 py-2">
-                                                        <i class="bx bx-plus-circle me-1"></i> Add Batch Split
-                                                    </button>
-                                                </div>
-                                                <div class="col-lg-9">
-                                                    <label class="form-label small fw-bold text-uppercase text-muted mb-2">Batch & Unit Allocation</label>
-                                                    <div class="allocation-rows-container">
-                                                        {{-- Allocation rows will be added here --}}
-                                                    </div>
-                                                </div>
+                                        <div class="col-lg-12">
+                                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                                <h6 class="text-uppercase fw-bold text-primary mb-0">Item Split & Allocation Management</h6>
+                                                <button type="button" class="btn btn-sm btn-soft-success add-allocation-row-btn">
+                                                    <i class="bx bx-plus-circle me-1"></i> Add Item Split
+                                                </button>
+                                            </div>
+                                            <div class="allocation-rows-container">
+                                                {{-- Allocation rows will be added here --}}
+                                            </div>
+                                        </div>
                                             </div>
                                         </div>
                                     </div>
@@ -330,19 +321,26 @@
             const rowHtml = `
                 <div class="allocation-row border rounded p-3 mb-3 bg-white shadow-sm" data-row-id="${rowUniqueId}">
                     <div class="row g-3 align-items-center">
-                        <div class="col-md-7">
+                        <div class="col-md-3">
+                            <label class="small fw-bold text-muted mb-1 d-block text-uppercase">Condition <span class="text-danger">*</span></label>
+                            <select name="items[${itemId}][allocations][${rowUniqueId}][condition]" class="form-select shadow-sm" required>
+                                <option value="intact">Intact (Restock)</option>
+                                <option value="damage">Damage (Wastage)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-5">
                             <label class="small fw-bold text-muted mb-1 d-block text-uppercase">Batch Number <span class="text-danger">*</span></label>
-                            <select name="items[${itemId}][allocations][${rowUniqueId}][batch_id]" class="form-select return-batch-select" data-order-item-id="${orderItemId}" required>
+                            <select name="items[${itemId}][allocations][${rowUniqueId}][batch_id]" class="form-select return-batch-select shadow-sm" data-order-item-id="${orderItemId}" required>
                                 <option value="">Select Batch</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label class="small fw-bold text-muted mb-1 d-block text-uppercase">Quantity <span class="text-danger">*</span></label>
-                            <input type="number" name="items[${itemId}][allocations][${rowUniqueId}][quantity]" class="form-control allocation-qty" placeholder="0" min="1" required>
+                            <input type="number" name="items[${itemId}][allocations][${rowUniqueId}][quantity]" class="form-control allocation-qty shadow-sm" placeholder="0" min="1" required>
                         </div>
                         <div class="col-md-2 text-end pt-3">
                             <button type="button" class="btn btn-outline-danger remove-row-btn d-none">
-                                <i class="bx bx-trash me-1"></i>Remove
+                                <i class="bx bx-trash"></i>
                             </button>
                         </div>
                     </div>

@@ -149,12 +149,13 @@ class ReturnService
                     $firstAlloc = true;
                     foreach ($itemData['allocations'] as $alloc) {
                         $serialIds = $alloc['batch_serial_ids'] ?? (isset($alloc['batch_serial_id']) ? [$alloc['batch_serial_id']] : []);
+                        $currentCondition = $alloc['condition'];
 
                         if (! empty($serialIds)) {
                             foreach ($serialIds as $serialId) {
                                 if ($firstAlloc) {
                                     $returnItem->update([
-                                        'condition' => $itemData['condition'],
+                                        'condition' => $currentCondition,
                                         'batch_id' => $alloc['batch_id'],
                                         'batch_serial_id' => $serialId,
                                         'quantity' => 1,
@@ -171,7 +172,7 @@ class ReturnService
                                         'quantity' => 1,
                                         'unit_price' => $returnItem->unit_price,
                                         'total_price' => $returnItem->unit_price,
-                                        'condition' => $itemData['condition'],
+                                        'condition' => $currentCondition,
                                         'is_received' => false,
                                     ]);
                                 }
@@ -180,7 +181,7 @@ class ReturnService
                             if ($firstAlloc) {
                                 // Update existing ReturnItem with first allocation
                                 $returnItem->update([
-                                    'condition' => $itemData['condition'],
+                                    'condition' => $currentCondition,
                                     'batch_id' => $alloc['batch_id'],
                                     'batch_serial_id' => null,
                                     'quantity' => $alloc['quantity'],
@@ -198,16 +199,12 @@ class ReturnService
                                     'quantity' => $alloc['quantity'],
                                     'unit_price' => $returnItem->unit_price,
                                     'total_price' => $alloc['quantity'] * $returnItem->unit_price,
-                                    'condition' => $itemData['condition'],
+                                    'condition' => $currentCondition,
                                     'is_received' => false,
                                 ]);
                             }
                         }
                     }
-                } else {
-                    $returnItem->update([
-                        'condition' => $itemData['condition'],
-                    ]);
                 }
             }
 
