@@ -287,9 +287,9 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         });
     });
 
-    // Notifications
     Route::controller(\App\Http\Controllers\Admin\NotificationController::class)->prefix('notifications')->group(function () {
         Route::get('/', 'index')->name('admin.notifications.index');
+        Route::get('/fetch-dropdown', 'fetchDropdown')->name('admin.notifications.fetch_dropdown');
         Route::get('/{id}/read', 'markAsRead')->name('admin.notifications.read');
         Route::post('/mark-all-read', 'markAllAsRead')->name('admin.notifications.mark_all_read');
     });

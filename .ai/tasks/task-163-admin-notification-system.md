@@ -12,6 +12,7 @@ Implement a database-driven notification system to alert administrators of criti
 - [x] Update `resources/views/admin/structure/partials/header.blade.php` with a dynamic notification dropdown and unread badge.
 - [x] Create `resources/views/admin/notifications/index.blade.php` with AJAX-based filters (Type, Search, Date Range) and partial table rendering.
 - [x] Refactor `NotificationService::getAdminNotifications` to support search and filtering via FlexSearch.
+- [x] Implement real-time AJAX polling (60s interval) in `header.blade.php` to refresh the notification dropdown and unread count without page reload.
 - [x] Integrate triggers in `OrderService::placeOrder`.
 - [x] Integrate triggers in `ReturnService::storeReturnRequest`.
 - [x] Integrate triggers in `ContactService::storeMessage`.

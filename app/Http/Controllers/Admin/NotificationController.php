@@ -57,4 +57,18 @@ class NotificationController extends Controller
             'alert-type' => 'success',
         ]);
     }
+
+    /**
+     * Get the latest unread notifications for the navbar dropdown.
+     */
+    public function fetchDropdown(): \Illuminate\Http\JsonResponse
+    {
+        $unreadNotifications = AdminNotification::unread()->latest()->take(10)->get();
+        $unreadCount = AdminNotification::unread()->count();
+
+        return response()->json([
+            'html' => view('admin.structure.partials.notification_items', compact('unreadNotifications', 'unreadCount'))->render(),
+            'count' => $unreadCount,
+        ]);
+    }
 }
