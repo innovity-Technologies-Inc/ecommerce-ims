@@ -65,11 +65,14 @@ The system handles two types of returns: from your customers and back to your su
 ### A. Customer Returns
 When a customer wants to return an item, use the `Returns` section:
 1.  **Return Requests:** Review the request, reason, and proof photos. Click "Approve" to tell the customer they can ship it back.
-2.  **Physical Receiving:** When the item arrives at your warehouse:
-    *   Open the request and click **"Mark as Received"**.
-    *   **Condition Inspection:** 
-        *   **Intact:** The item is perfect and goes back into your **Saleable** stock.
-        *   **Damaged:** The item is recorded as **Wastage** (Loss) and is kept out of your saleable stock.
+2.  **Physical Receiving (The Most Important Step):** When the item arrives at your warehouse, open the request and click **"Mark as Received"**. 
+3.  **Condition Inspection:** You must select the condition for each item received:
+    *   **Intact (Restock):** 
+        *   **System Action:** The system automatically adds the item back into your **Saleable Inventory**.
+        *   **Result:** The item is now available to be sold to another customer immediately.
+    *   **Damaged (Wastage):**
+        *   **System Action:** The system automatically marks the item as **Damaged** and adds a record to the **Wastages** table.
+        *   **Result:** The item is removed from saleable stock and tracked as a financial loss. It will appear in your "Damaged Products" list.
 
 ### B. Supplier RMA (Return to Vendor)
 If you need to send damaged or incorrect items back to your vendor, use the `Inventory` section:
