@@ -88,6 +88,18 @@ class ReturnService
                 Mail::to($recipientEmail)->send(new ReturnRequestConfirmationMail($returnRequest->load(['returnItems.product', 'returnItems.productVariant', 'order'])));
             }
 
+            // Trigger Admin Notification
+            try {
+                \App\Models\AdminNotification::create([
+                    'type' => 'return',
+                    'title' => 'New Return Request',
+                    'message' => "Return Request #{$returnRequest->return_id} has been submitted for Order #{$returnRequest->order->order_id}.",
+                    'url' => route('admin.returns.show_request', $returnRequest->id),
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Return Notification failed: '.$e->getMessage());
+            }
+
             return $returnRequest;
         });
     }

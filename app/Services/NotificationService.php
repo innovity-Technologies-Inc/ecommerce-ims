@@ -78,6 +78,19 @@ class NotificationService
         try {
             Mail::to($notifyEmail)->send(new LowStockAlertMail($itemsToAlert));
 
+            // Trigger Admin Notification
+            try {
+                $count = $itemsToAlert->count();
+                \App\Models\AdminNotification::create([
+                    'type' => 'low_stock',
+                    'title' => 'Low Stock Alert',
+                    'message' => "There are {$count} items currently below their minimum stock threshold.",
+                    'url' => route('admin.inventory.stock.index'),
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Low Stock Notification trigger failed: '.$e->getMessage());
+            }
+
             // Update last_alert_sent for these items
             InventoryLevel::whereIn('id', $itemsToAlert->pluck('id'))
                 ->update(['last_alert_sent' => now()]);

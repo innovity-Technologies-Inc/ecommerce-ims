@@ -21,8 +21,20 @@ class ContactService
         try {
             Mail::to($message->email)->send(new ContactConfirmationMail($message));
         } catch (\Exception $e) {
-            Log::error('Contact Confirmation Email Error: ' . $e->getMessage());
+            Log::error('Contact Confirmation Email Error: '.$e->getMessage());
             // Log or ignore to ensure the user's experience isn't interrupted by SMTP connection issues
+        }
+
+        // Trigger Admin Notification
+        try {
+            \App\Models\AdminNotification::create([
+                'type' => 'message',
+                'title' => 'New Contact Message',
+                'message' => "Received a new message from {$message->name}: ".\Illuminate\Support\Str::limit($message->message, 50),
+                'url' => route('admin.contact_messages.index'),
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Contact Notification failed: '.$e->getMessage());
         }
 
         return $message;

@@ -476,6 +476,18 @@ class OrderService
                 $this->couponService->recordUsage($appliedCoupon, $order);
             }
 
+            // Trigger Admin Notification
+            try {
+                \App\Models\AdminNotification::create([
+                    'type' => 'order',
+                    'title' => 'New Order Received',
+                    'message' => "Order #{$order->order_id} has been placed by {$order->name}.",
+                    'url' => route('admin.orders.show', $order->id),
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Order Notification failed: '.$e->getMessage());
+            }
+
             $this->cartService->clearCart();
             session()->forget(['shipping_method_id', 'coupon', 'shipping_charge', 'subtotal']);
 

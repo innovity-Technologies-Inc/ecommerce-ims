@@ -286,6 +286,13 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
             Route::get('/{adjustment}', 'show')->name('admin.inventory.adjustment.show')->middleware('permission:stock_adjustment.view');
         });
     });
+
+    // Notifications
+    Route::controller(\App\Http\Controllers\Admin\NotificationController::class)->prefix('notifications')->group(function () {
+        Route::get('/', 'index')->name('admin.notifications.index');
+        Route::get('/{id}/read', 'markAsRead')->name('admin.notifications.read');
+        Route::post('/mark-all-read', 'markAllAsRead')->name('admin.notifications.mark_all_read');
+    });
 });
 
 Route::middleware('auth')->group(function () {

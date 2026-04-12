@@ -143,4 +143,21 @@ The system automatically monitors your stock levels to prevent stockouts:
 Go to `Settings -> General Settings` to update your **Business Name**, **Currency Symbol**, and **Notification Email** for Alerts.
 
 ---
+
+## 12. Stay Informed (Notifications)
+The system includes a real-time alert system to ensure you never miss an important event.
+
+1.  **The Notification Bell:** Look at the top-right of your screen. A bell icon with a red number shows you how many new events need your attention.
+2.  **Types of Alerts:**
+    *   **New Orders:** Triggered immediately when a customer buys something.
+    *   **Return Requests:** Alerts you when a customer asks to send an item back.
+    *   **Contact Messages:** Notifies you when someone fills out your contact form.
+    *   **Low Stock:** A daily summary of items that are running out.
+3.  **Managing Alerts:**
+    *   Click the bell to see a quick preview of the latest 10 notifications.
+    *   Click **"View All Notifications"** to open a full history where you can search by date or type.
+    *   Click **"Mark all as read"** to clear your unread count.
+    *   **Pro Tip:** Clicking any notification will automatically take you to the relevant page (e.g., clicking an order alert opens that specific Order's details).
+
+---
 *For further assistance, please contact your system administrator.*

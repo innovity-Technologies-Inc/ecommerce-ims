@@ -177,6 +177,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-160:** Low Stock Alert Documentation: Add a comprehensive technical breakdown of the low-stock notification system to the project documentation, including detection logic, anti-spam mechanisms, and automated scheduling.
 - [x] **REQ-161:** Non-Technical User Guide: Create a detailed operational guide (USER_GUIDE.md) that explains the end-to-end business flow of the application for non-technical users, covering inventory setup, procurement, order fulfillment, and reporting.
 - [x] **REQ-162:** Granular Return Condition Logic: Move the "Item Condition" selection from the product level to the individual allocation (split) level during the Physical Receiving phase. This allows admins to accurately record different conditions (Intact/Damaged) for items of the same product within a single return request.
+- [x] **REQ-163:** Admin Notification System: Implement a custom database-driven notification system for administrators. Notifications are automatically triggered for Low Stock events, New Orders, Return Requests, and Contact Messages. Includes a dynamic navbar dropdown, unread count tracking, a "View All" page with advanced filtering (Type, Search, Date Range), and one-click "Mark as Read" functionality.
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.

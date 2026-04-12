@@ -375,5 +375,20 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     *   **Marketing:** Coupon Usage Limits, Homepage Section Limits.
     *   **Fulfillment:** Order Status Updates and Return Allocations.
 
+### 4.3 Admin Notification System (REQ-163)
+- **What (Business Purpose):** Provides real-time alerts to administrators for critical events requiring attention, ensuring faster response times for orders, returns, and inventory issues.
+- **How it Works (Technical Flow):**
+    1. **Triggers:** Specific events in the system trigger a notification:
+        *   **Orders:** New order placement.
+        *   **Returns:** New customer return request submission.
+        *   **Messages:** New contact message received.
+        *   **Inventory:** Low stock detection (daily check).
+    2. **Storage:** Notifications are stored in `admin_notifications` with `is_read = false`.
+    3. **Visibility:** A dynamic bell icon in the navbar shows the unread count and a preview of the latest 10 items via a **View Composer**.
+    4. **Management:** Admins can "Mark All as Read" or click individual items to be redirected to the relevant resource (e.g., clicking an order notification takes you to the Order Details page).
+    5. **History:** A dedicated index page allows filtering by **Type**, **Date**, and **Search**.
+- **Data & Storage (DB Connectivity):**
+    *   `admin_notifications` table stores title, message, type, url, and read status.
+
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*

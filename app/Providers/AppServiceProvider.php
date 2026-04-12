@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\AdminNotification;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,5 +23,13 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useBootstrapFive();
+
+        // Share unread notifications with the admin header
+        View::composer('admin.structure.partials.header', function ($view) {
+            $view->with([
+                'unreadNotifications' => AdminNotification::unread()->latest()->take(10)->get(),
+                'unreadCount' => AdminNotification::unread()->count(),
+            ]);
+        });
     }
 }
