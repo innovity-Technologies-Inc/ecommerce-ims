@@ -166,6 +166,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-149:** Report Data Accuracy (Print/Export): Ensure that "Print" and "Export" buttons in all report dashboards (Sales, Stock, Inventory) always process the complete filtered dataset instead of being limited to the 10 rows shown in the dashboard's preview.
 - [x] **REQ-150:** Report UI Optimization: Remove the "Batch #" search filter from the "Warehouse-wise Valuation" inventory report to ensure the interface is focused only on relevant aggregate filters for warehouse-level data.
 - [x] **REQ-151:** Report UI Optimization: Remove the "Batch #" search filter from the "Product-wise Valuation" inventory report to ensure the interface is focused only on relevant aggregate filters for product-level data.
+- [x] **REQ-152:** Pricing & Discount Logic Fix: Implement robust price and discount fallbacks for products with variants using global pricing. Ensure cart, checkout, and mini-cart correctly fall back to product-level regular and discount prices when variant-specific prices are missing. Added display of regular prices beside discounted prices in all cart/checkout views.
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.

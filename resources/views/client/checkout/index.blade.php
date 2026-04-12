@@ -103,7 +103,14 @@
                                                     @endif
                                                     <br><small>Qty: {{ $item->quantity }}</small>
                                                 </span>
-                                                <span class="order-price">${{ number_format($item->subtotal, 2) }}</span>
+                                                <span class="order-price">
+                                                    @if($item->product_discount > 0)
+                                                        <span class="text-decoration-line-through me-2" style="color: #999; font-size: 0.85em;">${{ number_format($item->regular_price * $item->quantity, 2) }}</span>
+                                                        ${{ number_format($item->subtotal, 2) }}
+                                                    @else
+                                                        ${{ number_format($item->subtotal, 2) }}
+                                                    @endif
+                                                </span>
                                             </li>
                                         @endforeach
                                     </ul>

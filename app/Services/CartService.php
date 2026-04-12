@@ -25,25 +25,35 @@ class CartService
         }
 
         return $items->map(function ($item) {
-            if ($item->variant) {
-                $regularPrice = $item->variant->regular_price ?? $item->product->regular_price;
-                // Priority: Flash Discount > Standard Discount > Regular Price
-                if ($item->product->is_flash_sale && $item->variant->flash_discount_price > 0) {
-                    $price = $item->variant->flash_discount_price;
-                } elseif ($item->variant->discount_price > 0) {
-                    $price = $item->variant->discount_price;
-                } else {
-                    $price = $regularPrice;
+            $product = $item->product;
+            $variant = $item->variant;
+
+            // 1. Determine Regular Price
+            // Use variant regular price if > 0, otherwise fall back to product regular price
+            $regularPrice = ($variant && $variant->regular_price > 0)
+                ? $variant->regular_price
+                : $product->regular_price;
+
+            // 2. Determine Discounted Price (Selling Price)
+            $price = $regularPrice; // Default to regular price
+
+            if ($product->is_flash_sale) {
+                // Priority: Variant Flash > Product Flash > Variant Discount > Product Discount
+                if ($variant && $variant->flash_discount_price > 0) {
+                    $price = $variant->flash_discount_price;
+                } elseif ($product->flash_discount_price > 0) {
+                    $price = $product->flash_discount_price;
+                } elseif ($variant && $variant->discount_price > 0) {
+                    $price = $variant->discount_price;
+                } elseif ($product->discount_price > 0) {
+                    $price = $product->discount_price;
                 }
             } else {
-                $regularPrice = $item->product->regular_price;
-                // Priority: Flash Discount > Standard Discount > Regular Price
-                if ($item->product->is_flash_sale && $item->product->flash_discount_price > 0) {
-                    $price = $item->product->flash_discount_price;
-                } elseif ($item->product->discount_price > 0) {
-                    $price = $item->product->discount_price;
-                } else {
-                    $price = $regularPrice;
+                // Priority: Variant Discount > Product Discount
+                if ($variant && $variant->discount_price > 0) {
+                    $price = $variant->discount_price;
+                } elseif ($product->discount_price > 0) {
+                    $price = $product->discount_price;
                 }
             }
 

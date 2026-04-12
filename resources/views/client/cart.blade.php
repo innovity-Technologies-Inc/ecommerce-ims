@@ -160,7 +160,12 @@
                                                     @endif
                                                 </td>
                                                 <td class="product-price-decimal">
-                                                    <span class="amount">${{ number_format($item->price, 2) }}</span>
+                                                    @if($item->product_discount > 0)
+                                                        <span class="amount">${{ number_format($item->price, 2) }}</span>
+                                                        <span class="old-price text-decoration-line-through ms-2" style="color: #999; font-size: 0.9em;">${{ number_format($item->regular_price, 2) }}</span>
+                                                    @else
+                                                        <span class="amount">${{ number_format($item->price, 2) }}</span>
+                                                    @endif
                                                 </td>
                                                 <td class="product-quantity">
                                                     <div class="cart-plus-minus">

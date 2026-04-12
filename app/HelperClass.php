@@ -76,32 +76,54 @@ class HelperClass
 
         if ($product->variants->count() > 0) {
             foreach ($product->variants as $variant) {
-                // Priority: Flash Discount > Standard Discount > Regular Price
-                if ($product->is_flash_sale && $variant->flash_discount_price > 0) {
-                    $price = $variant->flash_discount_price;
-                } elseif ($variant->discount_price > 0) {
-                    $price = $variant->discount_price;
+                // 1. Determine Regular Price for this variant
+                $regPrice = ($variant->regular_price > 0) ? $variant->regular_price : $product->regular_price;
+
+                // 2. Determine Selling Price for this variant
+                $price = $regPrice;
+
+                if ($product->is_flash_sale) {
+                    if ($variant->flash_discount_price > 0) {
+                        $price = $variant->flash_discount_price;
+                    } elseif ($product->flash_discount_price > 0) {
+                        $price = $product->flash_discount_price;
+                    } elseif ($variant->discount_price > 0) {
+                        $price = $variant->discount_price;
+                    } elseif ($product->discount_price > 0) {
+                        $price = $product->discount_price;
+                    }
                 } else {
-                    $price = $variant->regular_price;
+                    if ($variant->discount_price > 0) {
+                        $price = $variant->discount_price;
+                    } elseif ($product->discount_price > 0) {
+                        $price = $product->discount_price;
+                    }
                 }
 
                 if ($price > 0) {
                     $prices->push((float) $price);
                 }
             }
-        }
-
-        // Check base product price
-        if ($product->is_flash_sale && $product->flash_discount_price > 0) {
-            $basePrice = $product->flash_discount_price;
-        } elseif ($product->discount_price > 0) {
-            $basePrice = $product->discount_price;
         } else {
-            $basePrice = $product->regular_price;
-        }
+            // Check base product price
+            $regPrice = $product->regular_price;
+            $price = $regPrice;
 
-        if ($basePrice > 0) {
-            $prices->push((float) $basePrice);
+            if ($product->is_flash_sale) {
+                if ($product->flash_discount_price > 0) {
+                    $price = $product->flash_discount_price;
+                } elseif ($product->discount_price > 0) {
+                    $price = $product->discount_price;
+                }
+            } else {
+                if ($product->discount_price > 0) {
+                    $price = $product->discount_price;
+                }
+            }
+
+            if ($price > 0) {
+                $prices->push((float) $price);
+            }
         }
 
         $prices = $prices->unique();
@@ -110,10 +132,23 @@ class HelperClass
             $maxDiscount = $product->variants->count() > 0
                 ? $product->variants->max('flash_discount_percentage')
                 : $product->flash_discount_percentage;
+            if (! $maxDiscount && $product->flash_discount_percentage > 0) {
+                $maxDiscount = $product->flash_discount_percentage;
+            }
         } else {
             $maxDiscount = $product->variants->count() > 0
                 ? $product->variants->max('discount_percentage')
                 : $product->discount_percentage;
+            if (! $maxDiscount && $product->discount_percentage > 0) {
+                $maxDiscount = $product->discount_percentage;
+            }
+        }
+
+        // Determine Min Regular Price
+        if ($product->variants->count() > 0) {
+            $minReg = $product->variants->where('regular_price', '>', 0)->min('regular_price') ?? $product->regular_price;
+        } else {
+            $minReg = $product->regular_price;
         }
 
         return [
@@ -122,9 +157,7 @@ class HelperClass
             'has_range' => $prices->min() != $prices->max(),
             'has_discount' => $maxDiscount > 0,
             'max_discount_percentage' => $maxDiscount ?? 0,
-            'min_regular_price' => $product->variants->count() > 0
-                ? ($product->variants->min('regular_price') ?? $product->regular_price)
-                : $product->regular_price,
+            'min_regular_price' => $minReg,
         ];
     }
 }

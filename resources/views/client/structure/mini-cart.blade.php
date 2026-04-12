@@ -24,8 +24,14 @@
                                 <span class="variant-info"
                                       style="font-size: 12px; color: #666;">{{ $item->variant_details }}</span>
                             @endif
-                            <span class="quantity-price">{{ $item->quantity }} x <span
-                                    class="amount">${{ number_format($item->price, 2) }}</span></span>
+                            <span class="quantity-price">{{ $item->quantity }} x 
+                                @if($item->product_discount > 0)
+                                    <span class="amount">${{ number_format($item->price, 2) }}</span>
+                                    <span class="old-price text-decoration-line-through ms-1" style="color: #999; font-size: 0.85em;">${{ number_format($item->regular_price, 2) }}</span>
+                                @else
+                                    <span class="amount">${{ number_format($item->price, 2) }}</span>
+                                @endif
+                            </span>
                             <a href="javascript:void(0)" class="remove remove-from-cart" data-cart-id="{{ $item->id }}">×</a>
                         </div>
                     </li>
