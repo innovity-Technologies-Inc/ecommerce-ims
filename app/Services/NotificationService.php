@@ -4,7 +4,10 @@ namespace App\Services;
 
 use App\HelperClass;
 use App\Mail\LowStockAlertMail;
+use App\Models\AdminNotification;
 use App\Models\InventoryLevel;
+use DaiyanMozumder\LaravelFlexSearch\FlexSearch;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -12,6 +15,33 @@ use Illuminate\Support\Facades\Mail;
 
 class NotificationService
 {
+    /**
+     * Get all admin notifications with search and filtering.
+     */
+    public function getAdminNotifications(array $params = [], int $perPage = 20): LengthAwarePaginator
+    {
+        $query = AdminNotification::query();
+
+        $filters = [];
+        if (! empty($params['type'])) {
+            $filters['type'] = $params['type'];
+        }
+        if (! empty($params['date_from'])) {
+            $filters['created_at>='] = $params['date_from'].' 00:00:00';
+        }
+        if (! empty($params['date_to'])) {
+            $filters['created_at<='] = $params['date_to'].' 23:59:59';
+        }
+
+        $flexSearch = app(FlexSearch::class);
+        $searchTerm = $params['search'] ?? null;
+        $searchableColumns = ['title', 'message'];
+
+        $query = $flexSearch->apply($query, $filters, $searchTerm, $searchableColumns);
+
+        return $query->latest()->paginate($perPage);
+    }
+
     /**
      * Get all items currently in low stock across all warehouses.
      */

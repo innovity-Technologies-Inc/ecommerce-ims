@@ -25,15 +25,15 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <form method="GET" action="{{ route('admin.notifications.index') }}">
+                    <form id="filter-form">
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Search</label>
-                                <input type="text" name="search" class="form-control" placeholder="Title or message..." value="{{ request('search') }}">
+                                <input type="text" name="search" id="search-input" class="form-control" placeholder="Title or message..." value="{{ request('search') }}">
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label fw-bold">Type</label>
-                                <select name="type" class="form-select">
+                                <select name="type" id="type-select" class="form-select">
                                     <option value="">All Types</option>
                                     <option value="order" {{ request('type') == 'order' ? 'selected' : '' }}>Order</option>
                                     <option value="return" {{ request('type') == 'return' ? 'selected' : '' }}>Return</option>
@@ -43,16 +43,15 @@
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label fw-bold">Date From</label>
-                                <input type="date" name="date_from" class="form-control" value="{{ request('date_from') }}">
+                                <input type="date" name="date_from" id="date-from" class="form-control" value="{{ request('date_from') }}">
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label fw-bold">Date To</label>
-                                <input type="date" name="date_to" class="form-control" value="{{ request('date_to') }}">
+                                <input type="date" name="date_to" id="date-to" class="form-control" value="{{ request('date_to') }}">
                             </div>
                             <div class="col-md-2 d-flex align-items-end">
                                 <div class="d-flex gap-2 w-100">
-                                    <button type="submit" class="btn btn-primary w-100">Filter</button>
-                                    <a href="{{ route('admin.notifications.index') }}" class="btn btn-soft-secondary">Reset</a>
+                                    <button type="button" id="reset-btn" class="btn btn-soft-secondary w-100">Reset</button>
                                 </div>
                             </div>
                         </div>
@@ -65,71 +64,67 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle table-nowrap mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th style="width: 50px;">#</th>
-                                    <th>Title</th>
-                                    <th>Message</th>
-                                    <th class="text-center">Type</th>
-                                    <th class="text-center">Date</th>
-                                    <th class="text-center">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @php $sl = \App\HelperClass::indexNumberSerialization($notifications); @endphp
-                                @forelse($notifications as $notification)
-                                    <tr class="{{ !$notification->is_read ? 'table-info' : '' }}">
-                                        <td>{{ $sl++ }}</td>
-                                        <td>
-                                            <span class="fw-bold">{{ $notification->title }}</span>
-                                            @if(!$notification->is_read)
-                                                <span class="badge bg-danger ms-1">New</span>
-                                            @endif
-                                        </td>
-                                        <td class="text-wrap" style="max-width: 400px;">{{ $notification->message }}</td>
-                                        <td class="text-center">
-                                            <span class="badge {{ match($notification->type) {
-                                                'order' => 'bg-soft-primary text-primary',
-                                                'return' => 'bg-soft-info text-info',
-                                                'low_stock' => 'bg-soft-danger text-danger',
-                                                'message' => 'bg-soft-warning text-warning',
-                                                default => 'bg-soft-secondary text-secondary'
-                                            } }} fs-12">
-                                                {{ ucfirst(str_replace('_', ' ', $notification->type)) }}
-                                            </span>
-                                        </td>
-                                        <td class="text-center">
-                                            {{ $notification->created_at->format('d M, Y') }}<br>
-                                            <small class="text-muted">{{ $notification->created_at->format('h:i A') }}</small>
-                                        </td>
-                                        <td class="text-center">
-                                            <a href="{{ route('admin.notifications.read', $notification->id) }}" class="btn btn-soft-primary btn-sm">
-                                                <i class="bx bx-show"></i> View
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="6" class="text-center py-5">
-                                            <div class="text-muted">
-                                                <iconify-icon icon="solar:bell-bing-bold-duotone" class="fs-48 mb-3 opacity-25"></iconify-icon>
-                                                <p>No notifications found.</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="card-footer border-top">
-                    {{ $notifications->appends(request()->all())->links() }}
+                <div class="card-body p-0" id="table-container">
+                    @include('admin.notifications.partials.table')
                 </div>
             </div>
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        let searchTimer;
+        const tableContainer = $('#table-container');
+
+        function fetchNotifications(pageUrl = null) {
+            const search = $('#search-input').val();
+            const type = $('#type-select').val();
+            const dateFrom = $('#date-from').val();
+            const dateTo = $('#date-to').val();
+            
+            const url = new URL(pageUrl || window.location.href);
+            
+            if (search) url.searchParams.set('search', search); else url.searchParams.delete('search');
+            if (type) url.searchParams.set('type', type); else url.searchParams.delete('type');
+            if (dateFrom) url.searchParams.set('date_from', dateFrom); else url.searchParams.delete('date_from');
+            if (dateTo) url.searchParams.set('date_to', dateTo); else url.searchParams.delete('date_to');
+            
+            if (!pageUrl) url.searchParams.delete('page'); // Reset to page 1 on filter change
+
+            window.history.pushState({}, '', url);
+            tableContainer.css('opacity', '0.5');
+
+            $.ajax({
+                url: url.href,
+                type: 'GET',
+                success: function(response) {
+                    tableContainer.html(response);
+                    tableContainer.css('opacity', '1');
+                }
+            });
+        }
+
+        $('#search-input').on('keyup', function() {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(fetchNotifications, 500);
+        });
+
+        $('#type-select, #date-from, #date-to').on('change', function() {
+            fetchNotifications();
+        });
+
+        $('#reset-btn').on('click', function() {
+            $('#filter-form')[0].reset();
+            fetchNotifications("{{ route('admin.notifications.index') }}");
+        });
+
+        $(document).on('click', '.pagination a', function(e) {
+            e.preventDefault();
+            fetchNotifications($(this).attr('href'));
+        });
+    });
+</script>
 @endsection
