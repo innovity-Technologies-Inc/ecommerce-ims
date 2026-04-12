@@ -71,4 +71,17 @@ class CouponApplyController extends Controller
             'grand_total' => number_format($subtotal + $shippingCharge, 2),
         ]);
     }
+
+    /**
+     * Get available coupons with eligibility status.
+     */
+    public function availableCoupons(): JsonResponse
+    {
+        $subtotal = $this->cartService->getCartTotal();
+        $userId = auth()->id();
+
+        $coupons = $this->couponService->getActiveCouponsWithEligibility($subtotal, $userId);
+
+        return response()->json($coupons);
+    }
 }

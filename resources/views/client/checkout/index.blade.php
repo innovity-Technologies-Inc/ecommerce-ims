@@ -135,7 +135,12 @@
                                 </div>
                             </div>
                             <div class="coupon-area mt-20 mb-40px p-3 bg-white border">
-                                <label>Have a coupon?</label>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <label class="mb-0 fw-bold">Have a coupon?</label>
+                                    <button type="button" class="btn btn-sm px-3" data-bs-toggle="modal" data-bs-target="#availableCouponsModal" style="background-color: #e8f5e9; color: #2e7d32; border: 1px solid #2e7d32; font-weight: 600;">
+                                        <i class="fa fa-ticket me-1"></i> View Available Coupons
+                                    </button>
+                                </div>
                                 <div class="input-group mt-2">
                                     <input type="text" id="coupon_code" class="form-control" placeholder="Enter coupon code" value="{{ session('coupon.code') }}">
                                     <button class="btn btn-dark" type="button" id="apply-coupon-btn">Apply</button>
@@ -179,11 +184,161 @@
     </div>
 </div>
 <!-- checkout area end -->
+
+<!-- Available Coupons Modal -->
+<div class="modal fade" id="availableCouponsModal" tabindex="-1" aria-labelledby="availableCouponsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-light border-bottom-0">
+                <h5 class="modal-title fw-bold" id="availableCouponsModalLabel"><i class="fa fa-ticket me-2 text-primary"></i>Available Coupons</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4" style="background-color: #f8f9fa;">
+                <div id="available-coupons-list">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .coupon-card {
+        background: #fff;
+        border-radius: 12px;
+        position: relative;
+        transition: all 0.3s ease;
+        border: 1px solid #e0e0e0;
+        overflow: hidden;
+    }
+    .coupon-card.eligible {
+        border: 2px dashed #7AAACE;
+        box-shadow: 0 4px 15px rgba(122, 170, 206, 0.1);
+    }
+    .coupon-card.eligible:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(122, 170, 206, 0.2);
+    }
+    .coupon-card.ineligible {
+        filter: grayscale(1);
+        opacity: 0.7;
+        background: #fdfdfd;
+    }
+    .coupon-card .coupon-left {
+        padding: 20px;
+        background: #fff;
+        flex-grow: 1;
+    }
+    .coupon-card .coupon-right {
+        background: #f8f9fa;
+        padding: 20px;
+        border-left: 2px dotted #e0e0e0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 100px;
+    }
+    .coupon-card.eligible .coupon-right {
+        background: rgba(122, 170, 206, 0.05);
+        border-left-color: #7AAACE;
+    }
+    .coupon-code-badge {
+        display: inline-block;
+        padding: 5px 12px;
+        background: #f0f4f8;
+        color: #253237;
+        border-radius: 6px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        border: 1px solid #d0dae2;
+        margin-bottom: 8px;
+    }
+    .coupon-card.eligible .coupon-code-badge {
+        background: #eef6ff;
+        color: #7AAACE;
+        border-color: #7AAACE;
+    }
+    .ineligible-msg {
+        font-size: 11px;
+        padding: 4px 8px;
+        background: #fff5f5;
+        border-radius: 4px;
+        display: inline-block;
+    }
+</style>
+
 @endsection
 
 @push('scripts')
 <script>
     $(document).ready(function() {
+        const availableCouponsModal = document.getElementById('availableCouponsModal');
+        availableCouponsModal.addEventListener('show.bs.modal', function () {
+            $.ajax({
+                url: "{{ route('checkout.available_coupons') }}",
+                type: "GET",
+                success: function(response) {
+                    let html = '';
+                    if (response.length > 0) {
+                        response.forEach(item => {
+                            const coupon = item.coupon;
+                            const isEligible = item.is_eligible;
+                            const reason = item.ineligible_reason;
+                            
+                            html += `
+                                <div class="coupon-card mb-3 d-flex ${isEligible ? 'eligible' : 'ineligible'}">
+                                    <div class="coupon-left">
+                                        <div class="coupon-code-badge">${coupon.code}</div>
+                                        <h6 class="fw-bold mb-1" style="color: #253237;">
+                                            ${coupon.discount_type === 'percentage' ? coupon.discount_amount + '%' : '$' + parseFloat(coupon.discount_amount).toFixed(2)} OFF
+                                        </h6>
+                                        <p class="text-muted mb-2 small" style="font-size: 12px; line-height: 1.4;">
+                                            Apply this code to get a discount on ${coupon.apply_for === 'total_product_price' ? 'your product subtotal' : 'shipping charges'}.
+                                        </p>
+                                        <div class="d-flex align-items-center gap-3 mt-2">
+                                            <span class="small text-muted"><i class="fa fa-shopping-bag me-1"></i> Min: $${parseFloat(coupon.min_spend).toFixed(2)}</span>
+                                            <span class="small text-muted"><i class="fa fa-calendar me-1"></i> Exp: ${new Date(coupon.expired_on).toLocaleDateString()}</span>
+                                        </div>
+                                        ${!isEligible ? `
+                                            <div class="mt-2">
+                                                <span class="ineligible-msg text-danger fw-bold">
+                                                    <i class="fa fa-lock me-1"></i> ${reason}
+                                                </span>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                    <div class="coupon-right">
+                                        <button type="button" class="btn ${isEligible ? 'btn-dark' : 'btn-secondary disabled'} btn-sm apply-modal-coupon px-3" 
+                                                data-code="${coupon.code}" ${!isEligible ? 'disabled' : ''} 
+                                                style="${isEligible ? 'background-color: #253237; border: none;' : ''}">
+                                            ${isEligible ? 'APPLY' : 'LOCKED'}
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        html = '<div class="text-center py-5 text-muted"><i class="fa fa-ticket fa-3x mb-3 opacity-25"></i><p>No coupons available at the moment.</p></div>';
+                    }
+                    $('#available-coupons-list').html(html);
+                },
+                error: function() {
+                    $('#available-coupons-list').html('<div class="text-center py-5 text-danger"><p>Failed to load coupons. Please try again.</p></div>');
+                }
+            });
+        });
+
+        $(document).on('click', '.apply-modal-coupon', function() {
+            const code = $(this).data('code');
+            $('#coupon_code').val(code);
+            bootstrap.Modal.getInstance(availableCouponsModal).hide();
+            $('#apply-coupon-btn').click();
+        });
+
         $('#apply-coupon-btn').on('click', function() {
             const code = $('#coupon_code').val();
             if (!code) {

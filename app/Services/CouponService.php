@@ -180,13 +180,37 @@ class CouponService
     }
 
     /**
-     * Get usage history for a specific coupon.
+     * Get all active coupons with their eligibility for a specific subtotal.
      */
-    public function getUsageHistory(Coupon $coupon, int $perPage = 15): LengthAwarePaginator
+    public function getActiveCouponsWithEligibility(float $subtotal, ?int $userId = null): array
     {
-        return $coupon->usages()
-            ->with(['order', 'user'])
-            ->latest()
-            ->paginate($perPage);
+        $today = now()->toDateString();
+        $coupons = Coupon::where('status', true)
+            ->whereDate('active_on', '<=', $today)
+            ->whereDate('expired_on', '>=', $today)
+            ->get();
+
+        return $coupons->map(function ($coupon) use ($subtotal) {
+            $isEligible = true;
+            $reason = null;
+
+            // Usage Limit Check
+            if ($coupon->usage_limit !== null && $coupon->used_count >= $coupon->usage_limit) {
+                $isEligible = false;
+                $reason = 'Usage limit reached for this coupon.';
+            }
+
+            // Min Spend Check
+            if ($isEligible && $subtotal < $coupon->min_spend) {
+                $isEligible = false;
+                $reason = 'Minimum spend of $'.number_format($coupon->min_spend, 2).' required.';
+            }
+
+            return [
+                'coupon' => $coupon,
+                'is_eligible' => $isEligible,
+                'ineligible_reason' => $reason,
+            ];
+        })->toArray();
     }
 }

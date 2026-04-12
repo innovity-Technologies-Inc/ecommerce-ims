@@ -42,9 +42,13 @@ class CouponRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        if ($this->has('usage_limit')) {
+        if ($this->filled('usage_limit')) {
             $this->merge([
                 'usage_limit' => (int) $this->usage_limit,
+            ]);
+        } else {
+            $this->merge([
+                'usage_limit' => null,
             ]);
         }
     }
