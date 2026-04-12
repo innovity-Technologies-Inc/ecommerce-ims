@@ -71,15 +71,19 @@
   *   `supplier_rma_items` track the specific quantities and serials being sent back.
 
 ### 3.5 Flash Sale & Pricing Engine
-- **What (Business Purpose):** Manages time-limited promotional pricing to drive sales while maintaining margin visibility.
+- **What (Business Purpose):** Manages dynamic pricing, promotional discounts, and flash sales to drive customer engagement while ensuring accurate financial calculations from cart to checkout.
 - **How it Works (Technical Flow):**
-    1. **Configuration:** Admin sets a global Flash Sale status and duration.
-    2. **Selection:** Admin adds products/variants to the sale with specific discount percentages.
-    3. **Auto-Expiry:** A scheduled command (`REQ-69`) runs every minute to deactivate sales and reset product discounts once the end-date is reached.
-    4. **Sorting:** The shop page uses complex SQL to sort by the *effective* price (Base Price vs. Variant Price vs. Discounted Price).
+    1. **Dynamic Pricing Hierarchy (REQ-152):** The system follows a strict priority for calculating the *effective* selling price:
+        *   **Flash Sale:** Priority 1 (Variant Flash Price > Product Flash Price).
+        *   **Standard Discount:** Priority 2 (Variant Discount Price > Product Discount Price).
+        *   **Regular Price:** Base Price (Variant Regular Price > Product Regular Price).
+    2. **Robust Fallbacks:** If a variant-specific price or discount is missing (set to 0 or NULL), the engine automatically falls back to the parent Product's global settings. This ensures that "global discounts" are correctly applied even when products have variants.
+    3. **UI Transparency:** In the cart and checkout summary, the system displays the original Regular Price (with a line-through) alongside the effective Selling Price whenever a discount is active, providing clear value visibility to the customer.
+    4. **Auto-Expiry:** A scheduled command runs every minute to deactivate flash sales once the end-date is reached.
+    5. **Sorting:** The shop page uses optimized SQL to sort products by their *effective* price across all variants.
 - **Data & Storage (DB Connectivity):**
-    *   `flash_sales` master configuration.
-    *   `flash_sale_items` link `flash_sales` to `products`.
+    *   `products` & `product_variants`: Store regular and discounted price points.
+    *   `flash_sales` & `flash_sale_items`: Master configuration for time-limited promotions.
 
 ### 3.6 RBAC (Role-Based Access Control)
 - **What (Business Purpose):** Secures the Admin Panel by ensuring users only access the modules and operations permitted by their role.
