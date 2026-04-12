@@ -37,11 +37,13 @@
                         @endforeach
                     </select>
                 </div>
+                @if(($view ?? '') !== 'warehouse')
                 <div class="col-md-2">
                     <label class="form-label small fw-bold">Batch #</label>
                     <input type="text" name="batch_number" class="form-control" placeholder="Search Batch..." value="{{ $filters['batch_number'] ?? '' }}">
                 </div>
-                <div class="col-md-2 d-flex align-items-end">
+                @endif
+                <div class="col-md-{{ ($view ?? '') === 'warehouse' ? '4' : '2' }} d-flex align-items-end">
                     <button type="submit" class="btn btn-primary w-100">
                         <i class="bx bx-filter-alt me-1"></i> Generate
                     </button>
