@@ -31,8 +31,11 @@
 ### 3.2 Order Management & Fulfillment
 - **What (Business Purpose):** Manages the lifecycle of a customer purchase from checkout to final delivery and stock deduction.
 - **How it Works (Technical Flow):**
-    1. **Checkout:** Guest or User places an order. `orders` and `order_items` are created. Stock is NOT deducted yet.
-    2. **Shipping (Allocation & Deduction):** Admin changes status to 'Shipped'. A full-width allocation interface appears. Admin **MUST** select specific warehouses, batches, and serials to fulfill the order. This action triggers the **Final Stock Deduction**. `batch_serials` move to `sold`, global stock levels in `products`/`variants` are decremented, and ledger entries are logged.
+    1. **Checkout:** Guest or User places an order. `orders` and `order_items` are created. 
+       *   **Cost Logic:** At this stage, `total_cost` is **0.00**. This is because the system does not yet know which specific physical batch (and its associated unit cost) will be used to fulfill the order.
+    2. **Shipping (Allocation & Deduction):** Admin changes status to 'Shipped'. A full-width allocation interface appears. Admin **MUST** select specific warehouses, batches, and serials to fulfill the order. 
+       *   **Final Cost Capture:** This action triggers the **Final Stock Deduction** and **Cost Capture**. The system fetches the `unit_cost` from the selected batches and updates the `total_cost` in the `orders` and `order_items` tables.
+       *   **Ledger:** `batch_serials` move to `sold`, global stock levels in `products`/`variants` are decremented, and ledger entries are logged.
     3. **Shipment Record:** Fulfillment data is stored in `ordered_product_batches`.
     4. **Delivery:** Status move to 'Delivered'. This marks the order as complete and updates payment/sales count metrics.
 - **Data & Storage (DB Connectivity):**

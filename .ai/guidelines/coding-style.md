@@ -29,6 +29,7 @@ You MUST strictly follow this sequence for **EVERY** request:
       NEVER use standalone `->with('success', ...)` or `->with('error', ...)` calls.
 5. **Documentation Update (STRICT & MANDATORY):**
     - You MUST update `PROJECT_DOCUMENTATION.md` after completing **EVERY SINGLE INSTRUCTION** or modification.
+    - **User Guide:** You MUST also update `USER_GUIDE.md` if the change affects the operational flow or UI for the end user, ensuring the non-technical guide remains accurate.
     - Reflect the new module, connections, and system flow immediately.
     - **SOP: Documentation Standard (MANDATORY):** Every module or feature update must follow this specific structure:
         - **What (Business Purpose):** High-level explanation of why the feature exists and what value it provides to the user/admin.
