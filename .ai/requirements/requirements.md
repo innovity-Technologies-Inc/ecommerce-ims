@@ -165,6 +165,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-148:** Stock Report UI Enhancement: Add "Export" buttons next to the "Print" buttons in all dashboard cards of the Stock Reports to provide granular Excel export capabilities for Warehouse, Product, Aging, Wastage, Movement, and Serial Trace data.
 - [x] **REQ-149:** Report Data Accuracy (Print/Export): Ensure that "Print" and "Export" buttons in all report dashboards (Sales, Stock, Inventory) always process the complete filtered dataset instead of being limited to the 10 rows shown in the dashboard's preview.
 - [x] **REQ-150:** Report UI Optimization: Remove the "Batch #" search filter from the "Warehouse-wise Valuation" inventory report to ensure the interface is focused only on relevant aggregate filters for warehouse-level data.
+- [x] **REQ-151:** Report UI Optimization: Remove the "Batch #" search filter from the "Product-wise Valuation" inventory report to ensure the interface is focused only on relevant aggregate filters for product-level data.
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.
