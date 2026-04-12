@@ -138,7 +138,7 @@
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <label class="mb-0 fw-bold">Have a coupon?</label>
                                     <button type="button" class="btn btn-sm px-3" data-bs-toggle="modal" data-bs-target="#availableCouponsModal" style="background-color: #e8f5e9; color: #2e7d32; border: 1px solid #2e7d32; font-weight: 600;">
-                                        <i class="fa fa-ticket me-1"></i> View Available Coupons
+                                        <i class="fa fa-ticket me-1"></i> View Coupons
                                     </button>
                                 </div>
                                 <div class="input-group mt-2">
