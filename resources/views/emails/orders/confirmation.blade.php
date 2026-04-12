@@ -9,12 +9,20 @@ Your order has been placed successfully and is currently being processed.
 **Order Date:** {{ $order->created_at->format('M d, Y') }}
 
 <x-mail::table>
-| Product       | Qty | Price | Total |
-| :------------ | :-: | :---: | ----: |
+| Product | Qty | Price | Subtotal |
+| :--- | :---: | :---: | ---: |
 @foreach($order->orderItems as $item)
-| {{ $item->product_name }} {{ $item->variant_name ? '(' . $item->variant_name . ')' : '' }} | {{ $item->quantity }} | ${{ number_format($item->unit_price, 2) }} | ${{ number_format($item->total_price, 2) }} |
+| {{ $item->product_name }}{{ $item->variant_name ? ' (' . $item->variant_name . ')' : '' }} | {{ $item->quantity }} | ${{ number_format($item->regular_price, 2) }} | ${{ number_format($item->regular_price * $item->quantity, 2) }} |
 @endforeach
-| **Total**     |     |       | **${{ number_format($order->total_amount, 2) }}** |
+| **Gross Subtotal** | | | ${{ number_format($order->orderItems->sum(fn($i) => $i->regular_price * $i->quantity), 2) }} |
+@if($order->product_discount > 0)
+| Product Discount | | | -${{ number_format($order->product_discount, 2) }} |
+@endif
+@if($order->discount > 0)
+| Coupon Discount | | | -${{ number_format($order->discount, 2) }} |
+@endif
+| Shipping | | | ${{ number_format($order->shipping_charge, 2) }} |
+| **Grand Total** | | | **${{ number_format($order->total_amount, 2) }}** |
 </x-mail::table>
 
 **Shipping Address:**

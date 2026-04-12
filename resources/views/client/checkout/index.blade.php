@@ -137,7 +137,7 @@
                             <div class="coupon-area mt-20 mb-40px p-3 bg-white border">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <label class="mb-0 fw-bold">Have a coupon?</label>
-                                    <button type="button" class="btn btn-sm px-3 rounded-pill shadow-sm" data-bs-toggle="modal" data-bs-target="#availableCouponsModal" style="background: linear-gradient(135deg, #7AAACE, #9CC2E2); color: #fff; border: none; font-weight: 600; font-size: 12px; letter-spacing: 0.5px;">
+                                    <button type="button" class="btn btn-sm px-3 rounded-pill shadow-sm btn-view-coupons" data-bs-toggle="modal" data-bs-target="#availableCouponsModal">
                                         <i class="fa fa-ticket me-1"></i> View Coupons
                                     </button>
                                 </div>
@@ -207,6 +207,21 @@
 </div>
 
 <style>
+    .btn-view-coupons {
+        background: linear-gradient(135deg, #7AAACE, #9CC2E2);
+        color: #fff;
+        border: none;
+        font-weight: 600;
+        font-size: 12px;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+    .btn-view-coupons:hover {
+        background: linear-gradient(135deg, #6b99ba, #7AAACE);
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 5px 15px rgba(122, 170, 206, 0.4) !important;
+    }
     .coupon-card {
         background: #fff;
         border-radius: 12px;
