@@ -148,7 +148,8 @@ Go to `Settings -> General Settings` to update your **Business Name**, **Currenc
 The system includes a real-time alert system to ensure you never miss an important event.
 
 1.  **The Notification Bell:** Look at the top-right of your screen. A bell icon with a red number shows you how many new events need your attention.
-2.  **Types of Alerts:**
+2.  **Automatic Updates:** The bell icon and its list update **automatically every 60 seconds** in the background. You don't need to refresh the page to see new alerts, and it will never interrupt your work or any data you are currently typing into forms.
+3.  **Types of Alerts:**
     *   **New Orders:** Triggered immediately when a customer buys something.
     *   **Return Requests:** Alerts you when a customer asks to send an item back.
     *   **Contact Messages:** Notifies you when someone fills out your contact form.

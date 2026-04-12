@@ -385,8 +385,9 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
         *   **Inventory:** Low stock detection (daily check).
     2. **Storage:** Notifications are stored in `admin_notifications` with `is_read = false`.
     3. **Visibility:** A dynamic bell icon in the navbar shows the unread count and a preview of the latest 10 items via a **View Composer**.
-    4. **Management:** Admins can "Mark All as Read" or click individual items to be redirected to the relevant resource (e.g., clicking an order notification takes you to the Order Details page).
-    5. **History:** A dedicated index page allows filtering by **Type**, **Date**, and **Search**.
+    4. **Real-Time Experience:** The topbar dropdown and unread count are refreshed every **60 seconds** using background AJAX polling. The polling intelligently pauses when the browser tab is inactive (`document.hidden`) to optimize server resources.
+    5. **Management:** Admins can "Mark All as Read" or click individual items to be redirected to the relevant resource (e.g., clicking an order notification takes you to the Order Details page).
+    6. **History:** A dedicated index page allows filtering by **Type**, **Date**, and **Search** using **FlexSearch** and **AJAX** partial updates.
 - **Data & Storage (DB Connectivity):**
     *   `admin_notifications` table stores title, message, type, url, and read status.
 
