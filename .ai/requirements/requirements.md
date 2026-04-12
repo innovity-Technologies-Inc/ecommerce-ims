@@ -162,6 +162,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-145:** Dashboard & Report Tooltips: Add Bootstrap 5 tooltips to all metric cards and table headers across the main dashboard and reporting modules, providing clear "what" and "how" (calculation logic) explanations for every KPI.
 - [x] **REQ-146:** Product Form UX Improvements: Customize image upload error messages for better clarity when files exceed 2MB. Add a guidance note under the "Main Description" (SummerNote) field advising administrators to use content from Google Docs or Microsoft Word for optimal formatting.
 - [x] **REQ-147:** Return Module Enhancements: Implement automated email notifications for return request confirmation (customer) and status updates (admin). Shift the inventory allocation and condition inspection logic from the "Approval" step to the "Receiving" step to ensure accurate physical verification before stock adjustment.
+- [x] **REQ-148:** Stock Report UI Enhancement: Add "Export" buttons next to the "Print" buttons in all dashboard cards of the Stock Reports to provide granular Excel export capabilities for Warehouse, Product, Aging, Wastage, Movement, and Serial Trace data.
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.

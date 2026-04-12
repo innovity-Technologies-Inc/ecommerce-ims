@@ -361,7 +361,12 @@
                         <h5 class="card-title mb-0 text-dark fw-bold">Stock by Warehouse</h5>
                         <div class="d-flex gap-2">
                             <a href="{{ route('admin.reports.stock', array_merge(request()->all(), ['view' => 'warehouse'])) }}" class="btn btn-sm btn-soft-primary">View All</a>
-                            <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-warehouse', 'Stock by Warehouse')"><i class="bx bx-printer"></i></button>
+                            <div class="btn-group">
+                                <a href="{{ route('admin.reports.stock.export', array_merge(request()->all(), ['view' => 'warehouse'])) }}" class="btn btn-sm btn-soft-success">
+                                    <i class="bx bx-download"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-warehouse', 'Stock by Warehouse')"><i class="bx bx-printer"></i></button>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body p-0">
@@ -384,7 +389,12 @@
                         <h5 class="card-title mb-0 text-dark fw-bold">Stock by Product</h5>
                         <div class="d-flex gap-2">
                             <a href="{{ route('admin.reports.stock', array_merge(request()->all(), ['view' => 'product'])) }}" class="btn btn-sm btn-soft-primary">View All</a>
-                            <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-product', 'Stock by Product')"><i class="bx bx-printer"></i></button>
+                            <div class="btn-group">
+                                <a href="{{ route('admin.reports.stock.export', array_merge(request()->all(), ['view' => 'product'])) }}" class="btn btn-sm btn-soft-success">
+                                    <i class="bx bx-download"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-product', 'Stock by Product')"><i class="bx bx-printer"></i></button>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body p-0">
@@ -407,7 +417,12 @@
                         <h5 class="card-title mb-0 text-dark fw-bold">Batch Aging (Stagnant Stock)</h5>
                         <div class="d-flex gap-2">
                             <a href="{{ route('admin.reports.stock', array_merge(request()->all(), ['view' => 'aging'])) }}" class="btn btn-sm btn-soft-primary">View All</a>
-                            <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-aging', 'Batch Aging')"><i class="bx bx-printer"></i></button>
+                            <div class="btn-group">
+                                <a href="{{ route('admin.reports.stock.export', array_merge(request()->all(), ['view' => 'aging'])) }}" class="btn btn-sm btn-soft-success">
+                                    <i class="bx bx-download"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-aging', 'Batch Aging')"><i class="bx bx-printer"></i></button>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body p-0">
@@ -430,7 +445,12 @@
                         <h5 class="card-title mb-0 text-dark fw-bold">Wastage by Product</h5>
                         <div class="d-flex gap-2">
                             <a href="{{ route('admin.reports.stock', array_merge(request()->all(), ['view' => 'wastage_product'])) }}" class="btn btn-sm btn-soft-primary">View All</a>
-                            <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-wastage-product', 'Product Wastage')"><i class="bx bx-printer"></i></button>
+                            <div class="btn-group">
+                                <a href="{{ route('admin.reports.stock.export', array_merge(request()->all(), ['view' => 'wastage_product'])) }}" class="btn btn-sm btn-soft-success">
+                                    <i class="bx bx-download"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-wastage-product', 'Product Wastage')"><i class="bx bx-printer"></i></button>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body p-0">
@@ -453,7 +473,12 @@
                         <h5 class="card-title mb-0 text-dark fw-bold">Recent Stock Movements</h5>
                         <div class="d-flex gap-2">
                             <a href="{{ route('admin.reports.stock', array_merge(request()->all(), ['view' => 'movement'])) }}" class="btn btn-sm btn-soft-primary">View All</a>
-                            <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-movement', 'Recent Movements')"><i class="bx bx-printer"></i></button>
+                            <div class="btn-group">
+                                <a href="{{ route('admin.reports.stock.export', array_merge(request()->all(), ['view' => 'movement'])) }}" class="btn btn-sm btn-soft-success">
+                                    <i class="bx bx-download"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-movement', 'Recent Movements')"><i class="bx bx-printer"></i></button>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body p-0">
@@ -476,7 +501,12 @@
                         <h5 class="card-title mb-0 text-dark fw-bold">Physical Unit (Serial) Trace</h5>
                         <div class="d-flex gap-2">
                             <a href="{{ route('admin.reports.stock', array_merge(request()->all(), ['view' => 'serial'])) }}" class="btn btn-sm btn-soft-primary">View All</a>
-                            <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-serial', 'Serial Trace')"><i class="bx bx-printer"></i></button>
+                            <div class="btn-group">
+                                <a href="{{ route('admin.reports.stock.export', array_merge(request()->all(), ['view' => 'serial'])) }}" class="btn btn-sm btn-soft-success">
+                                    <i class="bx bx-download"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-serial', 'Serial Trace')"><i class="bx bx-printer"></i></button>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body p-0">
