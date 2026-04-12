@@ -36,9 +36,10 @@ class StockAdjustmentController extends Controller
      */
     public function create(): View
     {
-        $warehouses = Warehouse::where('is_quarantine', false)->get();
+        $warehouses = Warehouse::all();
         $products = Product::with('variants')->get();
-        $generatedBatchNumber = 'ADJ-' . date('ymd') . '-' . strtoupper(bin2hex(random_bytes(2)));
+        $generatedBatchNumber = 'ADJ-'.date('ymd').'-'.strtoupper(bin2hex(random_bytes(2)));
+
         return view('admin.inventory.adjustment.create', compact('warehouses', 'products', 'generatedBatchNumber'));
     }
 
@@ -52,7 +53,7 @@ class StockAdjustmentController extends Controller
 
             return redirect()->route('admin.inventory.adjustment.index')->with([
                 'message' => 'Stock adjustment created successfully.',
-                'alert-type' => 'success'
+                'alert-type' => 'success',
             ]);
         } catch (\Exception $e) {
             \Log::error('Stock Adjustment Store Error: '.$e->getMessage());

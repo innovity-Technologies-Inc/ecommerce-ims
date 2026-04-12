@@ -172,6 +172,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-155:** Order Confirmation Email Refinement: Update the customer order confirmation email template to include a detailed financial breakdown (Gross Subtotal, Product Discounts, Coupon Discounts, and Shipping Charges) matching the professional layout of the generated invoices.
 - [x] **REQ-156:** Purchase Order Schema Cleanup: Remove the redundant `batch_number` column from the `purchase_orders` table as batch tracking is managed by the dedicated `Batch` model.
 - [x] **REQ-157:** PO Module Currency Standardization: Add the global currency symbol (from general settings) to all amount values in the Purchase Order module, including the list table, show details, create/edit forms, and supplier emails.
+- [x] **REQ-158:** Warehouse Schema Optimization: Remove the `is_quarantine` flag from the `warehouses` table and update the `WarehouseSeeder` to remove the Quarantine warehouse, simplifying the inventory structure.
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.

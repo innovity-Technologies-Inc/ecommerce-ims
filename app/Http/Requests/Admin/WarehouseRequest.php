@@ -24,7 +24,6 @@ class WarehouseRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'location' => 'nullable|string',
-            'is_quarantine' => 'nullable|boolean',
         ];
     }
 }

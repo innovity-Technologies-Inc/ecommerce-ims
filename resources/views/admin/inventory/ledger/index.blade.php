@@ -23,7 +23,7 @@
                         <select name="warehouse_id" id="warehouseFilter" class="form-select select2">
                             <option value="all">All Warehouses</option>
                             @foreach($warehouses as $warehouse)
-                                <option value="{{ $warehouse->id }}">{{ $warehouse->name }} @if($warehouse->is_quarantine) (Quarantine) @endif</option>
+                                <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
                             @endforeach
                         </select>
                     </div>

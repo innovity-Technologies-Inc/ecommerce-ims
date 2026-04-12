@@ -22,7 +22,7 @@ class WastageController extends Controller
      */
     public function create(): View
     {
-        $warehouses = Warehouse::where('is_quarantine', false)->get();
+        $warehouses = Warehouse::all();
 
         return view('admin.returns.wastage_entry', compact('warehouses'));
     }

@@ -47,7 +47,6 @@ class SupplierRmaTest extends TestCase
         $this->warehouse = Warehouse::create([
             'name' => 'Test Warehouse',
             'location' => 'Test Location',
-            'is_quarantine' => true,
         ]);
 
         $this->product = Product::create([

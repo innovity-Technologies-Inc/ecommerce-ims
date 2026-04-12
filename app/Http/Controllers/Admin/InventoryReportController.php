@@ -20,7 +20,7 @@ class InventoryReportController extends Controller
     {
         $params = $request->all();
         $inventoryLevels = $this->inventoryService->getStockReport($params);
-        $warehouses = Warehouse::where('is_quarantine', false)->get();
+        $warehouses = Warehouse::all();
 
         if ($request->ajax()) {
             return view('admin.inventory.stock.partials.table', compact('inventoryLevels'));
@@ -46,7 +46,7 @@ class InventoryReportController extends Controller
     {
         $params = $request->all();
         $batches = $this->inventoryService->getBatchReport($params);
-        $warehouses = Warehouse::where('is_quarantine', false)->get();
+        $warehouses = Warehouse::all();
 
         if ($request->ajax()) {
             return view('admin.inventory.batches.partials.table', compact('batches'));

@@ -9,7 +9,7 @@
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                 <h4 class="mb-sm-0">Product Stock Details</h4>
                 <div class="page-title-right">
-                    <a href="{{ $level->warehouse->is_quarantine ? route('admin.inventory.damaged.index') : route('admin.inventory.stock.index') }}" class="btn btn-secondary btn-sm">
+                    <a href="{{ route('admin.inventory.stock.index') }}" class="btn btn-secondary btn-sm">
                         <i class="bx bx-arrow-back me-1"></i> Back to List
                     </a>
                 </div>
@@ -46,7 +46,7 @@
                         <tr>
                             <th>Warehouse:</th>
                             <td>
-                                <span class="badge {{ $level->warehouse->is_quarantine ? 'bg-danger' : 'bg-success' }}">
+                                <span class="badge bg-success">
                                     {{ $level->warehouse->name }}
                                 </span>
                             </td>

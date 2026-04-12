@@ -34,13 +34,6 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="col-lg-12">
-                                    <div class="mb-3">
-                                        <div class="form-check form-switch">
-                                            <input type="hidden" name="is_quarantine" value="0">
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class="card-footer border-top">

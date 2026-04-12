@@ -19,11 +19,6 @@
                     </div>
                     <div class="col-lg-auto ms-auto">
                         <div class="d-flex align-items-center gap-2">
-                            <span class="text-muted text-nowrap">Type:</span>
-                            <select id="is_quarantine" class="form-select form-select-sm">
-                                <option value="all" {{ request('is_quarantine') == 'all' ? 'selected' : '' }}>All</option>
-                                <option value="0" {{ request('is_quarantine') == '0' ? 'selected' : '' }}>Normal</option>
-                            </select>
                             <span class="text-muted text-nowrap">Sort By:</span>
                             <select class="form-select" id="sort-select">
                                 <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Latest</option>
@@ -51,12 +46,10 @@
 
         function fetchWarehouses() {
             const search = $('#search-input').val();
-            const type = $('#is_quarantine').val();
             const sort = $('#sort-select').val();
             const url = new URL(window.location.href);
             
             if (search) url.searchParams.set('search', search); else url.searchParams.delete('search');
-            if (type) url.searchParams.set('is_quarantine', type); else url.searchParams.delete('is_quarantine');
             if (sort) url.searchParams.set('sort', sort); else url.searchParams.delete('sort');
             
             window.history.pushState({}, '', url);
@@ -77,7 +70,7 @@
             searchTimer = setTimeout(fetchWarehouses, 500);
         });
 
-        $('#is_quarantine, #sort-select').on('change', fetchWarehouses);
+        $('#sort-select').on('change', fetchWarehouses);
 
         $(document).on('click', '.pagination a', function(e) {
             e.preventDefault();

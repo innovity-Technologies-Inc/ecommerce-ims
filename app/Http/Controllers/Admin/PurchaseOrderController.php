@@ -40,7 +40,7 @@ class PurchaseOrderController extends Controller
     public function create(): View
     {
         $suppliers = Supplier::all();
-        $warehouses = Warehouse::where('is_quarantine', false)->get();
+        $warehouses = Warehouse::all();
         $products = Product::with('variants')->where('status', 1)->get();
 
         return view('admin.inventory.po.create', compact('suppliers', 'warehouses', 'products'));
@@ -91,7 +91,7 @@ class PurchaseOrderController extends Controller
         }
 
         $suppliers = Supplier::all();
-        $warehouses = Warehouse::where('is_quarantine', false)->get();
+        $warehouses = Warehouse::all();
         $products = Product::with('variants')->where('status', 1)->get();
         $po->load('items');
 

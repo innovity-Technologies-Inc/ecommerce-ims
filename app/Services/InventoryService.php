@@ -167,12 +167,7 @@ class InventoryService
         $searchTerm = $params['search'] ?? null;
         $searchableColumns = ['name', 'location'];
 
-        $filters = [];
-        if (isset($params['is_quarantine']) && $params['is_quarantine'] !== 'all') {
-            $filters['is_quarantine'] = $params['is_quarantine'];
-        }
-
-        $query = $flexSearch->apply($query, $filters, $searchTerm, $searchableColumns);
+        $query = $flexSearch->apply($query, [], $searchTerm, $searchableColumns);
 
         $sort = $params['sort'] ?? 'latest';
         switch ($sort) {
@@ -327,7 +322,6 @@ class InventoryService
         return Warehouse::create([
             'name' => $data['name'],
             'location' => $data['location'],
-            'is_quarantine' => $data['is_quarantine'] ?? false,
         ]);
     }
 
@@ -339,7 +333,6 @@ class InventoryService
         $warehouse->update([
             'name' => $data['name'],
             'location' => $data['location'],
-            'is_quarantine' => $data['is_quarantine'] ?? false,
         ]);
 
         return $warehouse;

@@ -22,8 +22,8 @@
             <div class="card">
                 <div class="card-header border-bottom d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Stock Inventory Breakdown</h5>
-                    <span class="badge {{ $warehouse->is_quarantine ? 'bg-danger' : 'bg-success' }}">
-                        {{ $warehouse->is_quarantine ? 'Quarantine Warehouse' : 'Active Warehouse' }}
+                    <span class="badge bg-success">
+                        Active Warehouse
                     </span>
                 </div>
                 <div class="card-body p-0">
