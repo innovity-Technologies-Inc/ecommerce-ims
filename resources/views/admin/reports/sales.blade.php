@@ -307,7 +307,7 @@
                                 <a href="{{ route('admin.reports.sales.export', array_merge(request()->all(), ['type' => 'trends'])) }}" class="btn btn-sm btn-soft-success">
                                     <i class="bx bx-download"></i>
                                 </a>
-                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-trends', 'Sales Trends')">
+                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printFullReport('trends')">
                                     <i class="bx bx-printer"></i>
                                 </button>
                             </div>
@@ -403,7 +403,7 @@
                                 <a href="{{ route('admin.reports.sales.export', array_merge(request()->all(), ['type' => 'product'])) }}" class="btn btn-sm btn-soft-success">
                                     <i class="bx bx-download"></i>
                                 </a>
-                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-product', 'Top Products')">
+                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printFullReport('product')">
                                     <i class="bx bx-printer"></i>
                                 </button>
                             </div>
@@ -444,7 +444,7 @@
                                 <a href="{{ route('admin.reports.sales.export', array_merge(request()->all(), ['type' => 'warehouse'])) }}" class="btn btn-sm btn-soft-success">
                                     <i class="bx bx-download"></i>
                                 </a>
-                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-warehouse', 'Warehouse Sales')">
+                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printFullReport('warehouse')">
                                     <i class="bx bx-printer"></i>
                                 </button>
                             </div>
@@ -485,7 +485,7 @@
                                 <a href="{{ route('admin.reports.sales.export', array_merge(request()->all(), ['type' => 'payment_method'])) }}" class="btn btn-sm btn-soft-success">
                                     <i class="bx bx-download"></i>
                                 </a>
-                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-payment', 'Payment Methods')">
+                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printFullReport('payment_method')">
                                     <i class="bx bx-printer"></i>
                                 </button>
                             </div>
@@ -526,7 +526,7 @@
                                 <a href="{{ route('admin.reports.sales.export', array_merge(request()->all(), ['type' => 'batch'])) }}" class="btn btn-sm btn-soft-success">
                                     <i class="bx bx-download"></i>
                                 </a>
-                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printReportCard('card-batch', 'Batch Sales')">
+                                <button type="button" class="btn btn-sm btn-soft-secondary" onclick="printFullReport('batch')">
                                     <i class="bx bx-printer"></i>
                                 </button>
                             </div>
@@ -616,9 +616,12 @@
         }
     });
 
-    function printFullReport() {
+    function printFullReport(view = null) {
         const url = new URL(window.location.href);
         url.searchParams.set('is_print', '1');
+        if (view) {
+            url.searchParams.set('view', view);
+        }
         url.searchParams.delete('page');
         window.open(url.toString(), '_blank');
     }

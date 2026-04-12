@@ -163,6 +163,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-146:** Product Form UX Improvements: Customize image upload error messages for better clarity when files exceed 2MB. Add a guidance note under the "Main Description" (SummerNote) field advising administrators to use content from Google Docs or Microsoft Word for optimal formatting.
 - [x] **REQ-147:** Return Module Enhancements: Implement automated email notifications for return request confirmation (customer) and status updates (admin). Shift the inventory allocation and condition inspection logic from the "Approval" step to the "Receiving" step to ensure accurate physical verification before stock adjustment.
 - [x] **REQ-148:** Stock Report UI Enhancement: Add "Export" buttons next to the "Print" buttons in all dashboard cards of the Stock Reports to provide granular Excel export capabilities for Warehouse, Product, Aging, Wastage, Movement, and Serial Trace data.
+- [x] **REQ-149:** Report Data Accuracy (Print/Export): Ensure that "Print" and "Export" buttons in all report dashboards (Sales, Stock, Inventory) always process the complete filtered dataset instead of being limited to the 10 rows shown in the dashboard's preview.
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.
