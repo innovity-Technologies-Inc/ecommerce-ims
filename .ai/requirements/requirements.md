@@ -175,6 +175,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-158:** Warehouse Schema Optimization: Remove the `is_quarantine` flag from the `warehouses` table and update the `WarehouseSeeder` to remove the Quarantine warehouse, simplifying the inventory structure.
 - [x] **REQ-159:** Sales Report Data Accuracy: Force the Sales Report to only calculate data from orders with a 'Delivered' status to ensure financial reporting accurately reflects finalized sales. Removed the misleading "Order Status" filter from the Sales Report UI.
 - [x] **REQ-160:** Low Stock Alert Documentation: Add a comprehensive technical breakdown of the low-stock notification system to the project documentation, including detection logic, anti-spam mechanisms, and automated scheduling.
+- [x] **REQ-161:** Non-Technical User Guide: Create a detailed operational guide (USER_GUIDE.md) that explains the end-to-end business flow of the application for non-technical users, covering inventory setup, procurement, order fulfillment, and reporting.
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.
