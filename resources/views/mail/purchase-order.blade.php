@@ -10,12 +10,13 @@ Please find the details of our purchase order below.
 **Expected Delivery:** {{ $po->expected_delivery_date ? $po->expected_delivery_date->format('M d, Y') : 'N/A' }}
 
 <x-mail::table>
+@php $gs = \App\HelperClass::generalSettings(); @endphp
 | Product | Quantity | Unit Cost | Subtotal |
 | :--- | :---: | :---: | :---: |
 @foreach($po->items as $item)
-| {{ $item->product->name }} {{ $item->variant ? '(' . $item->variant->variant_name . ')' : '' }} | {{ $item->order_quantity }} | {{ number_format($item->unit_cost, 2) }} | {{ number_format($item->subtotal, 2) }} |
+| {{ $item->product->name }} {{ $item->variant ? '(' . $item->variant->variant_name . ')' : '' }} | {{ $item->order_quantity }} | {{ $gs->currency_symbol ?? '$' }}{{ number_format($item->unit_cost, 2) }} | {{ $gs->currency_symbol ?? '$' }}{{ number_format($item->subtotal, 2) }} |
 @endforeach
-| **Total** | | | **{{ number_format($po->total_amount, 2) }}** |
+| **Total** | | | **{{ $gs->currency_symbol ?? '$' }}{{ number_format($po->total_amount, 2) }}** |
 </x-mail::table>
 
 **Notes:**  

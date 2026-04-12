@@ -48,6 +48,7 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @php $gs = \App\HelperClass::generalSettings(); @endphp
                                 @foreach($po->items as $item)
                                     <tr>
                                         <td>
@@ -58,15 +59,15 @@
                                         </td>
                                         <td class="text-center"><span class="badge badge-soft-primary fs-13">{{ $item->order_quantity }}</span></td>
                                         <td class="text-center"><span class="badge badge-soft-success fs-13">{{ $item->received_quantity }}</span></td>
-                                        <td class="text-end">{{ number_format($item->unit_cost, 2) }}</td>
-                                        <td class="text-end">{{ number_format($item->subtotal, 2) }}</td>
+                                        <td class="text-end">{{ $gs->currency_symbol ?? '$' }}{{ number_format($item->unit_cost, 2) }}</td>
+                                        <td class="text-end">{{ $gs->currency_symbol ?? '$' }}{{ number_format($item->subtotal, 2) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
                             <tfoot>
                                 <tr>
                                     <th colspan="4" class="text-end">Estimated Total Amount:</th>
-                                    <th class="text-end">{{ number_format($po->total_amount, 2) }}</th>
+                                    <th class="text-end">{{ $gs->currency_symbol ?? '$' }}{{ number_format($po->total_amount, 2) }}</th>
                                 </tr>
                             </tfoot>
                         </table>

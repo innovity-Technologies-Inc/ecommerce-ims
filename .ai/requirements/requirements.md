@@ -170,6 +170,8 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-153:** Available Coupons Modal: Add an "Available Coupons" feature on the checkout page that opens a modal showing all active coupons. Eligible coupons (based on current subtotal) are selectable, while ineligible ones are greyed out with a specific reason (e.g., minimum spend not met). Applying a coupon from the modal automatically fills the input and triggers the application logic.
 - [x] **REQ-154:** Mandatory Source Control Guideline: Update the project's development workflow guidelines to require a mandatory stage and commit step with a clear, task-referenced message after every single task completion and verification.
 - [x] **REQ-155:** Order Confirmation Email Refinement: Update the customer order confirmation email template to include a detailed financial breakdown (Gross Subtotal, Product Discounts, Coupon Discounts, and Shipping Charges) matching the professional layout of the generated invoices.
+- [x] **REQ-156:** Purchase Order Schema Cleanup: Remove the redundant `batch_number` column from the `purchase_orders` table as batch tracking is managed by the dedicated `Batch` model.
+- [x] **REQ-157:** PO Module Currency Standardization: Add the global currency symbol (from general settings) to all amount values in the Purchase Order module, including the list table, show details, create/edit forms, and supplier emails.
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.

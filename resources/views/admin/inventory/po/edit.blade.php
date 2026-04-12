@@ -149,7 +149,11 @@
                                             <input type="number" name="items[{{ $index }}][unit_cost]" class="form-control unit-cost" step="0.01" min="0" value="{{ $item->unit_cost }}" required>
                                         </td>
                                         <td>
-                                            <input type="text" class="form-control subtotal" readonly value="{{ number_format($item->subtotal, 2, '.', '') }}">
+                                            @php $gs = \App\HelperClass::generalSettings(); @endphp
+                                            <div class="input-group">
+                                                <span class="input-group-text">{{ $gs->currency_symbol ?? '$' }}</span>
+                                                <input type="text" class="form-control subtotal" readonly value="{{ number_format($item->subtotal, 2, '.', '') }}">
+                                            </div>
                                         </td>
                                         <td>
                                             <button type="button" class="btn btn-soft-danger btn-sm removeItem">
@@ -168,7 +172,11 @@
                                         </td>
                                         <td class="text-end fw-bold">Total Amount:</td>
                                         <td colspan="2">
-                                            <input type="text" id="displayTotal" class="form-control fw-bold" readonly value="{{ number_format($po->total_amount, 2, '.', '') }}">
+                                            @php $gs = \App\HelperClass::generalSettings(); @endphp
+                                            <div class="input-group">
+                                                <span class="input-group-text">{{ $gs->currency_symbol ?? '$' }}</span>
+                                                <input type="text" id="displayTotal" class="form-control fw-bold" readonly value="{{ number_format($po->total_amount, 2, '.', '') }}">
+                                            </div>
                                         </td>
                                     </tr>
                                 </tfoot>
@@ -185,6 +193,7 @@
 </div>
 
 <template id="rowTemplate">
+    @php $gs = \App\HelperClass::generalSettings(); @endphp
     <tr class="item-row">
         <td>
             <select name="items[INDEX][product_key]" class="form-select product-select select2" required>
@@ -210,10 +219,16 @@
             <input type="number" name="items[INDEX][order_quantity]" class="form-control quantity" min="1" value="1" required>
         </td>
         <td>
-            <input type="number" name="items[INDEX][unit_cost]" class="form-control unit-cost" step="0.01" min="0" required>
+            <div class="input-group">
+                <span class="input-group-text">{{ $gs->currency_symbol ?? '$' }}</span>
+                <input type="number" name="items[INDEX][unit_cost]" class="form-control unit-cost" step="0.01" min="0" required>
+            </div>
         </td>
         <td>
-            <input type="text" class="form-control subtotal" readonly value="0.00">
+            <div class="input-group">
+                <span class="input-group-text">{{ $gs->currency_symbol ?? '$' }}</span>
+                <input type="text" class="form-control subtotal" readonly value="0.00">
+            </div>
         </td>
         <td>
             <button type="button" class="btn btn-soft-danger btn-sm removeItem">

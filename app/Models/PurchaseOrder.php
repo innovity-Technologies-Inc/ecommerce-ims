@@ -15,7 +15,6 @@ class PurchaseOrder extends Model
         'order_date',
         'expected_delivery_date',
         'received_date',
-        'batch_number',
         'status',
         'performance_score',
         'total_received_qty',

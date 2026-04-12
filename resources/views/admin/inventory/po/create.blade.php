@@ -122,6 +122,7 @@
                                     <!-- Rows added via JS -->
                                 </tbody>
                                 <tfoot>
+                                    @php $gs = \App\HelperClass::generalSettings(); @endphp
                                     <tr>
                                         <td colspan="2" class="text-start fw-bold">
                                             <button type="button" class="btn btn-soft-primary btn-sm" id="addItem">
@@ -130,7 +131,10 @@
                                         </td>
                                         <td class="text-end fw-bold">Total Amount:</td>
                                         <td colspan="2">
-                                            <input type="text" id="displayTotal" class="form-control fw-bold" readonly value="0.00">
+                                            <div class="input-group">
+                                                <span class="input-group-text">{{ $gs->currency_symbol ?? '$' }}</span>
+                                                <input type="text" id="displayTotal" class="form-control fw-bold" readonly value="0.00">
+                                            </div>
                                         </td>
                                     </tr>
                                 </tfoot>
@@ -172,10 +176,16 @@
             <input type="number" name="items[INDEX][order_quantity]" class="form-control quantity" min="1" value="1" required>
         </td>
         <td>
-            <input type="number" name="items[INDEX][unit_cost]" class="form-control unit-cost" step="0.01" min="0" required>
+            <div class="input-group">
+                <span class="input-group-text">{{ $gs->currency_symbol ?? '$' }}</span>
+                <input type="number" name="items[INDEX][unit_cost]" class="form-control unit-cost" step="0.01" min="0" required>
+            </div>
         </td>
         <td>
-            <input type="text" class="form-control subtotal" readonly value="0.00">
+            <div class="input-group">
+                <span class="input-group-text">{{ $gs->currency_symbol ?? '$' }}</span>
+                <input type="text" class="form-control subtotal" readonly value="0.00">
+            </div>
         </td>
         <td>
             <button type="button" class="btn btn-soft-danger btn-sm removeItem">
