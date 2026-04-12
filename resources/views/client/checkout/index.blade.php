@@ -137,7 +137,7 @@
                             <div class="coupon-area mt-20 mb-40px p-3 bg-white border">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <label class="mb-0 fw-bold">Have a coupon?</label>
-                                    <button type="button" class="btn btn-sm px-3" data-bs-toggle="modal" data-bs-target="#availableCouponsModal" style="background-color: #e8f5e9; color: #2e7d32; border: 1px solid #2e7d32; font-weight: 600;">
+                                    <button type="button" class="btn btn-sm px-3 rounded-pill shadow-sm" data-bs-toggle="modal" data-bs-target="#availableCouponsModal" style="background: linear-gradient(135deg, #2e7d32, #43a047); color: #fff; border: none; font-weight: 600; font-size: 12px; letter-spacing: 0.5px;">
                                         <i class="fa fa-ticket me-1"></i> View Coupons
                                     </button>
                                 </div>
@@ -216,21 +216,20 @@
         overflow: hidden;
     }
     .coupon-card.eligible {
-        border: 2px dashed #7AAACE;
-        box-shadow: 0 4px 15px rgba(122, 170, 206, 0.1);
+        border: 2px dashed #2e7d32;
+        box-shadow: 0 4px 15px rgba(46, 125, 50, 0.1);
     }
     .coupon-card.eligible:hover {
         transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(122, 170, 206, 0.2);
+        box-shadow: 0 8px 25px rgba(46, 125, 50, 0.2);
     }
     .coupon-card.ineligible {
-        filter: grayscale(1);
-        opacity: 0.7;
-        background: #fdfdfd;
+        border: 1px solid #ffcdd2;
+        background: #fffafa;
     }
     .coupon-card .coupon-left {
         padding: 20px;
-        background: #fff;
+        background: transparent;
         flex-grow: 1;
     }
     .coupon-card .coupon-right {
@@ -243,8 +242,12 @@
         min-width: 100px;
     }
     .coupon-card.eligible .coupon-right {
-        background: rgba(122, 170, 206, 0.05);
-        border-left-color: #7AAACE;
+        background: rgba(46, 125, 50, 0.05);
+        border-left-color: #2e7d32;
+    }
+    .coupon-card.ineligible .coupon-right {
+        background: #ffebee;
+        border-left-color: #ef9a9a;
     }
     .coupon-code-badge {
         display: inline-block;
@@ -258,16 +261,23 @@
         margin-bottom: 8px;
     }
     .coupon-card.eligible .coupon-code-badge {
-        background: #eef6ff;
-        color: #7AAACE;
-        border-color: #7AAACE;
+        background: #e8f5e9;
+        color: #2e7d32;
+        border-color: #2e7d32;
+    }
+    .coupon-card.ineligible .coupon-code-badge {
+        background: #ffebee;
+        color: #c62828;
+        border-color: #ef9a9a;
     }
     .ineligible-msg {
         font-size: 11px;
-        padding: 4px 8px;
-        background: #fff5f5;
-        border-radius: 4px;
+        padding: 6px 10px;
+        background: #ffebee;
+        color: #c62828;
+        border-radius: 6px;
         display: inline-block;
+        border: 1px solid #ffcdd2;
     }
 </style>
 
