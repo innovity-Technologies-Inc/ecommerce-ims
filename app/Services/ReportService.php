@@ -585,15 +585,16 @@ class ReportService
 
     protected function applyOrderFilters($query, array $filters, string $prefix = ''): void
     {
+        // For Sales Reports, we ONLY count Delivered orders
+        $query->where($prefix.'order_status', 'Delivered');
+
         if (! empty($filters['start_date'])) {
             $query->whereDate($prefix.'created_at', '>=', $filters['start_date']);
         }
         if (! empty($filters['end_date'])) {
             $query->whereDate($prefix.'created_at', '<=', $filters['end_date']);
         }
-        if (! empty($filters['order_status'])) {
-            $query->where($prefix.'order_status', $filters['order_status']);
-        }
+        // Removed dynamic order_status filter as it is now forced to 'Delivered'
         if (! empty($filters['payment_status'])) {
             $query->where($prefix.'payment_status', $filters['payment_status']);
         }

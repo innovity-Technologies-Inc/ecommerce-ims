@@ -77,16 +77,6 @@
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <label class="form-label small fw-bold">Order Status</label>
-                                <select name="order_status" class="form-select">
-                                    <option value="">All Statuses</option>
-                                    @php $statuses = ['Pending', 'Processing', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled', 'Rejected']; @endphp
-                                    @foreach($statuses as $status)
-                                        <option value="{{ $status }}" {{ ($filters['order_status'] ?? '') == $status ? 'selected' : '' }}>{{ $status }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-3">
                                 <label class="form-label small fw-bold">Payment Method</label>
                                 <select name="payment_method" class="form-select">
                                     <option value="">All Methods</option>

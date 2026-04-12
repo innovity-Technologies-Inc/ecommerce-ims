@@ -173,6 +173,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-156:** Purchase Order Schema Cleanup: Remove the redundant `batch_number` column from the `purchase_orders` table as batch tracking is managed by the dedicated `Batch` model.
 - [x] **REQ-157:** PO Module Currency Standardization: Add the global currency symbol (from general settings) to all amount values in the Purchase Order module, including the list table, show details, create/edit forms, and supplier emails.
 - [x] **REQ-158:** Warehouse Schema Optimization: Remove the `is_quarantine` flag from the `warehouses` table and update the `WarehouseSeeder` to remove the Quarantine warehouse, simplifying the inventory structure.
+- [x] **REQ-159:** Sales Report Data Accuracy: Force the Sales Report to only calculate data from orders with a 'Delivered' status to ensure financial reporting accurately reflects finalized sales. Removed the misleading "Order Status" filter from the Sales Report UI.
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.
