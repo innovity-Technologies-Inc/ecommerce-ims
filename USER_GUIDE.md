@@ -24,7 +24,18 @@ This is where you define what you sell. These options are found under the `Gener
 
 ---
 
-## 3. The Procurement Flow (Getting Stock)
+## 3. Customizing Your Homepage
+You can control what customers see on the front page using the `Homepage` sidebar menu.
+
+1.  **Sliders:** Upload high-quality banners for the main rotating slider.
+2.  **Product Sections (Bestsellers, Hot Deals, etc.):** 
+    *   Select a section (e.g., "Top Picks").
+    *   Choose **"Custom"** mode to manually pick products using the searchable "Product Selector".
+    *   Choose **"Auto"** mode to let the system automatically show the newest or most popular items.
+
+---
+
+## 4. The Procurement Flow (Getting Stock)
 Adding a product doesn't give it "stock". You must officially "receive" items into your warehouses.
 
 1.  **Create Purchase Order (PO):** Go to `Inventory -> Purchase Orders`. Create a PO for the supplier and select the items you are ordering.
@@ -35,7 +46,7 @@ Adding a product doesn't give it "stock". You must officially "receive" items in
 
 ---
 
-## 4. The Order Fulfillment Flow (Selling)
+## 5. The Order Fulfillment Flow (Selling)
 When a customer places an order on your website, follow this lifecycle in the `Orders` menu:
 
 1.  **Pending:** New orders appear here. Review the customer details.
@@ -44,11 +55,11 @@ When a customer places an order on your website, follow this lifecycle in the `O
     *   When you are ready to send the order, move it to **"Shipped"**.
     *   **Inventory Allocation:** A screen will appear asking you to pick which **Warehouse** and **Batch** the products are coming from. 
     *   *Note: Stock is only officially deducted from your records at this specific moment.*
-4.  **Delivered:** Once the customer receives the package, mark it as "Delivered". This finalizes the sale in your financial reports.
+4.  **Delivered:** Once the customer receives the package, mark it as "Delivered". This finalized the sale in your financial reports.
 
 ---
 
-## 5. Returns & RMA (Handling Goods Sent Back)
+## 6. Returns & RMA (Handling Goods Sent Back)
 The system handles two types of returns: from your customers and back to your suppliers.
 
 ### A. Customer Returns
@@ -68,7 +79,7 @@ If you need to send damaged or incorrect items back to your vendor, use the `Inv
 
 ---
 
-## 6. Inventory Maintenance (Adjustments & Wastage)
+## 7. Inventory Maintenance (Adjustments & Wastage)
 Use these tools under the `Inventory` and `Returns` menus to keep your stock accurate.
 
 1.  **Stock Adjustment:** If you find a discrepancy (e.g., extra items found or missing items), go to `Inventory -> Stock Adjustment`. You can manually increase or decrease stock for any batch.
@@ -77,15 +88,24 @@ Use these tools under the `Inventory` and `Returns` menus to keep your stock acc
 
 ---
 
-## 7. Marketing & Promotions
+## 8. Marketing & Promotions
 Found under the `Promotions` section in the sidebar:
 
-1.  **Coupons:** Create discount codes (e.g., "SAVE10"). You can set a minimum spend requirement.
+1.  **Coupons:** Create discount codes (e.g., "SAVE10"). You can set a minimum spend requirement and usage limits (leave empty for unlimited use).
 2.  **Flash Sale:** Put your shop in "Flash Sale Mode" for a specific time. You can choose which products get extra discounts during this period.
 
 ---
 
-## 8. Business Intelligence (Reports)
+## 9. Customer Experience (The Frontend)
+How your customers interact with the shop:
+
+1.  **Browsing:** Customers can filter products by Category, Brand, or Price.
+2.  **Applying Coupons:** During checkout, customers can click the **"View Coupons"** button to see all active offers. Clicking "Apply" on a valid offer automatically calculates their discount.
+3.  **Order Tracking:** Customers can track their order status in real-time. If an order is "Rejected" or "Cancelled", they can see your specific **Remarks/Reason** on their tracking page.
+
+---
+
+## 10. Business Intelligence (Reports)
 Use the `Reports` section to understand your business health:
 
 1.  **Sales Reports:** See your total revenue, profit, and top-selling products. *Note: Only 'Delivered' orders are counted as revenue.*
@@ -95,7 +115,7 @@ Use the `Reports` section to understand your business health:
 
 ---
 
-## 9. System Settings
+## 11. System Settings
 Go to the `Settings` section to:
 *   **General Settings:** Change your Business Name, Logos, **Currency Symbol**, and the **Notification Email** for Low Stock Alerts.
 *   **Contact Settings:** Update your office address, phone numbers, and social media links.
