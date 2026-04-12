@@ -35,6 +35,9 @@ You MUST strictly follow this sequence for **EVERY** request:
         - **How it Works (Technical Flow):** A step-by-step procedure of the logic (e.g., from Request -> Service Logic -> Result). Explain the "lifecycle" of the data.
         - **Data & Storage (DB Connectivity):** List related tables and explain HOW they are connected (e.g., "Table A connects to Table B via `id` to track X").
     - A task is ONLY complete when the documentation is updated with these technical specifics.
+6. **Source Control (MANDATORY):**
+    - After completing all the above steps and verifying the task, you MUST stage and commit all changes.
+    - **Commit Message Standard:** Use a clear, descriptive message starting with a type (e.g., `feat:`, `fix:`, `docs:`) and include the requirement/task ID (e.g., `feat: add coupon modal (REQ-153)`).
 
 ## 2. Architectural Patterns (MANDATORY & ENFORCED)
 
@@ -138,5 +141,7 @@ You MUST strictly follow this sequence for **EVERY** request:
 5. **Testing & Verification:**
     - **Seeder-Driven Verification:** ALWAYS use existing Seeders to populate test data. DO NOT create factories.
     - Write PHPUnit tests in `tests/Feature` or verify manually using seeded data.
-6. **Formatting:** Run `./vendor/bin/pint --dirty` before finalizing.
-7. **Optimization:** Run `php artisan optimize` to refresh configuration, route, and view caches.
+7. **Formatting:** Run `./vendor/bin/pint --dirty` before finalizing.
+8. **Optimization:** Run `php artisan optimize` to refresh configuration, route, and view caches.
+9. **Commit:** Stage and commit all changes with a task-referenced message.
+

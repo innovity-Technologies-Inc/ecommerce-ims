@@ -168,6 +168,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-151:** Report UI Optimization: Remove the "Batch #" search filter from the "Product-wise Valuation" inventory report to ensure the interface is focused only on relevant aggregate filters for product-level data.
 - [x] **REQ-152:** Pricing & Discount Logic Fix: Implement robust price and discount fallbacks for products with variants using global pricing. Ensure cart, checkout, and mini-cart correctly fall back to product-level regular and discount prices when variant-specific prices are missing. Added display of regular prices beside discounted prices in all cart/checkout views.
 - [x] **REQ-153:** Available Coupons Modal: Add an "Available Coupons" feature on the checkout page that opens a modal showing all active coupons. Eligible coupons (based on current subtotal) are selectable, while ineligible ones are greyed out with a specific reason (e.g., minimum spend not met). Applying a coupon from the modal automatically fills the input and triggers the application logic.
+- [x] **REQ-154:** Mandatory Source Control Guideline: Update the project's development workflow guidelines to require a mandatory stage and commit step with a clear, task-referenced message after every single task completion and verification.
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.
