@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ReturnReceiveRequest;
 use App\Http\Requests\Admin\ReturnRequestStatusUpdateRequest;
 use App\Services\ReturnService;
 use Illuminate\Http\RedirectResponse;
@@ -38,9 +39,9 @@ class ReturnController extends Controller
         return redirect()->back()->with('success', 'Return request status updated successfully.');
     }
 
-    public function receive(int $id): RedirectResponse
+    public function receive(ReturnReceiveRequest $request, int $id): RedirectResponse
     {
-        $this->returnService->receiveReturn($id);
+        $this->returnService->receiveReturn($id, $request->validated());
 
         return redirect()->back()->with('success', 'Return received and processed successfully.');
     }

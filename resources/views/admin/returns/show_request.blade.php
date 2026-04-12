@@ -141,7 +141,7 @@
                                             <div class="col-md-8">
                                                 <select name="status" id="status_toggle" class="form-select form-select-lg shadow-sm" required>
                                                     <option value="">Choose an action...</option>
-                                                    <option value="approved">Approve Return & Start Allocation</option>
+                                                    <option value="approved">Approve Return Request</option>
                                                     <option value="rejected">Reject Return Request</option>
                                                 </select>
                                             </div>
@@ -151,67 +151,6 @@
                                     <div id="rejection_container" class="d-none mt-3">
                                         <label class="form-label fw-bold">Rejection Reason <span class="text-danger">*</span></label>
                                         <textarea name="rejection_reason" class="form-control" rows="4" placeholder="Briefly explain why the return is rejected..."></textarea>
-                                    </div>
-                                </div>
-
-                                <div class="col-12">
-                                    <div id="condition_container" class="d-none">
-                                        <div class="d-flex align-items-center justify-content-between mb-3">
-                                            <h6 class="text-uppercase fw-bold text-primary mb-0">Allocation & Condition Management</h6>
-                                            <span class="badge bg-soft-info text-info">
-                                                <i class="bx bx-info-circle me-1"></i> Selection is restricted to items originally sold in this order
-                                            </span>
-                                        </div>
-
-                                        @foreach($request->returnItems as $item)
-                                            @php
-                                                $orderItem = \App\Models\OrderItem::where('order_id', $request->order_id)
-                                                    ->where('product_id', $item->product_id)
-                                                    ->where('product_variant_id', $item->product_variant_id)
-                                                    ->first();
-                                            @endphp
-                                            <div class="card border mb-3 shadow-none return-item-card" 
-                                                 data-item-id="{{ $item->id }}" 
-                                                 data-order-item-id="{{ $orderItem->id ?? 0 }}"
-                                                 data-target-qty="{{ $item->quantity }}"
-                                                 data-product-name="{{ $item->product->name }}">
-                                                <div class="card-header bg-light-subtle py-2 d-flex justify-content-between align-items-center">
-                                                    <div class="fw-bold text-dark">
-                                                        <i class="bx bx-package me-1 text-muted"></i> {{ $item->product->name }}
-                                                        <span class="badge bg-primary ms-2">Requested: {{ $item->quantity }}</span>
-                                                    </div>
-                                                    <div class="allocation-status">
-                                                        <span class="text-muted small">Total Allocated:</span> 
-                                                        <span class="current-allocated-qty fw-bold fs-15">0</span> 
-                                                        <span class="text-muted">/ {{ $item->quantity }}</span>
-                                                    </div>
-                                                </div>
-                                                <div class="card-body p-4">
-                                                    <div class="row g-4">
-                                                        <div class="col-lg-3 border-end">
-                                                            <div class="mb-4">
-                                                                <label class="form-label small fw-bold text-uppercase text-muted mb-2">Item Condition <span class="text-danger">*</span></label>
-                                                                <select name="items[{{ $item->id }}][condition]" class="form-select shadow-sm" required>
-                                                                    <option value="intact">Intact (Restock)</option>
-                                                                    <option value="damage">Damage (Wastage)</option>
-                                                                </select>
-                                                                <div class="form-text small">Select 'Intact' to return items to saleable stock.</div>
-                                                            </div>
-                                                            
-                                                            <button type="button" class="btn btn-sm btn-soft-success add-allocation-row-btn w-100 py-2">
-                                                                <i class="bx bx-plus-circle me-1"></i> Add Batch Split
-                                                            </button>
-                                                        </div>
-                                                        <div class="col-lg-9">
-                                                            <label class="form-label small fw-bold text-uppercase text-muted mb-2">Batch & Unit Allocation</label>
-                                                            <div class="allocation-rows-container">
-                                                                {{-- Allocation rows will be added here --}}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
                                     </div>
                                 </div>
                             </div>
@@ -230,23 +169,79 @@
             @elseif($request->status === 'approved')
                 @can('returns.edit')
                 <div class="card border-primary mb-3">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="card-title mb-0 text-white">Receiving Workflow</h5>
+                    <div class="card-header bg-primary text-white py-3">
+                        <h5 class="card-title mb-0 text-white"><i class="bx bx-package me-2"></i>Physical Receiving & Stock Allocation</h5>
                     </div>
                     <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-md-8">
-                                <p class="mb-0">The return request is approved. Once you have physically received the products, click the button below to process stock and sales adjustments. This will update inventory and financial records.</p>
+                        <p class="text-muted mb-4">The return request is approved. Inspect the returned items and allocate them to the correct batches/serials below to complete the restoration or wastage process.</p>
+                        
+                        <form action="{{ route('admin.returns.receive', $request->id) }}" method="POST" id="receive_return_form">
+                            @csrf
+                            <div id="condition_container">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <h6 class="text-uppercase fw-bold text-primary mb-0">Allocation & Condition Management</h6>
+                                    <span class="badge bg-soft-info text-info">
+                                        <i class="bx bx-info-circle me-1"></i> Selection is restricted to items originally sold in this order
+                                    </span>
+                                </div>
+
+                                @foreach($request->returnItems as $item)
+                                    @php
+                                        $orderItem = \App\Models\OrderItem::where('order_id', $request->order_id)
+                                            ->where('product_id', $item->product_id)
+                                            ->where('product_variant_id', $item->product_variant_id)
+                                            ->first();
+                                    @endphp
+                                    <div class="card border mb-4 shadow-none return-item-card" 
+                                         data-item-id="{{ $item->id }}" 
+                                         data-order-item-id="{{ $orderItem->id ?? 0 }}"
+                                         data-target-qty="{{ $item->quantity }}"
+                                         data-product-name="{{ $item->product->name }}">
+                                        <div class="card-header bg-light-subtle py-2 d-flex justify-content-between align-items-center border-bottom">
+                                            <div class="fw-bold text-dark">
+                                                <i class="bx bx-package me-1 text-muted"></i> {{ $item->product->name }}
+                                                <span class="badge bg-primary ms-2">Requested: {{ $item->quantity }}</span>
+                                            </div>
+                                            <div class="allocation-status">
+                                                <span class="text-muted small">Total Allocated:</span> 
+                                                <span class="current-allocated-qty fw-bold fs-15">0</span> 
+                                                <span class="text-muted">/ {{ $item->quantity }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-body p-4">
+                                            <div class="row g-4">
+                                                <div class="col-lg-3 border-end">
+                                                    <div class="mb-4">
+                                                        <label class="form-label small fw-bold text-uppercase text-muted mb-2">Item Condition <span class="text-danger">*</span></label>
+                                                        <select name="items[{{ $item->id }}][condition]" class="form-select shadow-sm" required>
+                                                            <option value="intact">Intact (Restock)</option>
+                                                            <option value="damage">Damage (Wastage)</option>
+                                                        </select>
+                                                        <div class="form-text small">Select 'Intact' to return items to saleable stock.</div>
+                                                    </div>
+                                                    
+                                                    <button type="button" class="btn btn-sm btn-soft-success add-allocation-row-btn w-100 py-2">
+                                                        <i class="bx bx-plus-circle me-1"></i> Add Batch Split
+                                                    </button>
+                                                </div>
+                                                <div class="col-lg-9">
+                                                    <label class="form-label small fw-bold text-uppercase text-muted mb-2">Batch & Unit Allocation</label>
+                                                    <div class="allocation-rows-container">
+                                                        {{-- Allocation rows will be added here --}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
-                            <div class="col-md-4 text-end">
-                                <form action="{{ route('admin.returns.receive', $request->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="btn btn-success px-4 py-2 fw-bold">
-                                        <i class="bx bx-check-circle me-1"></i> MARK AS RECEIVED
-                                    </button>
-                                </form>
+
+                            <div class="border-top pt-3 text-end mt-4">
+                                <button type="submit" class="btn btn-success px-5 py-2 fw-bold">
+                                    <i class="bx bx-check-circle me-1"></i> CONFIRM & PROCESS RECEIPT
+                                </button>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
                 @else
@@ -304,29 +299,28 @@
 
         $('#status_toggle').on('change', function() {
             const val = $(this).val();
-            if (val === 'approved') {
-                $('#condition_container').removeClass('d-none');
-                $('#rejection_container').addClass('d-none');
-                $('#rejection_container textarea').removeAttr('required');
-                initializeReturnAllocation();
-            } else if (val === 'rejected') {
+            if (val === 'rejected') {
                 $('#rejection_container').removeClass('d-none');
                 $('#rejection_container textarea').attr('required', 'required');
-                $('#condition_container').addClass('d-none');
             } else {
-                $('#condition_container').addClass('d-none');
                 $('#rejection_container').addClass('d-none');
+                $('#rejection_container textarea').removeAttr('required');
             }
         });
 
         function initializeReturnAllocation() {
-            $('.return-item-card').each(function() {
-                const card = $(this);
-                if (card.find('.allocation-row').length === 0) {
-                    addReturnAllocationRow(card);
-                }
-            });
+            if ($('#condition_container').length) {
+                $('.return-item-card').each(function() {
+                    const card = $(this);
+                    if (card.find('.allocation-row').length === 0) {
+                        addReturnAllocationRow(card);
+                    }
+                });
+            }
         }
+        
+        // Initialize if container exists (Approved state)
+        initializeReturnAllocation();
 
         function addReturnAllocationRow(card) {
             const itemId = card.data('item-id');
@@ -555,36 +549,34 @@
             $('#serialSelectionModal').modal('hide');
         });
 
-        $('form').on('submit', function(e) {
-            if ($('#status_toggle').val() === 'approved') {
-                let valid = true;
-                $('.return-item-card').each(function() {
-                    const card = $(this);
-                    const target = card.data('target-qty');
-                    let totalAllocated = 0;
-                    
-                    card.find('.allocation-row').each(function() {
-                        const row = $(this);
-                        const rowId = row.data('row-id');
-                        const qty = parseInt(row.find('.allocation-qty').val()) || 0;
-                        totalAllocated += qty;
+        $('#receive_return_form').on('submit', function(e) {
+            let valid = true;
+            $('.return-item-card').each(function() {
+                const card = $(this);
+                const target = card.data('target-qty');
+                let totalAllocated = 0;
+                
+                card.find('.allocation-row').each(function() {
+                    const row = $(this);
+                    const rowId = row.data('row-id');
+                    const qty = parseInt(row.find('.allocation-qty').val()) || 0;
+                    totalAllocated += qty;
 
-                        if (availableSerials[rowId] && (!selectedSerials[rowId] || selectedSerials[rowId].length !== qty)) {
-                            toastr.error(`Please select serials for ${card.data('product-name')} in all batches.`);
-                            valid = false;
-                            return false;
-                        }
-                    });
-
-                    if (totalAllocated !== target) {
-                        toastr.error(`Total allocated quantity (${totalAllocated}) must equal return quantity (${target}) for ${card.data('product-name')}.`);
+                    if (availableSerials[rowId] && (!selectedSerials[rowId] || selectedSerials[rowId].length !== qty)) {
+                        toastr.error(`Please select serials for ${card.data('product-name')} in all batches.`);
                         valid = false;
                         return false;
                     }
                 });
-                
-                if (!valid) return false;
-            }
+
+                if (totalAllocated !== target) {
+                    toastr.error(`Total allocated quantity (${totalAllocated}) must equal return quantity (${target}) for ${card.data('product-name')}.`);
+                    valid = false;
+                    return false;
+                }
+            });
+            
+            if (!valid) return false;
         });
     });
 </script>

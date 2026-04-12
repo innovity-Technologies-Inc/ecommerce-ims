@@ -24,12 +24,6 @@ class ReturnRequestStatusUpdateRequest extends FormRequest
         return [
             'status' => 'required|in:approved,rejected',
             'rejection_reason' => 'required_if:status,rejected|string|nullable',
-            'items' => 'required_if:status,approved|array',
-            'items.*.condition' => 'required_with:items|in:damage,intact',
-            'items.*.allocations' => 'required_if:status,approved|array',
-            'items.*.allocations.*.batch_id' => 'required_if:status,approved|exists:batches,id',
-            'items.*.allocations.*.quantity' => 'required_if:status,approved|integer|min:1',
-            'items.*.allocations.*.batch_serial_id' => 'nullable|exists:batch_serials,id',
         ];
     }
 
@@ -38,19 +32,7 @@ class ReturnRequestStatusUpdateRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        if ($this->has('items') && is_array($this->items)) {
-            $items = $this->items;
-            foreach ($items as $itemKey => $item) {
-                if (isset($item['allocations']) && is_array($item['allocations'])) {
-                    foreach ($item['allocations'] as $allocKey => $alloc) {
-                        if (isset($alloc['quantity'])) {
-                            $items[$itemKey]['allocations'][$allocKey]['quantity'] = (int) $alloc['quantity'];
-                        }
-                    }
-                }
-            }
-            $this->merge(['items' => $items]);
-        }
+        // No longer processing items/allocations here
     }
 
     public function messages(): array
@@ -58,8 +40,6 @@ class ReturnRequestStatusUpdateRequest extends FormRequest
         return [
             'status.required' => 'Please select a status for the return request.',
             'rejection_reason.required_if' => 'A rejection reason is mandatory when rejecting a request.',
-            'items.required_if' => 'Please set the condition for the items to be returned.',
-            'items.*.condition.required_with' => 'Every selected item must have a condition specified.',
         ];
     }
 }

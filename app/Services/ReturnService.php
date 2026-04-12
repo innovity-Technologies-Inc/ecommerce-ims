@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\HelperClass;
+use App\Mail\ReturnRequestConfirmationMail;
+use App\Mail\ReturnStatusUpdateMail;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\ReturnItem;
@@ -12,6 +14,7 @@ use DaiyanMozumder\LaravelFlexSearch\FlexSearch;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class ReturnService
 {
@@ -79,6 +82,12 @@ class ReturnService
                 }
             }
 
+            // Send Confirmation Email
+            $recipientEmail = $returnRequest->user ? $returnRequest->user->email : $returnRequest->order->email;
+            if ($recipientEmail) {
+                Mail::to($recipientEmail)->send(new ReturnRequestConfirmationMail($returnRequest->load(['returnItems.product', 'returnItems.productVariant', 'order'])));
+            }
+
             return $returnRequest;
         });
     }
@@ -116,86 +125,93 @@ class ReturnService
                 'rejection_reason' => $data['status'] === 'rejected' ? $data['rejection_reason'] : null,
             ]);
 
-            if ($data['status'] === 'approved') {
-                foreach ($data['items'] as $itemId => $itemData) {
-                    $returnItem = ReturnItem::findOrFail($itemId);
-
-                    // Handle Multiple Allocations (Splitting ReturnItem if needed)
-                    if (! empty($itemData['allocations'])) {
-                        $firstAlloc = true;
-                        foreach ($itemData['allocations'] as $alloc) {
-                            $serialIds = $alloc['batch_serial_ids'] ?? (isset($alloc['batch_serial_id']) ? [$alloc['batch_serial_id']] : []);
-
-                            if (! empty($serialIds)) {
-                                foreach ($serialIds as $serialId) {
-                                    if ($firstAlloc) {
-                                        $returnItem->update([
-                                            'condition' => $itemData['condition'],
-                                            'batch_id' => $alloc['batch_id'],
-                                            'batch_serial_id' => $serialId,
-                                            'quantity' => 1,
-                                            'total_price' => 1 * $returnItem->unit_price,
-                                        ]);
-                                        $firstAlloc = false;
-                                    } else {
-                                        ReturnItem::create([
-                                            'return_id' => $returnRequest->id,
-                                            'product_id' => $returnItem->product_id,
-                                            'product_variant_id' => $returnItem->product_variant_id,
-                                            'batch_id' => $alloc['batch_id'],
-                                            'batch_serial_id' => $serialId,
-                                            'quantity' => 1,
-                                            'unit_price' => $returnItem->unit_price,
-                                            'total_price' => $returnItem->unit_price,
-                                            'condition' => $itemData['condition'],
-                                            'is_received' => false,
-                                        ]);
-                                    }
-                                }
-                            } else {
-                                if ($firstAlloc) {
-                                    // Update existing ReturnItem with first allocation
-                                    $returnItem->update([
-                                        'condition' => $itemData['condition'],
-                                        'batch_id' => $alloc['batch_id'],
-                                        'batch_serial_id' => null,
-                                        'quantity' => $alloc['quantity'],
-                                        'total_price' => $alloc['quantity'] * $returnItem->unit_price,
-                                    ]);
-                                    $firstAlloc = false;
-                                } else {
-                                    // Create new ReturnItem for additional allocations
-                                    ReturnItem::create([
-                                        'return_id' => $returnRequest->id,
-                                        'product_id' => $returnItem->product_id,
-                                        'product_variant_id' => $returnItem->product_variant_id,
-                                        'batch_id' => $alloc['batch_id'],
-                                        'batch_serial_id' => null,
-                                        'quantity' => $alloc['quantity'],
-                                        'unit_price' => $returnItem->unit_price,
-                                        'total_price' => $alloc['quantity'] * $returnItem->unit_price,
-                                        'condition' => $itemData['condition'],
-                                        'is_received' => false,
-                                    ]);
-                                }
-                            }
-                        }
-                    } else {
-                        // Fallback for non-granular (though UI should prevent this)
-                        $returnItem->update([
-                            'condition' => $itemData['condition'],
-                        ]);
-                    }
-                }
+            // Send Status Update Email
+            $recipientEmail = $returnRequest->user ? $returnRequest->user->email : $returnRequest->order->email;
+            if ($recipientEmail) {
+                Mail::to($recipientEmail)->send(new ReturnStatusUpdateMail($returnRequest->load(['returnItems.product', 'returnItems.productVariant', 'order'])));
             }
 
             return $returnRequest;
         });
     }
 
-    public function receiveReturn(int $id): ReturnRequest
+    public function receiveReturn(int $id, array $data): ReturnRequest
     {
-        return DB::transaction(function () use ($id) {
+        return DB::transaction(function () use ($id, $data) {
+            $returnRequest = ReturnRequest::findOrFail($id);
+
+            // 1. Process Allocation (Moved from Approval to Receiving)
+            foreach ($data['items'] as $itemId => $itemData) {
+                $returnItem = ReturnItem::findOrFail($itemId);
+
+                // Handle Multiple Allocations (Splitting ReturnItem if needed)
+                if (! empty($itemData['allocations'])) {
+                    $firstAlloc = true;
+                    foreach ($itemData['allocations'] as $alloc) {
+                        $serialIds = $alloc['batch_serial_ids'] ?? (isset($alloc['batch_serial_id']) ? [$alloc['batch_serial_id']] : []);
+
+                        if (! empty($serialIds)) {
+                            foreach ($serialIds as $serialId) {
+                                if ($firstAlloc) {
+                                    $returnItem->update([
+                                        'condition' => $itemData['condition'],
+                                        'batch_id' => $alloc['batch_id'],
+                                        'batch_serial_id' => $serialId,
+                                        'quantity' => 1,
+                                        'total_price' => 1 * $returnItem->unit_price,
+                                    ]);
+                                    $firstAlloc = false;
+                                } else {
+                                    ReturnItem::create([
+                                        'return_id' => $returnRequest->id,
+                                        'product_id' => $returnItem->product_id,
+                                        'product_variant_id' => $returnItem->product_variant_id,
+                                        'batch_id' => $alloc['batch_id'],
+                                        'batch_serial_id' => $serialId,
+                                        'quantity' => 1,
+                                        'unit_price' => $returnItem->unit_price,
+                                        'total_price' => $returnItem->unit_price,
+                                        'condition' => $itemData['condition'],
+                                        'is_received' => false,
+                                    ]);
+                                }
+                            }
+                        } else {
+                            if ($firstAlloc) {
+                                // Update existing ReturnItem with first allocation
+                                $returnItem->update([
+                                    'condition' => $itemData['condition'],
+                                    'batch_id' => $alloc['batch_id'],
+                                    'batch_serial_id' => null,
+                                    'quantity' => $alloc['quantity'],
+                                    'total_price' => $alloc['quantity'] * $returnItem->unit_price,
+                                ]);
+                                $firstAlloc = false;
+                            } else {
+                                // Create new ReturnItem for additional allocations
+                                ReturnItem::create([
+                                    'return_id' => $returnRequest->id,
+                                    'product_id' => $returnItem->product_id,
+                                    'product_variant_id' => $returnItem->product_variant_id,
+                                    'batch_id' => $alloc['batch_id'],
+                                    'batch_serial_id' => null,
+                                    'quantity' => $alloc['quantity'],
+                                    'unit_price' => $returnItem->unit_price,
+                                    'total_price' => $alloc['quantity'] * $returnItem->unit_price,
+                                    'condition' => $itemData['condition'],
+                                    'is_received' => false,
+                                ]);
+                            }
+                        }
+                    }
+                } else {
+                    $returnItem->update([
+                        'condition' => $itemData['condition'],
+                    ]);
+                }
+            }
+
+            // 2. Refresh ReturnRequest and Process Stock Updates
             $returnRequest = ReturnRequest::with(['returnItems', 'order'])->findOrFail($id);
             $returnRequest->update(['status' => 'received']);
 

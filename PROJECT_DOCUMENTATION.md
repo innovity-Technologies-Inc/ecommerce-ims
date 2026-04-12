@@ -41,14 +41,18 @@
     *   `ordered_product_batches` bridge `order_items` to the `batches` table to track exactly which stock source was used.
 
 ### 3.3 Return Module (RMA)
-- **What (Business Purpose):** Handles the return of delivered products, ensuring correct stock restoration and financial reconciliation.
+- **What (Business Purpose):** Handles the return of delivered products, ensuring correct stock restoration and financial reconciliation through a multi-step verification process.
 - **How it Works (Technical Flow):**
   1. **Request:** Customers/Guests submit a return request for 'Delivered' items with proof images.
-  2. **Approval (Allocation):** Admin selects specific batches/serials to return. The system **only** allows selection of units originally shipped for that order.
-  3. **Condition:** Admin marks items as 'Intact' (Restock) or 'Damage' (Wastage).
-  4. **Receiving:** Admin marks as 'Received'. 
-     *   **Intact:** Stock is restored to batches/warehouses. Serials marked as `in_stock`. Sales totals are reduced in `orders` and `order_items`. Aggregate stock ledger entry created with `RETURN_INTACT` type.
-     *   **Damage:** Serials marked as `damaged` with `stock_status = 'wastage'`. Item added to `wastages`. Sales totals reduced.
+     *   **Automation:** The system automatically sends a **Return Request Confirmation Email** to the customer upon submission (REQ-147).
+  2. **Approval:** Admin reviews the request and images. They can either 'Approve' or 'Reject' (with a mandatory reason).
+     *   **Automation:** A **Return Status Update Email** is sent to the customer notifying them of the admin's decision (REQ-147).
+  3. **Physical Receiving & Allocation (REQ-147):** Once the physical items are received, the admin performs the allocation and condition inspection.
+     *   **Granular Allocation:** Admin selects the specific batches and serial numbers to be returned (limited to those originally shipped for the order).
+     *   **Condition Check:** Admin marks each item as 'Intact' (Restock) or 'Damage' (Wastage).
+  4. **Processing:** Admin marks the return as 'Received'. 
+     *   **Intact:** Stock is restored to batches/warehouses. Serials marked as `in_stock`. Sales totals and costs are reduced in `orders`, `order_items`, and `ordered_product_batches`. Aggregate stock ledger entry created with `RETURN_INTACT` type.
+     *   **Damage:** Serials marked as `damaged` with `stock_status = 'wastage'`. Item added to `wastages`. Sales/Cost totals reduced.
 - **Data & Storage (DB Connectivity):**
   *   `returns` link to `orders.id` and `users.id`.
   *   `return_items` bridge `returns.id` to `products.id` and `batches.id`. It tracks the specific `batch_serial_id` being returned.
