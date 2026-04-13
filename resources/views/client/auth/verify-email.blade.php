@@ -29,8 +29,8 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-items: center;
-        text-align: center;
+        align-items: flex-start;
+        text-align: left;
         color: #fff;
         position: relative;
     }
