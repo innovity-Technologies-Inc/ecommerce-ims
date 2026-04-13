@@ -2,18 +2,19 @@
 @section('content')
 
 <div class="container-xxl">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <div>
+            <h4 class="mb-0">Usage History for Coupon: <span class="text-primary">{{ $coupon->code }}</span></h4>
+            <p class="text-muted mb-0 small">Overview of customers who used this coupon and the discounts applied.</p>
+        </div>
+        <a href="{{ route('admin.coupons.index') }}" class="btn btn-sm btn-secondary">
+            <i class="bx bx-arrow-back me-1"></i> Back to Coupons
+        </a>
+    </div>
+
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <div>
-                        <h4 class="card-title">Usage History for Coupon: <span class="text-primary">{{ $coupon->code }}</span></h4>
-                        <p class="text-muted mb-0 small">Overview of customers who used this coupon and the discounts applied.</p>
-                    </div>
-                    <a href="{{ route('admin.coupons.index') }}" class="btn btn-sm btn-soft-secondary">
-                        <i class="bx bx-left-arrow-alt me-1"></i> Back to Coupons
-                    </a>
-                </div>
                 <div class="card-body">
                     <div class="row mb-4">
                         <div class="col-md-3">

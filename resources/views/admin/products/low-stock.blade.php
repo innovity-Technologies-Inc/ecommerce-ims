@@ -1,26 +1,21 @@
 @extends('admin.structure.app')
 @section('content')
-
 <div class="container-xxl">
     <div class="d-flex align-items-center justify-content-between mb-3">
         <h4 class="mb-0">Low Stock Alerts</h4>
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary btn-sm no-print">
-            <i class="bx bx-arrow-back me-1"></i> Back to Dashboard
-        </a>
+        <div class="d-flex align-items-center gap-2">
+            <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary btn-sm no-print">
+                <i class="bx bx-arrow-back me-1"></i> Back to Dashboard
+            </a>
+            <button type="button" class="btn btn-sm btn-soft-secondary no-print" onclick="printFullReport()">
+                <i class="bx bx-printer"></i> Print Report
+            </button>
+        </div>
     </div>
 
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="card-title">All Low Stock Products (Global & Warehouse)</h4>
-                    <div class="d-flex align-items-center gap-2">
-                        <button type="button" class="btn btn-sm btn-soft-secondary no-print" onclick="printFullReport()">
-                            <i class="bx bx-printer"></i> Print Report
-                        </button>
-                        <span class="badge bg-soft-danger text-danger">Total Alerts: {{ count($lowStockProducts) }}</span>
-                    </div>
-                </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover table-centered mb-0">
