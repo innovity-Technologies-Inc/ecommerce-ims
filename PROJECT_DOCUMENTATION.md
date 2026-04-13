@@ -392,5 +392,13 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
 - **Data & Storage (DB Connectivity):**
     *   `admin_notifications` table stores title, message, type, url, and read status.
 
+### 4.4 Client Auth Pages Redesign (REQ-164)
+- **What (Business Purpose):** Redesigns the client-side login, registration, and password recovery pages to provide a visually appealing, modern, and cohesive identity for users.
+- **How it Works (Technical Flow):**
+    1. **Layout & Styling:** Implements a modern split-pane card layout with a custom `#7AAACE` primary color scheme and responsive side banners.
+    2. **UI Enhancements:** Applies interactive CSS hover effects to the main authentication cards for improved user feedback.
+    3. **Breadcrumb Removal:** Conditionally hides the global breadcrumb for authentication routes (`login` and `register`) in the main client layout to maintain a clean interface.
+    4. **Integration:** Maintains full compatibility with existing Google Social Login and Google reCAPTCHA v2 integrations.
+
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*

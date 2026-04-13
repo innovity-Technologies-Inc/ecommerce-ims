@@ -19,6 +19,13 @@
         max-width: 1000px;
         width: 100%;
         min-height: 600px;
+        transition: all 0.4s ease;
+        border: 1px solid transparent;
+    }
+    .auth-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 45px rgba(122, 170, 206, 0.15);
+        border-color: rgba(122, 170, 206, 0.3);
     }
     .auth-side-banner {
         background: {{ isset($gs->login_banner) ? 'url('.asset('storage/'.$gs->login_banner).')' : 'linear-gradient(135deg, #7AAACE, #9CC2E2)' }};
