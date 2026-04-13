@@ -8,7 +8,7 @@
             <p class="text-muted mb-0 small">Overview of customers who used this coupon and the discounts applied.</p>
         </div>
         <a href="{{ route('admin.coupons.index') }}" class="btn btn-sm btn-secondary">
-            <i class="bx bx-arrow-back me-1"></i> Back to Coupons
+            <i class="bx bx-arrow-back me-1"></i> Back
         </a>
     </div>
 

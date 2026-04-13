@@ -7,7 +7,7 @@
     <div class="d-flex align-items-center justify-content-between mb-3">
         <h4 class="mb-0">Batch Details: {{ $batch->batch_number }}</h4>
         <a href="{{ route('admin.inventory.batches.index') }}" class="btn btn-secondary btn-sm">
-            <i class="bx bx-arrow-back me-1"></i> Back to Batch Tracking
+            <i class="bx bx-arrow-back me-1"></i> Back
         </a>
     </div>
 

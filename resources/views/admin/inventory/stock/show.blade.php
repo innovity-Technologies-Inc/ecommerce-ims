@@ -10,7 +10,7 @@
                 <h4 class="mb-sm-0">Product Stock Details</h4>
                 <div class="page-title-right">
                     <a href="{{ route('admin.inventory.stock.index') }}" class="btn btn-secondary btn-sm">
-                        <i class="bx bx-arrow-back me-1"></i> Back to List
+                        <i class="bx bx-arrow-back me-1"></i> Back
                     </a>
                 </div>
             </div>

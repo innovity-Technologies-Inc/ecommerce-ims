@@ -10,9 +10,8 @@
                 <h4 class="mb-sm-0">Warehouse: {{ $warehouse->name }}</h4>
                 <div class="page-title-right">
                     <a href="{{ route('admin.warehouses.index') }}" class="btn btn-secondary btn-sm">
-                        <i class="bx bx-arrow-back me-1"></i> Back to List
-                    </a>
-                </div>
+                        <i class="bx bx-arrow-back me-1"></i> Back
+                    </a>                </div>
             </div>
         </div>
     </div>

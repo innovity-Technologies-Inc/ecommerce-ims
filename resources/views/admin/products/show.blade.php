@@ -6,7 +6,7 @@
         <h4 class="mb-0">Product Details</h4>
         <div class="d-flex gap-2">
             <a href="{{ route('admin.products.edit', $product->id) }}" class="btn btn-primary btn-sm">Edit Product</a>
-            <a href="{{ route('admin.products.index') }}" class="btn btn-secondary btn-sm">Back to List</a>
+            <a href="{{ route('admin.products.index') }}" class="btn btn-secondary btn-sm">Back</a>
         </div>
     </div>
 

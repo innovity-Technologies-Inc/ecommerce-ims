@@ -421,5 +421,12 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     2. **Persistence of Collapsibles:** Automatically applies the `show` class and sets `aria-expanded="true"` on parent menu containers if any of their child routes are active, preventing the menu from collapsing when navigating within a module.
     3. **Wildcard Matching:** Leverages route wildcards (e.g., `admin.products.*`) to ensure parent menu items remain highlighted even on deep detail, create, or edit pages.
 
+### 4.8 Simplified Admin Navigation (REQ-169)
+- **What (Business Purpose):** Further refines the admin user interface by standardizing the text of navigation buttons, reducing visual noise and providing a cleaner, more focused user experience.
+- **How it Works (Technical Flow):**
+    1. **Text Normalization:** All "Back" buttons across all admin modules (Index, Show, Create, Edit) have been simplified to use exactly the text "Back".
+    2. **Icon Preservation:** Maintains the `bx bx-arrow-back` icon for intuitive visual recognition while removing redundant contextual suffixes like "to Dashboard" or "to List".
+    3. **Universal Consistency:** This standard is applied across Catalog, Inventory, Fulfillment, Management, and Settings modules to ensure a predictable UI pattern.
+
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*

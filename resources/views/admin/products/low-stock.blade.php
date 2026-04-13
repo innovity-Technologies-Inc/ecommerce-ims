@@ -4,8 +4,8 @@
     <div class="d-flex align-items-center justify-content-between mb-3">
         <h4 class="mb-0">Low Stock Alerts</h4>
         <div class="d-flex align-items-center gap-2">
-            <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary btn-sm no-print">
-                <i class="bx bx-arrow-back me-1"></i> Back to Dashboard
+            <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary btn-sm">
+                <i class="bx bx-arrow-back me-1"></i> Back
             </a>
             <button type="button" class="btn btn-sm btn-soft-secondary no-print" onclick="printFullReport()">
                 <i class="bx bx-printer"></i> Print Report

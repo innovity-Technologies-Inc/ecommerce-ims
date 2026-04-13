@@ -5,7 +5,7 @@
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h4 class="mb-0">Contact Messages</h4>
             <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary btn-sm">
-                <i class="bx bx-arrow-back me-1"></i> Back to Dashboard
+                <i class="bx bx-arrow-back me-1"></i> Back
             </a>
         </div>
 

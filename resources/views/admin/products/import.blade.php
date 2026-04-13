@@ -5,7 +5,7 @@
     <div class="d-flex align-items-center justify-content-between mb-3">
         <h4 class="mb-0">Import Products</h4>
         <a href="{{ route('admin.products.index') }}" class="btn btn-secondary btn-sm">
-            <i class="bx bx-arrow-back me-1"></i>Back to List
+            <i class="bx bx-arrow-back me-1"></i> Back
         </a>
     </div>
 
