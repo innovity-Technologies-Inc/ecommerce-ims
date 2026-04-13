@@ -1,5 +1,6 @@
 @extends('client.structure.app')
 @section('content')
+@php $gs = \App\HelperClass::generalSettings(); @endphp
 <style>
     .auth-page-wrapper {
         min-height: 100vh;
@@ -20,7 +21,9 @@
         min-height: 600px;
     }
     .auth-side-banner {
-        background: linear-gradient(135deg, #7AAACE, #9CC2E2);
+        background: {{ isset($gs->login_banner) ? 'url('.asset('storage/'.$gs->login_banner).')' : 'linear-gradient(135deg, #7AAACE, #9CC2E2)' }};
+        background-size: cover;
+        background-position: center;
         width: 45%;
         padding: 40px;
         display: flex;
@@ -33,8 +36,12 @@
         content: "";
         position: absolute;
         top: 0; left: 0; right: 0; bottom: 0;
-        background: url('https://www.transparenttextures.com/patterns/cubes.png');
-        opacity: 0.1;
+        background: {{ isset($gs->login_banner) ? 'rgba(0,0,0,0.3)' : "url('https://www.transparenttextures.com/patterns/cubes.png')" }};
+        opacity: {{ isset($gs->login_banner) ? '1' : '0.1' }};
+    }
+    .auth-side-banner > * {
+        position: relative;
+        z-index: 1;
     }
     .auth-form-content {
         width: 55%;

@@ -21,6 +21,8 @@ class SettingsService
             'meta_description',
             'currency',
             'notify_email',
+            'login_banner',
+            'register_banner',
             'primary_color',
             'secondary_color',
         ])->toArray();
@@ -44,6 +46,20 @@ class SettingsService
                 HelperClass::file_delete($setting->breadcrumb_image);
             }
             $updateData['breadcrumb_image'] = HelperClass::file_upload($data['breadcrumb_image'], 'settings');
+        }
+
+        if (isset($data['login_banner'])) {
+            if ($setting->login_banner) {
+                HelperClass::file_delete($setting->login_banner);
+            }
+            $updateData['login_banner'] = HelperClass::file_upload($data['login_banner'], 'settings');
+        }
+
+        if (isset($data['register_banner'])) {
+            if ($setting->register_banner) {
+                HelperClass::file_delete($setting->register_banner);
+            }
+            $updateData['register_banner'] = HelperClass::file_upload($data['register_banner'], 'settings');
         }
 
         if (isset($data['favicon'])) {

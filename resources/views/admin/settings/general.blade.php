@@ -77,6 +77,28 @@
                                 </div>
                             </div>
 
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="login_banner" class="form-label">Login Page Banner (450x600 recommended)</label>
+                                    <input type="file" name="login_banner" id="login_banner" class="form-control">
+                                    @if(isset($setting->login_banner))
+                                        <img src="{{ asset('storage/'.$setting->login_banner) }}" alt="Login Banner" class="img-fluid mt-2 rounded border" style="max-height: 100px;">
+                                    @endif
+                                    @error('login_banner') <span class="text-danger small">{{ $message }}</span> @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="register_banner" class="form-label">Registration Page Banner (450x650 recommended)</label>
+                                    <input type="file" name="register_banner" id="register_banner" class="form-control">
+                                    @if(isset($setting->register_banner))
+                                        <img src="{{ asset('storage/'.$setting->register_banner) }}" alt="Register Banner" class="img-fluid mt-2 rounded border" style="max-height: 100px;">
+                                    @endif
+                                    @error('register_banner') <span class="text-danger small">{{ $message }}</span> @enderror
+                                </div>
+                            </div>
+
                             <div class="col-lg-12">
                                 <hr>
                                 <h5 class="mb-3">SEO Settings</h5>

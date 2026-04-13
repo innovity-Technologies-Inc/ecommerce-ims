@@ -11,6 +11,8 @@ class GeneralSetting extends Model
         'dark_logo',
         'light_logo',
         'breadcrumb_image',
+        'login_banner',
+        'register_banner',
         'meta_title',
         'meta_description',
         'favicon',

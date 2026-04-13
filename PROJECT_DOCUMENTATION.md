@@ -374,6 +374,7 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     *   **Catalog:** Product/Variant Creation (Discount %, Min Stock).
     *   **Marketing:** Coupon Usage Limits, Homepage Section Limits.
     *   **Fulfillment:** Order Status Updates and Return Allocations.
+    *   **Identity:** Custom Banners for Login and Registration pages (REQ-165).
 
 ### 4.3 Admin Notification System (REQ-163)
 - **What (Business Purpose):** Provides real-time alerts to administrators for critical events requiring attention, ensuring faster response times for orders, returns, and inventory issues.
