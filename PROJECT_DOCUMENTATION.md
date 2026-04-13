@@ -400,5 +400,12 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     3. **Breadcrumb Removal:** Conditionally hides the global breadcrumb for authentication routes (`login` and `register`) in the main client layout to maintain a clean interface.
     4. **Integration:** Maintains full compatibility with existing Google Social Login and Google reCAPTCHA v2 integrations.
 
+### 4.5 Admin Back Navigation (REQ-166)
+- **What (Business Purpose):** Standardizes navigation in the admin panel by providing intuitive "Back" buttons on detail pages and dashboard-linked index pages, reducing clicks and improving user workflow.
+- **How it Works (Technical Flow):**
+    1. **Show Pages:** All standard "show" (details) views are updated with a "Back" button that uses the `route()` function to return to the relevant index page.
+    2. **Index Pages:** Primary index pages commonly accessed from the dashboard (Orders, Products, Customers, Best Selling, Low Stock) include a "Back to Dashboard" button.
+    3. **UI Standard:** All buttons use Bootstrap 5 secondary styling (`btn-secondary btn-sm`) with a `bx bx-arrow-back` icon for visual consistency across the entire admin suite.
+
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*

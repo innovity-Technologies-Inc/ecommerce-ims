@@ -4,9 +4,14 @@
 <div class="container-xxl">
     <div class="d-flex align-items-center justify-content-between mb-3">
         <h4 class="mb-0">Best Selling Products</h4>
-        <button type="button" class="btn btn-sm btn-soft-secondary no-print" onclick="printFullReport()">
-            <i class="bx bx-printer"></i> Print Full Report
-        </button>
+        <div class="d-flex align-items-center gap-2">
+            <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary btn-sm no-print">
+                <i class="bx bx-arrow-back me-1"></i> Back to Dashboard
+            </a>
+            <button type="button" class="btn btn-sm btn-soft-secondary no-print" onclick="printFullReport()">
+                <i class="bx bx-printer"></i> Print Full Report
+            </button>
+        </div>
     </div>
 
     <div class="card overflow-hidden">

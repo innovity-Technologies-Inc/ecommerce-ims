@@ -180,6 +180,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-163:** Admin Notification System: Implement a custom database-driven notification system for administrators. Notifications are automatically triggered for Low Stock events, New Orders, Return Requests, and Contact Messages. Includes a dynamic navbar dropdown, unread count tracking, a "View All" page with advanced filtering (Type, Search, Date Range), and one-click "Mark as Read" functionality.
 - [x] **REQ-164:** Client Auth Pages Redesign: Redesign the client-side login and registration pages with a modern, aesthetically pleasing layout. Remove the breadcrumb from these pages and ensure visual consistency with the project's primary color scheme (#7AAACE).
 - [x] **REQ-165:** Dynamic Auth Banners: Add functionality in the Admin General Settings to upload custom banners for the Login and Registration pages. These banners are displayed dynamically on the authentication pages with a professional overlay and pattern fallback.
+- [x] **REQ-166:** Admin Back Navigation: Add "Back" buttons to all detailed (show) pages and specific index pages linked from the dashboard (Orders, Products, Customers, Best Selling, Low Stock) to improve user navigation and experience.
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.

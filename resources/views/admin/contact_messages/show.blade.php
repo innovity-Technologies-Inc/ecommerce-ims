@@ -7,8 +7,8 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h4 class="card-title">Message Details</h4>
-                        <a href="{{ route('admin.contact_messages.index') }}" class="btn btn-sm btn-primary">
-                            <i class="bx bx-arrow-back me-1"></i> Back to List
+                        <a href="{{ route('admin.contact_messages.index') }}" class="btn btn-secondary btn-sm">
+                            <i class="bx bx-arrow-back me-1"></i> Back
                         </a>
                     </div>
                     <div class="card-body">

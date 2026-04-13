@@ -4,9 +4,12 @@
 <div class="container-xxl">
     <div class="d-flex align-items-center justify-content-between mb-3">
         <h4 class="mb-0">Product List</h4>
-        <div>
+        <div class="d-flex align-items-center gap-2">
+            <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary btn-sm">
+                <i class="bx bx-arrow-back me-1"></i> Back to Dashboard
+            </a>
             @can('products.create')
-            <a href="{{ route('admin.products.import') }}" class="btn btn-outline-info btn-sm me-1">
+            <a href="{{ route('admin.products.import') }}" class="btn btn-outline-info btn-sm">
                 <i class="bx bx-import me-1"></i>Import
             </a>
             <a href="{{ route('admin.products.create') }}" class="btn btn-primary btn-sm">

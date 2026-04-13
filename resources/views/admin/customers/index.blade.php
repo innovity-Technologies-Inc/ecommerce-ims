@@ -8,6 +8,9 @@
                     <div class="card-header">
                         <div class="d-flex align-items-center justify-content-between mb-2">
                             <h4 class="card-title">Customer List</h4>
+                            <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary btn-sm">
+                                <i class="bx bx-arrow-back me-1"></i> Back to Dashboard
+                            </a>
                         </div>
                         <div class="row align-items-center g-2">
                             <div class="col-lg-4">

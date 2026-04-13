@@ -6,7 +6,9 @@
     <div class="container-xxl">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h4 class="mb-0">Adjustment Details: {{ $adjustment->adjustment_number }}</h4>
-            <a href="{{ route('admin.inventory.adjustment.index') }}" class="btn btn-secondary btn-sm">Back to List</a>
+            <a href="{{ route('admin.inventory.adjustment.index') }}" class="btn btn-secondary btn-sm">
+                <i class="bx bx-arrow-back me-1"></i> Back
+            </a>
         </div>
 
         <div class="row">

@@ -4,8 +4,8 @@
 <div class="container-xxl" id="performance-detail-report">
     <div class="d-flex align-items-center justify-content-between mb-4 no-print">
         <div>
-            <a href="{{ route('admin.reports.warehouse-performance', ['start_date' => $filters['start_date'], 'end_date' => $filters['end_date']]) }}" class="btn btn-sm btn-outline-secondary mb-2 hover-lift">
-                <i class="bx bx-arrow-back"></i> Back to Dashboard
+            <a href="{{ route('admin.reports.warehouse-performance', ['start_date' => $filters['start_date'], 'end_date' => $filters['end_date']]) }}" class="btn btn-secondary btn-sm mb-2 hover-lift">
+                <i class="bx bx-arrow-back me-1"></i> Back
             </a>
             <h4 class="mb-0 fw-bold text-dark">Warehouse: <span class="text-primary">{{ $warehouse->name }}</span></h4>
             <p class="text-muted small mb-0"><i class="bx bx-calendar me-1"></i>Performance Period: <strong>{{ $filters['start_date'] }}</strong> to <strong>{{ $filters['end_date'] }}</strong></p>

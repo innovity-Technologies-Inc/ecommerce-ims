@@ -2,13 +2,20 @@
 @section('content')
 
     <div class="container-xxl">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h4 class="mb-0">Order Details: {{ $order->order_id }}</h4>
+            <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary btn-sm">
+                <i class="bx bx-arrow-back me-1"></i> Back
+            </a>
+        </div>
+
         <div class="row">
             <div class="col-lg-8">
                 {{-- Order Items Table --}}
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <div>
-                            <h5 class="card-title mb-0 d-inline-block me-2">Order Details: {{ $order->order_id }}</h5>
+                            <h5 class="card-title mb-0 d-inline-block me-2">Order Summary</h5>
                             @if($order->returnRequests->where('status', 'received')->count() > 0)
                                 <span class="badge bg-soft-danger text-danger">
                                     <i class="bx bx-undo me-1"></i> Returned Items
