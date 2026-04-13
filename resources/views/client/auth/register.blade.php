@@ -23,9 +23,9 @@
         border: 1px solid transparent;
     }
     .auth-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 45px rgba(122, 170, 206, 0.15);
-        border-color: rgba(122, 170, 206, 0.3);
+        transform: translateY(-10px);
+        box-shadow: 0 25px 50px rgba(122, 170, 206, 0.3), 0 0 15px rgba(122, 170, 206, 0.2);
+        border-color: #7AAACE;
     }
     .auth-side-banner {
         background: {{ isset($gs->register_banner) ? 'url('.asset('storage/'.$gs->register_banner).')' : 'linear-gradient(135deg, #7AAACE, #9CC2E2)' }};
