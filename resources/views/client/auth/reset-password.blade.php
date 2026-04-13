@@ -11,9 +11,9 @@
         padding: 40px 20px;
     }
     .auth-card {
-        background: #fff;
-        border-radius: 20px;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+        background: transparent;
+        border-radius: 0;
+        box-shadow: none;
         overflow: hidden;
         display: flex;
         max-width: 1000px;
