@@ -185,6 +185,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-168:** Sidebar Active State Logic: Implement dynamic `active` and `show` classes in the admin sidebar to highlight the current menu item and keep collapsible sections open when related sub-routes are active.
 - [x] **REQ-169:** Simplify Admin "Back" Button Text: Simplify the text of all "Back" buttons in the admin panel to just "Back", preserving icons and maintaining consistency across all views.
 - [ ] **REQ-170:** Dedicated Admin Profile Page: Implement a dedicated profile view and edit page for the logged-in administrator. The edit form must allow updating personal details (name, email, avatar, password) but strictly exclude role selection to prevent self-elevation or accidental lockout.
+- [x] **REQ-171:** Idempotent Seeders: Ensure all database seeders use `updateOrCreate` or similar logic to allow multiple runs without failing or creating duplicate records.
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.

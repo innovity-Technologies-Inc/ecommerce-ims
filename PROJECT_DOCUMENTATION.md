@@ -440,5 +440,13 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     - Avatar images are stored in `storage/app/public/admins/`.
     - `AdminProfileService` handles the business logic and file operations.
 
+### **7. Idempotent Seeders**
+- **What:** Database seeders refactored to support multiple executions without data duplication or constraint failures.
+- **How it Works:**
+    - `ProductSeeder.php` refactored to remove destructive `delete()` calls. It now checks for existing product slugs and uses `updateProduct()` if found, or `storeProduct()` if new.
+    - All other seeders (`Admin`, `Brand`, `Category`, `Supplier`, `Warehouse`, `Coupon`, etc.) utilize `updateOrCreate()` or `findOrCreate()` to maintain data integrity across multiple runs.
+- **Data & Storage:**
+    - Seeders interact with their respective Eloquent models using unique identifiers (email, slug, code, name) as lookup keys.
+
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*
