@@ -445,8 +445,18 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
 - **How it Works:**
     - `ProductSeeder.php` refactored to remove destructive `delete()` calls. It now checks for existing product slugs and uses `updateProduct()` if found, or `storeProduct()` if new.
     - All other seeders (`Admin`, `Brand`, `Category`, `Supplier`, `Warehouse`, `Coupon`, etc.) utilize `updateOrCreate()` or `findOrCreate()` to maintain data integrity across multiple runs.
-- **Data & Storage:**
+- Data & Storage:
     - Seeders interact with their respective Eloquent models using unique identifiers (email, slug, code, name) as lookup keys.
+
+### **8. Policy & FAQ Management (REQ-172)**
+- **What:** Separate management for legal policies (Privacy, Return) and a dedicated FAQ CRUD module.
+- **How it Works:**
+    - **Policies:** Admin can edit Privacy and Return policies via Summernote rich-text editors. Data is stored in the `policy_settings` table.
+    - **FAQs:** A full CRUD module allows admins to manage frequently asked questions. FAQs can be activated/deactivated and ordered.
+    - **Client Integration:** Public pages `/privacy-policy`, `/return-policy`, and `/faq` display this content. FAQs are presented in a Bootstrap accordion for a traditional user experience.
+- **Data & Storage:**
+    - `policy_settings` table: `privacy_policy` (longtext), `return_policy` (longtext).
+    - `faqs` table: `question` (string), `answer` (text), `is_active` (boolean), `sort_order` (integer).
 
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*

@@ -78,12 +78,11 @@
                         <h4 class="footer-herading">Information</h4>
                         <div class="footer-links">
                             <ul>
-                                <li><a href="#">Delivery</a></li>
-                                <li><a href="#">About Us</a></li>
-                                <li><a href="#">Secure Payment</a></li>
+                                <li><a href="{{ route('client.privacy_policy') }}">Privacy Policy</a></li>
+                                <li><a href="{{ route('client.return_policy') }}">Return Policy</a></li>
+                                <li><a href="{{ route('client.faq') }}">FAQ</a></li>
                                 <li><a href="{{ route('client.returns.index') }}">Returns</a></li>
                                 <li><a href="{{ route('client.contact') }}">Contact Us</a></li>
-                                <li><a href="#">Sitemap</a></li>
                             </ul>
                         </div>
                     </div>

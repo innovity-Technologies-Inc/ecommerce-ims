@@ -5,9 +5,22 @@ namespace App\Services;
 use App\HelperClass;
 use App\Models\ContactSetting;
 use App\Models\GeneralSetting;
+use App\Models\PolicySetting;
 
 class SettingsService
 {
+    /**
+     * Update policy settings.
+     */
+    public function updatePolicySettings(array $data): PolicySetting
+    {
+        $setting = PolicySetting::first() ?? new PolicySetting;
+        $setting->fill($data);
+        $setting->save();
+
+        return $setting;
+    }
+
     /**
      * Update general settings.
      */

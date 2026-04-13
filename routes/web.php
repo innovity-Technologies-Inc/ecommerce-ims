@@ -102,7 +102,14 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         Route::post('/general/update', 'updateGeneralSettings')->name('admin.settings.general.update')->middleware('permission:settings.edit');
         Route::get('/contact', 'contactSettings')->name('admin.settings.contact');
         Route::post('/contact/update', 'updateContactSettings')->name('admin.settings.contact.update')->middleware('permission:settings.edit');
+
+        // Policies
+        Route::get('/policies', [\App\Http\Controllers\Admin\PolicySettingController::class, 'edit'])->name('admin.settings.policies.edit');
+        Route::post('/policies/update', [\App\Http\Controllers\Admin\PolicySettingController::class, 'update'])->name('admin.settings.policies.update')->middleware('permission:settings.edit');
     });
+
+    // FAQs
+    Route::resource('faqs', \App\Http\Controllers\Admin\FaqController::class)->names('admin.faqs')->middleware('permission:settings.view');
 
     Route::prefix('sliders')->middleware('permission:sliders.view')->group(function () {
         Route::get('/', [\App\Http\Controllers\SliderController::class, 'index'])->name('admin.sliders.index');
@@ -317,6 +324,12 @@ Route::controller(FrontendController::class)->group(function () {
     Route::get('/order/{order_id}/invoice', 'publicInvoice')->name('client.public_invoice');
     Route::get('/contact', 'contact')->name('client.contact');
     Route::post('/contact/send', 'storeContactMessage')->name('client.contact.send');
+
+    // Policies & FAQ
+    Route::get('/privacy-policy', 'privacyPolicy')->name('client.privacy_policy');
+    Route::get('/return-policy', 'returnPolicy')->name('client.return_policy');
+    Route::get('/faq', 'faq')->name('client.faq');
+
     Route::prefix('returns')->name('client.returns.')->controller(\App\Http\Controllers\Client\ReturnController::class)->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/order-details', 'getOrderDetails')->name('order_details');

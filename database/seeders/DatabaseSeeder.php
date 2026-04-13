@@ -25,6 +25,8 @@ class DatabaseSeeder extends Seeder
             ContactSettingSeeder::class,
             WarehouseSeeder::class,
             SupplierSeeder::class,
+            PolicySettingSeeder::class,
+            FaqSeeder::class,
         ]);
     }
 }

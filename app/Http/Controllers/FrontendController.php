@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Client\ContactMessageRequest;
 use App\Http\Requests\Client\ProductFilterRequest;
 use App\Http\Requests\Client\TrackOrderRequest;
+use App\Models\Faq;
 use App\Models\FlashSale;
+use App\Models\PolicySetting;
 use App\Models\Product;
 use App\Models\SectionSetting;
 use App\Services\ContactService;
@@ -22,8 +24,51 @@ class FrontendController extends Controller
         protected OrderService $orderService,
         protected ContactService $contactService,
         protected FrontendService $frontendService,
-        protected \App\Services\FlashSaleService $flashSaleService
+        protected \App\Services\FlashSaleService $flashSaleService,
+        protected \App\Services\FaqService $faqService
     ) {}
+
+    /**
+     * Display the privacy policy page.
+     */
+    public function privacyPolicy(): View
+    {
+        $policy = PolicySetting::first();
+
+        return view('client.pages.privacy_policy', [
+            'policy' => $policy,
+            'title' => 'Privacy Policy',
+            'section' => 'Privacy Policy',
+        ]);
+    }
+
+    /**
+     * Display the return policy page.
+     */
+    public function returnPolicy(): View
+    {
+        $policy = PolicySetting::first();
+
+        return view('client.pages.return_policy', [
+            'policy' => $policy,
+            'title' => 'Return Policy',
+            'section' => 'Return Policy',
+        ]);
+    }
+
+    /**
+     * Display the FAQ page.
+     */
+    public function faq(): View
+    {
+        $faqs = $this->faqService->getActiveFaqs();
+
+        return view('client.pages.faq', [
+            'faqs' => $faqs,
+            'title' => 'Frequently Asked Questions',
+            'section' => 'FAQ',
+        ]);
+    }
 
     /**
      * Display the order tracking page.

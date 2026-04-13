@@ -355,6 +355,17 @@
             </li>
             @endcan
 
+            @can('settings.view')
+            <li class="nav-item">
+                <a class="nav-link {{ Request::routeIs('admin.faqs.*') ? 'active' : '' }}" href="{{ route('admin.faqs.index') }}">
+                                   <span class="nav-icon">
+                                        <iconify-icon icon="solar:question-square-bold-duotone"></iconify-icon>
+                                   </span>
+                    <span class="nav-text"> FAQs </span>
+                </a>
+            </li>
+            @endcan
+
             <li class="menu-title mt-2">Settings</li>
 
             @can('settings.view')
@@ -372,6 +383,9 @@
                         </li>
                         <li class="sub-nav-item">
                             <a class="sub-nav-link {{ Request::routeIs('admin.settings.contact') ? 'active' : '' }}" href="{{ route('admin.settings.contact') }}">Contact Settings</a>
+                        </li>
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link {{ Request::routeIs('admin.settings.policies.edit') ? 'active' : '' }}" href="{{ route('admin.settings.policies.edit') }}">Policy Settings</a>
                         </li>
                     </ul>
                 </div>
