@@ -182,6 +182,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-165:** Dynamic Auth Banners: Add functionality in the Admin General Settings to upload custom banners for the Login and Registration pages. These banners are displayed dynamically on the authentication pages with a professional overlay and pattern fallback.
 - [x] **REQ-166:** Admin Back Navigation: Add "Back" buttons to all detailed (show) pages and specific index pages linked from the dashboard (Orders, Products, Customers, Best Selling, Low Stock) to improve user navigation and experience.
 - [x] **REQ-167:** Standardize Admin Create/Edit Headers: Move page titles from `card-header` to a new `d-flex` header section above the `card` and add a "Back" button across all specified admin forms (Brands, Categories, Coupons, Products, Inventory, etc.) to match the show/index page styles.
+- [x] **REQ-168:** Sidebar Active State Logic: Implement dynamic `active` and `show` classes in the admin sidebar to highlight the current menu item and keep collapsible sections open when related sub-routes are active.
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.

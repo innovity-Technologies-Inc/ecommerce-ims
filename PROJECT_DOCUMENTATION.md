@@ -414,5 +414,12 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     2. **Back Navigation:** Every form now includes a "Back" button in the top-right of the page header, linking to the relevant index page or dashboard.
     3. **Clean Interface:** Redundant `card-header` elements were removed or repurposed to ensure a clean, modern aesthetic that aligns with the "show" and "index" page standards established in REQ-166.
 
+### 4.7 Sidebar Active State Logic (REQ-168)
+- **What (Business Purpose):** Enhances admin panel usability by providing visual feedback on the user's current location within the system, ensuring the sidebar reflects the active module and maintains the visibility of sub-menu items.
+- **How it Works (Technical Flow):**
+    1. **Dynamic Active Classes:** Uses Laravel's `Request::routeIs()` and `Request::is()` helpers to conditionally apply the `active` class to navigation links based on the current route and its parameters.
+    2. **Persistence of Collapsibles:** Automatically applies the `show` class and sets `aria-expanded="true"` on parent menu containers if any of their child routes are active, preventing the menu from collapsing when navigating within a module.
+    3. **Wildcard Matching:** Leverages route wildcards (e.g., `admin.products.*`) to ensure parent menu items remain highlighted even on deep detail, create, or edit pages.
+
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*

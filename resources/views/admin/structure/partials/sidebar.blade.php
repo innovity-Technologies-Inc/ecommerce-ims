@@ -21,7 +21,7 @@
 
             @can('dashboard.view')
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.dashboard') }}">
+                <a class="nav-link {{ Request::routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
                                    <span class="nav-icon">
                                         <iconify-icon icon="solar:widget-5-bold-duotone"></iconify-icon>
                                    </span>
@@ -32,7 +32,7 @@
 
             @can('category.view')
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.categories.index') }}">
+                <a class="nav-link {{ Request::routeIs('admin.categories.*') ? 'active' : '' }}" href="{{ route('admin.categories.index') }}">
                                    <span class="nav-icon">
                                         <iconify-icon icon="solar:clipboard-list-bold-duotone"></iconify-icon>
                                    </span>
@@ -43,7 +43,7 @@
 
             @can('brand.view')
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.brands.index') }}">
+                <a class="nav-link {{ Request::routeIs('admin.brands.*') ? 'active' : '' }}" href="{{ route('admin.brands.index') }}">
                                    <span class="nav-icon">
                                         <iconify-icon icon="solar:tag-bold-duotone"></iconify-icon>
                                    </span>
@@ -54,7 +54,7 @@
 
             @can('products.view')
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.products.index') }}">
+                <a class="nav-link {{ Request::routeIs('admin.products.*') && !Request::routeIs('admin.products.best-selling') && !Request::routeIs('admin.products.low-stock') ? 'active' : '' }}" href="{{ route('admin.products.index') }}">
                                    <span class="nav-icon">
                                         <iconify-icon icon="solar:t-shirt-bold-duotone"></iconify-icon>
                                    </span>
@@ -65,7 +65,7 @@
 
             @can('shipping_methods.view')
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.shipping_methods.index') }}">
+                <a class="nav-link {{ Request::routeIs('admin.shipping_methods.*') ? 'active' : '' }}" href="{{ route('admin.shipping_methods.index') }}">
                                    <span class="nav-icon">
                                         <iconify-icon icon="solar:delivery-bold-duotone"></iconify-icon>
                                    </span>
@@ -76,7 +76,7 @@
 
             @can('orders.view')
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.orders.index') }}">
+                <a class="nav-link {{ Request::routeIs('admin.orders.*') ? 'active' : '' }}" href="{{ route('admin.orders.index') }}">
                                    <span class="nav-icon">
                                         <iconify-icon icon="solar:cart-large-bold-duotone"></iconify-icon>
                                    </span>
@@ -87,19 +87,19 @@
 
             @can('returns.view')
             <li class="nav-item">
-                <a class="nav-link menu-arrow" href="#sidebarReturns" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarReturns">
+                <a class="nav-link menu-arrow {{ Request::routeIs('admin.returns.*') && !Request::routeIs('admin.returns.wastages') ? '' : 'collapsed' }}" href="#sidebarReturns" data-bs-toggle="collapse" role="button" aria-expanded="{{ Request::routeIs('admin.returns.*') && !Request::routeIs('admin.returns.wastages') ? 'true' : 'false' }}" aria-controls="sidebarReturns">
                                    <span class="nav-icon">
                                         <iconify-icon icon="solar:restart-bold-duotone"></iconify-icon>
                                    </span>
                     <span class="nav-text"> Returns </span>
                 </a>
-                <div class="collapse" id="sidebarReturns">
+                <div class="collapse {{ Request::routeIs('admin.returns.*') && !Request::routeIs('admin.returns.wastages') ? 'show' : '' }}" id="sidebarReturns">
                     <ul class="nav sub-navbar-nav">
                         <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.returns.requests') }}">Return Requests</a>
+                            <a class="sub-nav-link {{ Request::routeIs('admin.returns.requests') || Request::routeIs('admin.returns.show_request') ? 'active' : '' }}" href="{{ route('admin.returns.requests') }}">Return Requests</a>
                         </li>
                         <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.returns.returned_products') }}">Returned Products</a>
+                            <a class="sub-nav-link {{ Request::routeIs('admin.returns.returned_products') ? 'active' : '' }}" href="{{ route('admin.returns.returned_products') }}">Returned Products</a>
                         </li>
                     </ul>
                 </div>
@@ -108,22 +108,22 @@
 
             @if(auth('admin')->user()->can('coupons.view') || auth('admin')->user()->can('flash_sale.view'))
             <li class="nav-item">
-                <a class="nav-link menu-arrow" href="#sidebarPromotions" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarPromotions">
+                <a class="nav-link menu-arrow {{ Request::routeIs('admin.coupons.*') || Request::routeIs('admin.flash_sale.*') ? '' : 'collapsed' }}" href="#sidebarPromotions" data-bs-toggle="collapse" role="button" aria-expanded="{{ Request::routeIs('admin.coupons.*') || Request::routeIs('admin.flash_sale.*') ? 'true' : 'false' }}" aria-controls="sidebarPromotions">
                                    <span class="nav-icon">
                                         <iconify-icon icon="solar:ticket-sale-bold-duotone"></iconify-icon>
                                    </span>
                     <span class="nav-text"> Promotions </span>
                 </a>
-                <div class="collapse" id="sidebarPromotions">
+                <div class="collapse {{ Request::routeIs('admin.coupons.*') || Request::routeIs('admin.flash_sale.*') ? 'show' : '' }}" id="sidebarPromotions">
                     <ul class="nav sub-navbar-nav">
                         @can('coupons.view')
                         <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.coupons.index') }}">Coupons</a>
+                            <a class="sub-nav-link {{ Request::routeIs('admin.coupons.*') ? 'active' : '' }}" href="{{ route('admin.coupons.index') }}">Coupons</a>
                         </li>
                         @endcan
                         @can('flash_sale.view')
                         <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.flash_sale.edit') }}">Flash Sale</a>
+                            <a class="sub-nav-link {{ Request::routeIs('admin.flash_sale.*') ? 'active' : '' }}" href="{{ route('admin.flash_sale.edit') }}">Flash Sale</a>
                         </li>
                         @endcan
                     </ul>
@@ -133,34 +133,34 @@
 
             @if(auth('admin')->user()->can('sliders.view') || auth('admin')->user()->can('homepage_sections.view'))
             <li class="nav-item">
-                <a class="nav-link menu-arrow" href="#sidebarHomepage" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarHomepage">
+                <a class="nav-link menu-arrow {{ Request::routeIs('admin.sliders.*') || Request::routeIs('admin.sections.*') ? '' : 'collapsed' }}" href="#sidebarHomepage" data-bs-toggle="collapse" role="button" aria-expanded="{{ Request::routeIs('admin.sliders.*') || Request::routeIs('admin.sections.*') ? 'true' : 'false' }}" aria-controls="sidebarHomepage">
                                    <span class="nav-icon">
                                         <iconify-icon icon="solar:home-2-bold-duotone"></iconify-icon>
                                    </span>
                     <span class="nav-text"> Homepage </span>
                 </a>
-                <div class="collapse" id="sidebarHomepage">
+                <div class="collapse {{ Request::routeIs('admin.sliders.*') || Request::routeIs('admin.sections.*') ? 'show' : '' }}" id="sidebarHomepage">
                     <ul class="nav sub-navbar-nav">
                         @can('sliders.view')
                         <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.sliders.index') }}">Sliders</a>
+                            <a class="sub-nav-link {{ Request::routeIs('admin.sliders.*') ? 'active' : '' }}" href="{{ route('admin.sliders.index') }}">Sliders</a>
                         </li>
                         @endcan
                         @can('homepage_sections.view')
                         <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.sections.bestsellers') }}">Bestsellers</a>
+                            <a class="sub-nav-link {{ Request::routeIs('admin.sections.bestsellers') ? 'active' : '' }}" href="{{ route('admin.sections.bestsellers') }}">Bestsellers</a>
                         </li>
                         <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.sections.edit', 'hot_deals') }}">Hot Deals</a>
+                            <a class="sub-nav-link {{ Request::is('admin/sections/hot_deals*') ? 'active' : '' }}" href="{{ route('admin.sections.edit', 'hot_deals') }}">Hot Deals</a>
                         </li>
                         <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.sections.edit', 'featured') }}">Featured</a>
+                            <a class="sub-nav-link {{ Request::is('admin/sections/featured*') ? 'active' : '' }}" href="{{ route('admin.sections.edit', 'featured') }}">Featured</a>
                         </li>
                         <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.sections.edit', 'recently_added') }}">Recently Added</a>
+                            <a class="sub-nav-link {{ Request::is('admin/sections/recently_added*') ? 'active' : '' }}" href="{{ route('admin.sections.edit', 'recently_added') }}">Recently Added</a>
                         </li>
                         <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.sections.edit', 'top_picks') }}">Top Picks</a>
+                            <a class="sub-nav-link {{ Request::is('admin/sections/top_picks*') ? 'active' : '' }}" href="{{ route('admin.sections.edit', 'top_picks') }}">Top Picks</a>
                         </li>
                         @endcan
                     </ul>
@@ -172,7 +172,7 @@
 
             @can('warehouse.view')
             <li class="nav-item">
-               <a class="nav-link" href="{{ route('admin.warehouses.index') }}">
+               <a class="nav-link {{ Request::routeIs('admin.warehouses.*') ? 'active' : '' }}" href="{{ route('admin.warehouses.index') }}">
                    <span class="nav-icon">
                        <iconify-icon icon="solar:home-2-bold-duotone"></iconify-icon>
                    </span>
@@ -183,7 +183,7 @@
 
             @can('supplier.view')
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.suppliers.index') }}">
+                <a class="nav-link {{ Request::routeIs('admin.suppliers.*') ? 'active' : '' }}" href="{{ route('admin.suppliers.index') }}">
                     <span class="nav-icon">
                         <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon>
                     </span>
@@ -194,7 +194,7 @@
 
             @can('stock_adjustment.view')
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.inventory.adjustment.index') }}">
+                <a class="nav-link {{ Request::routeIs('admin.inventory.adjustment.*') ? 'active' : '' }}" href="{{ route('admin.inventory.adjustment.index') }}">
                     <span class="nav-icon">
                         <iconify-icon icon="solar:settings-minimalistic-bold-duotone"></iconify-icon>
                     </span>
@@ -205,7 +205,7 @@
 
             @can('po.view')
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.inventory.po.index') }}">
+                <a class="nav-link {{ Request::routeIs('admin.inventory.po.*') ? 'active' : '' }}" href="{{ route('admin.inventory.po.index') }}">
                     <span class="nav-icon">
                         <iconify-icon icon="solar:clipboard-list-bold-duotone"></iconify-icon>
                     </span>
@@ -216,7 +216,7 @@
 
             @can('stock_report.view')
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.inventory.stock.index') }}">
+                <a class="nav-link {{ Request::routeIs('admin.inventory.stock.*') ? 'active' : '' }}" href="{{ route('admin.inventory.stock.index') }}">
                     <span class="nav-icon">
                         <iconify-icon icon="solar:box-bold-duotone"></iconify-icon>
                     </span>
@@ -227,7 +227,7 @@
 
             @can('batch_tracking.view')
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.inventory.batches.index') }}">
+                <a class="nav-link {{ Request::routeIs('admin.inventory.batches.*') ? 'active' : '' }}" href="{{ route('admin.inventory.batches.index') }}">
                     <span class="nav-icon">
                         <iconify-icon icon="solar:routing-2-bold-duotone"></iconify-icon>
                     </span>
@@ -238,7 +238,7 @@
 
             @can('damaged_products.view')
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.inventory.damaged.index') }}">
+                <a class="nav-link {{ Request::routeIs('admin.inventory.damaged.*') ? 'active' : '' }}" href="{{ route('admin.inventory.damaged.index') }}">
                     <span class="nav-icon">
                         <iconify-icon icon="solar:danger-bold-duotone"></iconify-icon>
                     </span>
@@ -249,7 +249,7 @@
 
             @can('supplier_rma.view')
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.inventory.rma.index') }}">
+                <a class="nav-link {{ Request::routeIs('admin.inventory.rma.*') ? 'active' : '' }}" href="{{ route('admin.inventory.rma.index') }}">
                     <span class="nav-icon">
                         <iconify-icon icon="solar:undo-left-bold-duotone"></iconify-icon>
                     </span>
@@ -260,7 +260,7 @@
 
             @can('wastage.view')
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.returns.wastages') }}">
+                <a class="nav-link {{ Request::routeIs('admin.returns.wastages') || Request::routeIs('admin.wastage.*') ? 'active' : '' }}" href="{{ route('admin.returns.wastages') }}">
                     <span class="nav-icon">
                         <iconify-icon icon="solar:trash-bin-trash-bold-duotone"></iconify-icon>
                     </span>
@@ -273,7 +273,7 @@
             <li class="menu-title mt-2">Reports</li>
 
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.reports.sales') }}">
+                <a class="nav-link {{ Request::routeIs('admin.reports.sales.*') ? 'active' : '' }}" href="{{ route('admin.reports.sales') }}">
                     <span class="nav-icon">
                         <iconify-icon icon="solar:graph-up-bold-duotone"></iconify-icon>
                     </span>
@@ -281,7 +281,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.reports.inventory') }}">
+                <a class="nav-link {{ Request::routeIs('admin.reports.inventory.*') ? 'active' : '' }}" href="{{ route('admin.reports.inventory') }}">
                     <span class="nav-icon">
                         <iconify-icon icon="solar:box-minimalistic-bold-duotone"></iconify-icon>
                     </span>
@@ -289,7 +289,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.reports.stock') }}">
+                <a class="nav-link {{ Request::routeIs('admin.reports.stock.*') ? 'active' : '' }}" href="{{ route('admin.reports.stock') }}">
                     <span class="nav-icon">
                         <iconify-icon icon="solar:clipboard-list-bold-duotone"></iconify-icon>
                     </span>
@@ -297,7 +297,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.reports.warehouse-performance') }}">
+                <a class="nav-link {{ Request::routeIs('admin.reports.warehouse-performance.*') ? 'active' : '' }}" href="{{ route('admin.reports.warehouse-performance') }}">
                     <span class="nav-icon">
                         <iconify-icon icon="solar:chart-bold-duotone"></iconify-icon>
                     </span>
@@ -310,22 +310,22 @@
 
             @if(auth('admin')->user()->can('admins.view') || auth('admin')->user()->can('roles.view'))
             <li class="nav-item">
-                <a class="nav-link menu-arrow" href="#sidebarUsers" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarUsers">
+                <a class="nav-link menu-arrow {{ Request::routeIs('admin.index') || Request::routeIs('admin.create') || Request::routeIs('admin.edit') || Request::routeIs('admin.roles.*') ? '' : 'collapsed' }}" href="#sidebarUsers" data-bs-toggle="collapse" role="button" aria-expanded="{{ Request::routeIs('admin.index') || Request::routeIs('admin.create') || Request::routeIs('admin.edit') || Request::routeIs('admin.roles.*') ? 'true' : 'false' }}" aria-controls="sidebarUsers">
                                    <span class="nav-icon">
                                         <iconify-icon icon="solar:user-speak-bold-duotone"></iconify-icon>
                                    </span>
                     <span class="nav-text"> Admins </span>
                 </a>
-                <div class="collapse" id="sidebarUsers">
+                <div class="collapse {{ Request::routeIs('admin.index') || Request::routeIs('admin.create') || Request::routeIs('admin.edit') || Request::routeIs('admin.roles.*') ? 'show' : '' }}" id="sidebarUsers">
                     <ul class="nav sub-navbar-nav">
                         @can('admins.view')
                         <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.index') }}">Users</a>
+                            <a class="sub-nav-link {{ Request::routeIs('admin.index') || Request::routeIs('admin.create') || Request::routeIs('admin.edit') ? 'active' : '' }}" href="{{ route('admin.index') }}">Users</a>
                         </li>
                         @endcan
                         @can('roles.view')
                         <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.roles.index') }}">Roles</a>
+                            <a class="sub-nav-link {{ Request::routeIs('admin.roles.*') ? 'active' : '' }}" href="{{ route('admin.roles.index') }}">Roles</a>
                         </li>
                         @endcan
                     </ul>
@@ -335,7 +335,7 @@
 
             @can('customers.view')
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.customers.index') }}">
+                <a class="nav-link {{ Request::routeIs('admin.customers.*') ? 'active' : '' }}" href="{{ route('admin.customers.index') }}">
                                    <span class="nav-icon">
                                         <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon>
                                    </span>
@@ -346,7 +346,7 @@
 
             @can('contact_messages.view')
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.contact_messages.index') }}">
+                <a class="nav-link {{ Request::routeIs('admin.contact_messages.*') ? 'active' : '' }}" href="{{ route('admin.contact_messages.index') }}">
                                    <span class="nav-icon">
                                         <iconify-icon icon="solar:letter-bold-duotone"></iconify-icon>
                                    </span>
@@ -359,19 +359,19 @@
 
             @can('settings.view')
             <li class="nav-item">
-                <a class="nav-link menu-arrow" href="#sidebarSettings" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarSettings">
+                <a class="nav-link menu-arrow {{ Request::routeIs('admin.settings.*') ? '' : 'collapsed' }}" href="#sidebarSettings" data-bs-toggle="collapse" role="button" aria-expanded="{{ Request::routeIs('admin.settings.*') ? 'true' : 'false' }}" aria-controls="sidebarSettings">
                                    <span class="nav-icon">
                                         <iconify-icon icon="solar:settings-bold-duotone"></iconify-icon>
                                    </span>
                     <span class="nav-text"> Settings </span>
                 </a>
-                <div class="collapse" id="sidebarSettings">
+                <div class="collapse {{ Request::routeIs('admin.settings.*') ? 'show' : '' }}" id="sidebarSettings">
                     <ul class="nav sub-navbar-nav">
                         <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.settings.general') }}">General Settings</a>
+                            <a class="sub-nav-link {{ Request::routeIs('admin.settings.general') ? 'active' : '' }}" href="{{ route('admin.settings.general') }}">General Settings</a>
                         </li>
                         <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{ route('admin.settings.contact') }}">Contact Settings</a>
+                            <a class="sub-nav-link {{ Request::routeIs('admin.settings.contact') ? 'active' : '' }}" href="{{ route('admin.settings.contact') }}">Contact Settings</a>
                         </li>
                     </ul>
                 </div>
