@@ -3,7 +3,7 @@
     @include('client.structure.partials.header')
     @if(Route::currentRouteNamed('home'))
         @include('client.structure.partials.slider')
-    @else
+    @elseif(!Route::currentRouteNamed(['login', 'register']))
         @include('client.structure.partials.breadcrumb')
     @endif
         @yield('content')
