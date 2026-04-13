@@ -4,7 +4,9 @@
     <div class="container-xxl">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h4 class="mb-0">Create Supplier RMA</h4>
-            <a href="{{ route('admin.inventory.rma.index') }}" class="btn btn-secondary btn-sm">Back to List</a>
+            <a href="{{ route('admin.inventory.rma.index') }}" class="btn btn-secondary btn-sm">
+                <i class="bx bx-arrow-back me-1"></i> Back
+            </a>
         </div>
 
         <form action="{{ route('admin.inventory.rma.store') }}" method="POST" id="rma-form">

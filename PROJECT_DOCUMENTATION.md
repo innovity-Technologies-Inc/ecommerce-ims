@@ -407,5 +407,12 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     2. **Index Pages:** Primary index pages commonly accessed from the dashboard (Orders, Products, Customers, Best Selling, Low Stock) include a "Back to Dashboard" button.
     3. **UI Standard:** All buttons use Bootstrap 5 secondary styling (`btn-secondary btn-sm`) with a `bx bx-arrow-back` icon for visual consistency across the entire admin suite.
 
+### 4.6 Standardized Admin Form Headers (REQ-167)
+- **What (Business Purpose):** Standardizes the layout of all "Create" and "Edit" forms in the admin panel to provide a consistent user experience and easy navigation back to the list view.
+- **How it Works (Technical Flow):**
+    1. **Title Migration:** Page titles (e.g., "Add Product", "Edit Category") are moved from the `card-header` to a dedicated `d-flex` header section above the card.
+    2. **Back Navigation:** Every form now includes a "Back" button in the top-right of the page header, linking to the relevant index page or dashboard.
+    3. **Clean Interface:** Redundant `card-header` elements were removed or repurposed to ensure a clean, modern aesthetic that aligns with the "show" and "index" page standards established in REQ-166.
+
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*

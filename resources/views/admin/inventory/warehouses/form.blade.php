@@ -2,6 +2,13 @@
 @section('content')
 
     <div class="container-xxl">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h4 class="mb-0">{{ isset($warehouse) ? 'Edit Warehouse' : 'Add Warehouse' }}</h4>
+            <a href="{{ route('admin.warehouses.index') }}" class="btn btn-secondary btn-sm">
+                <i class="bx bx-arrow-back me-1"></i> Back
+            </a>
+        </div>
+
         <div class="row">
             <div class="col-lg-12">
                 <form action="{{ isset($warehouse) ? route('admin.warehouses.update', $warehouse->id) : route('admin.warehouses.store') }}" method="post">
@@ -10,9 +17,6 @@
                         @method('put')
                     @endif
                     <div class="card">
-                        <div class="card-header">
-                            <h4 class="card-title">{{ isset($warehouse) ? 'Edit Warehouse' : 'Add Warehouse' }}</h4>
-                        </div>
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-lg-6">

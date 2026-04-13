@@ -4,17 +4,11 @@
 
 @section('content')
 <div class="container-xxl">
-    <div class="row">
-        <div class="col-12">
-            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 class="mb-sm-0">Create Purchase Order</h4>
-                <div class="page-title-right">
-                    <a href="{{ route('admin.inventory.po.index') }}" class="btn btn-secondary btn-sm">
-                        <i class="bx bx-arrow-back me-1"></i> Back
-                    </a>
-                </div>
-            </div>
-        </div>
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h4 class="mb-0">Create Purchase Order</h4>
+        <a href="{{ route('admin.inventory.po.index') }}" class="btn btn-secondary btn-sm">
+            <i class="bx bx-arrow-back me-1"></i> Back
+        </a>
     </div>
 
     <form action="{{ route('admin.inventory.po.store') }}" method="POST" id="poForm">

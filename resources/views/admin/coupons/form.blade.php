@@ -4,7 +4,9 @@
     <div class="container-xxl">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h4 class="mb-0">{{ isset($coupon) ? 'Edit Coupon' : 'Create Coupon' }}</h4>
-            <a href="{{ route('admin.coupons.index') }}" class="btn btn-outline-secondary btn-sm">Back</a>
+            <a href="{{ route('admin.coupons.index') }}" class="btn btn-secondary btn-sm">
+                <i class="bx bx-arrow-back me-1"></i> Back
+            </a>
         </div>
 
         <form action="{{ isset($coupon) ? route('admin.coupons.update', $coupon->id) : route('admin.coupons.store') }}" method="POST">
