@@ -180,6 +180,17 @@ class CouponService
     }
 
     /**
+     * Get usage history for a specific coupon.
+     */
+    public function getUsageHistory(Coupon $coupon, int $perPage = 10): LengthAwarePaginator
+    {
+        return CouponUsage::where('coupon_id', $coupon->id)
+            ->with(['order', 'user'])
+            ->latest()
+            ->paginate($perPage);
+    }
+
+    /**
      * Get all active coupons with their eligibility for a specific subtotal.
      */
     public function getActiveCouponsWithEligibility(float $subtotal, ?int $userId = null): array
