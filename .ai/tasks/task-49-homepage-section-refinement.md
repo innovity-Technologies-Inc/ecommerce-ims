@@ -8,29 +8,29 @@ Implement a new "Top Picks" homepage section and ensure all homepage sections ha
 ## Implementation Steps
 
 ### 1. Database & Seeding
-- [ ] Add a new record for `top_picks` in the `section_settings` table via a migration or a seeder.
-- [ ] Ensure the migration handles the `section_name`, `section_title`, `mode`, etc.
+- [x] Add a new record for `top_picks` in the `section_settings` table via a migration or a seeder.
+- [x] Ensure the migration handles the `section_name`, `section_title`, `mode`, etc.
 
 ### 2. Service Layer & Logic
-- [ ] Update `HomepageService::getSectionProducts` to handle the `top_picks` section.
-- [ ] Define the "Organic" logic for `top_picks` (e.g., highly rated or specific flags).
+- [x] Update `HomepageService::getSectionProducts` to handle the `top_picks` section.
+- [x] Define the "Organic" logic for `top_picks` (e.g., highly rated or specific flags).
 
 ### 3. Admin Panel Integration
-- [ ] Update the Homepage Section Settings view in the Admin Panel to include the "Top Picks" section.
-- [ ] Ensure all sections (Bestsellers, Hot Deals, Featured, Recently Added, Top Picks) have independent "Is Visible" toggles and "Mode" (Organic/Custom) selection.
+- [x] Update the Homepage Section Settings view in the Admin Panel to include the "Top Picks" section.
+- [x] Ensure all sections (Bestsellers, Hot Deals, Featured, Recently Added, Top Picks) have independent "Is Visible" toggles and "Mode" (Organic/Custom) selection.
 
 ### 4. Client Frontend Integration
-- [ ] Create `resources/views/client/partials/top_picks.blade.php`.
-- [ ] Update `FrontendController@home` to fetch the `top_picks` section data.
-- [ ] Include `top_picks` in `resources/views/client/homepage.blade.php`.
-- [ ] Replace `feature_1` or `recent` if redundant, as per the user's request to differentiate the sections.
+- [x] Create `resources/views/client/partials/top_picks.blade.php`.
+- [x] Update `FrontendController@home` to fetch the `top_picks` section data.
+- [x] Include `top_picks` in `resources/views/client/homepage.blade.php`.
+- [x] Replace `feature_1` or `recent` if redundant, as per the user's request to differentiate the sections.
 
 ### 5. Verification
-- [ ] Verify that "Top Picks" appears in the Admin Panel.
-- [ ] Verify that toggling "Is Visible" correctly hides/shows sections on the homepage.
-- [ ] Verify that "Top Picks" pulls correct data in both Organic and Custom modes.
-- [ ] Run `./vendor/bin/pint --dirty`.
-- [ ] Update `PROJECT_DOCUMENTATION.md`.
+- [x] Verify that "Top Picks" appears in the Admin Panel.
+- [x] Verify that toggling "Is Visible" correctly hides/shows sections on the homepage.
+- [x] Verify that "Top Picks" pulls correct data in both Organic and Custom modes.
+- [x] Run `./vendor/bin/pint --dirty`.
+- [x] Update `PROJECT_DOCUMENTATION.md`.
 
 ## Verification Criteria
 - A new "Top Picks" section is available and configurable in the Admin Panel.

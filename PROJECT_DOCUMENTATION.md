@@ -428,5 +428,17 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     2. **Icon Preservation:** Maintains the `bx bx-arrow-back` icon for intuitive visual recognition while removing redundant contextual suffixes like "to Dashboard" or "to List".
     3. **Universal Consistency:** This standard is applied across Catalog, Inventory, Fulfillment, Management, and Settings modules to ensure a predictable UI pattern.
 
+### **6. Admin Profile Management**
+- **What:** Dedicated profile management for administrators to update their personal information and credentials.
+- **How it Works:**
+    - Admins can access their profile via the user dropdown in the topbar.
+    - The profile view displays current details and read-only role information.
+    - The edit form allows updating Name, Email, Avatar, and Password.
+    - **Security:** Role selection is strictly excluded from this module to prevent privilege escalation by logged-in users.
+- **Data & Storage:**
+    - Uses the `admins` table.
+    - Avatar images are stored in `storage/app/public/admins/`.
+    - `AdminProfileService` handles the business logic and file operations.
+
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*

@@ -40,6 +40,14 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     });
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard')->middleware('permission:dashboard.view');
 
+    // Admin Profile
+    Route::prefix('profile')->controller(\App\Http\Controllers\Admin\AdminProfileController::class)->group(function () {
+        Route::get('/', 'show')->name('admin.profile.show');
+        Route::put('/update-details', 'updateDetails')->name('admin.profile.update_details');
+        Route::put('/update-password', 'updatePassword')->name('admin.profile.update_password');
+        Route::put('/update-avatar', 'updateAvatar')->name('admin.profile.update_avatar');
+    });
+
     Route::prefix('products')->middleware('permission:products.view')->group(function () {
         Route::get('/', [ProductController::class, 'index'])->name('admin.products.index');
         Route::get('/low-stock', [DashboardController::class, 'lowStockProducts'])->name('admin.products.low-stock');

@@ -72,9 +72,9 @@ Implement a Purchase Order (PO) module as part of the Inventory system. Admins s
 - Update `PROJECT_DOCUMENTATION.md`.
 
 ## 3. Verification Criteria
-- [ ] Admin can create a PO with multiple products and variants.
-- [ ] PO number is uniquely generated.
-- [ ] Supplier receives an email if the notification checkbox is checked.
-- [ ] Status can be transitioned between Draft, Sent, and Delivered.
-- [ ] Index page supports live search/filter/sort via FlexSearch.
-- [ ] Documentation is updated with the new module details.
+- [x] Admin can create a PO with multiple products and variants.
+- [x] PO number is uniquely generated.
+- [x] Supplier receives an email if the notification checkbox is checked.
+- [x] Status can be transitioned between Draft, Sent, and Delivered.
+- [x] Index page supports live search/filter/sort via FlexSearch.
+- [x] Documentation is updated with the new module details.

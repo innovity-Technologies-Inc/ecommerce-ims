@@ -57,10 +57,10 @@ Implement a comprehensive Stock Reporting dashboard in the Admin Panel with deta
 - Register routes and add "Stock Report" under the Reports section in the sidebar.
 
 ## Verification Criteria
-- [ ] Low stock flag correctly triggers based on thresholds.
-- [ ] Valuation matches `quantity * unit_cost` from batch records.
-- [ ] Movement report correctly reflects ledger entries.
-- [ ] "View All" and Pagination work for all tabs.
-- [ ] Run `./vendor/bin/pint --dirty`.
-- [ ] Run `php artisan optimize`.
-- [ ] Update `PROJECT_DOCUMENTATION.md`.
+- [x] Low stock flag correctly triggers based on thresholds.
+- [x] Valuation matches `quantity * unit_cost` from batch records.
+- [x] Movement report correctly reflects ledger entries.
+- [x] "View All" and Pagination work for all tabs.
+- [x] Run `./vendor/bin/pint --dirty`.
+- [x] Run `php artisan optimize`.
+- [x] Update `PROJECT_DOCUMENTATION.md`.

@@ -26,44 +26,44 @@ Implement a manual stock entry system to adjust inventory without requiring a Pu
 ## 2. Implementation Steps
 
 ### Step 1: Backend Setup (Migrations & Models)
-- [ ] Create migration for `stock_adjustments` and `stock_adjustment_items`.
-- [ ] Create models: `StockAdjustment`, `StockAdjustmentItem`.
-- [ ] Define relationships in `Warehouse`, `Batch`, `Product`, `ProductVariant`, `Admin`.
+- [x] Create migration for `stock_adjustments` and `stock_adjustment_items`.
+- [x] Create models: `StockAdjustment`, `StockAdjustmentItem`.
+- [x] Define relationships in `Warehouse`, `Batch`, `Product`, `ProductVariant`, `Admin`.
 
 ### Step 2: Service Layer & Form Requests
-- [ ] Create `StockAdjustmentService` to handle complex multi-table logic.
-- [ ] Create `StockAdjustmentRequest` for validation.
+- [x] Create `StockAdjustmentService` to handle complex multi-table logic.
+- [x] Create `StockAdjustmentRequest` for validation.
 
 ### Step 3: Admin Controller & UI
-- [ ] Create `StockAdjustmentController`.
-- [ ] **Index Page:**
-    - [ ] List all adjustments with FlexSearch (filters: warehouse, date).
-- [ ] **Create Page:**
-    - [ ] Select Warehouse.
-    - [ ] Enter/Select Batch Number.
-    - [ ] Dynamic Product/Variant selection.
-    - [ ] Quantity, Unit Cost inputs.
-    - [ ] Serial Number tagging (if applicable).
-- [ ] **Show Page:**
-    - [ ] Detailed view of adjustment and its impact.
+- [x] Create `StockAdjustmentController`.
+- [x] **Index Page:**
+    - [x] List all adjustments with FlexSearch (filters: warehouse, date).
+- [x] **Create Page:**
+    - [x] Select Warehouse.
+    - [x] Enter/Select Batch Number.
+    - [x] Dynamic Product/Variant selection.
+    - [x] Quantity, Unit Cost inputs.
+    - [x] Serial Number tagging (if applicable).
+- [x] **Show Page:**
+    - [x] Detailed view of adjustment and its impact.
 
 ### Step 4: Logic Integration (Inventory Synchronization)
-- [ ] **On Creation:**
-    - [ ] Create or Update `Batch` (supplier_id will be null).
-    - [ ] Create `BatchProduct` records.
-    - [ ] Create `BatchSerial` records (stock_status = 'in_stock', product_status = 'good').
-    - [ ] Create/Update `InventoryLevel` records.
-    - [ ] Increment `Product` and `ProductVariant` global stock.
-    - [ ] Log `StockLedger` entries (`transaction_type = Manual_Adjustment`, `section_name = Stock Adjustment`).
+- [x] **On Creation:**
+    - [x] Create or Update `Batch` (supplier_id will be null).
+    - [x] Create `BatchProduct` records.
+    - [x] Create `BatchSerial` records (stock_status = 'in_stock', product_status = 'good').
+    - [x] Create/Update `InventoryLevel` records.
+    - [x] Increment `Product` and `ProductVariant` global stock.
+    - [x] Log `StockLedger` entries (`transaction_type = Manual_Adjustment`, `section_name = Stock Adjustment`).
 
 ### Step 5: Finalization
-- [ ] Run `./vendor/bin/pint --dirty`.
-- [ ] Run `php artisan optimize`.
-- [ ] Update `PROJECT_DOCUMENTATION.md`.
+- [x] Run `./vendor/bin/pint --dirty`.
+- [x] Run `php artisan optimize`.
+- [x] Update `PROJECT_DOCUMENTATION.md`.
 
 ## 3. Verification Criteria
-- [ ] Stock is correctly added to specified warehouse and batch.
-- [ ] Serial numbers are tracked and searchable in batch reports.
-- [ ] Global stock counts are accurately updated.
-- [ ] Stock Ledger records the adjustment with correct financial values.
-- [ ] Documentation updated.
+- [x] Stock is correctly added to specified warehouse and batch.
+- [x] Serial numbers are tracked and searchable in batch reports.
+- [x] Global stock counts are accurately updated.
+- [x] Stock Ledger records the adjustment with correct financial values.
+- [x] Documentation updated.

@@ -11,8 +11,8 @@ The warehouse performance report index page fails with an `ErrorException: Undef
 5.  Clear Laravel view and optimization caches.
 
 ## Verification Criteria
-- [ ] Accessible `/admin/reports/warehouse-performance` without error.
-- [ ] Accessible `/admin/reports/warehouse-performance/{id}` without error.
-- [ ] Correct closing stock value displayed in both views.
-- [ ] PHPUnit tests pass if relevant.
-- [ ] Run `php artisan optimize` and `vendor/bin/pint --dirty`.
+- [x] Accessible `/admin/reports/warehouse-performance` without error.
+- [x] Accessible `/admin/reports/warehouse-performance/{id}` without error.
+- [x] Correct closing stock value displayed in both views.
+- [x] PHPUnit tests pass if relevant.
+- [x] Run `php artisan optimize` and `vendor/bin/pint --dirty`.

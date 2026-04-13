@@ -18,35 +18,35 @@ Connect the client-side order flow with the inventory tracking system. Admins wi
 ## 2. Implementation Plan
 
 ### Phase 1: Database Updates
-- [ ] Create migration for `order_item_serials` table (links `order_item_id` to `batch_serial_id`).
-- [ ] Add `OrderItemSerial` model and define relationships in `OrderItem` and `BatchSerial`.
+- [x] Create migration for `order_item_serials` table (links `order_item_id` to `batch_serial_id`).
+- [x] Add `OrderItemSerial` model and define relationships in `OrderItem` and `BatchSerial`.
 
 ### Phase 2: Backend Logic (Service Layer)
-- [ ] Add AJAX endpoints to fetch:
-    - [ ] Warehouses containing a specific product/variant.
-    - [ ] Batches for a specific product/variant in a chosen warehouse.
-    - [ ] Available serials for a specific batch.
-- [ ] Update `OrderService::updateOrderStatus`:
-    - [ ] Handle `Shipped` logic: Map selected serials to order items and update their status.
-    - [ ] Handle `Delivered` logic: Trigger the final inventory deduction and stock ledger logging.
-- [ ] Refactor `OrderService::adjustStock` to use the selected batches/serials instead of generic unallocated deduction.
+- [x] Add AJAX endpoints to fetch:
+    - [x] Warehouses containing a specific product/variant.
+    - [x] Batches for a specific product/variant in a chosen warehouse.
+    - [x] Available serials for a specific batch.
+- [x] Update `OrderService::updateOrderStatus`:
+    - [x] Handle `Shipped` logic: Map selected serials to order items and update their status.
+    - [x] Handle `Delivered` logic: Trigger the final inventory deduction and stock ledger logging.
+- [x] Refactor `OrderService::adjustStock` to use the selected batches/serials instead of generic unallocated deduction.
 
 ### Phase 3: UI Updates (Admin Panel)
-- [ ] Update `resources/views/admin/orders/show.blade.php`:
-    - [ ] Modify the status update form to show the "Inventory Allocation" section when 'Shipped' is selected.
-    - [ ] Implement the dynamic warehouse/batch/serial selection logic for each order item.
-    - [ ] Use Select2 for serial selection (similar to PO receiving).
+- [x] Update `resources/views/admin/orders/show.blade.php`:
+    - [x] Modify the status update form to show the "Inventory Allocation" section when 'Shipped' is selected.
+    - [x] Implement the dynamic warehouse/batch/serial selection logic for each order item.
+    - [x] Use Select2 for serial selection (similar to PO receiving).
 
 ## 3. Verification Criteria
-- [ ] Place an order for products (simple and variant-based).
-- [ ] Change status to 'Shipped' and select specific warehouses, batches, and serials.
-- [ ] Verify `batch_serials` status is 'shipped'.
-- [ ] Change status to 'Delivered'.
-- [ ] Verify `batch_serials` status is 'sold'.
-- [ ] Verify stock levels are correctly decremented in `products`, `product_variants`, `batches`, and `inventory_levels`.
-- [ ] Verify `StockLedger` entry is created with correct financial data.
-- [ ] Run `./vendor/bin/pint --dirty`.
-- [ ] Run `php artisan optimize`.
+- [x] Place an order for products (simple and variant-based).
+- [x] Change status to 'Shipped' and select specific warehouses, batches, and serials.
+- [x] Verify `batch_serials` status is 'shipped'.
+- [x] Change status to 'Delivered'.
+- [x] Verify `batch_serials` status is 'sold'.
+- [x] Verify stock levels are correctly decremented in `products`, `product_variants`, `batches`, and `inventory_levels`.
+- [x] Verify `StockLedger` entry is created with correct financial data.
+- [x] Run `./vendor/bin/pint --dirty`.
+- [x] Run `php artisan optimize`.
 
 ## 4. Documentation
-- [ ] Update `PROJECT_DOCUMENTATION.md` with the "Order Fulfillment & Inventory Integration" section.
+- [x] Update `PROJECT_DOCUMENTATION.md` with the "Order Fulfillment & Inventory Integration" section.

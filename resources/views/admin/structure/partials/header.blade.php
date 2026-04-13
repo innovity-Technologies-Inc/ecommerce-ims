@@ -88,15 +88,22 @@
                 <!-- User -->
                 <div class="dropdown topbar-item">
                     <a type="button" class="topbar-button" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <span class="d-flex align-items-center">
-                                             <img class="rounded-circle avatar-sm" src="{{ Auth::guard('admin')->user()->image ? asset('storage/' . Auth::guard('admin')->user()->image) : asset('admin_assets/images/users/avatar-1.jpg') }}" alt="avatar">
-                                        </span>
+                        <span class="d-flex align-items-center">
+                            @php($adminUser = Auth::guard('admin')->user())
+                            @if($adminUser->avatar)
+                                <img class="rounded-circle avatar-sm" src="{{ asset('storage/' . $adminUser->avatar) }}" alt="avatar">
+                            @elseif($adminUser->image)
+                                <img class="rounded-circle avatar-sm" src="{{ asset('storage/' . $adminUser->image) }}" alt="avatar">
+                            @else
+                                <img class="rounded-circle avatar-sm" src="{{ asset('admin_assets/images/users/avatar-1.jpg') }}" alt="avatar">
+                            @endif
+                        </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end">
                         <!-- item-->
-                        <h6 class="dropdown-header">Welcome {{ucwords(Auth::guard('admin')->user()->name)}}</h6>
-                        <a class="dropdown-item" href="{{ route('admin.edit', Auth::guard('admin')->id()) }}">
-                            <i class="bx bx-user-circle text-muted fs-18 align-middle me-1"></i><span class="align-middle">Profile</span>
+                        <h6 class="dropdown-header">Welcome {{ucwords($adminUser->name)}}</h6>
+                        <a class="dropdown-item" href="{{ route('admin.profile.show') }}">
+                            <i class="bx bx-user-circle text-muted fs-18 align-middle me-1"></i><span class="align-middle">My Profile</span>
                         </a>
 
                         <form method="post" action="{{route('admin.logout')}}">

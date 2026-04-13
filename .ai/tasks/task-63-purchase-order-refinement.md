@@ -56,9 +56,9 @@ Refine the Purchase Order module with warehouse selection, advanced receiving (b
 - Update `PROJECT_DOCUMENTATION.md`.
 
 ## 3. Verification Criteria
-- [ ] PO creation includes warehouse selection.
-- [ ] Receiving PO creates Batch and BatchSerial records.
-- [ ] Damaged items are correctly moved to the "Quarantine" warehouse.
-- [ ] Stock Ledger correctly records all transactions with reason codes.
-- [ ] Product and Variant total stocks are updated consistently.
-- [ ] Tag-style serial number input works as expected.
+- [x] PO creation includes warehouse selection.
+- [x] Receiving PO creates Batch and BatchSerial records.
+- [x] Damaged items are correctly moved to the "Quarantine" warehouse.
+- [x] Stock Ledger correctly records all transactions with reason codes.
+- [x] Product and Variant total stocks are updated consistently.
+- [x] Tag-style serial number input works as expected.

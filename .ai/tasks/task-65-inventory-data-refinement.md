@@ -36,7 +36,7 @@ Refine the data structure for inventory tracking to support financial reporting 
 - Update `PROJECT_DOCUMENTATION.md`.
 
 ## 3. Verification Criteria
-- [ ] Batches table contains `supplier_id`.
-- [ ] Batch Serials table uses `in-stock` and `sold` statuses.
-- [ ] Stock Ledger records `unit_cost` and total `cost` for every transaction.
-- [ ] PO receipt correctly populates all new fields in batches and ledgers.
+- [x] Batches table contains `supplier_id`.
+- [x] Batch Serials table uses `in-stock` and `sold` statuses.
+- [x] Stock Ledger records `unit_cost` and total `cost` for every transaction.
+- [x] PO receipt correctly populates all new fields in batches and ledgers.

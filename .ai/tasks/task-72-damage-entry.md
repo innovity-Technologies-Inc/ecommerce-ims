@@ -15,47 +15,47 @@ Implement a module to record products damaged within the warehouse, integrating 
 ## 2. Implementation Steps
 
 ### Step 1: Backend Setup (Migrations & Models)
-- [ ] Create migration to update `wastages` table.
-- [ ] Create migration to update `batch_serials` `stock_status` enum.
-- [ ] Update `Wastage` model with new fields and relationships.
-- [ ] Update `BatchSerial` model if needed.
+- [x] Create migration to update `wastages` table.
+- [x] Create migration to update `batch_serials` `stock_status` enum.
+- [x] Update `Wastage` model with new fields and relationships.
+- [x] Update `BatchSerial` model if needed.
 
 ### Step 2: Service Layer & Form Requests
-- [ ] Create `DamageEntryService` (or extend `WastageService` if it exists).
-- [ ] Create `DamageEntryRequest` for validation.
+- [x] Create `DamageEntryService` (or extend `WastageService` if it exists).
+- [x] Create `DamageEntryRequest` for validation.
 
 ### Step 3: Admin Controller & UI
-- [ ] Update `WastageController` (or create `DamageEntryController`).
-- [ ] **Wastage Index Page:**
-    - [ ] Add "Damage Entry" button.
-- [ ] **Damage Entry Page (Create):**
-    - [ ] Select Warehouse.
-    - [ ] Select Batch (Filtered by warehouse).
-    - [ ] Select Product/Variant (Filtered by batch).
-    - [ ] Quantity input.
-    - [ ] Serial selection:
-        - [ ] Button to open modal with checkboxes for "Good" serials in selected batch/product.
-        - [ ] Mandatory if serials exist for selection.
-- [ ] **Wastage Show Page:**
-    - [ ] Update to show Warehouse and Batch info.
+- [x] Update `WastageController` (or create `DamageEntryController`).
+- [x] **Wastage Index Page:**
+    - [x] Add "Damage Entry" button.
+- [x] **Damage Entry Page (Create):**
+    - [x] Select Warehouse.
+    - [x] Select Batch (Filtered by warehouse).
+    - [x] Select Product/Variant (Filtered by batch).
+    - [x] Quantity input.
+    - [x] Serial selection:
+        - [x] Button to open modal with checkboxes for "Good" serials in selected batch/product.
+        - [x] Mandatory if serials exist for selection.
+- [x] **Wastage Show Page:**
+    - [x] Update to show Warehouse and Batch info.
 
 ### Step 4: Logic Integration (Inventory Synchronization)
-- [ ] **On Creation:**
-    - [ ] Create `Wastage` record.
-    - [ ] If serials selected:
-        - [ ] Update `batch_serials`: `product_status = 'damaged'`, `stock_status = 'wastage'`.
-    - [ ] Update `InventoryLevel`: Decrement `current_quantity`, Increment `damaged_quantity`.
-    - [ ] Update `Batch`: Decrement `total_saleable_qty`, Increment `total_damaged_qty`.
-    - [ ] Update `BatchProduct`: Decrement `saleable_qty`, Increment `damaged_qty`.
-    - [ ] Log `StockLedger`: `transaction_type = 'warehouse_damage'`, `reason_code = 'Warehouse Damage'`.
+- [x] **On Creation:**
+    - [x] Create `Wastage` record.
+    - [x] If serials selected:
+        - [x] Update `batch_serials`: `product_status = 'damaged'`, `stock_status = 'wastage'`.
+    - [x] Update `InventoryLevel`: Decrement `current_quantity`, Increment `damaged_quantity`.
+    - [x] Update `Batch`: Decrement `total_saleable_qty`, Increment `total_damaged_qty`.
+    - [x] Update `BatchProduct`: Decrement `saleable_qty`, Increment `damaged_qty`.
+    - [x] Log `StockLedger`: `transaction_type = 'warehouse_damage'`, `reason_code = 'Warehouse Damage'`.
 
 ### Step 5: Finalization
-- [ ] Run `./vendor/bin/pint --dirty`.
-- [ ] Run `php artisan optimize`.
-- [ ] Update `PROJECT_DOCUMENTATION.md`.
+- [x] Run `./vendor/bin/pint --dirty`.
+- [x] Run `php artisan optimize`.
+- [x] Update `PROJECT_DOCUMENTATION.md`.
 
 ## 3. Verification Criteria
-- [ ] Damage entry correctly reduces saleable stock and increases damaged stock.
-- [ ] Serials are correctly marked as wastage.
-- [ ] Stock Ledger records the warehouse damage transaction.
-- [ ] UI follows existing patterns (PO Receive / RMA).
+- [x] Damage entry correctly reduces saleable stock and increases damaged stock.
+- [x] Serials are correctly marked as wastage.
+- [x] Stock Ledger records the warehouse damage transaction.
+- [x] UI follows existing patterns (PO Receive / RMA).

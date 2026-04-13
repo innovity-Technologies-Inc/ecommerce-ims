@@ -51,10 +51,10 @@ Implement a comprehensive inventory reporting dashboard in the Admin Panel to tr
 - Register `admin.reports.inventory` and `admin.reports.inventory.export`.
 
 ## Verification Criteria
-- [ ] Valuation correctly uses `unit_cost` from the specific `batch_products` record.
-- [ ] "As-of date" calculation correctly aggregates `stock_ledgers`.
-- [ ] Filtering by Supplier correctly identifies batches linked to that supplier.
-- [ ] UI allows per-card printing and excel export.
-- [ ] Run `./vendor/bin/pint --dirty`.
-- [ ] Run `php artisan optimize`.
-- [ ] Update `PROJECT_DOCUMENTATION.md`.
+- [x] Valuation correctly uses `unit_cost` from the specific `batch_products` record.
+- [x] "As-of date" calculation correctly aggregates `stock_ledgers`.
+- [x] Filtering by Supplier correctly identifies batches linked to that supplier.
+- [x] UI allows per-card printing and excel export.
+- [x] Run `./vendor/bin/pint --dirty`.
+- [x] Run `php artisan optimize`.
+- [x] Update `PROJECT_DOCUMENTATION.md`.
