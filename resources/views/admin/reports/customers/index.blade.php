@@ -99,76 +99,80 @@
         </div>
     </div>
 
-    <!-- Quick Links to Detailed Reports -->
+    <!-- Quick Links to Detailed Reports (2-Row Grid) -->
     <div class="row g-4 mb-4">
-        <div class="col-md-6 col-lg-2">
-            <div class="card border-0 shadow-sm h-100 text-center py-4">
-                <div class="card-body px-2">
-                    <div class="avatar-md bg-soft-primary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
-                        <i class="bx bx-list-ul fs-24 text-primary"></i>
+        <!-- Row 1 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100 text-center py-4 border-top border-primary border-3">
+                <div class="card-body">
+                    <div class="avatar-lg bg-soft-primary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                        <i class="bx bx-list-ul fs-32 text-primary"></i>
                     </div>
-                    <h6 class="fw-bold">Customer List</h6>
-                    <a href="{{ route('admin.reports.customers.list') }}" class="btn btn-soft-primary btn-sm stretched-link mt-2">View</a>
+                    <h5 class="fw-bold">Customer List</h5>
+                    <p class="text-muted small">Detailed list with order aggregates and spend analysis.</p>
+                    <a href="{{ route('admin.reports.customers.list') }}" class="btn btn-soft-primary btn-sm stretched-link">View List</a>
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-lg-2">
-            <div class="card border-0 shadow-sm h-100 text-center py-4">
-                <div class="card-body px-2">
-                    <div class="avatar-md bg-soft-success rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
-                        <i class="bx bx-target-lock fs-24 text-success"></i>
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100 text-center py-4 border-top border-success border-3">
+                <div class="card-body">
+                    <div class="avatar-lg bg-soft-success rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                        <i class="bx bx-target-lock fs-32 text-success"></i>
                     </div>
-                    <h6 class="fw-bold">RFM Analysis</h6>
-                    <a href="{{ route('admin.reports.customers.rfm') }}" class="btn btn-soft-success btn-sm stretched-link mt-2">View</a>
+                    <h5 class="fw-bold">RFM Analysis</h5>
+                    <p class="text-muted small">Segment customers by Recency, Frequency, and Monetary value.</p>
+                    <a href="{{ route('admin.reports.customers.rfm') }}" class="btn btn-soft-success btn-sm stretched-link">View Analysis</a>
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100 text-center py-4">
-                <div class="card-body px-2">
-                    <div class="avatar-md bg-soft-info rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
-                        <i class="bx bx-line-chart fs-24 text-info"></i>
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100 text-center py-4 border-top border-info border-3">
+                <div class="card-body">
+                    <div class="avatar-lg bg-soft-info rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                        <i class="bx bx-line-chart fs-32 text-info"></i>
                     </div>
-                    <h6 class="fw-bold">Behavior</h6>
-                    <a href="{{ route('admin.reports.customers.behavior') }}" class="btn btn-soft-info btn-sm stretched-link mt-2">View</a>
+                    <h5 class="fw-bold">Purchase Behavior</h5>
+                    <p class="text-muted small">Analyze order trends, status distribution, and AOV trends.</p>
+                    <a href="{{ route('admin.reports.customers.behavior') }}" class="btn btn-soft-info btn-sm stretched-link">View Behavior</a>
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-lg-2">
-            <div class="card border-0 shadow-sm h-100 text-center py-4">
-                <div class="card-body px-2">
-                    <div class="avatar-md bg-soft-warning rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
-                        <i class="bx bx-grid-alt fs-24 text-warning"></i>
-                    </div>
-                    <h6 class="fw-bold">Cohorts</h6>
-                    <a href="{{ route('admin.reports.customers.cohort') }}" class="btn btn-soft-warning btn-sm stretched-link mt-2">View</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100 text-center py-4">
-                <div class="card-body px-2">
-                    <div class="avatar-md bg-soft-danger rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
-                        <i class="bx bx-trending-up fs-24 text-danger"></i>
-                    </div>
-                    <h6 class="fw-bold">CLV Projections</h6>
-                    <a href="{{ route('admin.reports.customers.clv') }}" class="btn btn-soft-danger btn-sm stretched-link mt-2">View</a>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Average Order Value Display -->
-    <div class="card border-0 shadow-sm mb-4 bg-primary text-white overflow-hidden position-relative">
-        <div class="card-body py-4">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h5 class="text-white-50 mb-1">Average Order Value (AOV)</h5>
-                    <h2 class="mb-0 display-6 fw-bold text-white">${{ number_format($stats['avg_order_value'], 2) }}</h2>
-                    <p class="mb-0 mt-2 text-white-50 small">Calculated from all delivered orders in the selected period.</p>
+        <!-- Row 2 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100 text-center py-4 border-top border-warning border-3">
+                <div class="card-body">
+                    <div class="avatar-lg bg-soft-warning rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                        <i class="bx bx-grid-alt fs-32 text-warning"></i>
+                    </div>
+                    <h5 class="fw-bold">Cohort Analysis</h5>
+                    <p class="text-muted small">Track customer retention and lifecycle across signup months.</p>
+                    <a href="{{ route('admin.reports.customers.cohort') }}" class="btn btn-soft-warning btn-sm stretched-link">View Cohorts</a>
                 </div>
-                <div class="col-md-4 text-end">
-                    <i class="bx bx-wallet fs-100 text-white-50 opacity-25"></i>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100 text-center py-4 border-top border-danger border-3">
+                <div class="card-body">
+                    <div class="avatar-lg bg-soft-danger rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                        <i class="bx bx-trending-up fs-32 text-danger"></i>
+                    </div>
+                    <h5 class="fw-bold">CLV Projections</h5>
+                    <p class="text-muted small">Predictive analysis of future customer value and tiering.</p>
+                    <a href="{{ route('admin.reports.customers.clv') }}" class="btn btn-soft-danger btn-sm stretched-link">View CLV</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100 text-center py-4 border-top border-secondary border-3">
+                <div class="card-body">
+                    <div class="avatar-lg bg-soft-secondary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                        <i class="bx bx-wallet fs-32 text-secondary"></i>
+                    </div>
+                    <h5 class="fw-bold">Avg Order Value</h5>
+                    <p class="text-muted small">Current AOV: <span class="fw-bold text-dark">${{ number_format($stats['avg_order_value'], 2) }}</span></p>
+                    <p class="text-muted extra-small mb-0">Calculated from all delivered orders.</p>
                 </div>
             </div>
         </div>
