@@ -60,7 +60,14 @@ class SliderRequest extends FormRequest
             'image.required' => 'A slider image is required.',
             'image.image' => 'The uploaded file must be an image.',
             'image.mimes' => 'Supported image formats: jpeg, png, jpg, gif, svg, webp.',
-            'image.max' => 'The slider image size should not exceed 2MB.',
+            'image.max' => 'The Slider Image size should not exceed 2MB.',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'image' => 'Slider Image',
         ];
     }
 }

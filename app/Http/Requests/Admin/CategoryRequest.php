@@ -37,7 +37,14 @@ class CategoryRequest extends FormRequest
             'parent_id.exists' => 'The selected parent category is invalid.',
             'icon.image' => 'The uploaded file must be an image.',
             'icon.mimes' => 'Allowed icon formats are: png, jpg, jpeg, svg, webp.',
-            'icon.max' => 'The icon size should not exceed 2MB.',
+            'icon.max' => 'The Category Icon size should not exceed 2MB. Please compress and try again.',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'icon' => 'Category Icon',
         ];
     }
 }

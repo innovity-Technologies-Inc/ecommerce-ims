@@ -18,4 +18,19 @@ class UpdateAdminAvatarRequest extends FormRequest
             'avatar' => 'required|image|max:2048',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'avatar.required' => 'Please select an image to upload.',
+            'avatar.max' => 'The Profile Avatar size exceeds 2MB. Please compress and try again.',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'avatar' => 'Profile Avatar',
+        ];
+    }
 }

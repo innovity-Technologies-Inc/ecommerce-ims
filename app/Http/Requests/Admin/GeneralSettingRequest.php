@@ -33,11 +33,26 @@ class GeneralSettingRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'dark_logo.image' => 'The dark logo must be an image file.',
-            'dark_logo.mimes' => 'Supported formats for dark logo: jpeg, png, jpg, gif, svg, webp.',
-            'light_logo.image' => 'The light logo must be an image file.',
-            'light_logo.mimes' => 'Supported formats for light logo: jpeg, png, jpg, gif, svg, webp.',
-            'favicon.max' => 'The favicon size should not exceed 1MB.',
+            'dark_logo.image' => 'The Dark Logo must be an image file.',
+            'dark_logo.max' => 'The Dark Logo size exceeds 2MB. Please compress and try again.',
+            'light_logo.image' => 'The Light Logo must be an image file.',
+            'light_logo.max' => 'The Light Logo size exceeds 2MB. Please compress and try again.',
+            'breadcrumb_image.max' => 'The Breadcrumb Image size exceeds 2MB. Please compress and try again.',
+            'login_banner.max' => 'The Login Banner size exceeds 2MB. Please compress and try again.',
+            'register_banner.max' => 'The Register Banner size exceeds 2MB. Please compress and try again.',
+            'favicon.max' => 'The Favicon size should not exceed 1MB.',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'dark_logo' => 'Dark Logo',
+            'light_logo' => 'Light Logo',
+            'breadcrumb_image' => 'Breadcrumb Image',
+            'login_banner' => 'Login Banner',
+            'register_banner' => 'Register Banner',
+            'favicon' => 'Favicon',
         ];
     }
 }

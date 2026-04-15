@@ -35,7 +35,14 @@ class BrandRequest extends FormRequest
             'name.max' => 'The brand name should not exceed 255 characters.',
             'icon.image' => 'The file uploaded must be an image.',
             'icon.mimes' => 'The icon must be a file of type: png, jpg, jpeg, svg, webp.',
-            'icon.max' => 'The icon size should not exceed 2MB.',
+            'icon.max' => 'The Brand Icon size should not exceed 2MB. Please compress and try again.',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'icon' => 'Brand Icon',
         ];
     }
 }

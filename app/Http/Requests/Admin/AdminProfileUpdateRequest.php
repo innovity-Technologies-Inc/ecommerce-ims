@@ -31,4 +31,18 @@ class AdminProfileUpdateRequest extends FormRequest
             'password' => 'nullable|string|min:8|confirmed',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'avatar.max' => 'The Profile Image size exceeds 2MB. Please compress and try again.',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'avatar' => 'Profile Image',
+        ];
+    }
 }

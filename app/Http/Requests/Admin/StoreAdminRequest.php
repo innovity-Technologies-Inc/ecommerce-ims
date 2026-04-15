@@ -40,6 +40,14 @@ class StoreAdminRequest extends FormRequest
             'password.min' => 'The password must be at least 8 characters.',
             'role.required' => 'Please assign a role to the administrator.',
             'role.exists' => 'The selected role is invalid.',
+            'image.max' => 'The Administrator Image size exceeds 2MB. Please compress and try again.',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'image' => 'Administrator Image',
         ];
     }
 }

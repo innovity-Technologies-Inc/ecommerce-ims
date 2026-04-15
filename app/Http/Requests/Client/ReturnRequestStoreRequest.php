@@ -40,10 +40,18 @@ class ReturnRequestStoreRequest extends FormRequest
         return [
             'order_id.required' => 'Invalid Order ID.',
             'reason.required' => 'Please provide a reason for the return.',
-            'images.*.image' => 'The proof must be an image file.',
-            'images.*.max' => 'Each image size should not exceed 2MB.',
+            'images.*.image' => 'One or more proof files are not valid images.',
+            'images.*.max' => 'One or more proof images exceed the 2MB size limit. Please compress and try again.',
             'items.required' => 'Please select at least one item to return.',
             'items.*.quantity.required' => 'Please specify the return quantity.',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'images' => 'Return Images',
+            'images.*' => 'Return Image',
         ];
     }
 }

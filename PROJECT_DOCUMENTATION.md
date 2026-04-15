@@ -469,5 +469,13 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     - **Exceptions:** "Back" buttons, "Create/Add New" buttons, and the "View All Notification" link maintain their text for navigation prominence.
 - **Standards:** All new modules must follow the `icon-only + tooltip` pattern for row-level actions.
 
+### **10. Image Validation Standardization (REQ-175)**
+- **What:** Improved user experience for file upload errors by removing technical debt (indices) and using human-readable labels.
+- **How it Works:**
+    - **Removal of Indices:** Error messages for multiple image uploads (arrays) no longer include indices like `.0` or `.1`.
+    - **Label Mapping:** Utilized the `attributes()` method in Form Requests to map technical database field names (e.g., `primary_image`, `gallery_images.*`, `dark_logo`) to user-friendly labels (e.g., "Primary Image", "Gallery Image", "Dark Logo").
+    - **Descriptive Messages:** Custom validation messages in the `messages()` method provide clear guidance, such as "One or more gallery images exceed the 2MB size limit. Please compress and try again."
+    - **Affected Modules:** Products, Sliders, General Settings, Categories, Brands, Client Returns, and Admin User Management.
+
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*
