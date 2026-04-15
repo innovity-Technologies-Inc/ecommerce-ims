@@ -165,14 +165,12 @@
             </div>
         </div>
         <div class="col-md-6 col-lg-4">
-            <div class="card border-0 shadow-sm h-100 text-center py-4 border-top border-secondary border-3">
-                <div class="card-body">
-                    <div class="avatar-lg bg-soft-secondary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
-                        <i class="bx bx-wallet fs-32 text-secondary"></i>
-                    </div>
-                    <h5 class="fw-bold">Avg Order Value</h5>
-                    <p class="text-muted small">Current AOV: <span class="fw-bold text-dark">${{ number_format($stats['avg_order_value'], 2) }}</span></p>
-                    <p class="text-muted extra-small mb-0">Calculated from all delivered orders.</p>
+            <div class="card border-0 shadow-sm h-100 bg-primary text-white overflow-hidden position-relative">
+                <div class="card-body d-flex flex-column justify-content-center text-center py-4">
+                    <i class="bx bx-wallet position-absolute end-0 bottom-0 text-white-50 opacity-25" style="font-size: 100px; transform: translate(20%, 20%);"></i>
+                    <h6 class="text-white-50 text-uppercase fw-bold mb-2 small">Average Order Value</h6>
+                    <h2 class="mb-0 display-6 fw-bold text-white">${{ number_format($stats['avg_order_value'], 2) }}</h2>
+                    <p class="extra-small text-white-50 mt-3 mb-0">Calculated from all delivered orders in the selected period.</p>
                 </div>
             </div>
         </div>
