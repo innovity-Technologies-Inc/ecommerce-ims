@@ -3,11 +3,11 @@
 @section('content')
 <div class="container-xxl">
     <div class="d-flex align-items-center justify-content-between mb-4">
-        <div>
+        <div class="d-flex align-items-center">
             <a href="{{ route('admin.reports.customers.index') }}" class="btn btn-sm btn-outline-secondary me-2">
                 <i class="bx bx-arrow-back"></i> Back
             </a>
-            <h4 class="mb-0 d-inline-block">Customer Lifetime Value (CLV) Projections</h4>
+            <h4 class="mb-0">Customer Lifetime Value (CLV) Projections</h4>
         </div>
     </div>
 
@@ -27,15 +27,15 @@
     <!-- Summary Stats -->
     <div class="row g-3 mb-4">
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm border-start border-primary border-4">
+            <div class="card border-0 shadow-sm border-start border-primary border-4 h-100" data-bs-toggle="tooltip" title="Average predicted lifetime value across all customers based on historical spend and purchase frequency.">
                 <div class="card-body">
-                    <h6 class="text-muted small text-uppercase mb-1">Average Projected CLV</h6>
+                    <h6 class="text-muted small text-uppercase mb-1">Average Projected CLV <i class="bx bx-info-circle small"></i></h6>
                     <h3 class="mb-0 fw-bold text-primary">${{ number_format($clv['averages']['avg_clv'], 2) }}</h3>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm border-start border-success border-4">
+            <div class="card border-0 shadow-sm border-start border-success border-4 h-100" data-bs-toggle="tooltip" title="Count of customers segmented by their predicted value: Whales (>$2000), Medium (>$500), and Standard.">
                 <div class="card-body text-center">
                     <div class="row">
                         <div class="col-4 border-end">
@@ -55,9 +55,9 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm border-start border-warning border-4">
+            <div class="card border-0 shadow-sm border-start border-warning border-4 h-100" data-bs-toggle="tooltip" title="The average amount customers have actually spent to date (Total Sales / Total Customers).">
                 <div class="card-body">
-                    <h6 class="text-muted small text-uppercase mb-1">Avg Historical Value</h6>
+                    <h6 class="text-muted small text-uppercase mb-1">Avg Historical Value <i class="bx bx-info-circle small"></i></h6>
                     <h3 class="mb-0 fw-bold text-warning">${{ number_format($clv['averages']['avg_historical'], 2) }}</h3>
                 </div>
             </div>

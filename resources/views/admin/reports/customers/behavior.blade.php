@@ -3,11 +3,11 @@
 @section('content')
 <div class="container-xxl">
     <div class="d-flex align-items-center justify-content-between mb-4">
-        <div>
+        <div class="d-flex align-items-center">
             <a href="{{ route('admin.reports.customers.index') }}" class="btn btn-sm btn-outline-secondary me-2">
                 <i class="bx bx-arrow-back"></i> Back
             </a>
-            <h4 class="mb-0 d-inline-block">Purchase Behavior Analytics</h4>
+            <h4 class="mb-0">Purchase Behavior Analytics</h4>
         </div>
     </div>
 
@@ -36,8 +36,9 @@
         <!-- Order Status Distribution -->
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white py-3 border-0">
+                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Order Status Distribution</h5>
+                    <i class="bx bx-info-circle text-muted" data-bs-toggle="tooltip" title="Percentage breakdown of all orders by their current status (Delivered, Pending, Cancelled, etc.)"></i>
                 </div>
                 <div class="card-body">
                     <div id="orderStatusChart"></div>
@@ -66,8 +67,9 @@
         <!-- AOV Trend -->
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white py-3 border-0">
+                <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Average Order Value (AOV) Trend</h5>
+                    <i class="bx bx-info-circle text-muted" data-bs-toggle="tooltip" title="Historical trend showing how much customers spend on average per order month-over-month."></i>
                 </div>
                 <div class="card-body">
                     <div id="aovTrendChart"></div>

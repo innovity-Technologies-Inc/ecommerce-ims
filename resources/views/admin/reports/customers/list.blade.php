@@ -3,11 +3,11 @@
 @section('content')
 <div class="container-xxl">
     <div class="d-flex align-items-center justify-content-between mb-4">
-        <div>
+        <div class="d-flex align-items-center">
             <a href="{{ route('admin.reports.customers.index') }}" class="btn btn-sm btn-outline-secondary me-2">
                 <i class="bx bx-arrow-back"></i> Back
             </a>
-            <h4 class="mb-0 d-inline-block">Customer Analytics List</h4>
+            <h4 class="mb-0">Customer Analytics List</h4>
         </div>
     </div>
 

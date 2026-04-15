@@ -3,11 +3,11 @@
 @section('content')
 <div class="container-xxl">
     <div class="d-flex align-items-center justify-content-between mb-4">
-        <div>
+        <div class="d-flex align-items-center">
             <a href="{{ route('admin.reports.customers.index') }}" class="btn btn-sm btn-outline-secondary me-2">
                 <i class="bx bx-arrow-back"></i> Back
             </a>
-            <h4 class="mb-0 d-inline-block">RFM Analysis & Segmentation</h4>
+            <h4 class="mb-0">RFM Analysis & Segmentation</h4>
         </div>
     </div>
 
@@ -27,37 +27,37 @@
     <!-- Segment Distribution -->
     <div class="row g-3 mb-4">
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm border-top border-primary border-4">
+            <div class="card border-0 shadow-sm border-top border-primary border-4 h-100" data-bs-toggle="tooltip" title="High value customers who purchase frequently and have been active recently.">
                 <div class="card-body text-center">
                     <h1 class="fw-bold text-primary">{{ count($rfm['segments']['VIP']) }}</h1>
-                    <h6 class="text-muted text-uppercase small fw-bold">VIP Customers</h6>
+                    <h6 class="text-muted text-uppercase small fw-bold">VIP Customers <i class="bx bx-info-circle small"></i></h6>
                     <p class="text-muted extra-small mb-0">High spend, high frequency, recent activity.</p>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm border-top border-success border-4">
+            <div class="card border-0 shadow-sm border-top border-success border-4 h-100" data-bs-toggle="tooltip" title="Customers who buy regularly and are consistent in their purchase behavior.">
                 <div class="card-body text-center">
                     <h1 class="fw-bold text-success">{{ count($rfm['segments']['Loyal']) }}</h1>
-                    <h6 class="text-muted text-uppercase small fw-bold">Loyal Customers</h6>
+                    <h6 class="text-muted text-uppercase small fw-bold">Loyal Customers <i class="bx bx-info-circle small"></i></h6>
                     <p class="text-muted extra-small mb-0">Frequent buyers with consistent activity.</p>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm border-top border-warning border-4">
+            <div class="card border-0 shadow-sm border-top border-warning border-4 h-100" data-bs-toggle="tooltip" title="Customers who haven't made a purchase in 90 to 180 days and may need re-engagement.">
                 <div class="card-body text-center">
                     <h1 class="fw-bold text-warning">{{ count($rfm['segments']['At Risk']) }}</h1>
-                    <h6 class="text-muted text-uppercase small fw-bold">At Risk</h6>
+                    <h6 class="text-muted text-uppercase small fw-bold">At Risk <i class="bx bx-info-circle small"></i></h6>
                     <p class="text-muted extra-small mb-0">Haven't purchased in 90-180 days.</p>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card border-0 shadow-sm border-top border-danger border-4">
+            <div class="card border-0 shadow-sm border-top border-danger border-4 h-100" data-bs-toggle="tooltip" title="Customers who have not been active for more than 180 days.">
                 <div class="card-body text-center">
                     <h1 class="fw-bold text-danger">{{ count($rfm['segments']['Lost']) }}</h1>
-                    <h6 class="text-muted text-uppercase small fw-bold">Lost Customers</h6>
+                    <h6 class="text-muted text-uppercase small fw-bold">Lost Customers <i class="bx bx-info-circle small"></i></h6>
                     <p class="text-muted extra-small mb-0">Inactive for more than 180 days.</p>
                 </div>
             </div>
