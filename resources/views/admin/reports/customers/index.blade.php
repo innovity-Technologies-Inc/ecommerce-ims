@@ -165,7 +165,7 @@
             </div>
         </div>
         <div class="col-md-6 col-lg-4">
-            <div class="card border-0 shadow-sm h-100 bg-primary text-white overflow-hidden position-relative">
+            <div class="card border-0 shadow-sm h-100 bg-dark text-white overflow-hidden position-relative">
                 <div class="card-body d-flex flex-column justify-content-center text-center py-4">
                     <i class="bx bx-wallet position-absolute end-0 bottom-0 text-white-50 opacity-25" style="font-size: 100px; transform: translate(20%, 20%);"></i>
                     <h6 class="text-white-50 text-uppercase fw-bold mb-2 small">Average Order Value</h6>
