@@ -46,7 +46,7 @@ class CustomerReportService
     /**
      * Get Filtered Customer List with Aggregate Data using FlexSearch
      */
-    public function getCustomerList(array $filters)
+    public function getCustomerList(array $params)
     {
         $query = User::query()
             ->withCount(['orders' => function ($q) {
@@ -62,16 +62,23 @@ class CustomerReportService
                     ->limit(1),
             ]);
 
+        // Explicitly define which fields can be used as direct WHERE filters
+        $filters = [];
+        if (isset($params['status']) && $params['status'] !== '') {
+            $filters['status'] = $params['status'];
+        }
+
         $searchableColumns = ['name', 'email', 'mobile', 'city', 'state'];
-        $searchTerm = $filters['search'] ?? null;
+        $searchTerm = $params['search'] ?? null;
 
         $flexSearch = app(FlexSearch::class);
 
+        // Apply Search and Filtering using FlexSearch
         $query = $flexSearch->apply($query, $filters, $searchTerm, $searchableColumns);
 
         return $query
-            ->orderBy($filters['sort_by'] ?? 'orders_sum_total_amount', $filters['sort_order'] ?? 'desc')
-            ->paginate($filters['per_page'] ?? 10);
+            ->orderBy($params['sort_by'] ?? 'orders_sum_total_amount', $params['sort_order'] ?? 'desc')
+            ->paginate($params['per_page'] ?? 10);
     }
 
     /**
