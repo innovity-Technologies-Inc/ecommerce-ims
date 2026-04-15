@@ -38,16 +38,16 @@
             <div class="card border-0 shadow-sm border-start border-success border-4 h-100" data-bs-toggle="tooltip" title="Count of customers segmented by their predicted value: Whales (>$2000), Medium (>$500), and Standard.">
                 <div class="card-body text-center">
                     <div class="row">
-                        <div class="col-4 border-end">
-                            <h6 class="text-muted extra-small mb-1">Whales</h6>
+                        <div class="col-4 border-end" data-bs-toggle="tooltip" title="High-value customers with a projected lifetime value exceeding $2,000.">
+                            <h6 class="text-muted extra-small mb-1">Whales <i class="bx bx-info-circle extra-small"></i></h6>
                             <h5 class="mb-0 fw-bold text-success">{{ $clv['segments']['whales'] }}</h5>
                         </div>
-                        <div class="col-4 border-end">
-                            <h6 class="text-muted extra-small mb-1">Medium</h6>
+                        <div class="col-4 border-end" data-bs-toggle="tooltip" title="Customers with a projected lifetime value between $500 and $2,000.">
+                            <h6 class="text-muted extra-small mb-1">Medium <i class="bx bx-info-circle extra-small"></i></h6>
                             <h5 class="mb-0 fw-bold text-info">{{ $clv['segments']['medium'] }}</h5>
                         </div>
-                        <div class="col-4">
-                            <h6 class="text-muted extra-small mb-1">Standard</h6>
+                        <div class="col-4" data-bs-toggle="tooltip" title="Standard customers with a projected lifetime value of $500 or less.">
+                            <h6 class="text-muted extra-small mb-1">Standard <i class="bx bx-info-circle extra-small"></i></h6>
                             <h5 class="mb-0 fw-bold text-secondary">{{ $clv['segments']['standard'] }}</h5>
                         </div>
                     </div>
