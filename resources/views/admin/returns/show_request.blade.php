@@ -4,7 +4,7 @@
 <div class="container-xxl">
     <div class="d-flex align-items-center justify-content-between mb-3">
         <h4 class="mb-0">Return Request #{{ $request->return_id }}</h4>
-        <a href="{{ route('admin.returns.index') }}" class="btn btn-secondary btn-sm">
+        <a href="{{ route('admin.returns.requests') }}" class="btn btn-secondary btn-sm">
             <i class="bx bx-arrow-back me-1"></i> Back
         </a>
     </div>

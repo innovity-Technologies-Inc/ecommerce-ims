@@ -9,7 +9,7 @@
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                 <h4 class="mb-sm-0 text-danger">Record Warehouse Damage (Wastage)</h4>
                 <div class="page-title-right">
-                    <a href="{{ route('admin.returns.index') }}" class="btn btn-secondary btn-sm">
+                    <a href="{{ route('admin.returns.wastages') }}" class="btn btn-secondary btn-sm">
                         <i class="bx bx-arrow-back me-1"></i> Back
                     </a>
                 </div>
