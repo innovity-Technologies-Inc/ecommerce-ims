@@ -225,6 +225,15 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
             Route::get('/export', 'export')->name('admin.reports.warehouse-performance.export');
             Route::get('/{id}', 'show')->name('admin.reports.warehouse-performance.show');
         });
+
+        // Customer Reports
+        Route::prefix('customers')->controller(\App\Http\Controllers\Admin\CustomerReportController::class)->group(function () {
+            Route::get('/', 'index')->name('admin.reports.customers.index');
+            Route::get('/list', 'list')->name('admin.reports.customers.list');
+            Route::get('/rfm', 'rfm')->name('admin.reports.customers.rfm');
+            Route::get('/behavior', 'behavior')->name('admin.reports.customers.behavior');
+            Route::get('/cohort', 'cohort')->name('admin.reports.customers.cohort');
+        });
     });
 
     Route::prefix('inventory')->group(function () {

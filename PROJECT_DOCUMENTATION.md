@@ -477,5 +477,17 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     - **Descriptive Messages:** Custom validation messages in the `messages()` method provide clear guidance, such as "One or more gallery images exceed the 2MB size limit. Please compress and try again."
     - **Affected Modules:** Products, Sliders, General Settings, Categories, Brands, Client Returns, and Admin User Management.
 
----
-*Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*
+### **11. Customer Reports & Analytics (REQ-173)**
+
+- **Purpose:** Provide deep insights into customer behavior, retention, and lifetime value to drive data-driven marketing decisions.
+- **How it Works:**
+    - **Overview Dashboard:** Real-time metrics for total, new, returning, and active customers, including Average Order Value (AOV).
+    - **Customer Analytics List:** A comprehensive, sortable list of all customers with aggregate order counts, total spend, and last order date using **FlexSearch**.
+    - **RFM Analysis:** Quantitatively segments customers based on **Recency** (days since last order), **Frequency** (total orders), and **Monetary** (total spent) into segments like VIP, Loyal, At Risk, and Lost.
+    - **Purchase Behavior:** Visual analysis of order status distribution (Donut Chart) and AOV trends (Line Chart) over time.
+    - **Cohort Analysis:** A retention heatmap tracking user activity grouped by their registration month (Cohort) over a 6-month window.
+- **Technical Implementation:**
+    - **Service:** `CustomerReportService` handles all complex SQL aggregations and analytic logic.
+    - **Controller:** `CustomerReportController` (Thin Controller) manages routing and data passing to views.
+    - **Visualization:** Integrated **ApexCharts** for interactive data visualization.
+    - **Navigation:** Added "Customer Reports" under the Reports section in the Admin Sidebar.

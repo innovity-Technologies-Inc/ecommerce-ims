@@ -304,6 +304,14 @@
                     <span class="nav-text"> Warehouse Performance </span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link {{ Request::routeIs('admin.reports.customers.*') ? 'active' : '' }}" href="{{ route('admin.reports.customers.index') }}">
+                    <span class="nav-icon">
+                        <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon>
+                    </span>
+                    <span class="nav-text"> Customer Reports </span>
+                </a>
+            </li>
             @endcan
 
             <li class="menu-title mt-2">Management</li>
