@@ -37,7 +37,7 @@
             <td>
                 <div class="d-flex gap-2">
                     @can('sliders.edit')
-                    <a href="{{ route('admin.sliders.edit', $data->id) }}" class="btn btn-soft-primary btn-sm">
+                    <a href="{{ route('admin.sliders.edit', $data->id) }}" class="btn btn-soft-primary btn-sm" data-bs-toggle="tooltip" title="Edit Slider">
                         <iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon>
                     </a>
                     @endcan
@@ -45,7 +45,7 @@
                     <form method="post" action="{{ route('admin.sliders.destroy', $data->id) }}">
                         @csrf
                         @method('delete')
-                        <button type="submit" class="btn btn-soft-danger btn-sm confirmDelete">
+                        <button type="submit" class="btn btn-soft-danger btn-sm confirmDelete" data-bs-toggle="tooltip" title="Delete Slider">
                             <iconify-icon icon="solar:trash-bin-minimalistic-2-broken" class="align-middle fs-18"></iconify-icon>
                         </button>
                     </form>

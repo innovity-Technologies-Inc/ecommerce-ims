@@ -54,11 +54,11 @@
                 </td>
                 <td>
                     <div class="d-flex gap-2">
-                        <a href="{{ route('admin.products.show', $data->id) }}" class="btn btn-soft-info btn-sm">
+                        <a href="{{ route('admin.products.show', $data->id) }}" class="btn btn-soft-info btn-sm" data-bs-toggle="tooltip" title="View Details">
                             <iconify-icon icon="solar:eye-broken" class="align-middle fs-18"></iconify-icon>
                         </a>
                         @can('products.edit')
-                        <a href="{{ route('admin.products.edit', $data->id) }}" class="btn btn-soft-primary btn-sm">
+                        <a href="{{ route('admin.products.edit', $data->id) }}" class="btn btn-soft-primary btn-sm" data-bs-toggle="tooltip" title="Edit Product">
                             <iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon>
                         </a>
                         @endcan

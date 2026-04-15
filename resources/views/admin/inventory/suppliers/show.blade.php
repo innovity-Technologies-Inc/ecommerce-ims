@@ -13,10 +13,9 @@
                         <i class="bx bx-arrow-back me-1"></i> Back
                     </a>
                     @can('supplier.edit')
-                    <a href="{{ route('admin.suppliers.edit', $supplier->id) }}" class="btn btn-primary btn-sm">
-                        <i class="bx bx-edit me-1"></i> Edit
-                    </a>
-                    @endcan
+                    <a href="{{ route('admin.suppliers.edit', $supplier->id) }}" class="btn btn-primary btn-sm" data-bs-toggle="tooltip" title="Edit Supplier">
+                        <i class="bx bx-edit fs-16"></i>
+                    </a>                    @endcan
                 </div>
             </div>
         </div>

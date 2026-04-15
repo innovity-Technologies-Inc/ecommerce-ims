@@ -25,6 +25,11 @@ This project focuses on a clean, modern, and high-performance e-commerce interfa
 
 ## 4. UI/UX Principles
 - **Icons:** Use `iconify-icon` with the `solar` icon set for consistency (e.g., `<iconify-icon icon="solar:eye-broken"></iconify-icon>`).
+- **Action Buttons:** Standardize all primary action buttons in the Admin Panel to use **icons only** (no text). This applies to "View", "Details", "Edit", "Create/Add", and "Delete" buttons within tables and listing pages.
+    - **View/Details:** Eye icon (`solar:eye-broken` or `solar:eye-bold-duotone`).
+    - **Edit:** Pen icon (`solar:pen-2-broken` or `solar:pen-new-square-bold-duotone`).
+    - **Delete:** Trash icon (`solar:trash-bin-trash-broken` or `solar:trash-bin-trash-bold-duotone`).
+    - **Create/Add:** Plus icon (`solar:add-circle-bold-duotone`).
 - **Visual Feedback:** Provide immediate feedback for user actions (e.g., loading spinners on buttons, Toastr for success/error).
 - **Forms:** Labels should always be present; use placeholders appropriately. Use Select2 for all searchable/multi-select dropdowns.
 - **Tables & Pagination:** Use responsive Bootstrap tables with consistent styling for actions. All paginated lists MUST include "Showing X to Y of Z Results" text next to the pagination links.

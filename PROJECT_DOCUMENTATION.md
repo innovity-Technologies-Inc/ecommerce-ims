@@ -458,5 +458,16 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     - `policy_settings` table: `privacy_policy` (longtext), `return_policy` (longtext).
     - `faqs` table: `question` (string), `answer` (text), `is_active` (boolean), `sort_order` (integer).
 
+### **9. UI Button Standardization (REQ-174)**
+- **What:** A consistent pattern for administrative action buttons to ensure a clean, modern, and uncluttered interface.
+- **How it Works:**
+    - **Action Buttons in Tables:** "View", "Edit", "Details", and "Delete" buttons in all listing tables are now **icon-only** with Bootstrap tooltips for context.
+    - **Consistent Icons:** 
+        - View/Details: Eye icon (`solar:eye-broken` or `bx-show`).
+        - Edit: Pen icon (`solar:pen-2-broken` or `bx-edit`).
+        - Delete: Trash icon (`solar:trash-bin-trash-broken`).
+    - **Exceptions:** "Back" buttons, "Create/Add New" buttons, and the "View All Notification" link maintain their text for navigation prominence.
+- **Standards:** All new modules must follow the `icon-only + tooltip` pattern for row-level actions.
+
 ---
 *Note: This documentation is the source of truth for the smart-ecom project and is updated as the project evolves.*

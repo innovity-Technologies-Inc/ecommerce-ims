@@ -29,7 +29,7 @@
             <td>
                 <div class="d-flex gap-2">
                     @can('shipping_methods.edit')
-                    <a href="{{ route('admin.shipping_methods.edit', $data->id) }}" class="btn btn-soft-primary btn-sm">
+                    <a href="{{ route('admin.shipping_methods.edit', $data->id) }}" class="btn btn-soft-primary btn-sm" data-bs-toggle="tooltip" title="Edit Shipping Method">
                         <iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon>
                     </a>
                     @endcan
@@ -37,7 +37,7 @@
                     <form method="post" action="{{ route('admin.shipping_methods.destroy', $data->id) }}">
                         @csrf
                         @method('delete')
-                        <button type="submit" class="btn btn-soft-danger btn-sm confirmDelete">
+                        <button type="submit" class="btn btn-soft-danger btn-sm confirmDelete" data-bs-toggle="tooltip" title="Delete Shipping Method">
                             <iconify-icon icon="solar:trash-bin-minimalistic-2-broken" class="align-middle fs-18"></iconify-icon>
                         </button>
                     </form>

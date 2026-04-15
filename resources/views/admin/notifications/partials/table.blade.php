@@ -38,8 +38,8 @@
                         <small class="text-muted">{{ $notification->created_at->format('h:i A') }}</small>
                     </td>
                     <td class="text-center">
-                        <a href="{{ route('admin.notifications.read', $notification->id) }}" class="btn btn-soft-primary btn-sm">
-                            <i class="bx bx-show"></i> View
+                        <a href="{{ route('admin.notifications.show', $notification->id) }}" class="btn btn-soft-primary btn-sm" data-bs-toggle="tooltip" title="View Details">
+                            <i class="bx bx-show fs-16"></i>
                         </a>
                     </td>
                 </tr>

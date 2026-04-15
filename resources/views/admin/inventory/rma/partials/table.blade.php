@@ -37,8 +37,8 @@
                         @endswitch
                     </td>
                     <td class="text-center">
-                        <a href="{{ route('admin.inventory.rma.show', $rma->id) }}" class="btn btn-soft-primary btn-sm">
-                            <i class="bx bx-show"></i> View
+                        <a href="{{ route('admin.inventory.rma.show', $rma->id) }}" class="btn btn-soft-primary btn-sm" data-bs-toggle="tooltip" title="View Details">
+                            <i class="bx bx-show fs-16"></i>
                         </a>
                     </td>
                 </tr>

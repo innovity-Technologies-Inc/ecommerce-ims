@@ -5,7 +5,9 @@
     <div class="d-flex align-items-center justify-content-between mb-3">
         <h4 class="mb-0">Product Details</h4>
         <div class="d-flex gap-2">
-            <a href="{{ route('admin.products.edit', $product->id) }}" class="btn btn-primary btn-sm">Edit Product</a>
+            <a href="{{ route('admin.products.edit', $product->id) }}" class="btn btn-primary btn-sm" data-bs-toggle="tooltip" title="Edit Product">
+                <i class="bx bx-edit fs-16"></i>
+            </a>
             <a href="{{ route('admin.products.index') }}" class="btn btn-secondary btn-sm">Back</a>
         </div>
     </div>

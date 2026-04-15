@@ -14,15 +14,15 @@
                     </a>
                     @if($po->status === 'Sent')
                         @can('po.edit')
-                        <a href="{{ route('admin.inventory.po.receive', $po->id) }}" class="btn btn-success btn-sm">
-                            <iconify-icon icon="solar:box-minimalistic-bold-duotone" class="align-middle fs-18 me-1"></iconify-icon> Receive PO
+                        <a href="{{ route('admin.inventory.po.receive', $po->id) }}" class="btn btn-success btn-sm" data-bs-toggle="tooltip" title="Receive Purchase Order">
+                            <iconify-icon icon="solar:box-minimalistic-bold-duotone" class="align-middle fs-18"></iconify-icon>
                         </a>
                         @endcan
                     @endif
                     @if($po->status === 'Draft')
                         @can('po.edit')
-                        <a href="{{ route('admin.inventory.po.edit', $po->id) }}" class="btn btn-primary btn-sm">
-                            <i class="bx bx-edit me-1"></i> Edit PO
+                        <a href="{{ route('admin.inventory.po.edit', $po->id) }}" class="btn btn-primary btn-sm" data-bs-toggle="tooltip" title="Edit Purchase Order">
+                            <i class="bx bx-edit fs-16"></i>
                         </a>
                         @endcan
                     @endif

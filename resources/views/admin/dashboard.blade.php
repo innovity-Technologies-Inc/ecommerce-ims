@@ -290,7 +290,9 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="card-title">Monthly Best Sellers ({{ date('M') }})</h4>
-                    <a href="{{ route('admin.products.best-selling', ['period' => 'monthly']) }}" class="btn btn-sm btn-soft-primary">View All</a>
+                    <a href="{{ route('admin.products.best-selling', ['period' => 'monthly']) }}" class="btn btn-sm btn-soft-primary" data-bs-toggle="tooltip" title="View Monthly Best Sellers">
+                        <i class="bx bx-show fs-14 me-1"></i> View All
+                    </a>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -328,7 +330,9 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="card-title">Yearly Best Sellers ({{ date('Y') }})</h4>
-                    <a href="{{ route('admin.products.best-selling', ['period' => 'yearly']) }}" class="btn btn-sm btn-soft-primary">View All</a>
+                    <a href="{{ route('admin.products.best-selling', ['period' => 'yearly']) }}" class="btn btn-sm btn-soft-primary" data-bs-toggle="tooltip" title="View Yearly Best Sellers">
+                        <i class="bx bx-show fs-14 me-1"></i> View All
+                    </a>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -373,7 +377,9 @@
                             <i class="bx bx-mail-send me-1"></i> Check & Notify Now
                         </a>
                         <span class="badge bg-soft-danger text-danger">Total Issues: {{ $summary['lowStockCount'] }}</span>
-                        <a href="{{ route('admin.products.low-stock') }}" class="btn btn-sm btn-soft-primary">View All</a>
+                        <a href="{{ route('admin.products.low-stock') }}" class="btn btn-sm btn-soft-primary" data-bs-toggle="tooltip" title="View All Low Stock Items">
+                            <i class="bx bx-show fs-14 me-1"></i> View All
+                        </a>
                     </div>
                 </div>
                 <div class="card-body p-0">

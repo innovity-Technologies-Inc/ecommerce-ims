@@ -292,7 +292,7 @@
                     <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">Sales Trends ({{ ucfirst($summary['group_by']) }})</h5>
                         <div class="d-flex gap-2">
-                            <a href="{{ route('admin.reports.sales', array_merge(request()->all(), ['view' => 'trends'])) }}" class="btn btn-sm btn-soft-primary">View All</a>
+                            <a href="{{ route('admin.reports.sales', array_merge(request()->all(), ['view' => 'trends'])) }}" class="btn btn-sm btn-soft-primary" data-bs-toggle="tooltip" title="View Full Report"><i class="bx bx-show fs-14 me-1"></i> View All</a>
                             <div class="btn-group">
                                 <a href="{{ route('admin.reports.sales.export', array_merge(request()->all(), ['type' => 'trends'])) }}" class="btn btn-sm btn-soft-success">
                                     <i class="bx bx-download"></i>
@@ -388,7 +388,7 @@
                     <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">Top Products by Sales</h5>
                         <div class="d-flex gap-2">
-                            <a href="{{ route('admin.reports.sales', array_merge(request()->all(), ['view' => 'product'])) }}" class="btn btn-sm btn-soft-primary">View All</a>
+                            <a href="{{ route('admin.reports.sales', array_merge(request()->all(), ['view' => 'product'])) }}" class="btn btn-sm btn-soft-primary" data-bs-toggle="tooltip" title="View Full Report"><i class="bx bx-show fs-14 me-1"></i> View All</a>
                             <div class="btn-group">
                                 <a href="{{ route('admin.reports.sales.export', array_merge(request()->all(), ['type' => 'product'])) }}" class="btn btn-sm btn-soft-success">
                                     <i class="bx bx-download"></i>
@@ -429,7 +429,7 @@
                     <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">Sales by Warehouse</h5>
                         <div class="d-flex gap-2">
-                            <a href="{{ route('admin.reports.sales', array_merge(request()->all(), ['view' => 'warehouse'])) }}" class="btn btn-sm btn-soft-primary">View All</a>
+                            <a href="{{ route('admin.reports.sales', array_merge(request()->all(), ['view' => 'warehouse'])) }}" class="btn btn-sm btn-soft-primary" data-bs-toggle="tooltip" title="View Full Report"><i class="bx bx-show fs-14 me-1"></i> View All</a>
                             <div class="btn-group">
                                 <a href="{{ route('admin.reports.sales.export', array_merge(request()->all(), ['type' => 'warehouse'])) }}" class="btn btn-sm btn-soft-success">
                                     <i class="bx bx-download"></i>
@@ -470,7 +470,7 @@
                     <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">Payment Methods Breakdown</h5>
                         <div class="d-flex gap-2">
-                            <a href="{{ route('admin.reports.sales', array_merge(request()->all(), ['view' => 'payment_method'])) }}" class="btn btn-sm btn-soft-primary">View All</a>
+                            <a href="{{ route('admin.reports.sales', array_merge(request()->all(), ['view' => 'payment_method'])) }}" class="btn btn-sm btn-soft-primary" data-bs-toggle="tooltip" title="View Full Report"><i class="bx bx-show fs-14 me-1"></i> View All</a>
                             <div class="btn-group">
                                 <a href="{{ route('admin.reports.sales.export', array_merge(request()->all(), ['type' => 'payment_method'])) }}" class="btn btn-sm btn-soft-success">
                                     <i class="bx bx-download"></i>
@@ -511,7 +511,7 @@
                     <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">Top Batches by Sales</h5>
                         <div class="d-flex gap-2">
-                            <a href="{{ route('admin.reports.sales', array_merge(request()->all(), ['view' => 'batch'])) }}" class="btn btn-sm btn-soft-primary">View All</a>
+                            <a href="{{ route('admin.reports.sales', array_merge(request()->all(), ['view' => 'batch'])) }}" class="btn btn-sm btn-soft-primary" data-bs-toggle="tooltip" title="View Full Report"><i class="bx bx-show fs-14 me-1"></i> View All</a>
                             <div class="btn-group">
                                 <a href="{{ route('admin.reports.sales.export', array_merge(request()->all(), ['type' => 'batch'])) }}" class="btn btn-sm btn-soft-success">
                                     <i class="bx bx-download"></i>

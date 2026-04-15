@@ -360,7 +360,7 @@
                     <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0 text-dark fw-bold">Stock by Warehouse</h5>
                         <div class="d-flex gap-2">
-                            <a href="{{ route('admin.reports.stock', array_merge(request()->all(), ['view' => 'warehouse'])) }}" class="btn btn-sm btn-soft-primary">View All</a>
+                            <a href="{{ route('admin.reports.stock', array_merge(request()->all(), ['view' => 'warehouse'])) }}" class="btn btn-sm btn-soft-primary" data-bs-toggle="tooltip" title="View Full Report"><i class="bx bx-show fs-14 me-1"></i> View All</a>
                             <div class="btn-group">
                                 <a href="{{ route('admin.reports.stock.export', array_merge(request()->all(), ['view' => 'warehouse'])) }}" class="btn btn-sm btn-soft-success">
                                     <i class="bx bx-download"></i>
@@ -388,7 +388,7 @@
                     <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0 text-dark fw-bold">Stock by Product</h5>
                         <div class="d-flex gap-2">
-                            <a href="{{ route('admin.reports.stock', array_merge(request()->all(), ['view' => 'product'])) }}" class="btn btn-sm btn-soft-primary">View All</a>
+                            <a href="{{ route('admin.reports.stock', array_merge(request()->all(), ['view' => 'product'])) }}" class="btn btn-sm btn-soft-primary" data-bs-toggle="tooltip" title="View Full Report"><i class="bx bx-show fs-14 me-1"></i> View All</a>
                             <div class="btn-group">
                                 <a href="{{ route('admin.reports.stock.export', array_merge(request()->all(), ['view' => 'product'])) }}" class="btn btn-sm btn-soft-success">
                                     <i class="bx bx-download"></i>
@@ -416,7 +416,7 @@
                     <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0 text-dark fw-bold">Batch Aging (Stagnant Stock)</h5>
                         <div class="d-flex gap-2">
-                            <a href="{{ route('admin.reports.stock', array_merge(request()->all(), ['view' => 'aging'])) }}" class="btn btn-sm btn-soft-primary">View All</a>
+                            <a href="{{ route('admin.reports.stock', array_merge(request()->all(), ['view' => 'aging'])) }}" class="btn btn-sm btn-soft-primary" data-bs-toggle="tooltip" title="View Full Report"><i class="bx bx-show fs-14 me-1"></i> View All</a>
                             <div class="btn-group">
                                 <a href="{{ route('admin.reports.stock.export', array_merge(request()->all(), ['view' => 'aging'])) }}" class="btn btn-sm btn-soft-success">
                                     <i class="bx bx-download"></i>
@@ -444,7 +444,7 @@
                     <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0 text-dark fw-bold">Wastage by Product</h5>
                         <div class="d-flex gap-2">
-                            <a href="{{ route('admin.reports.stock', array_merge(request()->all(), ['view' => 'wastage_product'])) }}" class="btn btn-sm btn-soft-primary">View All</a>
+                            <a href="{{ route('admin.reports.stock', array_merge(request()->all(), ['view' => 'wastage_product'])) }}" class="btn btn-sm btn-soft-primary" data-bs-toggle="tooltip" title="View Full Report"><i class="bx bx-show fs-14 me-1"></i> View All</a>
                             <div class="btn-group">
                                 <a href="{{ route('admin.reports.stock.export', array_merge(request()->all(), ['view' => 'wastage_product'])) }}" class="btn btn-sm btn-soft-success">
                                     <i class="bx bx-download"></i>
@@ -472,7 +472,7 @@
                     <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0 text-dark fw-bold">Recent Stock Movements</h5>
                         <div class="d-flex gap-2">
-                            <a href="{{ route('admin.reports.stock', array_merge(request()->all(), ['view' => 'movement'])) }}" class="btn btn-sm btn-soft-primary">View All</a>
+                            <a href="{{ route('admin.reports.stock', array_merge(request()->all(), ['view' => 'movement'])) }}" class="btn btn-sm btn-soft-primary" data-bs-toggle="tooltip" title="View Full Report"><i class="bx bx-show fs-14 me-1"></i> View All</a>
                             <div class="btn-group">
                                 <a href="{{ route('admin.reports.stock.export', array_merge(request()->all(), ['view' => 'movement'])) }}" class="btn btn-sm btn-soft-success">
                                     <i class="bx bx-download"></i>
@@ -500,7 +500,7 @@
                     <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0 text-dark fw-bold">Physical Unit (Serial) Trace</h5>
                         <div class="d-flex gap-2">
-                            <a href="{{ route('admin.reports.stock', array_merge(request()->all(), ['view' => 'serial'])) }}" class="btn btn-sm btn-soft-primary">View All</a>
+                            <a href="{{ route('admin.reports.stock', array_merge(request()->all(), ['view' => 'serial'])) }}" class="btn btn-sm btn-soft-primary" data-bs-toggle="tooltip" title="View Full Report"><i class="bx bx-show fs-14 me-1"></i> View All</a>
                             <div class="btn-group">
                                 <a href="{{ route('admin.reports.stock.export', array_merge(request()->all(), ['view' => 'serial'])) }}" class="btn btn-sm btn-soft-success">
                                     <i class="bx bx-download"></i>

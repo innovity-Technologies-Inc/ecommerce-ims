@@ -236,7 +236,7 @@
                     <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">Warehouse-wise Valuation</h5>
                         <div class="d-flex gap-2">
-                            <a href="{{ route('admin.reports.inventory', array_merge(request()->all(), ['view' => 'warehouse'])) }}" class="btn btn-sm btn-soft-primary text-nowrap">View All</a>
+                            <a href="{{ route('admin.reports.inventory', array_merge(request()->all(), ['view' => 'warehouse'])) }}" class="btn btn-sm btn-soft-primary" data-bs-toggle="tooltip" title="View Full Report"><i class="bx bx-show fs-14 me-1"></i> View All</a>
                             <div class="btn-group">
                                 <a href="{{ route('admin.reports.inventory.export', array_merge(request()->all(), ['type' => 'warehouse'])) }}" class="btn btn-sm btn-soft-success">
                                     <i class="bx bx-download"></i>
@@ -278,7 +278,7 @@
                     <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">Product-wise Valuation</h5>
                         <div class="d-flex gap-2">
-                            <a href="{{ route('admin.reports.inventory', array_merge(request()->all(), ['view' => 'product'])) }}" class="btn btn-sm btn-soft-primary text-nowrap">View All</a>
+                            <a href="{{ route('admin.reports.inventory', array_merge(request()->all(), ['view' => 'product'])) }}" class="btn btn-sm btn-soft-primary" data-bs-toggle="tooltip" title="View Full Report"><i class="bx bx-show fs-14 me-1"></i> View All</a>
                             <div class="btn-group">
                                 <a href="{{ route('admin.reports.inventory.export', array_merge(request()->all(), ['type' => 'product'])) }}" class="btn btn-sm btn-soft-success">
                                     <i class="bx bx-download"></i>
@@ -320,7 +320,7 @@
                     <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">Batch-wise Inventory Breakdown</h5>
                         <div class="d-flex gap-2">
-                            <a href="{{ route('admin.reports.inventory', array_merge(request()->all(), ['view' => 'batch'])) }}" class="btn btn-sm btn-soft-primary text-nowrap">View All</a>
+                            <a href="{{ route('admin.reports.inventory', array_merge(request()->all(), ['view' => 'batch'])) }}" class="btn btn-sm btn-soft-primary" data-bs-toggle="tooltip" title="View Full Report"><i class="bx bx-show fs-14 me-1"></i> View All</a>
                             <div class="btn-group">
                                 <a href="{{ route('admin.reports.inventory.export', array_merge(request()->all(), ['type' => 'batch'])) }}" class="btn btn-sm btn-soft-success">
                                     <i class="bx bx-download"></i>

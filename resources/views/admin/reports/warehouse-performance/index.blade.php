@@ -101,8 +101,8 @@
                                 <td class="text-center text-muted small">{{ number_format($row['slow_moving_percent'], 1) }}%</td>
                                 <td class="text-end pe-3 actions-column">
                                     <a href="{{ route('admin.reports.warehouse-performance.show', [$row['warehouse_id'], 'start_date' => $filters['start_date'], 'end_date' => $filters['end_date']]) }}" 
-                                       class="btn btn-sm btn-soft-primary">
-                                        <i class="bx bx-show me-1"></i> Details
+                                       class="btn btn-sm btn-soft-primary" data-bs-toggle="tooltip" title="View Details">
+                                        <i class="bx bx-show fs-16"></i>
                                     </a>
                                 </td>
                             </tr>

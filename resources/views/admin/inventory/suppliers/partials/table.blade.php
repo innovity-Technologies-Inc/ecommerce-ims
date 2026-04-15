@@ -36,11 +36,11 @@
             </td>
             <td>
                 <div class="d-flex gap-2">
-                    <a href="{{ route('admin.suppliers.show', $data->id) }}" class="btn btn-soft-info btn-sm">
+                    <a href="{{ route('admin.suppliers.show', $data->id) }}" class="btn btn-soft-info btn-sm" data-bs-toggle="tooltip" title="View Details">
                         <iconify-icon icon="solar:eye-broken" class="align-middle fs-18"></iconify-icon>
                     </a>
                     @can('supplier.edit')
-                    <a href="{{ route('admin.suppliers.edit', $data->id) }}" class="btn btn-soft-primary btn-sm">
+                    <a href="{{ route('admin.suppliers.edit', $data->id) }}" class="btn btn-soft-primary btn-sm" data-bs-toggle="tooltip" title="Edit Supplier">
                         <iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon>
                     </a>
                     @endcan
@@ -48,7 +48,7 @@
                     <form method="post" action="{{ route('admin.suppliers.destroy', $data->id) }}">
                         @csrf
                         @method('delete')
-                        <button type="submit" class="btn btn-soft-danger btn-sm confirmDelete">
+                        <button type="submit" class="btn btn-soft-danger btn-sm confirmDelete" data-bs-toggle="tooltip" title="Delete Supplier">
                             <iconify-icon icon="solar:trash-bin-minimalistic-2-broken" class="align-middle fs-18"></iconify-icon>
                         </button>
                     </form>

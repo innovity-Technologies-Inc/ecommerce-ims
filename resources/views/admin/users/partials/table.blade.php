@@ -30,13 +30,13 @@
             <td>
                 <div class="d-flex gap-2">
                     @can('admins.edit')
-                    <a href="{{route('admin.edit', $data->id)}}" class="btn btn-soft-primary btn-sm"><iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon></a>
+                    <a href="{{route('admin.edit', $data->id)}}" class="btn btn-soft-primary btn-sm" data-bs-toggle="tooltip" title="Edit Admin"><iconify-icon icon="solar:pen-2-broken" class="align-middle fs-18"></iconify-icon></a>
                     @endcan
                     @can('admins.delete')
                     <form action="{{route('admin.delete', $data->id)}}" method="post">
                         @csrf
                         @method('delete')
-                        <button type="submit" class="btn btn-soft-danger btn-sm confirmDelete"><iconify-icon icon="solar:trash-bin-trash-broken" class="align-middle fs-18"></iconify-icon></button>
+                        <button type="submit" class="btn btn-soft-danger btn-sm confirmDelete" data-bs-toggle="tooltip" title="Delete Admin"><iconify-icon icon="solar:trash-bin-trash-broken" class="align-middle fs-18"></iconify-icon></button>
                     </form>
                     @endcan
                 </div>

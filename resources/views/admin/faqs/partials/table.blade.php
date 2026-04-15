@@ -26,13 +26,13 @@
                     <td>{{ $faq->sort_order }}</td>
                     <td>
                         <div class="d-flex gap-2">
-                            <a href="{{ route('admin.faqs.edit', $faq->id) }}" class="btn btn-soft-primary btn-sm" title="Edit">
+                            <a href="{{ route('admin.faqs.edit', $faq->id) }}" class="btn btn-soft-primary btn-sm" data-bs-toggle="tooltip" title="Edit FAQ">
                                 <iconify-icon icon="solar:pen-new-square-broken" class="fs-16"></iconify-icon>
                             </a>
                             <form action="{{ route('admin.faqs.destroy', $faq->id) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-soft-danger btn-sm confirmDelete" title="Delete">
+                                <button type="submit" class="btn btn-soft-danger btn-sm confirmDelete" data-bs-toggle="tooltip" title="Delete FAQ">
                                     <iconify-icon icon="solar:trash-bin-trash-broken" class="fs-16"></iconify-icon>
                                 </button>
                             </form>

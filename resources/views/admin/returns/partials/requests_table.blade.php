@@ -34,8 +34,8 @@
                     </td>
                     <td>{{ $request->created_at->format('M d, Y') }}</td>
                     <td class="text-end pe-3">
-                        <a href="{{ route('admin.returns.show_request', $request->id) }}" class="btn btn-soft-primary btn-sm">
-                            <i class="bx bx-show"></i> View
+                        <a href="{{ route('admin.returns.show_request', $request->id) }}" class="btn btn-soft-primary btn-sm" data-bs-toggle="tooltip" title="View Details">
+                            <i class="bx bx-show fs-16"></i>
                         </a>
                     </td>
                 </tr>
