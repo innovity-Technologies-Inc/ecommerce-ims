@@ -11,6 +11,7 @@ use App\Models\Warehouse;
 use App\Services\DamageEntryService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class WastageController extends Controller
@@ -40,7 +41,7 @@ class WastageController extends Controller
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $e) {
-            \Log::error('Damage Entry Store Error: '.$e->getMessage());
+            Log::error('Damage Entry Store Error: '.$e->getMessage());
 
             return back()->with([
                 'message' => 'Something went wrong: '.$e->getMessage(),

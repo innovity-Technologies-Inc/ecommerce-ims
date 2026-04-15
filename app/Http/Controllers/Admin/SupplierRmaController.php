@@ -14,6 +14,7 @@ use App\Services\InventoryService;
 use App\Services\SupplierRmaService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class SupplierRmaController extends Controller
@@ -62,7 +63,7 @@ class SupplierRmaController extends Controller
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $e) {
-            \Log::error('Supplier RMA Store Error: '.$e->getMessage());
+            Log::error('Supplier RMA Store Error: '.$e->getMessage());
 
             return back()->with([
                 'message' => 'Something went wrong: '.$e->getMessage(),
@@ -94,7 +95,7 @@ class SupplierRmaController extends Controller
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $e) {
-            \Log::error('Supplier RMA Status Update Error: '.$e->getMessage());
+            Log::error('Supplier RMA Status Update Error: '.$e->getMessage());
 
             return back()->with([
                 'message' => 'Something went wrong: '.$e->getMessage(),

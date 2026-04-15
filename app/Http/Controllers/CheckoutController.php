@@ -8,6 +8,7 @@ use App\Services\CartService;
 use App\Services\OrderService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class CheckoutController extends Controller
@@ -27,14 +28,14 @@ class CheckoutController extends Controller
         if ($cartItems->isEmpty()) {
             return redirect()->route('cart.index')->with([
                 'message' => 'Your cart is empty. Please add items before checkout.',
-                'alert-type' => 'error'
+                'alert-type' => 'error',
             ]);
         }
 
         if (! session('shipping_method_id')) {
             return redirect()->route('cart.index')->with([
                 'message' => 'Please select a shipping method before checkout.',
-                'alert-type' => 'error'
+                'alert-type' => 'error',
             ]);
         }
 
@@ -42,7 +43,7 @@ class CheckoutController extends Controller
         if (! $selectedShippingMethod) {
             return redirect()->route('cart.index')->with([
                 'message' => 'Selected shipping method is no longer available.',
-                'alert-type' => 'error'
+                'alert-type' => 'error',
             ]);
         }
 
@@ -67,13 +68,14 @@ class CheckoutController extends Controller
             return redirect()->route('checkout.success', ['order_id' => $order->order_id])
                 ->with([
                     'message' => 'Order placed successfully!',
-                    'alert-type' => 'success'
+                    'alert-type' => 'success',
                 ]);
         } catch (\Exception $e) {
-            Log::error('Checkout Error: ' . $e->getMessage());
+            Log::error('Checkout Error: '.$e->getMessage());
+
             return back()->withInput()->with([
                 'message' => $e->getMessage(),
-                'alert-type' => 'error'
+                'alert-type' => 'error',
             ]);
         }
     }

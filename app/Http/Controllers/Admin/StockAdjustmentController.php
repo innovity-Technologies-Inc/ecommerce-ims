@@ -10,6 +10,7 @@ use App\Models\Warehouse;
 use App\Services\StockAdjustmentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class StockAdjustmentController extends Controller
@@ -56,7 +57,7 @@ class StockAdjustmentController extends Controller
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $e) {
-            \Log::error('Stock Adjustment Store Error: '.$e->getMessage());
+            Log::error('Stock Adjustment Store Error: '.$e->getMessage());
 
             return back()->with([
                 'message' => 'Something went wrong: '.$e->getMessage(),
