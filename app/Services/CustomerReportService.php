@@ -195,4 +195,65 @@ class CustomerReportService
 
         return $data;
     }
+
+    /**
+     * Get Customer Lifetime Value (CLV) Projections
+     */
+    public function getCLVProjections(array $filters): array
+    {
+        $customers = User::whereHas('orders', function($q) {
+            $q->where('order_status', '!=', 'cancelled');
+        })->get();
+
+        $lifespanMonths = 24; // Standard business assumption for projection
+
+        $clvData = $customers->map(function($user) use ($lifespanMonths) {
+            $totalSpent = Order::where('user_id', $user->id)
+                ->where('order_status', '!=', 'cancelled')
+                ->sum('total_amount');
+
+            $orderCount = Order::where('user_id', $user->id)
+                ->where('order_status', '!=', 'cancelled')
+                ->count();
+
+            $firstOrder = Order::where('user_id', $user->id)
+                ->where('order_status', '!=', 'cancelled')
+                ->oldest()
+                ->first();
+
+            $monthsActive = $firstOrder ? max(1, Carbon::parse($firstOrder->created_at)->diffInMonths(Carbon::now())) : 1;
+            
+            $aov = $orderCount > 0 ? ($totalSpent / $orderCount) : 0;
+            $frequencyPerMonth = $orderCount / $monthsActive;
+            
+            // Predictive CLV Formula: (AOV * Monthly Frequency * Lifespan)
+            $projectedFutureValue = $aov * $frequencyPerMonth * $lifespanMonths;
+            $totalCLV = $totalSpent + $projectedFutureValue;
+
+            return [
+                'user_id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'historical_value' => $totalSpent,
+                'projected_value' => $projectedFutureValue,
+                'total_clv' => $totalCLV,
+                'aov' => $aov,
+                'frequency' => round($frequencyPerMonth, 2),
+                'status' => $totalCLV > 2000 ? 'High Value (Whale)' : ($totalCLV > 500 ? 'Medium Value' : 'Standard'),
+            ];
+        });
+
+        return [
+            'top_customers' => $clvData->sortByDesc('total_clv')->take(20),
+            'averages' => [
+                'avg_clv' => $clvData->avg('total_clv'),
+                'avg_historical' => $clvData->avg('historical_value'),
+            ],
+            'segments' => [
+                'whales' => $clvData->filter(fn($c) => $c['total_clv'] > 2000)->count(),
+                'medium' => $clvData->filter(fn($c) => $c['total_clv'] > 500 && $c['total_clv'] <= 2000)->count(),
+                'standard' => $clvData->filter(fn($c) => $c['total_clv'] <= 500)->count(),
+            ]
+        ];
+    }
 }

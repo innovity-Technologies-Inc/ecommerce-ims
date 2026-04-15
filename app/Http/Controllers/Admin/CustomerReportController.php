@@ -62,7 +62,16 @@ class CustomerReportController extends Controller
     public function cohort(): View
     {
         $cohorts = $this->customerReportService->getCohortAnalysis();
-
         return view('admin.reports.customers.cohort', compact('cohorts'));
+    }
+
+    /**
+     * Display CLV Projections
+     */
+    public function clv(Request $request): View
+    {
+        $filters = $request->all();
+        $clv = $this->customerReportService->getCLVProjections($filters);
+        return view('admin.reports.customers.clv', compact('clv', 'filters'));
     }
 }

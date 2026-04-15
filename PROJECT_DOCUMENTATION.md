@@ -481,13 +481,24 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
 
 - **Purpose:** Provide deep insights into customer behavior, retention, and lifetime value to drive data-driven marketing decisions.
 - **How it Works:**
-    - **Overview Dashboard:** Real-time metrics for total, new, returning, and active customers, including Average Order Value (AOV).
-    - **Customer Analytics List:** A comprehensive, sortable list of all customers with aggregate order counts, total spend, and last order date using **FlexSearch**.
-    - **RFM Analysis:** Quantitatively segments customers based on **Recency** (days since last order), **Frequency** (total orders), and **Monetary** (total spent) into segments like VIP, Loyal, At Risk, and Lost.
-    - **Purchase Behavior:** Visual analysis of order status distribution (Donut Chart) and AOV trends (Line Chart) over time.
-    - **Cohort Analysis:** A retention heatmap tracking user activity grouped by their registration month (Cohort) over a 6-month window.
+    - **Overview Dashboard:** Real-time metrics for total, new, returning, and active customers.
+    - **Customer Analytics List:** Filterable list of all customers with aggregate order counts and total spend using **FlexSearch**.
+    - **RFM Analysis:** Quantitatively segments customers based on Recency, Frequency, and Monetary value into VIP, Loyal, At Risk, and Lost.
+    - **Purchase Behavior:** Visual analysis of order status distribution and AOV trends using ApexCharts.
+    - **Cohort Analysis:** A retention heatmap tracking user activity grouped by registration month over a 6-month window.
+    - **CLV Projections:** Predictive analysis of future customer value based on historical behavior.
+
+- **Detailed Formulas & Calculations:**
+    - **Average Order Value (AOV):** `Total Revenue / Total Number of Orders`.
+    - **Recency:** `Current Date - Last Order Date (in days)`.
+    - **Frequency:** `Total count of non-cancelled orders`.
+    - **Monetary:** `Sum of total_amount for all non-cancelled orders`.
+    - **Customer Lifespan (Projection Baseline):** 24 Months.
+    - **Monthly Purchase Frequency:** `Total Orders / Total Months since first order`.
+    - **Predictive CLV:** `Historical Spend + (AOV × Monthly Purchase Frequency × 24)`.
+
 - **Technical Implementation:**
-    - **Service:** `CustomerReportService` handles all complex SQL aggregations and analytic logic.
-    - **Controller:** `CustomerReportController` (Thin Controller) manages routing and data passing to views.
-    - **Visualization:** Integrated **ApexCharts** for interactive data visualization.
-    - **Navigation:** Added "Customer Reports" under the Reports section in the Admin Sidebar.
+    - **Service:** `CustomerReportService` handles all complex SQL aggregations.
+    - **Controller:** `CustomerReportController` (Thin Controller).
+    - **Visualization:** **ApexCharts** for interactive charts and heatmaps.
+    - **Navigation:** Added to the "Reports" section in the Admin Sidebar.

@@ -233,6 +233,7 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
             Route::get('/rfm', 'rfm')->name('admin.reports.customers.rfm');
             Route::get('/behavior', 'behavior')->name('admin.reports.customers.behavior');
             Route::get('/cohort', 'cohort')->name('admin.reports.customers.cohort');
+            Route::get('/clv', 'clv')->name('admin.reports.customers.clv');
         });
     });
 

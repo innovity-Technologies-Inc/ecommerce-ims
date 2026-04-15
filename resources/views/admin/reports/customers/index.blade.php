@@ -101,51 +101,58 @@
 
     <!-- Quick Links to Detailed Reports -->
     <div class="row g-4 mb-4">
-        <div class="col-md-6 col-lg-3">
+        <div class="col-md-6 col-lg-2">
             <div class="card border-0 shadow-sm h-100 text-center py-4">
-                <div class="card-body">
-                    <div class="avatar-lg bg-soft-primary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
-                        <i class="bx bx-list-ul fs-32 text-primary"></i>
+                <div class="card-body px-2">
+                    <div class="avatar-md bg-soft-primary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                        <i class="bx bx-list-ul fs-24 text-primary"></i>
                     </div>
-                    <h5 class="fw-bold">Customer List</h5>
-                    <p class="text-muted small">Detailed list with order aggregates and spend analysis.</p>
-                    <a href="{{ route('admin.reports.customers.list') }}" class="btn btn-soft-primary btn-sm stretched-link">View List</a>
+                    <h6 class="fw-bold">Customer List</h6>
+                    <a href="{{ route('admin.reports.customers.list') }}" class="btn btn-soft-primary btn-sm stretched-link mt-2">View</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-2">
+            <div class="card border-0 shadow-sm h-100 text-center py-4">
+                <div class="card-body px-2">
+                    <div class="avatar-md bg-soft-success rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                        <i class="bx bx-target-lock fs-24 text-success"></i>
+                    </div>
+                    <h6 class="fw-bold">RFM Analysis</h6>
+                    <a href="{{ route('admin.reports.customers.rfm') }}" class="btn btn-soft-success btn-sm stretched-link mt-2">View</a>
                 </div>
             </div>
         </div>
         <div class="col-md-6 col-lg-3">
             <div class="card border-0 shadow-sm h-100 text-center py-4">
-                <div class="card-body">
-                    <div class="avatar-lg bg-soft-success rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
-                        <i class="bx bx-target-lock fs-32 text-success"></i>
+                <div class="card-body px-2">
+                    <div class="avatar-md bg-soft-info rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                        <i class="bx bx-line-chart fs-24 text-info"></i>
                     </div>
-                    <h5 class="fw-bold">RFM Analysis</h5>
-                    <p class="text-muted small">Segment customers by Recency, Frequency, and Monetary value.</p>
-                    <a href="{{ route('admin.reports.customers.rfm') }}" class="btn btn-soft-success btn-sm stretched-link">View Analysis</a>
+                    <h6 class="fw-bold">Behavior</h6>
+                    <a href="{{ route('admin.reports.customers.behavior') }}" class="btn btn-soft-info btn-sm stretched-link mt-2">View</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-2">
+            <div class="card border-0 shadow-sm h-100 text-center py-4">
+                <div class="card-body px-2">
+                    <div class="avatar-md bg-soft-warning rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                        <i class="bx bx-grid-alt fs-24 text-warning"></i>
+                    </div>
+                    <h6 class="fw-bold">Cohorts</h6>
+                    <a href="{{ route('admin.reports.customers.cohort') }}" class="btn btn-soft-warning btn-sm stretched-link mt-2">View</a>
                 </div>
             </div>
         </div>
         <div class="col-md-6 col-lg-3">
             <div class="card border-0 shadow-sm h-100 text-center py-4">
-                <div class="card-body">
-                    <div class="avatar-lg bg-soft-info rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
-                        <i class="bx bx-line-chart fs-32 text-info"></i>
+                <div class="card-body px-2">
+                    <div class="avatar-md bg-soft-danger rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                        <i class="bx bx-trending-up fs-24 text-danger"></i>
                     </div>
-                    <h5 class="fw-bold">Purchase Behavior</h5>
-                    <p class="text-muted small">Analyze order trends, status distribution, and AOV trends.</p>
-                    <a href="{{ route('admin.reports.customers.behavior') }}" class="btn btn-soft-info btn-sm stretched-link">View Behavior</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100 text-center py-4">
-                <div class="card-body">
-                    <div class="avatar-lg bg-soft-warning rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
-                        <i class="bx bx-grid-alt fs-32 text-warning"></i>
-                    </div>
-                    <h5 class="fw-bold">Cohort Analysis</h5>
-                    <p class="text-muted small">Track customer retention and lifecycle across signup months.</p>
-                    <a href="{{ route('admin.reports.customers.cohort') }}" class="btn btn-soft-warning btn-sm stretched-link">View Cohorts</a>
+                    <h6 class="fw-bold">CLV Projections</h6>
+                    <a href="{{ route('admin.reports.customers.clv') }}" class="btn btn-soft-danger btn-sm stretched-link mt-2">View</a>
                 </div>
             </div>
         </div>

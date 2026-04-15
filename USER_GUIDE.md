@@ -161,4 +161,34 @@ The system includes a real-time alert system to ensure you never miss an importa
     *   **Pro Tip:** Clicking any notification will automatically take you to the relevant page (e.g., clicking an order alert opens that specific Order's details).
 
 ---
+
+## 9. Customer Reports & Analytics (REQ-173)
+The Customer Reports section provides deep insights into your customer base, helping you identify your most valuable users and predict future trends.
+
+### **9.1 Overview Metrics**
+*   **Total Customers:** All registered users in the system.
+*   **Returning Customers:** Users who have placed more than one successful order.
+*   **Active Customers:** Users who have purchased within the last 90 days.
+*   **Average Order Value (AOV):** `Total Sales Revenue / Number of Orders`.
+
+### **9.2 RFM Segmentation**
+Customers are grouped into segments based on three factors:
+1.  **Recency:** How many days since their last order.
+2.  **Frequency:** How many orders they have placed.
+3.  **Monetary:** How much they have spent in total.
+*   **VIP:** Recent buyers who spend heavily and frequently.
+*   **At Risk:** Customers who haven't bought anything in 3-6 months.
+*   **Lost:** Customers inactive for over 6 months.
+
+### **9.3 Cohort Analysis (Retention)**
+This heatmap shows how well you retain customers over time. It groups users by their registration month and tracks what percentage of that group comes back to shop in the following months. A "Deep Blue" color indicates strong retention, while "Faded Blue" shows potential churn.
+
+### **9.4 CLV Projections (Lifetime Value)**
+The system predicts the future value of a customer over a 24-month period using the following formula:
+`Projected CLV = Historical Spend + (AOV × Monthly Purchase Frequency × 24)`
+*   **Historical Spend:** Total amount already spent by the customer.
+*   **Projected Value:** Expected future revenue based on current habits.
+*   **Tiers:** Customers are tagged as **Whales** (High Value), **Medium Value**, or **Standard** based on their total projected lifetime worth.
+
+---
 *For further assistance, please contact your system administrator.*
