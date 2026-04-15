@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Order;
 use App\Models\User;
 use Carbon\Carbon;
-use DaiyanMozumder\FlexSearch\FlexSearch;
+use DaiyanMozumder\LaravelFlexSearch\FlexSearch;
 use Illuminate\Support\Facades\DB;
 
 class CustomerReportService
@@ -63,10 +63,13 @@ class CustomerReportService
             ]);
 
         $searchableColumns = ['name', 'email', 'mobile', 'city', 'state'];
+        $searchTerm = $filters['search'] ?? null;
 
-        $flexSearch = new FlexSearch($query, $filters, $searchableColumns);
+        $flexSearch = app(FlexSearch::class);
 
-        return $flexSearch->apply()
+        $query = $flexSearch->apply($query, $filters, $searchTerm, $searchableColumns);
+
+        return $query
             ->orderBy($filters['sort_by'] ?? 'orders_sum_total_amount', $filters['sort_order'] ?? 'desc')
             ->paginate($filters['per_page'] ?? 10);
     }
@@ -201,13 +204,13 @@ class CustomerReportService
      */
     public function getCLVProjections(array $filters): array
     {
-        $customers = User::whereHas('orders', function($q) {
+        $customers = User::whereHas('orders', function ($q) {
             $q->where('order_status', '!=', 'cancelled');
         })->get();
 
         $lifespanMonths = 24; // Standard business assumption for projection
 
-        $clvData = $customers->map(function($user) use ($lifespanMonths) {
+        $clvData = $customers->map(function ($user) use ($lifespanMonths) {
             $totalSpent = Order::where('user_id', $user->id)
                 ->where('order_status', '!=', 'cancelled')
                 ->sum('total_amount');
@@ -222,10 +225,10 @@ class CustomerReportService
                 ->first();
 
             $monthsActive = $firstOrder ? max(1, Carbon::parse($firstOrder->created_at)->diffInMonths(Carbon::now())) : 1;
-            
+
             $aov = $orderCount > 0 ? ($totalSpent / $orderCount) : 0;
             $frequencyPerMonth = $orderCount / $monthsActive;
-            
+
             // Predictive CLV Formula: (AOV * Monthly Frequency * Lifespan)
             $projectedFutureValue = $aov * $frequencyPerMonth * $lifespanMonths;
             $totalCLV = $totalSpent + $projectedFutureValue;
@@ -250,10 +253,10 @@ class CustomerReportService
                 'avg_historical' => $clvData->avg('historical_value'),
             ],
             'segments' => [
-                'whales' => $clvData->filter(fn($c) => $c['total_clv'] > 2000)->count(),
-                'medium' => $clvData->filter(fn($c) => $c['total_clv'] > 500 && $c['total_clv'] <= 2000)->count(),
-                'standard' => $clvData->filter(fn($c) => $c['total_clv'] <= 500)->count(),
-            ]
+                'whales' => $clvData->filter(fn ($c) => $c['total_clv'] > 2000)->count(),
+                'medium' => $clvData->filter(fn ($c) => $c['total_clv'] > 500 && $c['total_clv'] <= 2000)->count(),
+                'standard' => $clvData->filter(fn ($c) => $c['total_clv'] <= 500)->count(),
+            ],
         ];
     }
 }
