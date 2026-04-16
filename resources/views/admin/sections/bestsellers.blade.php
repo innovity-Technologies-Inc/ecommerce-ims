@@ -4,7 +4,7 @@
     <div class="container-xxl">
         <div class="row">
             <div class="col-lg-12">
-                <form action="{{ route('admin.sections.bestsellers.update') }}" method="post">
+                <form action="{{ route('admin.sections.update', 'bestsellers') }}" method="post">
                     @csrf
                     <div class="card">
                         <div class="card-header">
