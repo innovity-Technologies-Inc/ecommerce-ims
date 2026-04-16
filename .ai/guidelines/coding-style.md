@@ -101,7 +101,10 @@ You MUST strictly follow this sequence for **EVERY** request:
 - **Enums:** Use TitleCase for Enum keys.
 
 ## 3. Laravel 12 Conventions
-- **Routing:** Use named routes for all links.
+- **Routing (STRICT):**
+    - Use named routes for all links.
+    - **Route Verification (MANDATORY):** Before adding or changing a route in a Blade file, you MUST verify its existence using `php artisan route:list --name=your.route.name`.
+    - **No Fictional Routes:** NEVER guess or create fictional route names (e.g., using `.show` when only `.read` exists). If a route for similar functionality already exists, use it; otherwise, request a new route definition.
 - **Models:**
     - Use `casts()` method instead of `$casts` property.
     - Define relationships with explicit return types (e.g., `: HasMany`).
