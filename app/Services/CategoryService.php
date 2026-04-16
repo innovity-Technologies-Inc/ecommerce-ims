@@ -64,7 +64,7 @@ class CategoryService
         $categoryData = [
             'name' => $data['name'],
             'parent_id' => $data['parent_id'] ?? null,
-            'slug' => Str::slug($data['name']),
+            'slug' => $this->generateUniqueSlug($data['name'], $data['parent_id'] ?? null),
             'status' => isset($data['status']),
         ];
 
@@ -83,7 +83,7 @@ class CategoryService
         $categoryData = [
             'name' => $data['name'],
             'parent_id' => $data['parent_id'] ?? null,
-            'slug' => Str::slug($data['name']),
+            'slug' => $this->generateUniqueSlug($data['name'], $data['parent_id'] ?? null, $category->id),
             'status' => isset($data['status']),
         ];
 
@@ -97,6 +97,48 @@ class CategoryService
         $category->update($categoryData);
 
         return $category;
+    }
+
+    /**
+     * Generate a unique slug for a category.
+     */
+    protected function generateUniqueSlug(string $name, ?int $parentId = null, ?int $ignoreId = null): string
+    {
+        $slug = Str::slug($name);
+
+        // 1. Check if original slug is already in use
+        $exists = Category::where('slug', $slug)
+            ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
+            ->exists();
+
+        if (! $exists) {
+            return $slug;
+        }
+
+        // 2. If parent exists, try appending parent slug
+        if ($parentId) {
+            $parent = Category::find($parentId);
+            if ($parent) {
+                $slug = Str::slug($parent->name.'-'.$name);
+
+                $exists = Category::where('slug', $slug)
+                    ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
+                    ->exists();
+
+                if (! $exists) {
+                    return $slug;
+                }
+            }
+        }
+
+        // 3. Last resort: append numeric suffix
+        $originalSlug = $slug;
+        $i = 1;
+        while (Category::where('slug', $slug)->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists()) {
+            $slug = $originalSlug.'-'.$i++;
+        }
+
+        return $slug;
     }
 
     /**

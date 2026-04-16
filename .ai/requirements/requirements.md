@@ -192,6 +192,8 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-175:** CLV Projections Card Tooltip Fix: Remove the redundant central card tooltip from the "Customer Segmentation" card in the CLV Projections report while preserving individual segment (Whales, Medium, Standard) tooltips.
 - [x] **REQ-176:** Customer Report AOV Card Styling: Update the "Average Order Value" card in the customer reports dashboard to have an emerald background matching the sidebar theme and ensure all text is solid white.
 - [x] **REQ-178:** Comprehensive Database Seeding: Seed the database with 20 USA state-based warehouses, 15 suppliers, and 100 fashion products (with variants). For each product, download and upload at least 3 relevant fashion images. Generate Purchase Orders, Order Receives, and Stock Adjustments to populate initial stock and history. (NEW)
+- [x] **REQ-180:** Scoped Unique Category Names: Ensure category names are unique only within the same parent. (NEW)
+- [x] **REQ-181:** Unique Slug Generation: Implement robust slug generation to handle globally unique slugs even when names are duplicated across different parents. (NEW)
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.

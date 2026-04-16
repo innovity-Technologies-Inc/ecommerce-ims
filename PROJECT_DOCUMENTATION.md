@@ -210,24 +210,35 @@
     ### 3.12 Comprehensive Demo Seeding (REQ-178)
     - **What (Business Purpose):** Provides a robust, mathematically consistent set of fashion-related data to demonstrate the system's full capabilities across procurement, sales, and inventory management.
     - **How it Works (Technical Flow):**
-    1. **Data Population:** The `ProductSeeder` generates 100 unique fashion products across categories like T-Shirts, Jeans, Shoes, and Accessories.
-    2. **Image Automation:** For each product, the seeder automatically downloads 3 relevant fashion images from `loremflickr.com` and uploads them using the standard `ProductService` logic.
-    3. **Inventory Traceability:** Every product is initialized with a full history:
-        *   **Purchase Order:** A 'Sent' PO is created for every product/variant.
-        *   **Receipt:** The PO is "received" via `PurchaseOrderService`, generating valid **Batches**, **Inventory Levels**, and **Stock Ledger** entries.
-        *   **Adjustments:** Random products receive additional manual stock adjustments to demonstrate history tracking.
-    4. **Idempotency:** The seeder truncates all product, stock, and ledger tables before execution, ensuring a clean and consistent starting point for demos.
+        1. **Data Population:** The `ProductSeeder` generates 100 unique fashion products across categories like T-Shirts, Jeans, Shoes, and Accessories.
+        2. **Image Automation:** For each product, the seeder automatically downloads 3 relevant fashion images from `loremflickr.com` and uploads them using the standard `ProductService` logic.
+        3. **Inventory Traceability:** Every product is initialized with a full history:
+            *   **Purchase Order:** A 'Sent' PO is created for every product/variant.
+            *   **Receipt:** The PO is "received" via `PurchaseOrderService`, generating valid **Batches**, **Inventory Levels**, and **Stock Ledger** entries.
+            *   **Adjustments:** Random products receive additional manual stock adjustments to demonstrate history tracking.
+        4. **Idempotency:** The seeder truncates all product, stock, and ledger tables before execution, ensuring a clean and consistent starting point for demos.
     - **Data & Storage:**
-    *   **Warehouses:** 20 USA state-based hubs.
-    *   **Suppliers:** 15 fashion-specialized vendors.
-    *   **Volume:** ~100 Products, ~250 Variants, ~300 Images, and ~120 Inventory Batches.
+        *   **Warehouses:** 20 USA state-based hubs.
+        *   **Suppliers:** 15 fashion-specialized vendors.
+        *   **Volume:** ~100 Products, ~250 Variants, ~300 Images, and ~120 Inventory Batches.
+
+    ### 3.13 Scoped Unique Categories (REQ-180, REQ-181)
+    - **What (Business Purpose):** Allows for identical category names (e.g., "Shoes") to exist across different parent departments (e.g., "Men" vs. "Women") while maintaining URL unique identifiers (slugs).
+    - **How it Works (Technical Flow):**
+        1. **Validation:** The `CategoryRequest` uses a scoped `unique` rule constrained by `parent_id`. This ensures a name is only unique within its immediate parent.
+        2. **Unique Slug Engine:** The `CategoryService` implements a fallback engine for slug generation:
+            *   **Standard:** `slug($name)` (e.g., `shoes`).
+            *   **Conflict Fallback:** `slug($parent_name . '-' . $name)` (e.g., `men-shoes`).
+            *   **Hard Conflict Fallback:** `slug($name . '-' . $id_suffix)` (e.g., `shoes-1`).
+        3. **Database Integrity:** This multi-layered approach ensures the `slug` column remains globally unique in the database while fulfilling business requirements for flexible naming.
 
     ---
 
 
-## 4. Key Procedural Lifecycle: Stock Movement Ledger (Source of Truth)
+    ## 4. Key Procedural Lifecycle: Stock Movement Ledger (Source of Truth)
 
-### 3.11 Warehouse Performance Report (REQ-129, REQ-132)
+    ### 4.1 Warehouse Performance Report (REQ-129, REQ-132)
+
 **Business Purpose:** To monitor and improve warehouse operational quality by tracking efficiency, accuracy, and stock health metrics.
 
 **Stock Reconciliation (Source of Truth):**

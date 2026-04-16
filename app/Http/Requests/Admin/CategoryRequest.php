@@ -21,8 +21,17 @@ class CategoryRequest extends FormRequest
      */
     public function rules(): array
     {
+        $categoryId = $this->route('category') ? $this->route('category')->id : null;
+
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                \Illuminate\Validation\Rule::unique('categories')
+                    ->where('parent_id', $this->parent_id)
+                    ->ignore($categoryId),
+            ],
             'parent_id' => ['nullable', 'exists:categories,id'],
             'icon' => ['nullable', 'image', 'mimes:png,jpg,jpeg,svg,webp', 'max:2048'],
             'status' => ['nullable'],
