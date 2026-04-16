@@ -340,7 +340,7 @@
                                 <small class="text-muted">Generated on: {{ $order->invoice_date->format('d M, Y') }}</small>
                             </div>
                             <div class="d-grid gap-2">
-                                <a href="{{ route('admin.orders.invoice', $order->id) }}?is_print=true" 
+                                <a href="{{ route('admin.orders.view-invoice', $order->id) }}?is_print=true" 
                                    target="_blank" class="btn btn-outline-primary btn-sm" 
                                    data-bs-toggle="tooltip" title="View / Print Invoice">
                                     <i class="bx bx-show fs-16"></i>
