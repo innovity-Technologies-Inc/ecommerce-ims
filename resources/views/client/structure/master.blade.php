@@ -23,7 +23,7 @@
 
     <link rel="stylesheet" href="{{asset('client/assets/css/vendor/vendor.min.css')}}">
     <link rel="stylesheet" href="{{asset('client/assets/css/plugins/plugins.min.css')}}">
-    <link rel="stylesheet" href="{{asset('client/assets/css/style.css')}}">
+    <link rel="stylesheet" href="{{asset('client/assets/css/style.css')}}?v={{ time() }}">
     <link rel="stylesheet" href="{{asset('client/assets/css/responsive.css')}}">
 
     {{--    Toastr --}}

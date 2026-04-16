@@ -12008,3 +12008,47 @@ body.offcanvas-open {
     color: #ef1e1e
 }
 
+
+
+/* Product Card Aspect Ratio & Height Normalization (REQ-184) */
+.list-product {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+}
+
+.img-block {
+    aspect-ratio: 1 / 1 !important;
+    width: 100% !important;
+    overflow: hidden !important;
+}
+
+.img-block img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+.product-decs {
+    flex-grow: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.pricing-meta {
+    margin-top: auto !important;
+}
+
+.owl-stage {
+    display: flex !important;
+}
+
+.owl-item {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.owl-item > article {
+    height: 100% !important;
+    width: 100% !important;
+}
