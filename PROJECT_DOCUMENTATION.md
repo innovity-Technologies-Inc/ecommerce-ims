@@ -487,6 +487,7 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     - **Purchase Behavior:** Visual analysis of order status distribution and AOV trends using ApexCharts.
     - **Cohort Analysis:** A retention heatmap tracking user activity grouped by registration month over a 6-month window.
     - **CLV Projections:** Predictive analysis of future customer value based on historical behavior.
+    - **UI Optimization (REQ-175, REQ-176):** Removed redundant central tooltips from segmented cards and stylized the **Average Order Value** card with a high-contrast emerald theme to align with the sidebar aesthetic.
 
 - **Detailed Formulas & Calculations:**
     - **Average Order Value (AOV):** `Total Revenue / Total Number of Orders`.

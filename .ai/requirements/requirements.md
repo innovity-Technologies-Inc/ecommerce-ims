@@ -188,7 +188,9 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-171:** Idempotent Seeders: Ensure all database seeders use `updateOrCreate` or similar logic to allow multiple runs without failing or creating duplicate records.
 - [x] **REQ-172:** Policy Pages & FAQ CRUD: Implement separate management for Privacy/Return policies using Summernote and a dedicated CRUD for FAQs. Create client-side pages and idempotent seeders.
 - [ ] **REQ-173:** Comprehensive Customer Reports: Develop a new reporting module under the Admin Reports section for customer analytics. This includes an Overview Dashboard (stats), filtered Customer List, RFM Analysis (VIP, Loyal, At Risk, Lost), CLV (Customer Lifetime Value) calculations, Purchase Behavior (AOV, categories, trends), Cohort Analysis (retention), Churn Prediction, and detailed Segmentation. Must follow existing report design standards (filtering, export, print, visualization, tooltips).
-- [ ] **REQ-174:** Standardize Admin Action Buttons: Update all "View", "Edit", "Create", and "Details" buttons across the admin panel to display only icons (no text). Ensure consistent icon usage (e.g., eye icon for View/Details) and add this standard to the project guidelines.
+- [x] **REQ-174:** Standardize Admin Action Buttons: Update all "View", "Edit", "Create", and "Details" buttons across the admin panel to display only icons (no text). Ensure consistent icon usage (e.g., eye icon for View/Details) and add this standard to the project guidelines.
+- [x] **REQ-175:** CLV Projections Card Tooltip Fix: Remove the redundant central card tooltip from the "Customer Segmentation" card in the CLV Projections report while preserving individual segment (Whales, Medium, Standard) tooltips.
+- [x] **REQ-176:** Customer Report AOV Card Styling: Update the "Average Order Value" card in the customer reports dashboard to have an emerald background matching the sidebar theme and ensure all text is solid white.
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.

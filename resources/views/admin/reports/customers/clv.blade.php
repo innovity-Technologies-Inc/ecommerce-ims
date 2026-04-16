@@ -35,7 +35,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm border-start border-success border-4 h-100" data-bs-toggle="tooltip" title="Count of customers segmented by their predicted value: Whales (>$2000), Medium (>$500), and Standard.">
+            <div class="card border-0 shadow-sm border-start border-success border-4 h-100">
                 <div class="card-body text-center">
                     <div class="row">
                         <div class="col-4 border-end" data-bs-toggle="tooltip" title="High-value customers with a projected lifetime value exceeding $2,000.">
