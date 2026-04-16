@@ -393,7 +393,7 @@ class PurchaseOrderService
      */
     protected function generatePONumber(): string
     {
-        $lastPo = PurchaseOrder::latest()->first();
+        $lastPo = PurchaseOrder::orderBy('id', 'desc')->first();
         $number = $lastPo ? (int) str_replace('PO-', '', $lastPo->po_number) + 1 : 1;
 
         return 'PO-'.str_pad($number, 8, '0', STR_PAD_LEFT);

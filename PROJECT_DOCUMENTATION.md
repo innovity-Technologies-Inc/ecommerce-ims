@@ -207,9 +207,23 @@
     *   `return_items`: Source for calculating return-based efficiency penalties.
     *   `warehouse_stock_limits`: Source for localized alert thresholds.
 
+    ### 3.12 Comprehensive Demo Seeding (REQ-178)
+    - **What (Business Purpose):** Provides a robust, mathematically consistent set of fashion-related data to demonstrate the system's full capabilities across procurement, sales, and inventory management.
+    - **How it Works (Technical Flow):**
+    1. **Data Population:** The `ProductSeeder` generates 100 unique fashion products across categories like T-Shirts, Jeans, Shoes, and Accessories.
+    2. **Image Automation:** For each product, the seeder automatically downloads 3 relevant fashion images from `loremflickr.com` and uploads them using the standard `ProductService` logic.
+    3. **Inventory Traceability:** Every product is initialized with a full history:
+        *   **Purchase Order:** A 'Sent' PO is created for every product/variant.
+        *   **Receipt:** The PO is "received" via `PurchaseOrderService`, generating valid **Batches**, **Inventory Levels**, and **Stock Ledger** entries.
+        *   **Adjustments:** Random products receive additional manual stock adjustments to demonstrate history tracking.
+    4. **Idempotency:** The seeder truncates all product, stock, and ledger tables before execution, ensuring a clean and consistent starting point for demos.
+    - **Data & Storage:**
+    *   **Warehouses:** 20 USA state-based hubs.
+    *   **Suppliers:** 15 fashion-specialized vendors.
+    *   **Volume:** ~100 Products, ~250 Variants, ~300 Images, and ~120 Inventory Batches.
 
+    ---
 
----
 
 ## 4. Key Procedural Lifecycle: Stock Movement Ledger (Source of Truth)
 

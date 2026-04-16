@@ -191,4 +191,13 @@ The system predicts the future value of a customer over a 24-month period using 
 *   **Tiers:** Customers are tagged as **Whales** (High Value), **Medium Value**, or **Standard** based on their total projected lifetime worth.
 
 ---
+
+## 13. Ready-to-Use Fashion Catalog (Demo Data)
+To help you get started immediately, the system comes pre-loaded with a comprehensive **Fashion Catalog**.
+*   **100+ Products:** T-Shirts, Jeans, Shoes, and Accessories with full descriptions and marketing tags.
+*   **300+ Images:** High-quality fashion photography is automatically assigned to every product.
+*   **Full History:** Every product includes a realistic history of **Purchase Orders**, **Warehousing**, and **Stock Adjustments**.
+*   **Segmented Hubs:** Data is distributed across **20 USA-based Warehouses** and linked to **15 Professional Suppliers**.
+
+---
 *For further assistance, please contact your system administrator.*

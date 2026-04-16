@@ -191,6 +191,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-174:** Standardize Admin Action Buttons: Update all "View", "Edit", "Create", and "Details" buttons across the admin panel to display only icons (no text). Ensure consistent icon usage (e.g., eye icon for View/Details) and add this standard to the project guidelines.
 - [x] **REQ-175:** CLV Projections Card Tooltip Fix: Remove the redundant central card tooltip from the "Customer Segmentation" card in the CLV Projections report while preserving individual segment (Whales, Medium, Standard) tooltips.
 - [x] **REQ-176:** Customer Report AOV Card Styling: Update the "Average Order Value" card in the customer reports dashboard to have an emerald background matching the sidebar theme and ensure all text is solid white.
+- [x] **REQ-178:** Comprehensive Database Seeding: Seed the database with 20 USA state-based warehouses, 15 suppliers, and 100 fashion products (with variants). For each product, download and upload at least 3 relevant fashion images. Generate Purchase Orders, Order Receives, and Stock Adjustments to populate initial stock and history. (NEW)
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.
