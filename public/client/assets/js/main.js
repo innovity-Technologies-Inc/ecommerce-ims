@@ -783,7 +783,7 @@
         nav: true,
         smartSpeed: 1000,
         dots: false,
-        items: 2,
+        items: 4,
         loop: false,
         margin: 30,
         responsive: {
@@ -801,19 +801,19 @@
                 items: 2,
                 autoplay: true,
                 loop: true,
-
             },
             768: {
-                items: 1,
+                items: 2,
             },
             992: {
-                items: 1,
+                items: 3,
             },
             1200: {
-                items: 2,
+                items: 4,
             }
         }
     })
+
 
     /*---------------------------
      Hot Deal Slider 2 Active
