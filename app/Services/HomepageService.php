@@ -161,10 +161,10 @@ class HomepageService
                 return $query->orderBy('sales_count', 'desc')->limit($section->limit)->get();
 
             case 'hot_deals':
-                return $query->where('is_hot_deal', true)->limit(2)->get();
+                return $query->where('is_hot_deal', true)->limit($section->limit ?? 4)->get();
 
             case 'featured':
-                return $query->where('is_featured', true)->limit(4)->get();
+                return $query->where('is_featured', true)->limit($section->limit ?? 4)->get();
 
             case 'recently_added':
                 return $query->limit($section->limit)->get();

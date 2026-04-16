@@ -194,6 +194,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-178:** Comprehensive Database Seeding: Seed the database with 20 USA state-based warehouses, 15 suppliers, and 100 fashion products (with variants). For each product, download and upload at least 3 relevant fashion images. Generate Purchase Orders, Order Receives, and Stock Adjustments to populate initial stock and history. (NEW)
 - [x] **REQ-180:** Scoped Unique Category Names: Ensure category names are unique only within the same parent. (NEW)
 - [x] **REQ-181:** Unique Slug Generation: Implement robust slug generation to handle globally unique slugs even when names are duplicated across different parents. (NEW)
+- [x] **REQ-182:** Hot Deal Layout: Update the Hot Deal section to display 4 cards per row on desktop and improve responsiveness. (NEW)
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.
