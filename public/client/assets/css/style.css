@@ -12084,11 +12084,18 @@ body.offcanvas-open {
 
 
 /* Cart & Wishlist Image Normalization (REQ-190) */
+.cart-table-content table tbody > tr td:first-child {
+    padding-left: 30px !important;
+}
+
 .product-thumbnail a {
     display: block !important;
     aspect-ratio: 1 / 1 !important;
     width: 80px !important;
+    height: 80px !important;
     overflow: hidden !important;
+    border: 1px solid #eee !important;
+    border-radius: 4px !important;
 }
 
 .product-thumbnail a img {
@@ -12097,12 +12104,22 @@ body.offcanvas-open {
     object-fit: cover !important;
 }
 
+.minicart-product-list li {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+}
+
 .minicart-product-list li a.image {
     display: block !important;
     aspect-ratio: 1 / 1 !important;
     width: 80px !important;
+    max-width: 80px !important;
+    height: 80px !important;
     overflow: hidden !important;
-    flex-shrink: 0 !important;
+    flex: 0 0 80px !important;
+    border: 1px solid #eee !important;
+    border-radius: 4px !important;
 }
 
 .minicart-product-list li a.image img {
@@ -12110,3 +12127,10 @@ body.offcanvas-open {
     height: 100% !important;
     object-fit: cover !important;
 }
+
+
+/* Fix Mini-Cart Title Overlap (REQ-191) */
+.minicart-product-list li .content {
+    padding-right: 25px !important;
+}
+
