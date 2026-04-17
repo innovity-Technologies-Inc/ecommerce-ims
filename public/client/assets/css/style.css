@@ -12081,3 +12081,32 @@ body.offcanvas-open {
     height: 100% !important;
     width: 100% !important;
 }
+
+
+/* Cart & Wishlist Image Normalization (REQ-190) */
+.product-thumbnail a {
+    display: block !important;
+    aspect-ratio: 1 / 1 !important;
+    width: 80px !important;
+    overflow: hidden !important;
+}
+
+.product-thumbnail a img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+.minicart-product-list li a.image {
+    display: block !important;
+    aspect-ratio: 1 / 1 !important;
+    width: 80px !important;
+    overflow: hidden !important;
+    flex-shrink: 0 !important;
+}
+
+.minicart-product-list li a.image img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}

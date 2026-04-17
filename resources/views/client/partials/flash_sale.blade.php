@@ -1,4 +1,11 @@
 @if(isset($flashSale) && $flashSale->isActive() && $flashSale->items->isNotEmpty())
+<style>
+    @media (min-width: 992px) {
+        .flash-sale-timer {
+            margin-right: 100px;
+        }
+    }
+</style>
 <section class="flash-sale-area mt-60px">
     <div class="container">
         <div class="row align-items-center mb-30px">
