@@ -12011,31 +12011,31 @@ body.offcanvas-open {
 
 
 /* Product Card Aspect Ratio & Height Normalization (REQ-184) */
-.list-product {
+article.list-product {
     display: flex !important;
     flex-direction: column !important;
     height: 100% !important;
 }
 
-.list-product .img-block {
+article.list-product .img-block {
     aspect-ratio: 1 / 1 !important;
     width: 100% !important;
     overflow: hidden !important;
 }
 
-.list-product .img-block img {
+article.list-product .img-block img {
     width: 100% !important;
     height: 100% !important;
     object-fit: cover !important;
 }
 
-.list-product .product-decs {
+article.list-product .product-decs {
     flex-grow: 1 !important;
     display: flex !important;
     flex-direction: column !important;
 }
 
-.list-product .pricing-meta {
+article.list-product .pricing-meta {
     margin-top: auto !important;
 }
 
@@ -12044,6 +12044,7 @@ body.offcanvas-open {
     display: block !important;
     height: auto !important;
     padding: 20px !important;
+    background: #fff !important;
 }
 
 .feature-slider-item .img-block {
@@ -12064,7 +12065,33 @@ body.offcanvas-open {
 }
 
 .feature-slider-item .add-to-link {
-    display: none !important; /* Usually these horizontal cards don't have hover buttons in this theme */
+    display: none !important;
+}
+
+/* Specific Fix for Shop List View (REQ-194) */
+.shop-list-wrap .list-product {
+    display: flex !important;
+    flex-direction: row !important;
+    height: auto !important;
+    padding: 20px !important;
+    background: #fff !important;
+    border: 1px solid #ebebeb !important;
+    border-radius: 5px !important;
+}
+
+.shop-list-wrap .product-desc-wrap .add-to-link {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    left: auto !important;
+    right: 30px !important;
+    bottom: 30px !important;
+    width: auto !important;
+    background: transparent !important;
+}
+
+.shop-list-wrap .list-product:hover .add-to-link {
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 /* Carousel Stretch Support */

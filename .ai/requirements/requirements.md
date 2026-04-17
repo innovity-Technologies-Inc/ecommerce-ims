@@ -204,6 +204,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-190:** Cart & Wishlist Image Normalization: Standardize product image sizes in Cart and Wishlist views using Aspect Ratio (1:1) and object-fit cover for visual consistency with product cards. (NEW)
 - [x] **REQ-192:** AVIF Image Support: Update all image upload sections (Products, Categories, Brands, Sliders, etc.) to accept the modern AVIF image format. (NEW)
 - [x] **REQ-193:** Product Grid Spacing: Add vertical spacing (gutters) between product rows in the shop listing view to prevent cards from touching. (NEW)
+- [x] **REQ-194:** Product List View Style Fix: Restore horizontal layout and internal padding for the list view, and fix the hover behavior for action buttons. (NEW)
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.
