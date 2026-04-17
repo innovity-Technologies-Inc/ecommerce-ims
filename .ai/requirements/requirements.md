@@ -197,6 +197,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-182:** Hot Deal Layout: Update the Hot Deal section to display 4 cards per row on desktop and improve responsiveness. (NEW)
 - [x] **REQ-184:** Aspect Ratio & Height Normalization: Standardize product card heights and image sizes using Aspect Ratio (1:1) and Flexbox normalization to handle varying content sizes. (NEW)
 - [x] **REQ-185:** Image Size Note: Add a note in the product image upload section of the admin panel specifying the recommended image size (800x800 px) for better UI consistency. (NEW)
+- [x] **REQ-186:** Featured Slider Responsive Fix: Fix the Featured Product slider to consistently show 2 columns on desktop resolutions, preventing oversized cards. (NEW)
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.
