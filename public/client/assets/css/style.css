@@ -12129,8 +12129,21 @@ body.offcanvas-open {
 }
 
 
-/* Fix Mini-Cart Title Overlap (REQ-191) */
+
+
+/* Fix Mini-Cart Remove Button & Alignment (REQ-191) */
 .minicart-product-list li .content {
-    padding-right: 25px !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+    padding-right: 30px !important;
+    position: relative !important;
+}
+
+.minicart-product-list li .content .remove {
+    position: absolute !important;
+    right: 0 !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    z-index: 10 !important;
 }
 

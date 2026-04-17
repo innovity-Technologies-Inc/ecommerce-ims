@@ -19,7 +19,7 @@
                         </a>
                         <div class="content">
                             <a href="{{ route('client.products.details', $item->product_slug) }}"
-                               class="title">{{ $item->product_name }}</a>
+                               class="title" title="{{ $item->product_name }}">{{ \Illuminate\Support\Str::limit($item->product_name, 35) }}</a>
                             @if($item->variant_name)
                                 <span class="variant-info"
                                       style="font-size: 12px; color: #666;">{{ $item->variant_details }}</span>
