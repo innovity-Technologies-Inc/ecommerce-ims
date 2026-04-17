@@ -12082,13 +12082,13 @@ article.list-product .pricing-meta {
 }
 
 .shop-list-wrap .list-product .img-block {
-    flex: 0 0 33.333% !important; /* Matches col-md-4 roughly */
-    max-width: 300px !important;
+    flex: 0 0 250px !important;
+    max-width: 250px !important;
     aspect-ratio: 1 / 1 !important;
     margin-right: 30px !important;
     overflow: hidden !important;
     border: 1px solid #f5f5f5 !important;
-    border-radius: 5px !important;
+    border-radius: 6px !important;
 }
 
 .shop-list-wrap .list-product .img-block img {
@@ -12102,14 +12102,14 @@ article.list-product .pricing-meta {
     display: flex !important;
     flex-direction: column !important;
     padding: 0 !important;
+    height: 280px !important;
 }
 
 .shop-list-wrap .add-to-link {
     opacity: 0 !important;
     visibility: hidden !important;
-    position: absolute !important;
-    right: 25px !important;
-    bottom: 25px !important;
+    position: static !important;
+    margin-top: auto !important;
     width: auto !important;
     background: transparent !important;
     transition: all 0.3s ease !important;
@@ -12118,12 +12118,54 @@ article.list-product .pricing-meta {
 .shop-list-wrap .add-to-link ul {
     display: flex !important;
     align-items: center !important;
-    gap: 10px !important;
+    gap: 15px !important;
+    padding: 0 !important;
+    margin: 0 !important;
 }
 
 .shop-list-wrap .add-to-link ul li {
     float: none !important;
     margin: 0 !important;
+    display: block !important;
+}
+
+.shop-list-wrap .add-to-link ul li a {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background-color: #253237 !important;
+    color: #fff !important;
+    height: 42px !important;
+    padding: 0 25px !important;
+    border-radius: 4px !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    transition: background 0.3s ease !important;
+}
+
+/* Specific styling for the Wishlist (Love) icon in list view */
+.shop-list-wrap .add-to-link ul li:not(.cart) a {
+    width: 42px !important;
+    height: 42px !important;
+    padding: 0 !important;
+    font-size: 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.shop-list-wrap .add-to-link ul li a i {
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.shop-list-wrap .add-to-link ul li a:hover {
+    background-color: #ff4545 !important;
 }
 
 .shop-list-wrap .list-product:hover .add-to-link {
