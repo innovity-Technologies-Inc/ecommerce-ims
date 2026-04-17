@@ -12017,28 +12017,57 @@ body.offcanvas-open {
     height: 100% !important;
 }
 
-.img-block {
+.list-product .img-block {
     aspect-ratio: 1 / 1 !important;
     width: 100% !important;
     overflow: hidden !important;
 }
 
-.img-block img {
+.list-product .img-block img {
     width: 100% !important;
     height: 100% !important;
     object-fit: cover !important;
 }
 
-.product-decs {
+.list-product .product-decs {
     flex-grow: 1 !important;
     display: flex !important;
     flex-direction: column !important;
 }
 
-.pricing-meta {
+.list-product .pricing-meta {
     margin-top: auto !important;
 }
 
+/* Specific Fix for Featured/Stacked Horizontal Sliders */
+.feature-slider-item .list-product {
+    display: block !important;
+    height: auto !important;
+    padding: 20px !important;
+}
+
+.feature-slider-item .img-block {
+    float: left !important;
+    width: 120px !important;
+    margin-right: 20px !important;
+    aspect-ratio: 1 / 1 !important;
+}
+
+.feature-slider-item .product-decs {
+    display: block !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+}
+
+.feature-slider-item .pricing-meta {
+    margin-top: 10px !important;
+}
+
+.feature-slider-item .add-to-link {
+    display: none !important; /* Usually these horizontal cards don't have hover buttons in this theme */
+}
+
+/* Carousel Stretch Support */
 .owl-stage {
     display: flex !important;
 }
