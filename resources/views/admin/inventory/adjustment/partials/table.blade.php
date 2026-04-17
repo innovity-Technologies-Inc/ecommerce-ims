@@ -22,7 +22,7 @@
                     <td>{{ $adjustment->batch->batch_number }}</td>
                     <td>{{ $adjustment->creator->name }}</td>
                     <td class="text-center">
-                        <a href="{{ route('admin.inventory.adjustment.show', $data->id) }}" class="btn btn-soft-primary btn-sm" data-bs-toggle="tooltip" title="View Details">
+                        <a href="{{ route('admin.inventory.adjustment.show', $adjustment->id) }}" class="btn btn-soft-primary btn-sm" data-bs-toggle="tooltip" title="View Details">
                             <i class="bx bx-show fs-16"></i>
                         </a>
                     </td>
