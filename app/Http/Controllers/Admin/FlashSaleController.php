@@ -32,9 +32,21 @@ class FlashSaleController extends Controller
      */
     public function update(FlashSaleRequest $request)
     {
-        $this->flashSaleService->updateFlashSale($request->validated());
+        try {
+            $this->flashSaleService->updateFlashSale($request->validated());
 
-        return redirect()->back()->with('success', 'Flash Sale updated successfully!');
+            return redirect()->back()->with([
+                'message' => 'Flash Sale updated successfully!',
+                'alert-type' => 'success',
+            ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Flash Sale Update Error: '.$e->getMessage());
+
+            return redirect()->back()->with([
+                'message' => 'Something went wrong while updating the Flash Sale.',
+                'alert-type' => 'error',
+            ]);
+        }
     }
 
     /**
