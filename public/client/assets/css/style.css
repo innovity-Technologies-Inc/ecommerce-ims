@@ -12073,20 +12073,57 @@ article.list-product .pricing-meta {
     display: flex !important;
     flex-direction: row !important;
     height: auto !important;
-    padding: 20px !important;
+    padding: 25px !important;
     background: #fff !important;
     border: 1px solid #ebebeb !important;
+    border-radius: 8px !important;
+    align-items: flex-start !important;
+    position: relative !important;
+}
+
+.shop-list-wrap .list-product .img-block {
+    flex: 0 0 33.333% !important; /* Matches col-md-4 roughly */
+    max-width: 300px !important;
+    aspect-ratio: 1 / 1 !important;
+    margin-right: 30px !important;
+    overflow: hidden !important;
+    border: 1px solid #f5f5f5 !important;
     border-radius: 5px !important;
 }
 
-.shop-list-wrap .product-desc-wrap .add-to-link {
+.shop-list-wrap .list-product .img-block img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+.shop-list-wrap .product-desc-wrap {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 0 !important;
+}
+
+.shop-list-wrap .add-to-link {
     opacity: 0 !important;
     visibility: hidden !important;
-    left: auto !important;
-    right: 30px !important;
-    bottom: 30px !important;
+    position: absolute !important;
+    right: 25px !important;
+    bottom: 25px !important;
     width: auto !important;
     background: transparent !important;
+    transition: all 0.3s ease !important;
+}
+
+.shop-list-wrap .add-to-link ul {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+}
+
+.shop-list-wrap .add-to-link ul li {
+    float: none !important;
+    margin: 0 !important;
 }
 
 .shop-list-wrap .list-product:hover .add-to-link {
