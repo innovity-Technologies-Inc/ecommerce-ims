@@ -72,7 +72,7 @@
                             <div class="tab-content jump">
                                 <!-- Tab One Start -->
                                 <div id="shop-1" class="tab-pane fade show active">
-                                    <div class="row">
+                                    <div class="row gy-4">
                                         @forelse($products as $product)
                                         <div class="col-xl-3 col-md-6 col-lg-4 col-sm-6 col-xs-12">
                                             @include('client.partials.product_card', ['product' => $product])
