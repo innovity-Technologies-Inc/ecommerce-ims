@@ -232,6 +232,16 @@
             *   **Hard Conflict Fallback:** `slug($name . '-' . $id_suffix)` (e.g., `shoes-1`).
         3. **Database Integrity:** This multi-layered approach ensures the `slug` column remains globally unique in the database while fulfilling business requirements for flexible naming.
 
+    ### 3.14 Flash Sale Discount Dynamics (REQ-188)
+    - **What (Business Purpose):** Ensures that when a Flash Sale is active, the system prioritizes flash pricing and displays the correct discount badges to maximize conversion.
+    - **How it Works (Technical Flow):**
+        1. **Activation:** When a Flash Sale is enabled in the Admin Panel, the `FlashSaleService` updates all linked products, setting `is_flash_sale` to true and calculating `flash_discount_price` and `flash_discount_percentage`.
+        2. **Priority Pricing:** The `HelperClass::getProductPriceRange` logic detects the `is_flash_sale` flag and overrides standard regular/discount pricing with Flash Sale values.
+        3. **Badge Logic:** The product card template checks the calculated `has_discount` flag (derived from flash values during a sale) to render the red "-X%" discount badge.
+    - **Data & Storage:**
+        *   **Flag:** `products.is_flash_sale` (Boolean).
+        *   **Pricing:** `products.flash_discount_price` and `products.flash_discount_percentage`.
+
     ---
 
 

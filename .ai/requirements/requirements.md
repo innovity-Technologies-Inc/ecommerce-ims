@@ -199,6 +199,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-185:** Image Size Note: Add a note in the product image upload section of the admin panel specifying the recommended image size (800x800 px) for better UI consistency. (NEW)
 - [x] **REQ-186:** Featured Slider Responsive Fix: Fix the Featured Product slider to consistently show 2 columns on desktop resolutions, preventing oversized cards. (NEW)
 - [x] **REQ-187:** Stock Adjustment Table Fix: Fix the Undefined variable $data error in the stock adjustment table partial. (NEW)
+- [x] **REQ-188:** Flash Sale Discount Badge Fix: Resolve the issue where the discount badge was not showing for active flash sale products due to missing mass-assignment allowance in the Product model. (NEW)
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.
