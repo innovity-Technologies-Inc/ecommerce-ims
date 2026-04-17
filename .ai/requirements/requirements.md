@@ -196,6 +196,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-181:** Unique Slug Generation: Implement robust slug generation to handle globally unique slugs even when names are duplicated across different parents. (NEW)
 - [x] **REQ-182:** Hot Deal Layout: Update the Hot Deal section to display 4 cards per row on desktop and improve responsiveness. (NEW)
 - [x] **REQ-184:** Aspect Ratio & Height Normalization: Standardize product card heights and image sizes using Aspect Ratio (1:1) and Flexbox normalization to handle varying content sizes. (NEW)
+- [x] **REQ-185:** Image Size Note: Add a note in the product image upload section of the admin panel specifying the recommended image size (800x800 px) for better UI consistency. (NEW)
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.

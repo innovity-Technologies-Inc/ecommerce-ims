@@ -210,7 +210,7 @@
                                         <div class="mb-3">
                                             <label for="primary_image" class="form-label">Primary Image <span class="text-danger">*</span></label>
                                             <input type="file" name="primary_image" id="primary_image" class="filepond" {{ !isset($product) ? 'required' : '' }}>
-                                            <p class="extra-small text-muted mt-1">This will be the main display image. (Max 2MB)</p>
+                                            <p class="extra-small text-muted mt-1">This will be the main display image. Recommended size: 800x800 px (1:1 Ratio). Max 2MB.</p>
                                             
                                             @if(isset($product))
                                                 @php $primaryImg = $product->images->where('is_primary', true)->first(); @endphp
@@ -231,7 +231,7 @@
                                         <div class="mb-3">
                                             <label for="gallery_images" class="form-label">{{ isset($product) ? 'Add Gallery Images' : 'Gallery Images' }} (Max 5 at a time)</label>
                                             <input type="file" name="gallery_images[]" id="gallery_images" class="filepond" data-allow-reorder="true" data-max-files="5" multiple>
-                                            <p class="extra-small text-muted mt-1">Select up to 5 additional images. Individual size must not exceed 2MB.</p>
+                                            <p class="extra-small text-muted mt-1">Select up to 5 additional images. Recommended size: 800x800 px (1:1 Ratio). Individual size must not exceed 2MB.</p>
 
                                             @if(isset($product) && $product->images->where('is_primary', false)->count() > 0)
                                                 <div class="row mt-3">
