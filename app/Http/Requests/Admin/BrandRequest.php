@@ -23,7 +23,7 @@ class BrandRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'icon' => ['nullable', 'image', 'mimes:png,jpg,jpeg,svg,webp', 'max:2048'],
+            'icon' => ['nullable', 'image', 'mimes:png,jpg,jpeg,svg,webp,avif', 'max:2048'],
             'status' => ['nullable'],
         ];
     }
@@ -34,7 +34,7 @@ class BrandRequest extends FormRequest
             'name.required' => 'Please provide a brand name.',
             'name.max' => 'The brand name should not exceed 255 characters.',
             'icon.image' => 'The file uploaded must be an image.',
-            'icon.mimes' => 'The icon must be a file of type: png, jpg, jpeg, svg, webp.',
+            'icon.mimes' => 'The icon must be a file of type: png, jpg, jpeg, svg, webp, avif.',
             'icon.max' => 'The Brand Icon size should not exceed 2MB. Please compress and try again.',
         ];
     }

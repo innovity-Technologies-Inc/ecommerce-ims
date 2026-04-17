@@ -33,7 +33,7 @@ class CategoryRequest extends FormRequest
                     ->ignore($categoryId),
             ],
             'parent_id' => ['nullable', 'exists:categories,id'],
-            'icon' => ['nullable', 'image', 'mimes:png,jpg,jpeg,svg,webp', 'max:2048'],
+            'icon' => ['nullable', 'image', 'mimes:png,jpg,jpeg,svg,webp,avif', 'max:2048'],
             'status' => ['nullable'],
         ];
     }
@@ -45,7 +45,7 @@ class CategoryRequest extends FormRequest
             'name.max' => 'The category name should not exceed 255 characters.',
             'parent_id.exists' => 'The selected parent category is invalid.',
             'icon.image' => 'The uploaded file must be an image.',
-            'icon.mimes' => 'Allowed icon formats are: png, jpg, jpeg, svg, webp.',
+            'icon.mimes' => 'Allowed icon formats are: png, jpg, jpeg, svg, webp, avif.',
             'icon.max' => 'The Category Icon size should not exceed 2MB. Please compress and try again.',
         ];
     }

@@ -239,10 +239,19 @@
         2. **Priority Pricing:** The `HelperClass::getProductPriceRange` logic detects the `is_flash_sale` flag and overrides standard regular/discount pricing with Flash Sale values.
         3. **Badge Logic:** The product card template checks the calculated `has_discount` flag (derived from flash values during a sale) to render the red "-X%" discount badge.
     - **Data & Storage:**
-        *   **Flag:** `products.is_flash_sale` (Boolean).
-        *   **Pricing:** `products.flash_discount_price` and `products.flash_discount_percentage`.
+        - **Flag:** `products.is_flash_sale` (Boolean).
+        - **Pricing:** `products.flash_discount_price` and `products.flash_discount_percentage`.
 
-    ---
+        ### 3.15 Modern Image Format Support (REQ-192)
+        - **What (Business Purpose):** Enables the use of high-compression, modern image formats like AVIF to improve website performance and SEO.
+        - **How it Works (Technical Flow):**
+        1. **Validation:** All image-bearing Form Requests (Products, Categories, Brands, Sliders, etc.) have been updated to include the `avif` mime type in their validation rules.
+        2. **Storage:** The `HelperClass::file_upload` logic dynamically detects the `.avif` extension and stores it in the designated public disk folders.
+        3. **Rendering:** Standard `<img>` tags on the frontend render AVIF files natively on all modern browsers.
+        - **Scope:** Applied across all administrative upload portals.
+
+        ---
+
 
 
     ## 4. Key Procedural Lifecycle: Stock Movement Ledger (Source of Truth)

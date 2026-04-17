@@ -32,9 +32,9 @@ class SliderRequest extends FormRequest
         ];
 
         if ($this->isMethod('POST')) {
-            $rules['image'] = 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048';
+            $rules['image'] = 'required|image|mimes:jpeg,png,jpg,gif,svg,webp,avif|max:2048';
         } else {
-            $rules['image'] = 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048';
+            $rules['image'] = 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp,avif|max:2048';
         }
 
         return $rules;
@@ -59,7 +59,7 @@ class SliderRequest extends FormRequest
             'button_url.url' => 'The button link must be a valid URL.',
             'image.required' => 'A slider image is required.',
             'image.image' => 'The uploaded file must be an image.',
-            'image.mimes' => 'Supported image formats: jpeg, png, jpg, gif, svg, webp.',
+            'image.mimes' => 'Supported image formats: jpeg, png, jpg, gif, svg, webp, avif.',
             'image.max' => 'The Slider Image size should not exceed 2MB.',
         ];
     }

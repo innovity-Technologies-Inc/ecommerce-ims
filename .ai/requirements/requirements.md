@@ -202,6 +202,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-188:** Flash Sale Discount Badge Fix: Resolve the issue where the discount badge was not showing for active flash sale products due to missing mass-assignment allowance in the Product model. (NEW)
 - [x] **REQ-189:** Flash Sale Notification & Error Handling Fix: Standardize Flash Sale session messages and implement mandatory error logging in the controller. (NEW)
 - [x] **REQ-190:** Cart & Wishlist Image Normalization: Standardize product image sizes in Cart and Wishlist views using Aspect Ratio (1:1) and object-fit cover for visual consistency with product cards. (NEW)
+- [x] **REQ-192:** AVIF Image Support: Update all image upload sections (Products, Categories, Brands, Sliders, etc.) to accept the modern AVIF image format. (NEW)
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.
