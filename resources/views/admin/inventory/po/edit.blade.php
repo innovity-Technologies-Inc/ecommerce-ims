@@ -140,12 +140,15 @@
                                             <input type="number" name="items[{{ $index }}][order_quantity]" class="form-control quantity" min="1" value="{{ $item->order_quantity }}" required>
                                         </td>
                                         <td>
-                                            <input type="number" name="items[{{ $index }}][unit_cost]" class="form-control unit-cost" step="0.01" min="0" value="{{ $item->unit_cost }}" required>
+                                            <div class="input-group">
+                                                <span class="input-group-text">{{ $gs->currency ?? '$' }}</span>
+                                                <input type="number" name="items[{{ $index }}][unit_cost]" class="form-control unit-cost" step="0.01" min="0" value="{{ $item->unit_cost }}" required>
+                                            </div>
                                         </td>
                                         <td>
                                             @php $gs = \App\HelperClass::generalSettings(); @endphp
                                             <div class="input-group">
-                                                <span class="input-group-text">{{ $gs->currency_symbol ?? '$' }}</span>
+                                                <span class="input-group-text">{{ $gs->currency ?? '$' }}</span>
                                                 <input type="text" class="form-control subtotal" readonly value="{{ number_format($item->subtotal, 2, '.', '') }}">
                                             </div>
                                         </td>
@@ -168,7 +171,7 @@
                                         <td colspan="2">
                                             @php $gs = \App\HelperClass::generalSettings(); @endphp
                                             <div class="input-group">
-                                                <span class="input-group-text">{{ $gs->currency_symbol ?? '$' }}</span>
+                                                <span class="input-group-text">{{ $gs->currency ?? '$' }}</span>
                                                 <input type="text" id="displayTotal" class="form-control fw-bold" readonly value="{{ number_format($po->total_amount, 2, '.', '') }}">
                                             </div>
                                         </td>
@@ -214,13 +217,13 @@
         </td>
         <td>
             <div class="input-group">
-                <span class="input-group-text">{{ $gs->currency_symbol ?? '$' }}</span>
+                <span class="input-group-text">{{ $gs->currency ?? '$' }}</span>
                 <input type="number" name="items[INDEX][unit_cost]" class="form-control unit-cost" step="0.01" min="0" required>
             </div>
         </td>
         <td>
             <div class="input-group">
-                <span class="input-group-text">{{ $gs->currency_symbol ?? '$' }}</span>
+                <span class="input-group-text">{{ $gs->currency ?? '$' }}</span>
                 <input type="text" class="form-control subtotal" readonly value="0.00">
             </div>
         </td>

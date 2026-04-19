@@ -140,7 +140,9 @@ The system automatically monitors your stock levels to prevent stockouts:
 ---
 
 ## 11. System Settings
-Go to `Settings -> General Settings` to update your **Business Name**, **Authentication Banners** (for Login/Register pages), **Currency Symbol**, and **Notification Email** for Alerts.
+Go to `Settings -> General Settings` to update your **Business Name**, **Authentication Banners** (for Login/Register pages), **Currency Symbol**, and **Notification Email** for Alerts. 
+
+*Note: The **Currency Symbol** set here will be automatically applied to all Purchase Orders, Reports, and customer invoices across the system.*
 
 ---
 

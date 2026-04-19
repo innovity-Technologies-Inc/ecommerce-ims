@@ -126,7 +126,7 @@
                                         <td class="text-end fw-bold">Total Amount:</td>
                                         <td colspan="2">
                                             <div class="input-group">
-                                                <span class="input-group-text">{{ $gs->currency_symbol ?? '$' }}</span>
+                                                <span class="input-group-text">{{ $gs->currency ?? '$' }}</span>
                                                 <input type="text" id="displayTotal" class="form-control fw-bold" readonly value="0.00">
                                             </div>
                                         </td>
@@ -171,13 +171,13 @@
         </td>
         <td>
             <div class="input-group">
-                <span class="input-group-text">{{ $gs->currency_symbol ?? '$' }}</span>
+                <span class="input-group-text">{{ $gs->currency ?? '$' }}</span>
                 <input type="number" name="items[INDEX][unit_cost]" class="form-control unit-cost" step="0.01" min="0" required>
             </div>
         </td>
         <td>
             <div class="input-group">
-                <span class="input-group-text">{{ $gs->currency_symbol ?? '$' }}</span>
+                <span class="input-group-text">{{ $gs->currency ?? '$' }}</span>
                 <input type="text" class="form-control subtotal" readonly value="0.00">
             </div>
         </td>

@@ -26,7 +26,7 @@
                     <td>{{ $po->order_date->format('M d, Y') }}</td>
                     <td>{{ $po->expected_delivery_date ? $po->expected_delivery_date->format('M d, Y') : '-' }}</td>
                     @php $gs = \App\HelperClass::generalSettings(); @endphp
-                    <td>{{ $gs->currency_symbol ?? '$' }}{{ number_format($po->total_amount, 2) }}</td>
+                    <td>{{ $gs->currency ?? '$' }}{{ number_format($po->total_amount, 2) }}</td>
                     <td>
                         @php
                             $badgeClass = match($po->status) {

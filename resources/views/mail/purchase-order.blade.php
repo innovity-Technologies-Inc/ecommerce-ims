@@ -14,9 +14,9 @@ Please find the details of our purchase order below.
 | Product | Quantity | Unit Cost | Subtotal |
 | :--- | :---: | :---: | :---: |
 @foreach($po->items as $item)
-| {{ $item->product->name }} {{ $item->variant ? '(' . $item->variant->variant_name . ')' : '' }} | {{ $item->order_quantity }} | {{ $gs->currency_symbol ?? '$' }}{{ number_format($item->unit_cost, 2) }} | {{ $gs->currency_symbol ?? '$' }}{{ number_format($item->subtotal, 2) }} |
+| {{ $item->product->name }} {{ $item->variant ? '(' . $item->variant->variant_name . ')' : '' }} | {{ $item->order_quantity }} | {{ $gs->currency ?? '$' }}{{ number_format($item->unit_cost, 2) }} | {{ $gs->currency ?? '$' }}{{ number_format($item->subtotal, 2) }} |
 @endforeach
-| **Total** | | | **{{ $gs->currency_symbol ?? '$' }}{{ number_format($po->total_amount, 2) }}** |
+| **Total** | | | **{{ $gs->currency ?? '$' }}{{ number_format($po->total_amount, 2) }}** |
 </x-mail::table>
 
 **Notes:**  

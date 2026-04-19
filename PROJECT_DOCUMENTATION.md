@@ -242,7 +242,16 @@
         - **Flag:** `products.is_flash_sale` (Boolean).
         - **Pricing:** `products.flash_discount_price` and `products.flash_discount_percentage`.
 
-        ### 3.15 Modern Image Format Support (REQ-192)
+    ### 3.15 PO Currency Refinement (REQ-195)
+    - **What (Business Purpose):** Ensures that the Purchase Order module reflects the business's global currency setting, providing a consistent financial interface for procurement.
+    - **How it Works (Technical Flow):**
+        1. **Global Setting:** The system retrieves the currency symbol (e.g., $, BDT) from the **General Settings** module via `HelperClass::generalSettings()`.
+        2. **Dynamic Rendering:** All Purchase Order views (List, Create, Edit, Details) and outgoing supplier emails pull the currency symbol dynamically from this global setting.
+        3. **Standardization:** Replaces handcoded currency fallbacks with the user-defined setting to ensure 100% alignment with the business's operational currency.
+    - **Data & Storage:**
+        - **Source:** `general_settings.currency` field.
+
+    ### 3.16 Modern Image Format Support (REQ-192)
         - **What (Business Purpose):** Enables the use of high-compression, modern image formats like AVIF to improve website performance and SEO.
         - **How it Works (Technical Flow):**
         1. **Validation:** All image-bearing Form Requests (Products, Categories, Brands, Sliders, etc.) have been updated to include the `avif` mime type in their validation rules.
