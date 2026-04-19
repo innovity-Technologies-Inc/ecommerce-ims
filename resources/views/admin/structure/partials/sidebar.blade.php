@@ -220,7 +220,7 @@
                     <span class="nav-icon">
                         <iconify-icon icon="solar:box-bold-duotone"></iconify-icon>
                     </span>
-                    <span class="nav-text"> Stock Report </span>
+                    <span class="nav-text"> Stock Trace </span>
                 </a>
             </li>
             @endcan

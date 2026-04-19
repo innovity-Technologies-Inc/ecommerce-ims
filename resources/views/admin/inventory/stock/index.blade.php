@@ -1,11 +1,11 @@
 @extends('admin.structure.app')
 
-@section('title', 'Inventory Stock Report')
+@section('title', 'Stock Trace')
 
 @section('content')
 <div class="container-xxl">
     <div class="d-flex align-items-center justify-content-between mb-3">
-        <h4 class="mb-0">Inventory Stock Report</h4>
+        <h4 class="mb-0">Stock Trace</h4>
     </div>
 
     <div class="card">

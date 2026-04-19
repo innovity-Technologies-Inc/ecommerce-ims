@@ -33,4 +33,9 @@ This project focuses on a clean, modern, and high-performance e-commerce interfa
 - **Visual Feedback:** Provide immediate feedback for user actions (e.g., loading spinners on buttons, Toastr for success/error).
 - **Forms:** Labels should always be present; use placeholders appropriately. Use Select2 for all searchable/multi-select dropdowns.
 - **Tables & Pagination:** Use responsive Bootstrap tables with consistent styling for actions. All paginated lists MUST include "Showing X to Y of Z Results" text next to the pagination links.
-- **Consistency:** Use consistent spacing, typography (sans-serif), and color palettes across all views.
+## 5. Performance & Flickering Prevention (STRICT)
+- **Stationary Backgrounds:** Heavy CSS effects (e.g., complex radial gradients, large blurs) MUST be applied to a `fixed` pseudo-element (e.g., `.content-page::before`) rather than the scrollable content container. This prevents GPU-heavy repaints during scrolling, especially in browsers like Firefox.
+- **Stable AJAX Loading:** When updating tables via AJAX, DO NOT use logic that shifts the page layout (e.g., dynamic `min-height` or aggressive `opacity` changes on the whole container). 
+    - **Standard:** Use a `loadingOverlay` that covers the table content without changing its dimensions.
+- **Browser Compatibility:** Avoid using `transform: translateZ(0)` or `will-change` hints on the main content containers unless absolutely necessary for specific animations, as these can cause text blurring in Firefox when combined with fixed backgrounds.
+- **Mandatory Pagination:** ALL index/listing pages MUST implement Laravel's pagination (`links()`) to keep the DOM size manageable and maintain scroll performance.
