@@ -171,12 +171,13 @@
             background: var(--bs-body-bg);
             position: relative;
             overflow-x: hidden;
-            isolation: isolate;
+            /* Fix flickering by neutralizing problematic condensed menu height */
+            min-height: auto !important;
         }
 
         .content-page::before {
             content: "";
-            position: fixed; /* Use fixed to keep it out of the scroll flow */
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
@@ -185,17 +186,28 @@
                         radial-gradient(900px 300px at 110% 10%, rgba(99, 102, 241, 0.05), transparent 35%);
             pointer-events: none;
             z-index: -1;
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
+            /* Performance hints */
             -webkit-transform: translateZ(0);
             transform: translateZ(0);
         }
 
         .content-page .content {
             padding-top: 8px;
-            will-change: scroll-position;
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
+            /* Performance hints */
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+        }
+
+        /* Standardize logo-box to prevent flickering and blurring */
+        .main-nav .logo-box {
+            -webkit-backdrop-filter: none !important;
+            backdrop-filter: none !important;
+            background-color: var(--bs-main-nav-bg) !important;
+        }
+        
+        html[data-menu-size=condensed] .main-nav .logo-box {
+            -webkit-backdrop-filter: none !important;
+            backdrop-filter: none !important;
         }
 
         .content-page .content .container-fluid {

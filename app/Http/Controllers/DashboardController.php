@@ -57,8 +57,12 @@ class DashboardController extends Controller
 
     public function lowStockProducts(\Illuminate\Http\Request $request)
     {
-        $limit = $request->has('is_print') ? 500 : 50;
-        $lowStockProducts = $this->dashboardService->getLowStockProducts($limit);
+        $perPage = $request->has('is_print') ? 500 : 20;
+        $lowStockProducts = $this->dashboardService->getLowStockProductsPaged($request->all(), $perPage);
+
+        if ($request->ajax()) {
+            return view('admin.products.partials.low_stock_table', compact('lowStockProducts'))->render();
+        }
 
         return view('admin.products.low-stock', compact('lowStockProducts'));
     }

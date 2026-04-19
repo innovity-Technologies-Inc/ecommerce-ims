@@ -13,59 +13,29 @@
         </div>
     </div>
 
+    <div class="card mb-3 no-print">
+        <div class="card-body">
+            <form id="filterForm">
+                <div class="row g-2">
+                    <div class="col-md-4">
+                        <input type="text" name="search" id="searchInput" class="form-control" placeholder="Search product name or SKU...">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover table-centered mb-0">
-                            <thead class="bg-light bg-opacity-50">
-                                <tr>
-                                    <th class="ps-3">Product</th>
-                                    <th>Variant</th>
-                                    <th>Type</th>
-                                    <th>Location</th>
-                                    <th class="text-center">Current Stock</th>
-                                    <th class="text-center">Suggested Restock</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($lowStockProducts as $item)
-                                <tr>
-                                    <td class="ps-3">
-                                        <div class="d-flex align-items-center">
-                                            <img src="{{ asset('storage/' . ($item['image'] ?? '')) }}" alt="" class="avatar-sm rounded me-2">
-                                            <div>
-                                                <h5 class="fs-14 my-1">
-                                                    <a href="{{ route('admin.products.show', $item['product_id']) }}" class="text-reset">{{ $item['name'] }}</a>
-                                                </h5>
-                                                <span class="text-muted fs-12">{{ $item['category'] }}</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>{{ $item['variant_name'] }}</td>
-                                    <td>
-                                        <span class="badge {{ $item['type'] === 'Global' ? 'bg-soft-primary text-primary' : 'bg-soft-warning text-warning' }}">
-                                            {{ $item['type'] }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <small class="text-muted">{{ $item['location'] }}</small>
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="fw-bold text-danger">{{ $item['stock'] }}</span>
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="fw-bold text-success">+{{ $item['suggested_restock'] }}</span>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="6" class="text-center py-4">No low stock products found.</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                <div class="card-body p-0 position-relative" id="table-container">
+                    <div id="loadingSpinner" class="position-absolute top-50 start-50 translate-middle d-none" style="z-index: 10;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <div id="tableContent">
+                        @include('admin.products.partials.low_stock_table')
                     </div>
                 </div>
             </div>
@@ -78,6 +48,47 @@
 @section('scripts')
 <script>
 $(document).ready(function() {
+    const tableContainer = $('#table-container');
+    const tableContent = $('#tableContent');
+    const loadingSpinner = $('#loadingSpinner');
+    const filterForm = $('#filterForm');
+
+    function fetchLowStock(url = "{{ route('admin.dashboard.low_stock') }}") {
+        tableContainer.css('min-height', tableContainer.height() + 'px');
+        tableContent.css('opacity', 0.5);
+        loadingSpinner.removeClass('d-none');
+
+        const params = filterForm.serialize();
+        const finalUrl = url + (url.includes('?') ? '&' : '?') + params;
+
+        $.ajax({
+            url: url,
+            data: filterForm.serialize(),
+            success: function(response) {
+                tableContent.html(response).css('opacity', 1);
+                loadingSpinner.addClass('d-none');
+                tableContainer.css('min-height', '');
+                window.history.pushState({}, '', finalUrl);
+            },
+            error: function() {
+                tableContent.css('opacity', 1);
+                loadingSpinner.addClass('d-none');
+                tableContainer.css('min-height', '');
+            }
+        });
+    }
+
+    let debounceTimer;
+    $('#searchInput').on('keyup', function() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(fetchLowStock, 500);
+    });
+
+    $(document).on('click', '.pagination a', function(e) {
+        e.preventDefault();
+        fetchLowStock($(this).attr('href'));
+    });
+
     // Auto-print logic for full data view
     if (new URLSearchParams(window.location.search).has('is_print')) {
         $('.no-print, .btn-group, .btn, .bx, iconify-icon, .card-header, .card-footer, .pagination').hide();
@@ -106,6 +117,7 @@ $(document).ready(function() {
 function printFullReport() {
     const url = new URL(window.location.href);
     url.searchParams.set('is_print', '1');
+    url.searchParams.delete('page');
     window.open(url.toString(), '_blank');
 }
 </script>

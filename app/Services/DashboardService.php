@@ -577,4 +577,128 @@ class DashboardService
 
         return $allLowStock->sortBy('stock')->take($perPage);
     }
+
+    /**
+     * Get low stock products with pagination.
+     */
+    public function getLowStockProductsPaged(array $params = [], int $perPage = 20): \Illuminate\Pagination\LengthAwarePaginator
+    {
+        $allLowStock = collect();
+
+        // 1a. Simple Products
+        $globalLowProducts = Product::with(['primaryImage', 'category'])
+            ->whereDoesntHave('variants')
+            ->where('min_stock_global', '>', 0)
+            ->whereColumn('stock', '<=', 'min_stock_global');
+
+        if (!empty($params['search'])) {
+            $search = $params['search'];
+            $globalLowProducts->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('sku', 'like', "%{$search}%");
+            });
+        }
+
+        foreach ($globalLowProducts->get() as $product) {
+            $allLowStock->push((object)[
+                'type' => 'Global',
+                'product_id' => $product->id,
+                'name' => $product->name,
+                'category' => $product->category?->name ?? 'N/A',
+                'image' => $product->primaryImage?->image_path ?? '',
+                'variant_name' => 'N/A',
+                'sku' => $product->sku ?? 'N/A',
+                'stock' => $product->stock,
+                'location' => 'All Warehouses',
+                'min_stock' => $product->min_stock_global,
+            ]);
+        }
+
+        // 1b. Variants
+        $globalLowVariants = ProductVariant::with(['product.primaryImage', 'product.category'])
+            ->where('min_stock_global', '>', 0)
+            ->whereColumn('stock', '<=', 'min_stock_global');
+
+        if (!empty($params['search'])) {
+            $search = $params['search'];
+            $globalLowVariants->where(function($q) use ($search) {
+                $q->where('variant_name', 'like', "%{$search}%")
+                  ->orWhere('sku', 'like', "%{$search}%")
+                  ->orWhereHas('product', function($pq) use ($search) {
+                      $pq->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        foreach ($globalLowVariants->get() as $variant) {
+            $allLowStock->push((object)[
+                'type' => 'Global',
+                'product_id' => $variant->product_id,
+                'name' => $variant->product?->name ?? 'N/A',
+                'category' => $variant->product?->category?->name ?? 'N/A',
+                'image' => $variant->product?->primaryImage?->image_path ?? '',
+                'variant_name' => $variant->variant_name,
+                'sku' => $variant->sku,
+                'stock' => $variant->stock,
+                'location' => 'All Warehouses',
+                'min_stock' => $variant->min_stock_global,
+            ]);
+        }
+
+        // 2. Warehouse
+        $warehouseLowStock = InventoryLevel::with(['product.primaryImage', 'product.category', 'variant', 'warehouse'])
+            ->join('warehouse_stock_limits', function ($join) {
+                $join->on('inventory_levels.product_id', '=', 'warehouse_stock_limits.product_id')
+                    ->on('inventory_levels.warehouse_id', '=', 'warehouse_stock_limits.warehouse_id')
+                    ->where(function ($q) {
+                        $q->whereColumn('inventory_levels.product_variant_id', '=', 'warehouse_stock_limits.product_variant_id')
+                            ->orWhere(function ($sq) {
+                                $sq->whereNull('inventory_levels.product_variant_id')
+                                    ->whereNull('warehouse_stock_limits.product_variant_id');
+                            });
+                    });
+            })
+            ->whereColumn('inventory_levels.current_quantity', '<=', 'warehouse_stock_limits.min_stock')
+            ->select('inventory_levels.*', 'warehouse_stock_limits.min_stock as warehouse_min');
+
+        if (!empty($params['search'])) {
+            $search = $params['search'];
+            $warehouseLowStock->where(function($q) use ($search) {
+                $q->whereHas('product', function($pq) use ($search) {
+                    $pq->where('name', 'like', "%{$search}%");
+                })->orWhereHas('variant', function($vq) use ($search) {
+                    $vq->where('variant_name', 'like', "%{$search}%")
+                      ->orWhere('sku', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        foreach ($warehouseLowStock->get() as $level) {
+            $allLowStock->push((object)[
+                'type' => 'Warehouse',
+                'product_id' => $level->product_id,
+                'name' => $level->product?->name ?? 'N/A',
+                'category' => $level->product?->category?->name ?? 'N/A',
+                'image' => $level->product?->primaryImage?->image_path ?? '',
+                'variant_name' => $level->variant?->variant_name ?? 'N/A',
+                'sku' => $level->variant?->sku ?? ($level->product?->sku ?? 'N/A'),
+                'stock' => $level->current_quantity,
+                'location' => $level->warehouse?->name ?? 'Unknown',
+                'min_stock' => $level->warehouse_min,
+            ]);
+        }
+
+        $sorted = $allLowStock->sortBy('stock');
+
+        $page = request()->get('page', 1);
+        $offset = ($page - 1) * $perPage;
+
+        return new \Illuminate\Pagination\LengthAwarePaginator(
+            $sorted->slice($offset, $perPage)->values(),
+            $sorted->count(),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+    }
 }
