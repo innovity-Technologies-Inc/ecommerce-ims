@@ -168,13 +168,26 @@
 
         /* Content polish */
         .content-page {
+            background: var(--bs-body-bg);
+            position: relative;
+        }
+
+        .content-page::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background: radial-gradient(1200px 400px at 20% -5%, rgba(16, 141, 255, 0.06), transparent 40%),
-            radial-gradient(900px 300px at 110% 10%, rgba(99, 102, 241, 0.05), transparent 35%),
-            var(--bs-body-bg);
+                        radial-gradient(900px 300px at 110% 10%, rgba(99, 102, 241, 0.05), transparent 35%);
+            pointer-events: none;
+            z-index: -1;
         }
 
         .content-page .content {
             padding-top: 8px;
+            will-change: transform;
         }
 
         .content-page .content .container-fluid {

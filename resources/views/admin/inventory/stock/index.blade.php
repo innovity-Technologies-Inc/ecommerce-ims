@@ -40,8 +40,15 @@
             </form>
         </div>
 
-        <div id="tableContainer" class="card-body p-0">
-            @include('admin.inventory.stock.partials.table')
+        <div id="tableContainer" class="card-body p-0 position-relative">
+            <div id="loadingSpinner" class="position-absolute top-50 start-50 translate-middle d-none" style="z-index: 10;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            <div id="tableContent">
+                @include('admin.inventory.stock.partials.table')
+            </div>
         </div>
     </div>
 </div>
@@ -51,10 +58,16 @@
 <script>
     $(document).ready(function() {
         const tableContainer = $('#tableContainer');
+        const tableContent = $('#tableContent');
+        const loadingSpinner = $('#loadingSpinner');
         const filterForm = $('#filterForm');
 
         function fetchStock(url = "{{ route('admin.inventory.stock.index') }}") {
-            tableContainer.css('opacity', 0.5);
+            // Maintain height to prevent jumping
+            tableContainer.css('min-height', tableContainer.height() + 'px');
+            tableContent.css('opacity', 0.5);
+            loadingSpinner.removeClass('d-none');
+
             const params = filterForm.serialize();
             const finalUrl = url + (url.includes('?') ? '&' : '?') + params;
 
@@ -62,8 +75,15 @@
                 url: url,
                 data: filterForm.serialize(),
                 success: function(response) {
-                    tableContainer.html(response).css('opacity', 1);
+                    tableContent.html(response).css('opacity', 1);
+                    loadingSpinner.addClass('d-none');
+                    tableContainer.css('min-height', '');
                     window.history.pushState({}, '', finalUrl);
+                },
+                error: function() {
+                    tableContent.css('opacity', 1);
+                    loadingSpinner.addClass('d-none');
+                    tableContainer.css('min-height', '');
                 }
             });
         }

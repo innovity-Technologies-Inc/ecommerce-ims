@@ -251,7 +251,14 @@
     - **Data & Storage:**
         - **Source:** `general_settings.currency` field.
 
-    ### 3.16 Modern Image Format Support (REQ-192)
+    ### 3.16 Performance & UX Optimizations (REQ-196)
+    - **What (Business Purpose):** Improves the stability and responsiveness of data-heavy reports to provide a professional user experience.
+    - **How it Works (Technical Flow):**
+        1. **Background Optimization:** Moved complex CSS radial gradients to pseudo-elements with `pointer-events: none` to reduce GPU composite overhead during scrolling.
+        2. **Hardware Acceleration:** Injected `will-change: transform` hints on high-scroll areas to trigger browser-level rendering optimizations.
+        3. **AJAX UX Refinement:** Replaced aggressive container opacity changes with localized loading spinners and layout-preserving `min-height` logic in the Stock Index report to prevent content "flickering" or jumping during updates.
+
+    ### 3.17 Modern Image Format Support (REQ-192)
         - **What (Business Purpose):** Enables the use of high-compression, modern image formats like AVIF to improve website performance and SEO.
         - **How it Works (Technical Flow):**
         1. **Validation:** All image-bearing Form Requests (Products, Categories, Brands, Sliders, etc.) have been updated to include the `avif` mime type in their validation rules.
