@@ -171,8 +171,7 @@
             background: var(--bs-body-bg);
             position: relative;
             overflow-x: hidden;
-            /* Fix flickering by neutralizing problematic condensed menu height */
-            min-height: auto !important;
+            min-height: 100vh;
         }
 
         .content-page::before {
@@ -186,28 +185,19 @@
                         radial-gradient(900px 300px at 110% 10%, rgba(99, 102, 241, 0.05), transparent 35%);
             pointer-events: none;
             z-index: -1;
-            /* Performance hints */
-            -webkit-transform: translateZ(0);
-            transform: translateZ(0);
         }
 
         .content-page .content {
             padding-top: 8px;
-            /* Performance hints */
-            -webkit-transform: translateZ(0);
-            transform: translateZ(0);
+            /* Firefox fix: prevent blurring by avoiding translateZ on main container */
+            transform: none !important;
         }
 
-        /* Standardize logo-box to prevent flickering and blurring */
+        /* Standardize logo-box */
         .main-nav .logo-box {
-            -webkit-backdrop-filter: none !important;
-            backdrop-filter: none !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+            backdrop-filter: blur(10px) !important;
             background-color: var(--bs-main-nav-bg) !important;
-        }
-        
-        html[data-menu-size=condensed] .main-nav .logo-box {
-            -webkit-backdrop-filter: none !important;
-            backdrop-filter: none !important;
         }
 
         .content-page .content .container-fluid {

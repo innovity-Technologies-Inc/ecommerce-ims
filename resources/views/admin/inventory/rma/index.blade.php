@@ -41,7 +41,7 @@
                 </div>
             </div>
             <div class="card-body p-0 position-relative" id="table-container">
-                <div id="loadingSpinner" class="position-absolute top-50 start-50 translate-middle d-none" style="z-index: 10;">
+                <div id="loadingOverlay" class="position-absolute top-0 start-0 w-100 h-100 d-none d-flex align-items-center justify-content-center" style="z-index: 10; background: rgba(255,255,255,0.5);">
                     <div class="spinner-border text-primary" role="status">
                         <span class="visually-hidden">Loading...</span>
                     </div>
@@ -61,7 +61,7 @@
         let searchTimer;
         const tableContainer = $('#table-container');
         const tableContent = $('#tableContent');
-        const loadingSpinner = $('#loadingSpinner');
+        const loadingOverlay = $('#loadingOverlay');
 
         function fetchRmas(url = null) {
             const search = $('#search-input').val();
@@ -78,25 +78,18 @@
                 if (sort) finalUrl.searchParams.set('sort', sort); else finalUrl.searchParams.delete('sort');
             }
             
-            // Maintain height
-            tableContainer.css('min-height', tableContainer.height() + 'px');
-            tableContent.css('opacity', '0.5');
-            loadingSpinner.removeClass('d-none');
+            loadingOverlay.removeClass('d-none');
 
             $.ajax({
                 url: finalUrl.href,
                 type: 'GET',
                 success: function(response) {
                     tableContent.html(response);
-                    tableContent.css('opacity', '1');
-                    loadingSpinner.addClass('d-none');
-                    tableContainer.css('min-height', '');
+                    loadingOverlay.addClass('d-none');
                     window.history.pushState({}, '', finalUrl.href);
                 },
                 error: function() {
-                    tableContent.css('opacity', '1');
-                    loadingSpinner.addClass('d-none');
-                    tableContainer.css('min-height', '');
+                    loadingOverlay.addClass('d-none');
                 }
             });
         }

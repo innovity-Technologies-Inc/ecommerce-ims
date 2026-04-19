@@ -41,7 +41,7 @@
         </div>
 
         <div id="tableContainer" class="card-body p-0 position-relative">
-            <div id="loadingSpinner" class="position-absolute top-50 start-50 translate-middle d-none" style="z-index: 10;">
+            <div id="loadingOverlay" class="position-absolute top-0 start-0 w-100 h-100 d-none d-flex align-items-center justify-content-center" style="z-index: 10; background: rgba(255,255,255,0.5);">
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
@@ -59,14 +59,12 @@
     $(document).ready(function() {
         const tableContainer = $('#tableContainer');
         const tableContent = $('#tableContent');
-        const loadingSpinner = $('#loadingSpinner');
+        const loadingOverlay = $('#loadingOverlay');
         const filterForm = $('#filterForm');
 
         function fetchStock(url = "{{ route('admin.inventory.stock.index') }}") {
-            // Maintain height to prevent jumping
-            tableContainer.css('min-height', tableContainer.height() + 'px');
-            tableContent.css('opacity', 0.5);
-            loadingSpinner.removeClass('d-none');
+            // Avoid changing height or opacity directly on container to prevent Firefox flickering at bottom
+            loadingOverlay.removeClass('d-none');
 
             const params = filterForm.serialize();
             const finalUrl = url + (url.includes('?') ? '&' : '?') + params;
@@ -75,15 +73,12 @@
                 url: url,
                 data: filterForm.serialize(),
                 success: function(response) {
-                    tableContent.html(response).css('opacity', 1);
-                    loadingSpinner.addClass('d-none');
-                    tableContainer.css('min-height', '');
+                    tableContent.html(response);
+                    loadingOverlay.addClass('d-none');
                     window.history.pushState({}, '', finalUrl);
                 },
                 error: function() {
-                    tableContent.css('opacity', 1);
-                    loadingSpinner.addClass('d-none');
-                    tableContainer.css('min-height', '');
+                    loadingOverlay.addClass('d-none');
                 }
             });
         }

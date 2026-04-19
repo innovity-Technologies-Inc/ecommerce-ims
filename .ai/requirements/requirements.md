@@ -206,7 +206,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-193:** Product Grid Spacing: Add vertical spacing (gutters) between product rows in the shop listing view to prevent cards from touching. (NEW)
 - [x] **REQ-194:** Product List View Style Fix: Restore horizontal layout and internal padding for the list view, and fix the hover behavior for action buttons. (NEW)
 - [x] **REQ-195:** PO Currency from General Settings: Update the Purchase Order module to use the currency symbol defined in General Settings dynamically instead of handcoded values. (NEW)
-- [x] **REQ-196:** Stock Index Performance & UX: Fix flickering and blurring issues on the stock index and other pages during scrolling and AJAX updates. This includes optimizing background gradients, neutralizing problematic backdrop-filters, fixing condensed menu min-height bugs, and implementing paginated, searchable low-stock alerts. (NEW)
+- [x] **REQ-196:** Stock Index Performance & UX: Fix flickering and blurring issues on the stock index page (especially in Firefox) during scrolling and AJAX updates. This includes optimizing background gradients by using fixed pseudo-elements, neutralizing problematic backdrop-filters, and implementing a stable loading overlay that prevents layout shifts. (NEW)
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.
