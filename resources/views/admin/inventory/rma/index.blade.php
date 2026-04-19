@@ -40,8 +40,15 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body p-0" id="table-container">
-                @include('admin.inventory.rma.partials.table')
+            <div class="card-body p-0 position-relative" id="table-container">
+                <div id="loadingSpinner" class="position-absolute top-50 start-50 translate-middle d-none" style="z-index: 10;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div id="tableContent">
+                    @include('admin.inventory.rma.partials.table')
+                </div>
             </div>
         </div>
     </div>
@@ -53,28 +60,43 @@
     $(document).ready(function() {
         let searchTimer;
         const tableContainer = $('#table-container');
+        const tableContent = $('#tableContent');
+        const loadingSpinner = $('#loadingSpinner');
 
-        function fetchRmas() {
+        function fetchRmas(url = null) {
             const search = $('#search-input').val();
             const supplier = $('#supplier-select').val();
             const status = $('#status-select').val();
             const sort = $('#sort-select').val();
-            const url = new URL(window.location.href);
             
-            if (search) url.searchParams.set('search', search); else url.searchParams.delete('search');
-            if (supplier !== 'all') url.searchParams.set('supplier_id', supplier); else url.searchParams.delete('supplier_id');
-            if (status !== 'all') url.searchParams.set('status', status); else url.searchParams.delete('status');
-            if (sort) url.searchParams.set('sort', sort); else url.searchParams.delete('sort');
+            let finalUrl = url ? new URL(url) : new URL(window.location.href);
             
-            window.history.pushState({}, '', url);
-            tableContainer.css('opacity', '0.5');
+            if (!url) {
+                if (search) finalUrl.searchParams.set('search', search); else finalUrl.searchParams.delete('search');
+                if (supplier !== 'all') finalUrl.searchParams.set('supplier_id', supplier); else finalUrl.searchParams.delete('supplier_id');
+                if (status !== 'all') finalUrl.searchParams.set('status', status); else finalUrl.searchParams.delete('status');
+                if (sort) finalUrl.searchParams.set('sort', sort); else finalUrl.searchParams.delete('sort');
+            }
+            
+            // Maintain height
+            tableContainer.css('min-height', tableContainer.height() + 'px');
+            tableContent.css('opacity', '0.5');
+            loadingSpinner.removeClass('d-none');
 
             $.ajax({
-                url: url.href,
+                url: finalUrl.href,
                 type: 'GET',
                 success: function(response) {
-                    tableContainer.html(response);
-                    tableContainer.css('opacity', '1');
+                    tableContent.html(response);
+                    tableContent.css('opacity', '1');
+                    loadingSpinner.addClass('d-none');
+                    tableContainer.css('min-height', '');
+                    window.history.pushState({}, '', finalUrl.href);
+                },
+                error: function() {
+                    tableContent.css('opacity', '1');
+                    loadingSpinner.addClass('d-none');
+                    tableContainer.css('min-height', '');
                 }
             });
         }
@@ -89,16 +111,7 @@
         $(document).on('click', '.pagination a', function(e) {
             e.preventDefault();
             const url = $(this).attr('href');
-            tableContainer.css('opacity', '0.5');
-            $.ajax({
-                url: url,
-                type: 'GET',
-                success: function(response) {
-                    tableContainer.html(response);
-                    tableContainer.css('opacity', '1');
-                    window.history.pushState({}, '', url);
-                }
-            });
+            fetchRmas(url);
         });
     });
 </script>

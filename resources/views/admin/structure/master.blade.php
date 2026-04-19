@@ -170,11 +170,13 @@
         .content-page {
             background: var(--bs-body-bg);
             position: relative;
+            overflow-x: hidden;
+            isolation: isolate;
         }
 
         .content-page::before {
             content: "";
-            position: absolute;
+            position: fixed; /* Use fixed to keep it out of the scroll flow */
             top: 0;
             left: 0;
             right: 0;
@@ -183,11 +185,17 @@
                         radial-gradient(900px 300px at 110% 10%, rgba(99, 102, 241, 0.05), transparent 35%);
             pointer-events: none;
             z-index: -1;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
         }
 
         .content-page .content {
             padding-top: 8px;
-            will-change: transform;
+            will-change: scroll-position;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
         }
 
         .content-page .content .container-fluid {
