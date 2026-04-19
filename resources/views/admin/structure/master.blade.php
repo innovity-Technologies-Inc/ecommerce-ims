@@ -288,18 +288,6 @@
             font-weight: 600;
         }
 
-        .main-nav .nav-link.active::after {
-            content: "";
-            position: absolute;
-            right: 0;
-            top: 20%;
-            height: 60%;
-            width: 3px;
-            background-color: #10b981;
-            border-radius: 3px 0 0 3px;
-            box-shadow: 0 0 8px #10b981;
-        }
-
         .main-nav .menu-title {
             color: rgba(16, 185, 129, 0.5) !important;
             text-transform: uppercase;
