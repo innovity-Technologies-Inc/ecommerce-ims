@@ -388,6 +388,23 @@
             document.getElementById('wishlist-product-id').value = productId;
             document.getElementById('wishlist-form').submit();
         }
+
+        $(document).on('change', '.toggle-password-visibility', function() {
+            const isChecked = $(this).is(':checked');
+            const targetForm = $(this).closest('form');
+            // Select both current password inputs and those we've temporarily changed to type="text"
+            const passwordInputs = targetForm.length ? 
+                targetForm.find('input[type="password"], input[data-password-original="true"]') : 
+                $('input[type="password"], input[data-password-original="true"]');
+            
+            passwordInputs.each(function() {
+                if (isChecked) {
+                    $(this).attr('type', 'text').attr('data-password-original', 'true');
+                } else {
+                    $(this).attr('type', 'password');
+                }
+            });
+        });
     </script>
 
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>

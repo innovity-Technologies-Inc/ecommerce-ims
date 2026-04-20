@@ -253,6 +253,10 @@
                         <input type="checkbox" class="form-check-input" id="checkbox-signin" name="remember" {{ old('remember') ? 'checked' : '' }}>
                         <label class="form-check-label" for="checkbox-signin">Keep me logged in</label>
                     </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input toggle-password-visibility" id="show-password">
+                        <label class="form-check-label" for="show-password">Show Password</label>
+                    </div>
                 </div>
 
                 <div class="d-grid">

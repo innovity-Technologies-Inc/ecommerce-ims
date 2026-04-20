@@ -165,6 +165,13 @@
                     @enderror
                 </div>
 
+                <div class="form-check mb-4">
+                    <input class="form-check-input toggle-password-visibility" type="checkbox" id="show-password-reset">
+                    <label class="form-check-label small text-muted" for="show-password-reset">
+                        Show Password
+                    </label>
+                </div>
+
                 <button type="submit" class="btn-auth-submit">
                     Update Password
                 </button>

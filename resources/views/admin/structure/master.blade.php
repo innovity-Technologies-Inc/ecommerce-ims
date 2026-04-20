@@ -600,8 +600,23 @@
                 ['insert', ['link', 'picture', 'video']],
                 ['view', ['codeview']]
             ],
-            // Optional: Set your desired height
-            height: 200,
+        });
+    });
+
+    $(document).on('change', '.toggle-password-visibility', function() {
+        const isChecked = $(this).is(':checked');
+        const targetForm = $(this).closest('form');
+        // Select both current password inputs and those we've temporarily changed to type="text"
+        const passwordInputs = targetForm.length ? 
+            targetForm.find('input[type="password"], input[data-password-original="true"]') : 
+            $('input[type="password"], input[data-password-original="true"]');
+        
+        passwordInputs.each(function() {
+            if (isChecked) {
+                $(this).attr('type', 'text').attr('data-password-original', 'true');
+            } else {
+                $(this).attr('type', 'password');
+            }
         });
     });
 </script>

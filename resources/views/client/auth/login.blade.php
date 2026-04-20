@@ -196,11 +196,17 @@
                     <input type="password" name="password" placeholder="••••••••" required>
                 </div>
 
-                <div class="d-flex align-items-center mb-4">
+                <div class="d-flex align-items-center justify-content-between mb-4">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
                         <label class="form-check-label small text-muted" for="remember">
                             Stay logged in
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input toggle-password-visibility" type="checkbox" id="show-password-client">
+                        <label class="form-check-label small text-muted" for="show-password-client">
+                            Show Password
                         </label>
                     </div>
                 </div>

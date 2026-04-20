@@ -129,6 +129,14 @@
                                                             <input type="password" name="password_confirmation">
                                                         </div>
                                                     </div>
+                                                    <div class="col-lg-12 col-md-12">
+                                                        <div class="form-check mt-2">
+                                                            <input class="form-check-input toggle-password-visibility" type="checkbox" id="show-password-profile">
+                                                            <label class="form-check-label small text-muted" for="show-password-profile">
+                                                                Show Password
+                                                            </label>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <div class="billing-back-btn">
                                                     <div class="billing-back">

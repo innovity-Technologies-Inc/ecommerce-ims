@@ -207,6 +207,13 @@
                     </div>
                 </div>
 
+                <div class="form-check mb-3">
+                    <input class="form-check-input toggle-password-visibility" type="checkbox" id="show-password-register">
+                    <label class="form-check-label small text-muted" for="show-password-register">
+                        Show Password
+                    </label>
+                </div>
+
                 <div class="mb-4 mt-2">
                     {!! NoCaptcha::display() !!}
                     @error('g-recaptcha-response')

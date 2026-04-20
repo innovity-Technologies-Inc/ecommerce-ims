@@ -135,6 +135,12 @@
                         <label for="password_confirmation" class="form-label">Confirm New Password</label>
                         <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
                     </div>
+                    <div class="mb-0">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input toggle-password-visibility" id="show-password-admin">
+                            <label class="form-check-label" for="show-password-admin">Show Passwords</label>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
