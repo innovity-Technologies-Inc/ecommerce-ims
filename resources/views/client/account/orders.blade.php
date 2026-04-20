@@ -68,6 +68,10 @@
                 display: block;
                 text-align: center;
             }
+            .start-shopping-btn {
+                padding-left: 20px !important;
+                padding-right: 20px !important;
+            }
         }
     </style>
     <!-- account area start -->
@@ -132,7 +136,7 @@
                                                             <td colspan="5" class="text-center py-5">
                                                                 <h4 class="mb-3">You haven't placed any orders yet.</h4>
                                                                 <div class="mt-4">
-                                                                    <a href="{{ route('client.products.index') }}" class="btn btn-primary px-5 py-3 text-white" style="background-color: #7AAACE; border-color: #7AAACE; font-weight: 700; text-transform: uppercase; border-radius: 0; white-space: nowrap;">Start Shopping</a>
+                                                                    <a href="{{ route('client.products.index') }}" class="btn btn-primary px-5 py-3 text-white start-shopping-btn" style="background-color: #7AAACE; border-color: #7AAACE; font-weight: 700; text-transform: uppercase; border-radius: 0; white-space: nowrap;">Start Shopping</a>
                                                                 </div>
                                                             </td>
                                                         </tr>
