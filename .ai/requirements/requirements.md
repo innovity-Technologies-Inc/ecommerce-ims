@@ -225,7 +225,9 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-214:** Mobile Cart Icon Adjustment: Reduce the size of the cart icon and quantity badge in mobile view for better visual balance. (NEW)
 - [x] **REQ-215:** Product Sort Mobile Wrapping Fix: Ensure the "Sort By" text and dropdown in the products page stay on a single line on mobile devices to prevent layout shifts. (NEW)
 - [x] **REQ-216:** Order History "Start Shopping" Button Fix: Ensure the "Start Shopping" button in the empty order history view stays on a single line on mobile devices by preventing text wrapping. (NEW)
-- [ ] **REQ-217:** Cart Page Shopping Buttons Fix: Ensure the "Go to Shop" and "Continue Shopping" buttons on the cart page stay on a single line on mobile devices to prevent text wrapping and improve layout consistency. (NEW)
+- [x] **REQ-217:** Cart Page Shopping Buttons Fix: Ensure the "Go to Shop" and "Continue Shopping" buttons on the cart page stay on a single line on mobile devices to prevent text wrapping and improve layout consistency. (NEW)
+- [ ] **REQ-218:** Cart Empty State and Button Standardization: Ensure "Your cart is empty" stays on one line. Remove the redundant "Go to Shop" button. Make action buttons ("Continue Shopping", "Clear Cart", "Proceed to Checkout") visually similar in size. When the cart is empty, hide all action buttons except "Continue Shopping" and hide the cart total/banner section. (NEW)
+
 
 
 

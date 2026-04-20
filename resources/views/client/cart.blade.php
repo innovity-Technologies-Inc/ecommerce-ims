@@ -127,6 +127,18 @@
                 white-space: nowrap !important;
                 padding: 10px 15px !important;
             }
+            .cart-shiping-update a,
+            .cart-clear button,
+            .cart-clear a {
+                min-width: 220px !important;
+                text-align: center !important;
+                display: inline-flex !important;
+                justify-content: center !important;
+                align-items: center !important;
+            }
+            .empty-cart-text {
+                white-space: nowrap !important;
+            }
         }
     </style>
     <!-- cart area start -->
@@ -187,8 +199,7 @@
                                     @else
                                         <tr>
                                             <td colspan="6" class="text-center py-5">
-                                                <h4>Your cart is empty.</h4>
-                                                <a href="{{ route('client.products.index') }}" class="btn btn-primary mt-3" style="white-space: nowrap !important;">Go to Shop</a>
+                                                <h4 class="empty-cart-text">Your cart is empty.</h4>
                                             </td>
                                         </tr>
                                     @endif
@@ -201,65 +212,69 @@
                                     <div class="cart-shiping-update">
                                         <a href="{{ route('client.products.index') }}">Continue Shopping</a>
                                     </div>
+                                    @if($cartItems->count() > 0)
                                     <div class="cart-clear">
                                         <button type="button" id="clear-cart">Clear Shopping Cart</button>
                                         <a href="{{ route('checkout.index') }}" class="proceed-checkout-btn">Proceed to Checkout</a>
                                     </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
                     </form>
-                    <div class="row d-flex align-items-stretch">
-                        <div class="col-lg-8 col-md-12 mb-res-sm-30px d-flex">
-                            <div class="cart-banner w-100">
-                                <a href="{{ route('client.products.index') }}" class="d-block h-100">
-                                    <img src="{{ asset('client/assets/images/banner-image/5.jpg') }}" alt="Cart Banner" class="img-fluid w-100 h-100" style="object-fit: cover;">
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-12 d-flex">
-                            <div class="grand-totall w-100">
-                                <div class="title-wrap">
-                                    <h4 class="cart-bottom-title section-bg-gary-cart">Cart Total</h4>
+                        @if($cartItems->count() > 0)
+                        <div class="row d-flex align-items-stretch">
+                            <div class="col-lg-8 col-md-12 mb-res-sm-30px d-flex">
+                                <div class="cart-banner w-100">
+                                    <a href="{{ route('client.products.index') }}" class="d-block h-100">
+                                        <img src="{{ asset('client/assets/images/banner-image/5.jpg') }}" alt="Cart Banner" class="img-fluid w-100 h-100" style="object-fit: cover;">
+                                    </a>
                                 </div>
-                                <h5>Subtotal <span class="cart-total-display">${{ number_format($cartItems->sum('subtotal'), 2) }}</span></h5>
-                                <div class="total-shipping">
-                                    <h5>Shipping Method</h5>
-                                    <ul id="shipping-methods-list" class="list-unstyled">
-                                        @foreach($shippingMethods as $method)
-                                            <li class="mb-3 border-bottom pb-3">
-                                                <div class="d-flex align-items-start">
-                                                    <div class="shipping-radio-wrapper me-3 mt-1">
-                                                        <input type="radio" name="shipping_method" class="shipping-method-radio" 
-                                                               id="method-{{ $method->id }}"
-                                                               value="{{ $method->id }}" 
-                                                               {{ (session('shipping_method_id') == $method->id) ? 'checked' : '' }} 
-                                                               style="width: 18px; height: 18px; cursor: pointer; vertical-align: middle;" />
-                                                    </div>
-                                                    <label class="flex-grow-1 mb-0" for="method-{{ $method->id }}" style="cursor: pointer;">
-                                                        <div class="d-flex justify-content-between align-items-center">
-                                                            <span class="fw-bold text-dark fs-15">{{ $method->name }}</span>
-                                                            <span class="fw-bold text-dark fs-15">${{ number_format($method->price, 2) }}</span>
+                            </div>
+                            <div class="col-lg-4 col-md-12 d-flex">
+                                <div class="grand-totall w-100">
+                                    <div class="title-wrap">
+                                        <h4 class="cart-bottom-title section-bg-gary-cart">Cart Total</h4>
+                                    </div>
+                                    <h5>Subtotal <span class="cart-total-display">${{ number_format($cartItems->sum('subtotal'), 2) }}</span></h5>
+                                    <div class="total-shipping">
+                                        <h5>Shipping Method</h5>
+                                        <ul id="shipping-methods-list" class="list-unstyled">
+                                            @foreach($shippingMethods as $method)
+                                                <li class="mb-3 border-bottom pb-3">
+                                                    <div class="d-flex align-items-start">
+                                                        <div class="shipping-radio-wrapper me-3 mt-1">
+                                                            <input type="radio" name="shipping_method" class="shipping-method-radio" 
+                                                                   id="method-{{ $method->id }}"
+                                                                   value="{{ $method->id }}" 
+                                                                   {{ (session('shipping_method_id') == $method->id) ? 'checked' : '' }} 
+                                                                   style="width: 18px; height: 18px; cursor: pointer; vertical-align: middle;" />
                                                         </div>
-                                                        @if($method->short_description)
-                                                            <div class="mt-1">
-                                                                <small class="text-muted d-block" style="font-size: 13px; line-height: 1.4;">
-                                                                    {{ $method->short_description }}
-                                                                </small>
+                                                        <label class="flex-grow-1 mb-0" for="method-{{ $method->id }}" style="cursor: pointer;">
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <span class="fw-bold text-dark fs-15">{{ $method->name }}</span>
+                                                                <span class="fw-bold text-dark fs-15">${{ number_format($method->price, 2) }}</span>
                                                             </div>
-                                                        @endif
-                                                    </label>
-                                                </div>
-                                            </li>
-                                        @endforeach
-                                    </ul>
+                                                            @if($method->short_description)
+                                                                <div class="mt-1">
+                                                                    <small class="text-muted d-block" style="font-size: 13px; line-height: 1.4;">
+                                                                        {{ $method->short_description }}
+                                                                    </small>
+                                                                </div>
+                                                            @endif
+                                                        </label>
+                                                    </div>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                    <h4 class="grand-totall-title">Shipping <span id="shipping-total-display">${{ number_format($selectedShippingMethod ? $selectedShippingMethod->price : 0, 2) }}</span></h4>
+                                    <h4 class="grand-totall-title">Grand Total <span class="grand-total-display">${{ number_format($cartItems->sum('subtotal') + ($selectedShippingMethod ? $selectedShippingMethod->price : 0), 2) }}</span></h4>
+                                    <a href="{{ route('checkout.index') }}" class="proceed-checkout-btn">Proceed to Checkout</a>
                                 </div>
-                                <h4 class="grand-totall-title">Shipping <span id="shipping-total-display">${{ number_format($selectedShippingMethod ? $selectedShippingMethod->price : 0, 2) }}</span></h4>
-                                <h4 class="grand-totall-title">Grand Total <span class="grand-total-display">${{ number_format($cartItems->sum('subtotal') + ($selectedShippingMethod ? $selectedShippingMethod->price : 0), 2) }}</span></h4>
-                                <a href="{{ route('checkout.index') }}" class="proceed-checkout-btn">Proceed to Checkout</a>
                             </div>
                         </div>
-                    </div>
+                        @endif
 
                 </div>
             </div>
