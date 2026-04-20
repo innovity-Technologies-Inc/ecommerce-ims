@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Client\ProfileUpdateRequest;
+use App\Http\Requests\Client\UpdateAddressRequest;
+use App\Http\Requests\Client\UpdatePasswordRequest;
+use App\Services\CustomerProfileService;
 use App\Services\OrderService;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class CustomerController extends Controller
 {
-    public function __construct(protected OrderService $orderService) {}
+    public function __construct(
+        protected OrderService $orderService,
+        protected CustomerProfileService $profileService
+    ) {}
 
     public function accountInformation()
     {
@@ -35,7 +41,10 @@ class CustomerController extends Controller
         $order = $this->orderService->trackOrderById($orderId);
 
         if (! $order || $order->user_id !== Auth::guard('web')->id()) {
-            return redirect()->route('user.orders')->with('error', 'Order not found.');
+            return redirect()->route('user.orders')->with([
+                'message' => 'Order not found.',
+                'alert-type' => 'error',
+            ]);
         }
 
         return view('client.account.order-details', compact('title', 'section', 'order'));
@@ -59,16 +68,10 @@ class CustomerController extends Controller
         return view('client.orders.invoice-print', compact('order'));
     }
 
-    public function profileUpdate(Request $request)
+    public function profileUpdate(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.Auth::guard('web')->id()],
-            'mobile' => ['required', 'string', 'max:20'],
-        ]);
-
-        $user = Auth::guard('web')->user();
-        $user->update($request->only(['name', 'email', 'mobile']));
+        $userId = Auth::guard('web')->id();
+        $this->profileService->updateProfile($userId, $request->validated());
 
         return redirect()->back()->with([
             'message' => 'Profile updated successfully',
@@ -77,36 +80,32 @@ class CustomerController extends Controller
         ]);
     }
 
-    public function changePassword(Request $request)
+    public function changePassword(UpdatePasswordRequest $request): RedirectResponse
     {
-        $user = Auth::guard('web')->user();
+        $userId = Auth::guard('web')->id();
+        $result = $this->profileService->updatePassword(
+            $userId,
+            $request->password,
+            $request->current_password
+        );
 
-        if ($user->google_id) {
-            return back()->with([
-                'message' => 'Social login users cannot change their password.',
-                'alert-type' => 'error',
-            ]);
+        if (! $result['status']) {
+            $errors = [];
+            if (isset($result['error_type'])) {
+                $errors[$result['error_type']] = $result['message'];
+            } else {
+                return back()->with([
+                    'message' => $result['message'],
+                    'alert-type' => 'error',
+                    'active_tab' => 'password',
+                ]);
+            }
+
+            return back()->withErrors($errors)->withInput()->with('active_tab', 'password');
         }
 
-        $request->validate([
-            'current_password' => ['required'],
-            'password' => ['required', 'confirmed', 'min:8'],
-        ]);
-
-        // Check old password
-        if (! Hash::check($request->current_password, $user->password)) {
-            return back()->withErrors([
-                'current_password' => 'Current password is incorrect.',
-            ])->withInput()->with('active_tab', 'password');
-        }
-
-        // Update password
-        $user->update([
-            'password' => Hash::make($request->password),
-        ]);
-
-        // Regenerate session
-        $request->session()->regenerate();
+        // Regenerate session if password changed
+        session()->regenerate();
 
         return back()->with([
             'message' => 'Password changed successfully',
@@ -115,18 +114,10 @@ class CustomerController extends Controller
         ]);
     }
 
-    public function addressUpdate(Request $request)
+    public function addressUpdate(UpdateAddressRequest $request): RedirectResponse
     {
-        $request->validate([
-            'address' => ['required', 'string', 'max:255'],
-            'city' => ['required', 'string', 'max:100'],
-            'state' => ['nullable', 'string', 'max:100'],
-            'country' => ['nullable', 'string', 'max:100'],
-            'zip' => ['nullable', 'string', 'max:20'],
-        ]);
-
-        $user = Auth::guard('web')->user();
-        $user->update($request->only(['address', 'city', 'state', 'country', 'zip']));
+        $userId = Auth::guard('web')->id();
+        $this->profileService->updateAddress($userId, $request->validated());
 
         return redirect()->back()->with([
             'message' => 'Address updated successfully',

@@ -565,3 +565,13 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     - **Controller:** `CustomerReportController` (Thin Controller).
     - **Visualization:** **ApexCharts** for interactive charts and heatmaps.
     - **Navigation:** Added to the "Reports" section in the Admin Sidebar.
+
+### **12. Customer Profile Management (REQ-202)**
+- **What (Business Purpose):** Enables customers to manage their personal information, delivery addresses, and account security (passwords) autonomously.
+- **How it Works (Technical Flow):**
+    1. **Service Layer:** `CustomerProfileService` centralizes all logic for updating user records, handling password hashing, and validating current credentials.
+    2. **Social Login Integration:** Specifically addresses users who registered via Google Auth by allowing them to "set" their first password without requiring a non-existent "Current Password". Once a password is created, standard security protocols (Current Password validation) are automatically enforced.
+    3. **Form Requests:** Standardized validation for basic info (`ProfileUpdateRequest`), security (`UpdatePasswordRequest`), and shipping details (`UpdateAddressRequest`).
+- **Data & Storage (DB Connectivity):**
+    - Directly interacts with the `users` table.
+    - Uses `google_id` and `password` fields to determine the security context for each user.

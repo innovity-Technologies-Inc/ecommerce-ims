@@ -84,14 +84,14 @@
                                 </div>
                             </div>
                             
-                            @if(!$user->google_id)
                             <div class="panel panel-default single-my-account">
                                 <div class="panel-heading my-account-title">
                                     <h3 class="panel-title"><span>{{ $panelIndex++ }} .</span> <a data-bs-toggle="collapse"
                                                                                 data-parent="#faq" href="#my-account-2"
                                                                                 class="{{ $activeTab !== 'password' ? 'collapsed' : '' }}"
-                                                                                aria-expanded="{{ $activeTab === 'password' ? 'true' : 'false' }}">Change
-                                            your password </a></h3>
+                                                                                aria-expanded="{{ $activeTab === 'password' ? 'true' : 'false' }}">
+                                            {{ $user->password ? 'Change your password' : 'Set your password' }}
+                                        </a></h3>
                                 </div>
                                 <div id="my-account-2" class="panel-collapse collapse {{ $activeTab === 'password' ? 'show' : '' }}">
                                     <form method="post" action="{{route('user.password.update')}}">
@@ -100,12 +100,12 @@
                                         <div class="panel-body">
                                             <div class="myaccount-info-wrapper">
                                                 <div class="account-info-wrapper">
-                                                    <h5>Change Password</h5>
+                                                    <h5>{{ $user->password ? 'Change Password' : 'Set Password' }}</h5>
                                                 </div>
                                                 <div class="row">
+                                                    @if($user->password)
                                                     <div class="col-lg-12 col-md-12">
                                                         <div class="billing-info">
-
                                                             <label>Current Password</label>
                                                             <input type="password" name="current_password">
                                                             @error('current_password')
@@ -113,9 +113,10 @@
                                                             @enderror
                                                         </div>
                                                     </div>
+                                                    @endif
                                                     <div class="col-lg-12 col-md-12">
                                                         <div class="billing-info">
-                                                            <label>Password</label>
+                                                            <label>New Password</label>
                                                             <input type="password" name="password">
                                                             @error('password')
                                                             <span class="small text-danger">{{$message}}</span>
@@ -124,7 +125,7 @@
                                                     </div>
                                                     <div class="col-lg-12 col-md-12">
                                                         <div class="billing-info">
-                                                            <label>Password Confirm</label>
+                                                            <label>New Password Confirm</label>
                                                             <input type="password" name="password_confirmation">
                                                         </div>
                                                     </div>
@@ -142,7 +143,6 @@
                                     </form>
                                 </div>
                             </div>
-                            @endif
 
                             <div class="panel panel-default single-my-account">
                                 <div class="panel-heading my-account-title">
