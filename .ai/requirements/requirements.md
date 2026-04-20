@@ -213,6 +213,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [ ] **REQ-202:** Social Login Password Fix: Allow users registered via Google/Social login to set/update their password without requiring a "Current Password" if one hasn't been set, and refactor the customer profile logic to use Service Layer and Form Requests. (NEW)
 - [x] **REQ-203:** Show Password Toggle: Implement a "Show Password" checkbox on all password-related forms in both Admin and Client interfaces to toggle visibility of current, new, and confirmation password fields. (NEW)
 - [ ] **REQ-204:** Show Password Toggle on Admin User Form: Add the "Show Password" checkbox to the Admin user creation and edit form (`resources/views/admin/users/forms.blade.php`). (NEW)
+- [ ] **REQ-205:** Modern Customer Profile UI: Redesign the customer account information page with a modern, sidebar-tabbed interface, improved typography, and consistent styling with the rest of the e-commerce frontend. (NEW)
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.
