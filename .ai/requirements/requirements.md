@@ -221,6 +221,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [ ] **REQ-210:** Account Layout Structural Fix: Repair the broken account profile layout by fixing unclosed sections and implementing a more robust CSS Grid structure that allows the sidebar to remain styled while correctly positioning content panes on desktop. (NEW)
 - [ ] **REQ-211:** Perfect Profile Desktop/Mobile Layout: Refine the CSS Grid strategy to ensure the profile page correctly renders as a sidebar-tabbed interface on desktop (with a stable white sidebar card) and an interleaved accordion on mobile. (NEW)
 - [ ] **REQ-212:** Modern Unified Profile UI: Replace the complex responsive grid logic with a clean, stable, and beautiful unified design. Uses a standard sidebar on desktop and a vertical stack on mobile, ensuring topbar/breadcrumb stability and consistent modern aesthetics. (NEW)
+- [ ] **REQ-213:** Customer Profile Image Upload: Add an option for customers to upload/update their profile image. This includes an edit icon on the avatar, a Bootstrap modal for file selection, a database migration to add the `image` column to the `users` table, and backend logic for handling file uploads. (NEW)
 
 
 ## Other

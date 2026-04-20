@@ -36,18 +36,56 @@
     }
     
     .account-avatar {
-        width: 90px;
-        height: 90px;
+        width: 100px;
+        height: 100px;
         background: linear-gradient(135deg, #7AAACE 0%, #5a8fb2 100%);
         color: #fff;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 36px;
+        font-size: 40px;
         font-weight: 700;
         margin: 0 auto 15px;
         box-shadow: 0 8px 20px rgba(122, 170, 206, 0.25);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .account-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .avatar-edit-btn {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        width: 32px;
+        height: 32px;
+        background: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        z-index: 3;
+        transition: all 0.3s ease;
+        border: 1px solid #f1f5f9;
+    }
+
+    .avatar-edit-btn:hover {
+        background: #7AAACE;
+        color: #fff;
+        transform: scale(1.1);
+    }
+
+    .avatar-container {
+        position: relative;
+        width: 110px;
+        margin: 0 auto 15px;
     }
     
     .account-nav {
@@ -202,8 +240,17 @@
             <div class="col-lg-4">
                 <div class="account-sidebar">
                     <div class="account-user-card">
-                        <div class="account-avatar">
-                            {{ strtoupper(substr($user->name, 0, 1)) }}
+                        <div class="avatar-container">
+                            <div class="account-avatar">
+                                @if($user->image)
+                                    <img src="{{ asset('storage/'.$user->image) }}" alt="{{ $user->name }}">
+                                @else
+                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                                @endif
+                            </div>
+                            <div class="avatar-edit-btn" data-bs-toggle="modal" data-bs-target="#changeAvatarModal">
+                                <iconify-icon icon="solar:camera-bold-duotone"></iconify-icon>
+                            </div>
                         </div>
                         <h4 class="mb-1 fw-bold text-dark">{{ $user->name }}</h4>
                         <p class="text-muted small mb-0">{{ $user->email }}</p>
@@ -406,6 +453,33 @@
                     
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Change Avatar Modal -->
+<div class="modal fade" id="changeAvatarModal" tabindex="-1" aria-labelledby="changeAvatarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow" style="border-radius: 20px;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="changeAvatarModalLabel">Update Profile Image</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('user.profile.image') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+                <div class="modal-body p-4">
+                    <div class="form-group-custom mb-0">
+                        <label class="form-label-custom">Select New Image</label>
+                        <input type="file" name="image" class="form-control-custom" accept="image/*" required>
+                        <p class="text-muted small mt-2 mb-0">Recommended: Square image, max 2MB (JPG, PNG, WebP, AVIF).</p>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0 pb-4">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal" style="border-radius: 12px; padding: 12px 25px;">Cancel</button>
+                    <button type="submit" class="btn-save-custom">Upload Image</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

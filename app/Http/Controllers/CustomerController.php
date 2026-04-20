@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Client\ProfileUpdateRequest;
 use App\Http\Requests\Client\UpdateAddressRequest;
 use App\Http\Requests\Client\UpdatePasswordRequest;
+use App\Http\Requests\Client\UpdateProfileImageRequest;
 use App\Services\CustomerProfileService;
 use App\Services\OrderService;
 use Illuminate\Http\RedirectResponse;
@@ -123,6 +124,17 @@ class CustomerController extends Controller
             'message' => 'Address updated successfully',
             'alert-type' => 'success',
             'active_tab' => 'address',
+        ]);
+    }
+
+    public function updateAvatar(UpdateProfileImageRequest $request): RedirectResponse
+    {
+        $userId = Auth::guard('web')->id();
+        $this->profileService->updateAvatar($userId, $request->file('image'));
+
+        return redirect()->back()->with([
+            'message' => 'Profile image updated successfully',
+            'alert-type' => 'success',
         ]);
     }
 }

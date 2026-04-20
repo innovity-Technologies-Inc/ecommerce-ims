@@ -39,8 +39,13 @@
                         <!-- Header Top Language Currency -->
                         <div class="header-top-set-lan-curr d-flex justify-content-end">
                             <div class="header-bottom-set dropdown">
-                                <button class="dropdown-toggle header-action-btn hover-style-default color-white"
-                                        data-bs-toggle="dropdown"> Settings <i class="ion-ios-arrow-down"></i></button>
+                                <button class="dropdown-toggle header-action-btn hover-style-default color-white d-flex align-items-center"
+                                        data-bs-toggle="dropdown">
+                                    @if(Auth::guard('web')->check() && Auth::guard('web')->user()->image)
+                                        <img src="{{ asset('storage/'.Auth::guard('web')->user()->image) }}" alt="" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; margin-right: 5px;">
+                                    @endif
+                                    Settings <i class="ion-ios-arrow-down ms-1"></i>
+                                </button>
                                 <ul class="dropdown-menu">
                                     @if(Auth::guard('web')->check())
                                     <li><a class="dropdown-item" href="{{route('user.account')}}">My account</a></li>
@@ -217,7 +222,13 @@
                     <div class="cart-info d-flex m-0 justify-content-end align-items-center">
                         <div class="header-bottom-set dropdown me-3">
                             <button class="dropdown-toggle border-0 bg-transparent p-0 header-action-btn hover-style-default"
-                                    data-bs-toggle="dropdown" style="font-size: 20px;"><i class="ion-person"></i></button>
+                                    data-bs-toggle="dropdown" style="font-size: 20px;">
+                                @if(Auth::guard('web')->check() && Auth::guard('web')->user()->image)
+                                    <img src="{{ asset('storage/'.Auth::guard('web')->user()->image) }}" alt="" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
+                                @else
+                                    <i class="ion-person"></i>
+                                @endif
+                            </button>
                             <ul class="dropdown-menu">
                                 @if(Auth::guard('web')->check())
                                     <li><a class="dropdown-item" href="{{route('user.account')}}">My account</a></li>
@@ -281,6 +292,23 @@
 <div id="offcanvas-mobile-menu" class="offcanvas offcanvas-mobile-menu hover-style-default">
     <button class="offcanvas-close"></button>
     <!-- contact Info -->
+    @if(Auth::guard('web')->check())
+        <div class="user-info-offcanvas d-flex align-items-center p-3 border-bottom mb-3">
+            <div class="user-avatar-offcanvas me-3">
+                @if(Auth::user()->image)
+                    <img src="{{ asset('storage/'.Auth::user()->image) }}" alt="" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                @else
+                    <div style="width: 50px; height: 50px; border-radius: 50%; background: #7AAACE; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px;">
+                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                    </div>
+                @endif
+            </div>
+            <div>
+                <h6 class="mb-0 fw-bold">{{ Auth::user()->name }}</h6>
+                <p class="mb-0 small text-muted">{{ Auth::user()->email }}</p>
+            </div>
+        </div>
+    @endif
     @if($cs && $cs->phone_number)
         <div class="contact-info d-flex align-items-center justify-content-center color-black py-3">
             <img class="me-3" src="{{asset('client/assets/images/icons/mobile-contact.png')}}" alt="">

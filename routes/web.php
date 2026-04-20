@@ -370,6 +370,7 @@ Route::prefix('checkout')->name('checkout.')->group(function () {
 Route::middleware(['auth:web', 'verified'])->prefix('user')->controller(CustomerController::class)->group(function () {
     Route::get('my-account', 'accountInformation')->name('user.account');
     Route::put('profile-update', 'profileUpdate')->name('user.profile.update');
+    Route::put('profile-image-update', 'updateAvatar')->name('user.profile.image');
     Route::put('password-update', 'changePassword')->name('user.password.update');
     Route::put('address-update', 'addressUpdate')->name('user.address.update');
     Route::get('orders', 'orderHistory')->name('user.orders');

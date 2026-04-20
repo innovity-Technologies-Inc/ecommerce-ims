@@ -64,6 +64,31 @@ class CustomerProfileService
     }
 
     /**
+     * Update customer profile image.
+     */
+    public function updateAvatar(int $userId, $image): bool
+    {
+        try {
+            $user = User::findOrFail($userId);
+
+            // Delete old image if exists
+            if ($user->image) {
+                \App\HelperClass::file_delete($user->image);
+            }
+
+            // Upload new image
+            $path = \App\HelperClass::file_upload($image, 'customers');
+
+            return $user->update([
+                'image' => $path,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error updating customer profile image: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Update customer address information.
      */
     public function updateAddress(int $userId, array $data): bool
