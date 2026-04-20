@@ -123,6 +123,10 @@
                 background: #fff;
                 display: block !important;
             }
+            .cart-shiping-update a {
+                white-space: nowrap !important;
+                padding: 10px 15px !important;
+            }
         }
     </style>
     <!-- cart area start -->
@@ -184,7 +188,7 @@
                                         <tr>
                                             <td colspan="6" class="text-center py-5">
                                                 <h4>Your cart is empty.</h4>
-                                                <a href="{{ route('client.products.index') }}" class="btn btn-primary mt-3">Go to Shop</a>
+                                                <a href="{{ route('client.products.index') }}" class="btn btn-primary mt-3" style="white-space: nowrap !important;">Go to Shop</a>
                                             </td>
                                         </tr>
                                     @endif
