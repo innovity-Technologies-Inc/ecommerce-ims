@@ -223,7 +223,9 @@ This document lists the high-level requirements for the modules implemented in t
 - [ ] **REQ-212:** Modern Unified Profile UI: Replace the complex responsive grid logic with a clean, stable, and beautiful unified design. Uses a standard sidebar on desktop and a vertical stack on mobile, ensuring topbar/breadcrumb stability and consistent modern aesthetics. (NEW)
 - [x] **REQ-213:** Customer Profile Image Upload: Add an option for customers to upload/update their profile image. This includes an edit icon on the avatar, a Bootstrap modal for file selection, a database migration to add the `image` column to the `users` table, and backend logic for handling file uploads. (NEW)
 - [x] **REQ-214:** Mobile Cart Icon Adjustment: Reduce the size of the cart icon and quantity badge in mobile view for better visual balance. (NEW)
-- [ ] **REQ-215:** Product Sort Mobile Wrapping Fix: Ensure the "Sort By" text and dropdown in the products page stay on a single line on mobile devices to prevent layout shifts. (NEW)
+- [x] **REQ-215:** Product Sort Mobile Wrapping Fix: Ensure the "Sort By" text and dropdown in the products page stay on a single line on mobile devices to prevent layout shifts. (NEW)
+- [ ] **REQ-216:** Order History "Start Shopping" Button Fix: Ensure the "Start Shopping" button in the empty order history view stays on a single line on mobile devices by preventing text wrapping. (NEW)
+
 
 
 ## Other
