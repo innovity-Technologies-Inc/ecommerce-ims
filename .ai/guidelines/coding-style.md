@@ -126,6 +126,7 @@ You MUST strictly follow this sequence for **EVERY** request:
 - **Models:**
     - Use `casts()` method instead of `$casts` property.
     - Define relationships with explicit return types (e.g., `: HasMany`).
+    - **MANDATORY:** When adding new columns to a database table via migration, you MUST always add the corresponding field to the `$fillable` array in the Eloquent model to prevent mass-assignment issues.
 - **Middleware/Exceptions:** Configured in `bootstrap/app.php`.
 - **Configuration:** Always use `config('key')`, never `env('KEY')` outside of config files.
 

@@ -5,6 +5,21 @@
     $nav_categories = \App\HelperClass::getCategories();
     $nav_brands = \App\HelperClass::getBrands();
 @endphp
+<style>
+    @media (max-width: 991px) {
+        .mobile-navigation .count-cart i {
+            font-size: 20px !important;
+        }
+        .mobile-navigation .item-quantity-tag {
+            width: 15px !important;
+            height: 15px !important;
+            line-height: 15px !important;
+            font-size: 9px !important;
+            top: -5px !important;
+            right: -5px !important;
+        }
+    }
+</style>
 <header class="main-header">
     <!-- Header Top Start -->
     <div class="header-top-nav">
@@ -250,6 +265,7 @@
                         </div>
                         <div class="mini-cart-warp me-3">
                             <a href="#offcanvas-cart" class="count-cart color-black offcanvas-toggle">
+                                <i class="ion-bag"></i>
                                 <span class="item-quantity-tag">{{ sprintf('%02d', \App\HelperClass::cartCount()) }}</span>
                             </a>
                         </div>
