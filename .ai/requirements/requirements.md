@@ -211,7 +211,8 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-200:** FlexSearch v4.0.0 Guidelines: Update project coding style guidelines with version-specific implementation patterns for FlexSearch v4.0.0, including multi-column filtering and relationship searching. (NEW)
 - [ ] **REQ-201:** Split Customer Stats Rows: Reorganize the summary metrics in the Customer Reports overview to be displayed across two rows (3 + 2) for improved visual balance. (NEW)
 - [ ] **REQ-202:** Social Login Password Fix: Allow users registered via Google/Social login to set/update their password without requiring a "Current Password" if one hasn't been set, and refactor the customer profile logic to use Service Layer and Form Requests. (NEW)
-- [ ] **REQ-203:** Show Password Toggle: Implement a "Show Password" checkbox on all password-related forms in both Admin and Client interfaces to toggle visibility of current, new, and confirmation password fields. (NEW)
+- [x] **REQ-203:** Show Password Toggle: Implement a "Show Password" checkbox on all password-related forms in both Admin and Client interfaces to toggle visibility of current, new, and confirmation password fields. (NEW)
+- [ ] **REQ-204:** Show Password Toggle on Admin User Form: Add the "Show Password" checkbox to the Admin user creation and edit form (`resources/views/admin/users/forms.blade.php`). (NEW)
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.

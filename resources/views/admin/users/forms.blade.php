@@ -57,6 +57,13 @@
                                     </div>
                                 </div>
 
+                                <div class="col-lg-12">
+                                    <div class="form-check mb-3">
+                                        <input type="checkbox" class="form-check-input toggle-password-visibility" id="show-password-user">
+                                        <label class="form-check-label" for="show-password-user">Show Passwords</label>
+                                    </div>
+                                </div>
+
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label for="role" class="form-label">Assign Role <span class="text-danger">*</span></label>
