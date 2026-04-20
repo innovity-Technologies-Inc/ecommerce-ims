@@ -70,6 +70,15 @@ class HelperClass
         Storage::disk('public')->delete($file_path);
     }
 
+    public static function getProductTotalStock($product)
+    {
+        if ($product->variants->count() > 0) {
+            return $product->variants->sum('stock') ?? 0;
+        }
+
+        return $product->stock ?? 0;
+    }
+
     public static function getProductPriceRange($product)
     {
         $prices = collect();

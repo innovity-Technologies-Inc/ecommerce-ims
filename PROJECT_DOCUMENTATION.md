@@ -566,6 +566,9 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     - **Visualization:** **ApexCharts** for interactive charts and heatmaps.
     - **Navigation:** Added to the "Reports" section in the Admin Sidebar.
 
+- **Frontend Action Enhancements (REQ-219):**
+    - **Stock-Aware Add to Cart:** Real-time stock validation for "Add to Cart" buttons. Disables the button and shows "OUT OF STOCK" when products or specific variants are unavailable, preventing invalid cart additions.
+
 - **Customer Profile Management (REQ-202, REQ-212):**
     - **Service Layer:** `CustomerProfileService` centralizes all logic for updating user records, handling password hashing, and validating current credentials.
     - **UI Architecture:** A beautiful, unified design featuring a clean sidebar on desktop and a vertical stack on mobile. Built with standard Bootstrap 5 components for maximum structural stability and visual consistency.

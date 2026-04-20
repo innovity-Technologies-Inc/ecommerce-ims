@@ -200,7 +200,14 @@
                                 <input class="cart-plus-minus-box" type="text" name="qtybutton" value="1" id="product-quantity">
                             </div>
                             <div class="pro-details-cart btn-hover">
-                                <a href="javascript:void(0)" class="add-to-cart-btn" data-product-id="{{ $product->id }}"> + Add To Cart</a>
+                                @php
+                                    $initialStock = ($product->variants->count() > 0 ? $product->variants->first()->stock : $product->stock);
+                                @endphp
+                                <a href="javascript:void(0)" class="add-to-cart-btn {{ $initialStock <= 0 ? 'disabled' : '' }}" 
+                                   data-product-id="{{ $product->id }}"
+                                   style="{{ $initialStock <= 0 ? 'background-color: #ef4444; border-color: #ef4444; color: white; cursor: not-allowed; opacity: 0.8;' : '' }}">
+                                   {{ $initialStock <= 0 ? 'OUT OF STOCK' : '+ Add To Cart' }}
+                                </a>
                             </div>
                         </div>
                         @else
@@ -341,12 +348,25 @@
 
                 // Update Stock
                 if (!isNaN(stock)) {
+                    const addToCartBtn = $('.add-to-cart-btn');
                     if (stock > 0) {
                         stockDisplay.text(stock + ' In Stock').removeClass('bg-danger').addClass('bg-success');
-                        $('.add-to-cart-btn').parent().show();
+                        addToCartBtn.removeClass('disabled').text('+ Add To Cart').css({
+                            'background-color': '',
+                            'border-color': '',
+                            'color': '',
+                            'cursor': '',
+                            'opacity': ''
+                        });
                     } else {
                         stockDisplay.text('Out of Stock').removeClass('bg-success').addClass('bg-danger');
-                        $('.add-to-cart-btn').parent().hide();
+                        addToCartBtn.addClass('disabled').text('OUT OF STOCK').css({
+                            'background-color': '#ef4444',
+                            'border-color': '#ef4444',
+                            'color': 'white',
+                            'cursor': 'not-allowed',
+                            'opacity': '0.8'
+                        });
                     }
                 }
             });

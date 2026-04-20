@@ -58,8 +58,13 @@
     </div>
     <div class="add-to-link">
         <ul>
+            @php
+                $totalStock = \App\HelperClass::getProductTotalStock($product);
+            @endphp
             @if(!$product->status)
                 <li class="cart"><a class="cart-btn" href="{{ route('client.products.details', $product->slug) }}">VIEW DETAILS</a></li>
+            @elseif($totalStock <= 0)
+                <li class="cart"><a class="cart-btn disabled" style="background-color: #ef4444; border-color: #ef4444; color: white; cursor: not-allowed; opacity: 0.8;" href="javascript:void(0)">OUT OF STOCK</a></li>
             @elseif($product->variants->count() > 0)
                 <li class="cart"><a class="cart-btn" href="{{ route('client.products.details', $product->slug) }}">SELECT OPTIONS</a></li>
             @else
