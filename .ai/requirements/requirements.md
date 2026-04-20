@@ -209,6 +209,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-196:** Stock Index Performance & UX: Fix flickering and blurring issues on the stock index page (especially in Firefox) during scrolling and AJAX updates. This includes optimizing background gradients by using fixed pseudo-elements, neutralizing problematic backdrop-filters, and implementing a stable loading overlay that prevents layout shifts. (NEW)
 - [ ] **REQ-199:** Guest Customer Counter in Reports: Add a "Guest Customers" counter to the Customer Purchase Reports overview. Guest customers are identified by orders with no `user_id`, counted by unique email addresses. (NEW)
 - [x] **REQ-200:** FlexSearch v4.0.0 Guidelines: Update project coding style guidelines with version-specific implementation patterns for FlexSearch v4.0.0, including multi-column filtering and relationship searching. (NEW)
+- [ ] **REQ-201:** Split Customer Stats Rows: Reorganize the summary metrics in the Customer Reports overview to be displayed across two rows (3 + 2) for improved visual balance. (NEW)
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.

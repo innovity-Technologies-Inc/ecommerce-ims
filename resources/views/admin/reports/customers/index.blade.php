@@ -28,8 +28,8 @@
     </div>
 
     <!-- Summary Metrics -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-4 col-lg">
+    <div class="row g-3 mb-3">
+        <div class="col-md-4">
             <div class="card border-0 shadow-sm border-start border-primary border-4 h-100" data-bs-toggle="tooltip" title="Total registered customers in the system">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
@@ -46,7 +46,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4 col-lg">
+        <div class="col-md-4">
             <div class="card border-0 shadow-sm border-start border-success border-4 h-100" data-bs-toggle="tooltip" title="New customers registered within the selected period">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
@@ -63,7 +63,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4 col-lg">
+        <div class="col-md-4">
             <div class="card border-0 shadow-sm border-start border-secondary border-4 h-100" data-bs-toggle="tooltip" title="Unique guest customers (unregistered) based on email from orders in the selected period">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
@@ -80,7 +80,10 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4 col-lg">
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
             <div class="card border-0 shadow-sm border-start border-info border-4 h-100" data-bs-toggle="tooltip" title="Customers with more than one order in the selected period">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
@@ -97,7 +100,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4 col-lg">
+        <div class="col-md-6">
             <div class="card border-0 shadow-sm border-start border-warning border-4 h-100" data-bs-toggle="tooltip" title="Customers who placed an order in the last 3 months">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
