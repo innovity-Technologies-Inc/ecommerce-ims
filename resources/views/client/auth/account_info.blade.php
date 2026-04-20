@@ -84,6 +84,18 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         padding: 30px;
         border: none;
+    }
+    .tab-pane {
+        width: 100%;
+    }
+    .tab-pane:not(.active) {
+        display: none !important;
+        height: 0 !important;
+        overflow: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    .profile-item-wrapper .tab-pane.active {
         margin-top: 15px;
         margin-bottom: 15px;
     }

@@ -215,6 +215,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [ ] **REQ-204:** Show Password Toggle on Admin User Form: Add the "Show Password" checkbox to the Admin user creation and edit form (`resources/views/admin/users/forms.blade.php`). (NEW)
 - [x] **REQ-205:** Modern Customer Profile UI: Redesign the customer account information page with a modern, sidebar-tabbed interface, improved typography, and consistent styling with the rest of the e-commerce frontend. (NEW)
 - [ ] **REQ-206:** Responsive Profile Layout (Mobile Accordion): Update the profile page to behave like an accordion on mobile devices, where clicking a tab section opens the corresponding form immediately below the tab button, while maintaining the sidebar-tab layout on desktop. (NEW)
+- [ ] **REQ-207:** Profile Mobile Spacing Fix: Resolve the issue where hidden tab panes on mobile were still occupying vertical space, causing large gaps between section buttons. Ensure hidden panes are fully removed from the layout until activated. (NEW)
 
 
 ## Other
