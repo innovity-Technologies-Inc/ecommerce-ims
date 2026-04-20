@@ -566,14 +566,9 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     - **Visualization:** **ApexCharts** for interactive charts and heatmaps.
     - **Navigation:** Added to the "Reports" section in the Admin Sidebar.
 
-### **12. Customer Profile Management (REQ-202)**
-- **What (Business Purpose):** Enables customers to manage their personal information, delivery addresses, and account security (passwords) autonomously.
-- **How it Works (Technical Flow):**
-    1. **Service Layer:** `CustomerProfileService` centralizes all logic for updating user records, handling password hashing, and validating current credentials.
-    - **Social Login Integration:** Specifically addresses users who registered via Google Auth by allowing them to "set" their first password without requiring a non-existent "Current Password". Once a password is created, standard security protocols (Current Password validation) are automatically enforced.
-    - **Password Visibility Toggle (REQ-203):** Standardized implementation of "Show Password" checkboxes across all authentication and profile forms (Login, Register, Reset, and Profile Updates) in both Admin and Client interfaces.
-    - **Form Requests:** Standardized validation for basic info (`ProfileUpdateRequest`), security (`UpdatePasswordRequest`), and shipping details (`UpdateAddressRequest`).
+- **Customer Profile Management (REQ-202, REQ-212):**
+    - **Service Layer:** `CustomerProfileService` centralizes all logic for updating user records, handling password hashing, and validating current credentials.
+    - **UI Architecture:** A beautiful, unified design featuring a clean sidebar on desktop and a vertical stack on mobile. Built with standard Bootstrap 5 components for maximum structural stability and visual consistency.
+    - **Social Login Integration:** Specifically addresses users who registered via Google Auth by allowing them to "set" their first password without requiring a non-existent "Current Password".
+    - **Password Visibility Toggle (REQ-203):** Standardized implementation of "Show Password" checkboxes across all security forms.
 
-- **Data & Storage (DB Connectivity):**
-    - Directly interacts with the `users` table.
-    - Uses `google_id` and `password` fields to determine the security context for each user.
