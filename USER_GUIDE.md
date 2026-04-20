@@ -169,6 +169,7 @@ The Customer Reports section provides deep insights into your customer base, hel
 
 ### **9.1 Overview Metrics**
 *   **Total Customers:** All registered users in the system.
+*   **Guest Customers:** Unique unregistered shoppers identified by their email addresses in orders.
 *   **Returning Customers:** Users who have placed more than one successful order.
 *   **Active Customers:** Users who have purchased within the last 90 days.
 *   **Average Order Value (AOV):** `Total Sales Revenue / Number of Orders`.

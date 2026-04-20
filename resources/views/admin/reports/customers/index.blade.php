@@ -29,7 +29,7 @@
 
     <!-- Summary Metrics -->
     <div class="row g-3 mb-4">
-        <div class="col-md-3">
+        <div class="col-md-4 col-lg">
             <div class="card border-0 shadow-sm border-start border-primary border-4 h-100" data-bs-toggle="tooltip" title="Total registered customers in the system">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
@@ -46,7 +46,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4 col-lg">
             <div class="card border-0 shadow-sm border-start border-success border-4 h-100" data-bs-toggle="tooltip" title="New customers registered within the selected period">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
@@ -63,7 +63,24 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4 col-lg">
+            <div class="card border-0 shadow-sm border-start border-secondary border-4 h-100" data-bs-toggle="tooltip" title="Unique guest customers (unregistered) based on email from orders in the selected period">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 me-3">
+                            <div class="avatar-sm bg-soft-secondary rounded">
+                                <i class="bx bx-user-voice fs-24 text-secondary mt-2 ms-2"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="text-muted small text-uppercase mb-1">Guest Customers <i class="bx bx-info-circle small"></i></h6>
+                            <h3 class="mb-0 fw-bold text-secondary">{{ number_format($stats['guest_customers']) }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg">
             <div class="card border-0 shadow-sm border-start border-info border-4 h-100" data-bs-toggle="tooltip" title="Customers with more than one order in the selected period">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
@@ -80,7 +97,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4 col-lg">
             <div class="card border-0 shadow-sm border-start border-warning border-4 h-100" data-bs-toggle="tooltip" title="Customers who placed an order in the last 3 months">
                 <div class="card-body">
                     <div class="d-flex align-items-center">

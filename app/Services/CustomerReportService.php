@@ -15,8 +15,8 @@ class CustomerReportService
      */
     public function getOverviewStats(array $filters): array
     {
-        $startDate = $filters['start_date'] ?? Carbon::now()->startOfMonth();
-        $endDate = $filters['end_date'] ?? Carbon::now()->endOfDay();
+        $startDate = isset($filters['start_date']) ? Carbon::parse($filters['start_date'])->startOfDay() : Carbon::now()->startOfMonth();
+        $endDate = isset($filters['end_date']) ? Carbon::parse($filters['end_date'])->endOfDay() : Carbon::now()->endOfDay();
 
         $totalCustomers = User::count();
         $newCustomers = User::whereBetween('created_at', [$startDate, $endDate])->count();
@@ -30,6 +30,11 @@ class CustomerReportService
             $query->where('created_at', '>=', Carbon::now()->subMonths(3));
         })->count();
 
+        $guestCustomers = Order::whereNull('user_id')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->distinct('email')
+            ->count('email');
+
         $avgOrderValue = Order::where('order_status', '!=', 'cancelled')
             ->whereBetween('created_at', [$startDate, $endDate])
             ->avg('total_amount') ?? 0;
@@ -37,6 +42,7 @@ class CustomerReportService
         return [
             'total_customers' => $totalCustomers,
             'new_customers' => $newCustomers,
+            'guest_customers' => $guestCustomers,
             'returning_customers' => $returningCustomers,
             'active_customers' => $activeCustomers,
             'avg_order_value' => $avgOrderValue,

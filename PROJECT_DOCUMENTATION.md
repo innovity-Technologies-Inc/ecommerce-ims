@@ -547,6 +547,7 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     - **Purchase Behavior:** Visual analysis of order status distribution and AOV trends using ApexCharts.
     - **Cohort Analysis:** A retention heatmap tracking user activity grouped by registration month over a 6-month window.
     - **CLV Projections:** Predictive analysis of future customer value based on historical behavior.
+    - **Guest Customer Tracking (REQ-199):** Identifies and counts unique guest shoppers based on email addresses from orders where `user_id` is null, providing a more complete picture of the total customer base beyond registered users.
     - **Standardized Action Buttons:** Primary actions (View, Edit, Delete, Add) are now icon-only with tooltips for a cleaner UI.
     - **Route Verification Mandate:** All Blade routes must be verified using `php artisan route:list` before implementation to prevent fictional route errors.
 
