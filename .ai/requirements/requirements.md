@@ -216,6 +216,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-205:** Modern Customer Profile UI: Redesign the customer account information page with a modern, sidebar-tabbed interface, improved typography, and consistent styling with the rest of the e-commerce frontend. (NEW)
 - [ ] **REQ-206:** Responsive Profile Layout (Mobile Accordion): Update the profile page to behave like an accordion on mobile devices, where clicking a tab section opens the corresponding form immediately below the tab button, while maintaining the sidebar-tab layout on desktop. (NEW)
 - [ ] **REQ-207:** Profile Mobile Spacing Fix: Resolve the issue where hidden tab panes on mobile were still occupying vertical space, causing large gaps between section buttons. Ensure hidden panes are fully removed from the layout until activated. (NEW)
+- [ ] **REQ-208:** Profile Tab Toggle Behavior: Update the profile section navigation to allow "click-to-close" functionality. If an active tab is clicked again, it should collapse (close), behaving like a true accordion. (NEW)
 
 
 ## Other

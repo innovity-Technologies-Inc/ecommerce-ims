@@ -343,4 +343,23 @@
     </div>
 </div>
 
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        $('.nav-profile .nav-link').on('click', function(e) {
+            const $this = $(this);
+            const targetId = $this.data('bs-target');
+            const $targetPane = $(targetId);
+
+            if ($this.hasClass('active')) {
+                // If already active, toggle it OFF
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                
+                $this.removeClass('active').attr('aria-selected', 'false');
+                $targetPane.removeClass('show active');
+            }
+        });
+    });
+</script>
 @endsection
