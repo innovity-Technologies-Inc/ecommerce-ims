@@ -14,6 +14,12 @@
         .select-shoing-wrap {
             display: flex;
             align-items: center;
+            flex-wrap: nowrap;
+        }
+        .shot-product p {
+            white-space: nowrap;
+            margin-bottom: 0;
+            margin-right: 10px;
         }
         @media (max-width: 767px) {
             .shop-top-bar {
