@@ -62,9 +62,27 @@ You MUST strictly follow this sequence for **EVERY** request:
 - Every store, update, or action-based request **MUST** have a dedicated class created via `php artisan make:request`.
 - Inline `$request->validate([...])` is strictly prohibited.
 
-### **Search & Filtering (Mandatory FlexSearch)**
-- **MANDATORY:** Every search and filtering operation in the Admin Panel **MUST** utilize the `FlexSearch` engine (powered by `daiyanmozumder/laravel-flexsearch`).
-- **ALL** search logic and multi-column filtering parameters **MUST** be implemented within the **Service Layer** by injecting `FlexSearch` and using its `apply()` method.
+### **Search & Filtering (Mandatory FlexSearch v4.0.0)**
+- **MANDATORY:** Every search and filtering operation in the Admin Panel **MUST** utilize the `FlexSearch` engine (powered by `daiyanmozumder/laravel-flexsearch` v4.0.0+).
+- **ALL** search logic and multi-column filtering parameters **MUST** be implemented within the **Service Layer** by injecting `DaiyanMozumder\FlexSearch\FlexSearch` and using its `apply()` method.
+- **Service Implementation Pattern:**
+  ```php
+  public function listItems(array $params): LengthAwarePaginator
+  {
+      $query = Model::query();
+      $searchConfig = [
+          'searchable' => ['name', 'sku', 'description'], // Columns for keyword search
+          'filterable' => ['category_id', 'status'],      // Exact match filters
+          'sortable'   => ['created_at', 'price'],        // Allowed sort columns
+          'relationships' => [                            // Optional: Search in relations
+              'category' => ['name'],
+          ]
+      ];
+
+      return $this->flexSearch->apply($query, $params, $searchConfig)
+          ->paginate($params['per_page'] ?? 10);
+  }
+  ```
 - Controllers **MUST NOT** build search queries using `->where('name', 'like', ...)` or similar manual logic.
 - AJAX-driven live searching and sorting with URL synchronization (`window.history.pushState`) is the project standard.
 

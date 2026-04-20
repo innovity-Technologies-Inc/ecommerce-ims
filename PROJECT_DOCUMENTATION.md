@@ -8,7 +8,7 @@
 ## 2. Core Architectural Standards
 - **Service Layer Pattern:** 100% of business logic resides in `app/Services`. Controllers are strictly for routing.
 - **Form Requests:** All validation is handled by dedicated Request classes.
-- **FlexSearch Engine:** All searching and filtering in the Admin Panel use AJAX-driven FlexSearch for speed and consistency.
+- **FlexSearch Engine (v4.0.0+):** All searching and filtering in the Admin Panel use AJAX-driven FlexSearch for speed and consistency. It supports multi-column filtering, relationship searching, and dynamic sorting.
 - **Atomic Operations:** Inventory and financial updates are wrapped in DB Transactions to ensure zero data loss.
 
 ---
