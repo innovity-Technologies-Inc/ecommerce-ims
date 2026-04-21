@@ -9,6 +9,10 @@ $(document).ready(function() {
     // Add to Cart
     $(document).on('click', '.add-to-cart-btn', function(e) {
         e.preventDefault();
+
+        if ($(this).hasClass('disabled')) {
+            return false;
+        }
         
         let productId = $(this).data('product-id');
         let quantity = $('#product-quantity').val() || $(this).data('quantity') || 1;

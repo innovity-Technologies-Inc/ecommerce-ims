@@ -227,7 +227,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-216:** Order History "Start Shopping" Button Fix: Ensure the "Start Shopping" button in the empty order history view stays on a single line on mobile devices by preventing text wrapping. (NEW)
 - [x] **REQ-217:** Cart Page Shopping Buttons Fix: Ensure the "Go to Shop" and "Continue Shopping" buttons on the cart page stay on a single line on mobile devices to prevent text wrapping and improve layout consistency. (NEW)
 - [ ] **REQ-218:** Cart Empty State and Button Standardization: Ensure "Your cart is empty" stays on one line. Remove the redundant "Go to Shop" button. Make action buttons ("Continue Shopping", "Clear Cart", "Proceed to Checkout") visually similar in size. When the cart is empty, hide all action buttons except "Continue Shopping" and hide the cart total/banner section. (NEW)
-- [ ] **REQ-219:** Stock-Aware Add to Cart Button: Disable the "Add to Cart" button when a product or specific variant is out of stock. Replace the button text with "Out of Stock" and ensure this applies to both product listing and details pages. (NEW)
+- [x] **REQ-219:** Stock-Aware Add to Cart Button: Disable the "Add to Cart" button when a product or specific variant is out of stock. Prevent clicks on disabled buttons via JavaScript and maintain consistent visual feedback. (UPDATED)
 
 
 

@@ -206,7 +206,7 @@
                                 <a href="javascript:void(0)" class="add-to-cart-btn {{ $initialStock <= 0 ? 'disabled' : '' }}" 
                                    data-product-id="{{ $product->id }}"
                                    style="{{ $initialStock <= 0 ? 'background-color: #ef4444; border-color: #ef4444; color: white; cursor: not-allowed; opacity: 0.8;' : '' }}">
-                                   {{ $initialStock <= 0 ? 'OUT OF STOCK' : '+ Add To Cart' }}
+                                   + Add To Cart
                                 </a>
                             </div>
                         </div>
@@ -360,7 +360,7 @@
                         });
                     } else {
                         stockDisplay.text('Out of Stock').removeClass('bg-success').addClass('bg-danger');
-                        addToCartBtn.addClass('disabled').text('OUT OF STOCK').css({
+                        addToCartBtn.addClass('disabled').text('+ Add To Cart').css({
                             'background-color': '#ef4444',
                             'border-color': '#ef4444',
                             'color': 'white',
