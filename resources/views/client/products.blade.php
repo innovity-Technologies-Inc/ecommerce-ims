@@ -171,12 +171,12 @@
                                                                     @endphp
                                                                     @if(!$product->status)
                                                                         <li class="cart"><a class="cart-btn" href="{{ route('client.products.details', $product->slug) }}">VIEW DETAILS</a></li>
-                                                                    @elseif($totalStock <= 0)
-                                                                        <li class="cart"><a class="cart-btn add-to-cart-btn disabled" style="background-color: #a0a0a0; border-color: #a0a0a0; color: white; cursor: not-allowed; opacity: 0.8;" href="javascript:void(0)" data-product-id="{{ $product->id }}">ADD TO CART</a></li>
-                                                                    @elseif($product->variants->count() > 0)
-                                                                        <li class="cart"><a class="cart-btn" href="{{ route('client.products.details', $product->slug) }}">SELECT OPTIONS</a></li>
-                                                                    @else
-                                                                        <li class="cart"><a class="cart-btn add-to-cart-btn" href="javascript:void(0)" data-product-id="{{ $product->id }}" data-quantity="1">ADD TO CART</a></li>
+                                                                    @elseif($totalStock > 0)
+                                                                        @if($product->variants->count() > 0)
+                                                                            <li class="cart"><a class="cart-btn" href="{{ route('client.products.details', $product->slug) }}">SELECT OPTIONS</a></li>
+                                                                        @else
+                                                                            <li class="cart"><a class="cart-btn add-to-cart-btn" href="javascript:void(0)" data-product-id="{{ $product->id }}" data-quantity="1">ADD TO CART</a></li>
+                                                                        @endif
                                                                     @endif
                                                                     @if(Auth::guard('web')->check())
                                                                     <li>
