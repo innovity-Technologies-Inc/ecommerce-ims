@@ -205,7 +205,7 @@
                                 @endphp
                                 <a href="javascript:void(0)" class="add-to-cart-btn {{ $initialStock <= 0 ? 'disabled' : '' }}" 
                                    data-product-id="{{ $product->id }}"
-                                   style="{{ $initialStock <= 0 ? 'background-color: #ef4444; border-color: #ef4444; color: white; cursor: not-allowed; opacity: 0.8;' : '' }}">
+                                   style="{{ $initialStock <= 0 ? 'background-color: #a0a0a0; border-color: #a0a0a0; color: white; cursor: not-allowed; opacity: 0.8;' : '' }}">
                                    + Add To Cart
                                 </a>
                             </div>
@@ -361,8 +361,8 @@
                     } else {
                         stockDisplay.text('Out of Stock').removeClass('bg-success').addClass('bg-danger');
                         addToCartBtn.addClass('disabled').text('+ Add To Cart').css({
-                            'background-color': '#ef4444',
-                            'border-color': '#ef4444',
+                            'background-color': '#a0a0a0',
+                            'border-color': '#a0a0a0',
                             'color': 'white',
                             'cursor': 'not-allowed',
                             'opacity': '0.8'
