@@ -85,7 +85,7 @@
                                 @foreach($behavior['aov_trend'] as $trend)
                                     <tr>
                                         <td>{{ \Carbon\Carbon::parse($trend->month . '-01')->format('M Y') }}</td>
-                                        <td class="text-end fw-bold">${{ number_format($trend->aov, 2) }}</td>
+                                        <td class="text-end fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($trend->aov, 2) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -146,7 +146,7 @@
         },
         yaxis: {
             labels: {
-                formatter: (val) => '$' + val.toFixed(0)
+                formatter: (val) => "{{ $gs->currency ?? '$' }}" + val.toFixed(0)
             }
         }
     }).render();

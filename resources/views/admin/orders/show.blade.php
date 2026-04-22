@@ -1,5 +1,6 @@
 @extends('admin.structure.app')
 @section('content')
+@php $gs = \App\HelperClass::generalSettings(); @endphp
 
     <div class="container-xxl">
         <div class="d-flex align-items-center justify-content-between mb-3">
@@ -98,14 +99,14 @@
                                             </div>
                                         </td>
                                         <td>
-                                            ${{ number_format($item->regular_price, 2) }}
+                                            {{ $gs->currency ?? '$' }}{{ number_format($item->regular_price, 2) }}
                                         </td>
                                         <td>{{ $item->quantity }}</td>
                                         <td>
-                                            ${{ number_format($item->regular_price * $item->quantity, 2) }}
+                                            {{ $gs->currency ?? '$' }}{{ number_format($item->regular_price * $item->quantity, 2) }}
                                             @if($item->total_cost > 0)
                                                 <div class="small text-muted mt-1" title="Procurement Cost">
-                                                    Proc. Cost: ${{ number_format($item->total_cost, 2) }}
+                                                    Proc. Cost: {{ $gs->currency ?? '$' }}{{ number_format($item->total_cost, 2) }}
                                                 </div>
                                             @endif
                                         </td>
@@ -122,11 +123,11 @@
                                         <tbody>
                                         <tr>
                                             <th>Subtotal :</th>
-                                            <td class="text-end">${{ number_format($order->subtotal, 2) }}</td>
+                                            <td class="text-end">{{ $gs->currency ?? '$' }}{{ number_format($order->subtotal, 2) }}</td>
                                         </tr>
                                         <tr>
                                             <th>Shipping :</th>
-                                            <td class="text-end">${{ number_format($order->shipping_charge, 2) }}</td>
+                                            <td class="text-end">{{ $gs->currency ?? '$' }}{{ number_format($order->shipping_charge, 2) }}</td>
                                         </tr>
                                         <tr>
                                             <th>Discount :</th>
@@ -134,18 +135,18 @@
                                                 @if($order->coupon)
                                                     <span class="badge bg-soft-success text-success me-1">{{ $order->coupon->code }}</span>
                                                 @endif
-                                                ${{ number_format($order->discount, 2) }}
+                                                {{ $gs->currency ?? '$' }}{{ number_format($order->discount, 2) }}
                                             </td>
                                         </tr>
                                         @if($order->total_cost > 0)
                                         <tr>
                                             <th>Total Cost :</th>
-                                            <td class="text-end text-muted small">${{ number_format($order->total_cost, 2) }}</td>
+                                            <td class="text-end text-muted small">{{ $gs->currency ?? '$' }}{{ number_format($order->total_cost, 2) }}</td>
                                         </tr>
                                         @endif
                                         <tr class="border-top">
                                             <th class="fs-16">Total :</th>
-                                            <td class="text-end fs-16 fw-bold">${{ number_format($order->total_amount, 2) }}</td>
+                                            <td class="text-end fs-16 fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($order->total_amount, 2) }}</td>
                                         </tr>
                                         </tbody>
                                     </table>

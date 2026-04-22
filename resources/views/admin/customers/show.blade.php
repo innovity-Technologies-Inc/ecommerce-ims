@@ -82,7 +82,7 @@
                                             <a href="{{ route('admin.orders.show', $order->id) }}" class="fw-bold">{{ $order->order_id }}</a>
                                         </td>
                                         <td>{{ $order->created_at->format('d M, Y') }}</td>
-                                        <td>${{ number_format($order->total_amount, 2) }}</td>
+                                        <td>{{ $gs->currency ?? '$' }}{{ number_format($order->total_amount, 2) }}</td>
                                         <td>
                                             @php
                                                 $statusClass = match($order->order_status) {

@@ -162,7 +162,7 @@
                             <i class="bx bx-dollar-circle fs-1 text-primary"></i>
                         </div>
                         <h6 class="text-muted text-uppercase fw-bold small mb-2">Live Inventory Value <i class="bx bx-info-circle small"></i></h6>
-                        <h2 class="fw-bold text-dark mb-3">${{ number_format($report['inventory_value'] ?? 0, 2) }}</h2>
+                        <h2 class="fw-bold text-dark mb-3">{{ $gs->currency ?? '$' }}{{ number_format($report['inventory_value'] ?? 0, 2) }}</h2>
                         <div class="bg-light p-2 px-3 rounded-pill d-inline-block" data-bs-toggle="tooltip" title="How many times the average inventory was sold during this period (Cost of Goods Sold / Inventory Value)">
                             <span class="small text-muted me-2">Stock Turnover:</span>
                             <span class="fw-bold text-primary">{{ number_format($report['stock_turnover'] ?? 0, 2) }}x <i class="bx bx-info-circle x-small"></i></span>

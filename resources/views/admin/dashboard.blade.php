@@ -9,7 +9,7 @@
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
                             <p class="text-muted fw-medium text-truncate mb-2">Today's Revenue <i class="bx bx-info-circle small"></i></p>
-                            <h4 class="mb-0 text-dark">{{ config('app.currency', '$') }}{{ number_format($summary['todaySales'], 2) }}</h4>
+                            <h4 class="mb-0 text-dark">{{ $gs->currency ?? '$' }}{{ number_format($summary['todaySales'], 2) }}</h4>
                         </div>
                         <div class="avatar-md bg-soft-primary rounded">
                             <i class="bx bx-dollar-circle avatar-title fs-24 text-primary"></i>
@@ -25,7 +25,7 @@
                         <div class="d-flex align-items-center justify-content-between">
                             <div>
                                 <p class="text-muted fw-medium text-truncate mb-2">This Month's Revenue <i class="bx bx-info-circle small"></i></p>
-                                <h4 class="mb-0 text-dark">{{ config('app.currency', '$') }}{{ number_format($summary['thisMonthSales'], 2) }}</h4>
+                                <h4 class="mb-0 text-dark">{{ $gs->currency ?? '$' }}{{ number_format($summary['thisMonthSales'], 2) }}</h4>
                             </div>
                             <div class="avatar-md bg-soft-primary rounded">
                                 <i class="bx bx-cart avatar-title fs-24 text-primary"></i>
@@ -42,7 +42,7 @@
                         <div class="d-flex align-items-center justify-content-between">
                             <div>
                                 <p class="text-muted fw-medium text-truncate mb-2">This Year's Revenue <i class="bx bx-info-circle small"></i></p>
-                                <h4 class="mb-0 text-dark">{{ config('app.currency', '$') }}{{ number_format($summary['thisYearSales'], 2) }}</h4>
+                                <h4 class="mb-0 text-dark">{{ $gs->currency ?? '$' }}{{ number_format($summary['thisYearSales'], 2) }}</h4>
                             </div>
                             <div class="avatar-md bg-soft-success rounded">
                                 <i class="bx bx-line-chart avatar-title fs-24 text-success"></i>
@@ -61,7 +61,7 @@
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
                             <p class="text-muted fw-medium text-truncate mb-2">Today's Profit <i class="bx bx-info-circle small"></i></p>
-                            <h4 class="mb-0 text-dark">{{ config('app.currency', '$') }}{{ number_format($summary['todayProfit'], 2) }}</h4>
+                            <h4 class="mb-0 text-dark">{{ $gs->currency ?? '$' }}{{ number_format($summary['todayProfit'], 2) }}</h4>
                         </div>
                         <div class="avatar-md bg-soft-success rounded">
                             <i class="bx bx-trending-up avatar-title fs-24 text-success"></i>
@@ -76,7 +76,7 @@
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
                             <p class="text-muted fw-medium text-truncate mb-2">This Month's Profit <i class="bx bx-info-circle small"></i></p>
-                            <h4 class="mb-0 text-dark">{{ config('app.currency', '$') }}{{ number_format($summary['thisMonthProfit'], 2) }}</h4>
+                            <h4 class="mb-0 text-dark">{{ $gs->currency ?? '$' }}{{ number_format($summary['thisMonthProfit'], 2) }}</h4>
                         </div>
                         <div class="avatar-md bg-soft-success rounded">
                             <i class="bx bx-money avatar-title fs-24 text-success"></i>
@@ -91,7 +91,7 @@
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
                             <p class="text-muted fw-medium text-truncate mb-2">This Year's Profit <i class="bx bx-info-circle small"></i></p>
-                            <h4 class="mb-0 text-dark">{{ config('app.currency', '$') }}{{ number_format($summary['thisYearProfit'], 2) }}</h4>
+                            <h4 class="mb-0 text-dark">{{ $gs->currency ?? '$' }}{{ number_format($summary['thisYearProfit'], 2) }}</h4>
                         </div>
                         <div class="avatar-md bg-soft-success rounded">
                             <i class="bx bx-rocket avatar-title fs-24 text-success"></i>
@@ -465,7 +465,7 @@
         yaxis: {
             labels: {
                 formatter: function (value) {
-                    return "{{ config('app.currency', '$') }}" + value.toLocaleString();
+                    return "{{ $gs->currency ?? '$' }}" + value.toLocaleString();
                 }
             }
         },
@@ -481,7 +481,7 @@
         tooltip: {
             y: {
                 formatter: function (value) {
-                    return "{{ config('app.currency', '$') }}" + value.toLocaleString();
+                    return "{{ $gs->currency ?? '$' }}" + value.toLocaleString();
                 }
             }
         }
@@ -518,7 +518,7 @@
         yaxis: {
             labels: {
                 formatter: function (value) {
-                    return "{{ config('app.currency', '$') }}" + value.toLocaleString();
+                    return "{{ $gs->currency ?? '$' }}" + value.toLocaleString();
                 }
             }
         },
@@ -527,7 +527,7 @@
         tooltip: {
             y: {
                 formatter: function (value) {
-                    return "{{ config('app.currency', '$') }}" + value.toLocaleString();
+                    return "{{ $gs->currency ?? '$' }}" + value.toLocaleString();
                 }
             }
         }
@@ -552,7 +552,7 @@
         yaxis: {
             labels: {
                 formatter: function (value) {
-                    return "{{ config('app.currency', '$') }}" + value.toLocaleString();
+                    return "{{ $gs->currency ?? '$' }}" + value.toLocaleString();
                 }
             }
         },
@@ -568,7 +568,7 @@
         tooltip: {
             y: {
                 formatter: function (value) {
-                    return "{{ config('app.currency', '$') }}" + value.toLocaleString();
+                    return "{{ $gs->currency ?? '$' }}" + value.toLocaleString();
                 }
             }
         }
@@ -597,14 +597,14 @@
         yaxis: {
             labels: {
                 formatter: function (value) {
-                    return "{{ config('app.currency', '$') }}" + value.toLocaleString();
+                    return "{{ $gs->currency ?? '$' }}" + value.toLocaleString();
                 }
             }
         },
         tooltip: {
             y: {
                 formatter: function (value) {
-                    return "{{ config('app.currency', '$') }}" + value.toLocaleString();
+                    return "{{ $gs->currency ?? '$' }}" + value.toLocaleString();
                 }
             }
         }

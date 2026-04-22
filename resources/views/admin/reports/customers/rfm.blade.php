@@ -94,7 +94,7 @@
                                 <td class="text-center">
                                     <span class="badge bg-soft-info text-info px-3">{{ $stat['frequency'] }}</span>
                                 </td>
-                                <td class="text-end fw-bold">${{ number_format($stat['monetary'], 2) }}</td>
+                                <td class="text-end fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($stat['monetary'], 2) }}</td>
                                 <td class="text-center">
                                     @php
                                         $segment = 'Others';

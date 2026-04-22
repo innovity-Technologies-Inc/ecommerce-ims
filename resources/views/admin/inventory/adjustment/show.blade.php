@@ -41,8 +41,8 @@
                                                 @endif
                                             </td>
                                             <td class="text-center">{{ $item->quantity }}</td>
-                                            <td class="text-end">{{ number_format($item->unit_cost, 2) }}</td>
-                                            <td class="text-end">{{ number_format($item->quantity * $item->unit_cost, 2) }}</td>
+                                            <td class="text-end">{{ \App\HelperClass::generalSettings()->currency ?? '$' }}{{ number_format($item->unit_cost, 2) }}</td>
+                                            <td class="text-end">{{ \App\HelperClass::generalSettings()->currency ?? '$' }}{{ number_format($item->quantity * $item->unit_cost, 2) }}</td>
                                             <td class="text-center">
                                                 @if($item->serials && $item->serials->count() > 0)
                                                     <button type="button" class="btn btn-soft-primary btn-sm view-serials-btn" 

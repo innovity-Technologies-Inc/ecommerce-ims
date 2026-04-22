@@ -122,39 +122,39 @@
                         @endif
                     </td>
                     <td class="text-center">{{ $item->quantity }}</td>
-                    <td class="text-right">${{ number_format($item->regular_price, 2) }}</td>
-                    <td class="text-right">${{ number_format($item->regular_price * $item->quantity, 2) }}</td>
+                    <td class="text-right">{{ $gs->currency ?? '$' }}{{ number_format($item->regular_price, 2) }}</td>
+                    <td class="text-right">{{ $gs->currency ?? '$' }}{{ number_format($item->regular_price * $item->quantity, 2) }}</td>
                 </tr>
             @endforeach
 
             <tr class="total">
                 <td colspan="2"></td>
                 <td class="fw-bold text-right" style="border-top: 2px solid #eee;">Gross Subtotal</td>
-                <td class="text-right" style="border-top: 2px solid #eee;">${{ number_format($order->orderItems->sum(fn($i) => $i->regular_price * $i->quantity), 2) }}</td>
+                <td class="text-right" style="border-top: 2px solid #eee;">{{ $gs->currency ?? '$' }}{{ number_format($order->orderItems->sum(fn($i) => $i->regular_price * $i->quantity), 2) }}</td>
             </tr>
             @if($order->product_discount > 0)
             <tr class="total">
                 <td colspan="2"></td>
                 <td class="text-right text-muted">Product Discount</td>
-                <td class="text-right text-danger">-${{ number_format($order->product_discount, 2) }}</td>
+                <td class="text-right text-danger">-{{ $gs->currency ?? '$' }}{{ number_format($order->product_discount, 2) }}</td>
             </tr>
             @endif
             @if($order->discount > 0)
             <tr class="total">
                 <td colspan="2"></td>
                 <td class="text-right text-muted">Coupon Discount</td>
-                <td class="text-right text-danger">-${{ number_format($order->discount, 2) }}</td>
+                <td class="text-right text-danger">-{{ $gs->currency ?? '$' }}{{ number_format($order->discount, 2) }}</td>
             </tr>
             @endif
             <tr class="total">
                 <td colspan="2"></td>
                 <td class="text-right text-muted">Shipping</td>
-                <td class="text-right">${{ number_format($order->shipping_charge, 2) }}</td>
+                <td class="text-right">{{ $gs->currency ?? '$' }}{{ number_format($order->shipping_charge, 2) }}</td>
             </tr>
             <tr class="total">
                 <td colspan="2"></td>
                 <td class="fw-bold text-right" style="font-size: 18px;">Grand Total</td>
-                <td class="fw-bold text-right" style="font-size: 18px; color: #333;">${{ number_format($order->total_amount, 2) }}</td>
+                <td class="fw-bold text-right" style="font-size: 18px; color: #333;">{{ $gs->currency ?? '$' }}{{ number_format($order->total_amount, 2) }}</td>
             </tr>
         </table>
         <div style="margin-top: 50px; text-align: center; color: #777; font-size: 12px;">

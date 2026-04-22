@@ -30,7 +30,7 @@
             <div class="card border-0 shadow-sm border-start border-primary border-4 h-100" data-bs-toggle="tooltip" title="Average predicted lifetime value across all customers based on historical spend and purchase frequency.">
                 <div class="card-body">
                     <h6 class="text-muted small text-uppercase mb-1">Average Projected CLV <i class="bx bx-info-circle small"></i></h6>
-                    <h3 class="mb-0 fw-bold text-primary">${{ number_format($clv['averages']['avg_clv'], 2) }}</h3>
+                    <h3 class="mb-0 fw-bold text-primary">{{ $gs->currency ?? '$' }}{{ number_format($clv['averages']['avg_clv'], 2) }}</h3>
                 </div>
             </div>
         </div>
@@ -38,11 +38,11 @@
             <div class="card border-0 shadow-sm border-start border-success border-4 h-100">
                 <div class="card-body text-center">
                     <div class="row">
-                        <div class="col-4 border-end" data-bs-toggle="tooltip" title="High-value customers with a projected lifetime value exceeding $2,000.">
+                        <div class="col-4 border-end" data-bs-toggle="tooltip" title="High-value customers with a projected lifetime value exceeding {{ $gs->currency ?? '$' }}.">
                             <h6 class="text-muted extra-small mb-1">Whales <i class="bx bx-info-circle extra-small"></i></h6>
                             <h5 class="mb-0 fw-bold text-success">{{ $clv['segments']['whales'] }}</h5>
                         </div>
-                        <div class="col-4 border-end" data-bs-toggle="tooltip" title="Customers with a projected lifetime value between $500 and $2,000.">
+                        <div class="col-4 border-end" data-bs-toggle="tooltip" title="Customers with a projected lifetime value between $500 and {{ $gs->currency ?? '$' }}.">
                             <h6 class="text-muted extra-small mb-1">Medium <i class="bx bx-info-circle extra-small"></i></h6>
                             <h5 class="mb-0 fw-bold text-info">{{ $clv['segments']['medium'] }}</h5>
                         </div>
@@ -58,7 +58,7 @@
             <div class="card border-0 shadow-sm border-start border-warning border-4 h-100" data-bs-toggle="tooltip" title="The average amount customers have actually spent to date (Total Sales / Total Customers).">
                 <div class="card-body">
                     <h6 class="text-muted small text-uppercase mb-1">Avg Historical Value <i class="bx bx-info-circle small"></i></h6>
-                    <h3 class="mb-0 fw-bold text-warning">${{ number_format($clv['averages']['avg_historical'], 2) }}</h3>
+                    <h3 class="mb-0 fw-bold text-warning">{{ $gs->currency ?? '$' }}{{ number_format($clv['averages']['avg_historical'], 2) }}</h3>
                 </div>
             </div>
         </div>
@@ -90,11 +90,11 @@
                                     <h6 class="mb-0 fw-bold text-dark">{{ $row['name'] }}</h6>
                                     <small class="text-muted">{{ $row['email'] }}</small>
                                 </td>
-                                <td class="text-end">${{ number_format($row['historical_value'], 2) }}</td>
-                                <td class="text-end small">${{ number_format($row['aov'], 2) }}</td>
+                                <td class="text-end">{{ $gs->currency ?? '$' }}{{ number_format($row['historical_value'], 2) }}</td>
+                                <td class="text-end small">{{ $gs->currency ?? '$' }}{{ number_format($row['aov'], 2) }}</td>
                                 <td class="text-center small">{{ $row['frequency'] }} orders</td>
-                                <td class="text-end text-primary small">${{ number_format($row['projected_value'], 2) }}</td>
-                                <td class="text-end fw-bold text-dark">${{ number_format($row['total_clv'], 2) }}</td>
+                                <td class="text-end text-primary small">{{ $gs->currency ?? '$' }}{{ number_format($row['projected_value'], 2) }}</td>
+                                <td class="text-end fw-bold text-dark">{{ $gs->currency ?? '$' }}{{ number_format($row['total_clv'], 2) }}</td>
                                 <td class="text-center">
                                     @php
                                         $badgeClass = 'bg-secondary';

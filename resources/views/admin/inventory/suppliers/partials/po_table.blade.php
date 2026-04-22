@@ -42,7 +42,7 @@
                             <span class="text-muted">N/A</span>
                         @endif
                     </td>
-                    <td class="fw-bold">{{ number_format($po->total_amount, 2) }}</td>
+                    <td class="fw-bold">{{ \App\HelperClass::generalSettings()->currency ?? '$' }}{{ number_format($po->total_amount, 2) }}</td>
                     <td>
                         <a href="{{ route('admin.inventory.po.show', $po->id) }}" class="btn btn-soft-primary btn-sm">
                             <iconify-icon icon="solar:eye-broken" class="align-middle fs-16"></iconify-icon>

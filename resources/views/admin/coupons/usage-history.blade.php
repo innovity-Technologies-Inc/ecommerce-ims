@@ -27,7 +27,7 @@
                             <div class="p-3 border rounded bg-light-subtle">
                                 <span class="text-muted small text-uppercase fw-bold d-block mb-1">Discount Amount</span>
                                 <span class="fw-bold fs-16">
-                                    {{ $coupon->discount_type == 'percentage' ? number_format($coupon->discount_amount, 0).'%' : '$'.number_format($coupon->discount_amount, 2) }}
+                                    {{ $coupon->discount_type == 'percentage' ? number_format($coupon->discount_amount, 0).'%' : ($gs->currency ?? '$').number_format($coupon->discount_amount, 2) }}
                                 </span>
                             </div>
                         </div>
@@ -75,7 +75,7 @@
                                             </a>
                                         </td>
                                         <td>
-                                            <span class="text-danger fw-bold">${{ number_format($usage->discount_amount, 2) }}</span>
+                                            <span class="text-danger fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($usage->discount_amount, 2) }}</span>
                                         </td>
                                         <td>
                                             {{ $usage->created_at->format('d M, Y - h:i A') }}
