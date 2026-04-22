@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\TracksAdminActivity;
 use Illuminate\Database\Eloquent\Model;
 
 class ProductVariant extends Model
 {
+    use TracksAdminActivity;
+
     protected $fillable = [
         'product_id',
         'variant_name',

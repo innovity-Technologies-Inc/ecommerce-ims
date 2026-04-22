@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\TracksAdminActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderedProductBatch extends Model
 {
+    use TracksAdminActivity;
+
     protected $fillable = [
         'order_id',
         'order_item_id',

@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\TracksAdminActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class AdminNotification extends Model
 {
-    use HasFactory;
+    use HasFactory, TracksAdminActivity;
 
     protected $fillable = [
         'type',

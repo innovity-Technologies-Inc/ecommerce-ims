@@ -5,9 +5,10 @@
 
 ---
 
-## 2. Core Architectural Standards
+### **2. Core Architectural Standards**
 - **Service Layer Pattern:** 100% of business logic resides in `app/Services`. Controllers are strictly for routing.
 - **Form Requests:** All validation is handled by dedicated Request classes.
+- **Admin Activity Tracking (REQ-222):** All primary models use the `TracksAdminActivity` trait. This automatically populates `created_by` and `updated_by` fields (foreign keys to `admins`) during creation and update operations performed by an authenticated admin.
 - **FlexSearch Engine (v4.0.0+):** All searching and filtering in the Admin Panel use AJAX-driven FlexSearch for speed and consistency. It supports multi-column filtering, relationship searching, and dynamic sorting.
 - **Atomic Operations:** Inventory and financial updates are wrapped in DB Transactions to ensure zero data loss.
 

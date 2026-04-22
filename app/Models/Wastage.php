@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\TracksAdminActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Wastage extends Model
 {
-    use HasFactory;
+    use HasFactory, TracksAdminActivity;
 
     protected $fillable = [
         'product_id',
@@ -18,7 +19,6 @@ class Wastage extends Model
         'quantity',
         'reason',
         'return_id',
-        'created_by',
     ];
 
     public function product(): BelongsTo
@@ -39,11 +39,6 @@ class Wastage extends Model
     public function batch(): BelongsTo
     {
         return $this->belongsTo(Batch::class);
-    }
-
-    public function creator(): BelongsTo
-    {
-        return $this->belongsTo(Admin::class, 'created_by');
     }
 
     public function returnRequest(): BelongsTo

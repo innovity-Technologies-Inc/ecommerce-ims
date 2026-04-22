@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\TracksAdminActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class SectionSetting extends Model
 {
+    use TracksAdminActivity;
+
     protected $fillable = [
         'section_name',
         'section_title',

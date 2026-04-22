@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\TracksAdminActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class StockAdjustmentItem extends Model
 {
-    use HasFactory;
+    use HasFactory, TracksAdminActivity;
 
     protected $fillable = [
         'stock_adjustment_id',

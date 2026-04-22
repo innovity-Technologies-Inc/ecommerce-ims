@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\TracksAdminActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PurchaseOrderItem extends Model
 {
+    use TracksAdminActivity;
+
     protected $fillable = [
         'purchase_order_id',
         'product_id',

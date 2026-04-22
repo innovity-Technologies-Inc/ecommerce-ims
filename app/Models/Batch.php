@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\TracksAdminActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Batch extends Model
 {
+    use TracksAdminActivity;
+
     protected $fillable = [
         'batch_number',
         'purchase_order_id',

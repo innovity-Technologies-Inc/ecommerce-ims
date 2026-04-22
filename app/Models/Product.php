@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\TracksAdminActivity;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
+    use TracksAdminActivity;
+
     protected $fillable = [
         'category_id',
         'sub_category_id',

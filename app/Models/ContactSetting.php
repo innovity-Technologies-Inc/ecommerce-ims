@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\TracksAdminActivity;
 use Illuminate\Database\Eloquent\Model;
 
 class ContactSetting extends Model
 {
+    use TracksAdminActivity;
+
     protected $fillable = [
         'company_name',
         'company_email',

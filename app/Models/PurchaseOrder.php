@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\TracksAdminActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PurchaseOrder extends Model
 {
+    use TracksAdminActivity;
+
     protected $fillable = [
         'po_number',
         'supplier_id',
@@ -21,7 +24,6 @@ class PurchaseOrder extends Model
         'total_damaged_qty',
         'notify_supplier',
         'notes',
-        'created_by',
     ];
 
     protected function casts(): array
@@ -55,11 +57,6 @@ class PurchaseOrder extends Model
     public function batches(): HasMany
     {
         return $this->hasMany(Batch::class);
-    }
-
-    public function creator(): BelongsTo
-    {
-        return $this->belongsTo(Admin::class, 'created_by');
     }
 
     public function items(): HasMany
