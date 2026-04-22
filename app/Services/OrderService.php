@@ -230,7 +230,7 @@ class OrderService
             }
 
             // Define statuses that are considered "Active" (stock is deducted)
-            $activeStatuses = ['Pending', 'Processing', 'Out for Delivery', 'Delivered', 'Shipped'];
+            $activeStatuses = ['Shipped', 'Out for Delivery', 'Delivered'];
             // Define statuses that are considered "Restorative" (stock should be returned)
             $restorativeStatuses = ['Cancelled', 'Rejected'];
 
@@ -566,7 +566,7 @@ class OrderService
     {
         $transitions = [
             'Pending' => ['Processing', 'Cancelled', 'Rejected'],
-            'Processing' => ['Shipped'],
+            'Processing' => ['Shipped', 'Cancelled'],
             'Shipped' => ['Out for Delivery'],
             'Out for Delivery' => ['Delivered'],
             'Delivered' => [],

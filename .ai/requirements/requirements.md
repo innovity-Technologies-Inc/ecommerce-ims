@@ -228,6 +228,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-217:** Cart Page Shopping Buttons Fix: Ensure the "Go to Shop" and "Continue Shopping" buttons on the cart page stay on a single line on mobile devices to prevent text wrapping and improve layout consistency. (NEW)
 - [ ] **REQ-218:** Cart Empty State and Button Standardization: Ensure "Your cart is empty" stays on one line. Remove the redundant "Go to Shop" button. Make action buttons ("Continue Shopping", "Clear Cart", "Proceed to Checkout") visually similar in size. When the cart is empty, hide all action buttons except "Continue Shopping" and hide the cart total/banner section. (NEW)
 - [x] **REQ-219:** Stock-Aware Add to Cart Button: Disable the "Add to Cart" button when a product or specific variant is out of stock. Prevent clicks on disabled buttons via JavaScript and maintain consistent visual feedback. (UPDATED)
+- [ ] **REQ-220:** Order Status Transition Update: Allow transitions from 'Processing' to 'Shipped' (already exists) and 'Cancelled' (new). Ensure 'Cancelled' from 'Processing' correctly handles any necessary stock restoration if applicable (though stock is only deducted at 'Shipped' status).
 
 
 
