@@ -19,7 +19,7 @@ return new class extends Migration
             'return_items', 'return_images', 'rma_items', 'supplier_rmas',
             'stock_adjustments', 'stock_adjustment_items', 'stock_ledgers',
             'section_settings', 'section_product', 'policy_settings', 'faqs',
-            'admin_notifications', 'wastages',
+            'admin_notifications', 'wastages', 'general_settings', 'contact_settings', 'sliders',
         ];
 
         foreach ($tables as $table) {
@@ -50,7 +50,7 @@ return new class extends Migration
             'return_items', 'return_images', 'rma_items', 'supplier_rmas',
             'stock_adjustments', 'stock_adjustment_items', 'stock_ledgers',
             'section_settings', 'section_product', 'policy_settings', 'faqs',
-            'admin_notifications', 'wastages',
+            'admin_notifications', 'wastages', 'general_settings', 'contact_settings', 'sliders',
         ];
 
         foreach ($tables as $tableName) {
