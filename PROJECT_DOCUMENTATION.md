@@ -520,16 +520,17 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     - `policy_settings` table: `privacy_policy` (longtext), `return_policy` (longtext).
     - `faqs` table: `question` (string), `answer` (text), `is_active` (boolean), `sort_order` (integer).
 
-### **9. UI Button Standardization (REQ-174)**
-- **What:** A consistent pattern for administrative action buttons to ensure a clean, modern, and uncluttered interface.
+### **9. UI Button Standardization (REQ-174, REQ-221)**
+- **What:** A consistent pattern for administrative action buttons and row numbering to ensure a clean, modern, and mathematically accurate interface.
 - **How it Works:**
     - **Action Buttons in Tables:** "View", "Edit", "Details", and "Delete" buttons in all listing tables are now **icon-only** with Bootstrap tooltips for context.
     - **Consistent Icons:** 
         - View/Details: Eye icon (`solar:eye-broken` or `bx-show`).
         - Edit: Pen icon (`solar:pen-2-broken` or `bx-edit`).
         - Delete: Trash icon (`solar:trash-bin-trash-broken`).
+    - **Table Row Numbering:** All administrative tables use `HelperClass::indexNumberSerialization($data)` to initialize the starting serial number and `{{ $sl++ }}` to increment it. This ensures accurate row numbering even across paginated results.
     - **Exceptions:** "Back" buttons, "Create/Add New" buttons, and the "View All Notification" link maintain their text for navigation prominence.
-- **Standards:** All new modules must follow the `icon-only + tooltip` pattern for row-level actions.
+- **Standards:** All new modules must follow the `icon-only + tooltip` pattern for row-level actions and the `$sl++` pattern for serial numbers.
 
 ### **10. Image Validation Standardization (REQ-175)**
 - **What:** Improved user experience for file upload errors by removing technical debt (indices) and using human-readable labels.
