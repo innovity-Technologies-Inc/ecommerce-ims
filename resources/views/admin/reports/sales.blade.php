@@ -1,6 +1,7 @@
 @extends('admin.structure.app')
 
 @section('content')
+@php $gs = \App\HelperClass::generalSettings(); @endphp
 <div class="container-xxl">
     <div class="d-flex align-items-center justify-content-between mb-4">
         <h4 class="mb-0">Sales Reports</h4>
@@ -104,8 +105,8 @@
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted small text-uppercase mb-1">Net Sales <i class="bx bx-info-circle small"></i></h6>
-                            <h3 class="mb-0 fw-bold text-primary">${{ number_format($summary['totals']['net_sales'], 2) }}</h3>
-                            <div class="small text-muted">Gross: ${{ number_format($summary['totals']['gross_sales'], 2) }}</div>
+                            <h3 class="mb-0 fw-bold text-primary">{{ $gs->currency ?? '$' }}{{ number_format($summary['totals']['net_sales'], 2) }}</h3>
+                            <div class="small text-muted">Gross: {{ $gs->currency ?? '$' }}{{ number_format($summary['totals']['gross_sales'], 2) }}</div>
                         </div>
                     </div>
                 </div>
@@ -122,7 +123,7 @@
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted small text-uppercase mb-1">Gross Profit <i class="bx bx-info-circle small"></i></h6>
-                            <h3 class="mb-0 fw-bold text-success">${{ number_format($summary['totals']['gross_profit'], 2) }}</h3>
+                            <h3 class="mb-0 fw-bold text-success">{{ $gs->currency ?? '$' }}{{ number_format($summary['totals']['gross_profit'], 2) }}</h3>
                             <div class="small text-muted">Margin: {{ number_format($summary['totals']['gross_margin_percent'], 1) }}%</div>
                         </div>
                     </div>
@@ -143,7 +144,7 @@
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted small text-uppercase mb-1">AOV <i class="bx bx-info-circle small"></i></h6>
-                            <h3 class="mb-0 fw-bold">${{ number_format($summary['totals']['aov'], 2) }}</h3>
+                            <h3 class="mb-0 fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($summary['totals']['aov'], 2) }}</h3>
                         </div>
                     </div>
                 </div>
@@ -222,9 +223,9 @@
                                     <tr>
                                         <td class="ps-3 fw-medium">{{ $row->period }}</td>
                                         <td class="text-center">{{ $row->orders_count }}</td>
-                                        <td class="text-end text-primary fw-bold">${{ number_format($row->net_sales, 2) }}</td>
-                                        <td class="text-end text-muted small">${{ number_format($row->total_cost, 2) }}</td>
-                                        <td class="text-end text-success fw-bold pe-3">${{ number_format($row->gross_profit, 2) }}</td>
+                                        <td class="text-end text-primary fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($row->net_sales, 2) }}</td>
+                                        <td class="text-end text-muted small">{{ $gs->currency ?? '$' }}{{ number_format($row->total_cost, 2) }}</td>
+                                        <td class="text-end text-success fw-bold pe-3">{{ $gs->currency ?? '$' }}{{ number_format($row->gross_profit, 2) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -243,7 +244,7 @@
                                     <tr>
                                         <td class="ps-3 fw-medium">{{ $row->name }}</td>
                                         <td class="text-center">{{ $row->orders_count }}</td>
-                                        <td class="text-end pe-3 fw-bold">${{ number_format($row->net_sales, 2) }}</td>
+                                        <td class="text-end pe-3 fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($row->net_sales, 2) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -265,9 +266,9 @@
                                     <tr>
                                         <td class="ps-3 fw-medium">{{ $row->name }}</td>
                                         <td class="text-center">{{ number_format($row->units_sold) }}</td>
-                                        <td class="text-end fw-bold">${{ number_format($row->net_sales, 2) }}</td>
-                                        <td class="text-end text-muted small">${{ number_format($row->total_cost, 2) }}</td>
-                                        <td class="text-end text-success fw-bold pe-3">${{ number_format($row->gross_profit, 2) }}</td>
+                                        <td class="text-end fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($row->net_sales, 2) }}</td>
+                                        <td class="text-end text-muted small">{{ $gs->currency ?? '$' }}{{ number_format($row->total_cost, 2) }}</td>
+                                        <td class="text-end text-success fw-bold pe-3">{{ $gs->currency ?? '$' }}{{ number_format($row->gross_profit, 2) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -320,9 +321,9 @@
                                         <tr>
                                             <td class="ps-3 fw-medium">{{ $data->period }}</td>
                                             <td class="text-center">{{ $data->orders_count }}</td>
-                                            <td class="text-end text-primary fw-bold">${{ number_format($data->net_sales, 2) }}</td>
-                                            <td class="text-end text-muted small">${{ number_format($data->total_cost, 2) }}</td>
-                                            <td class="text-end text-success fw-bold pe-3">${{ number_format($data->gross_profit, 2) }}</td>
+                                            <td class="text-end text-primary fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($data->net_sales, 2) }}</td>
+                                            <td class="text-end text-muted small">{{ $gs->currency ?? '$' }}{{ number_format($data->total_cost, 2) }}</td>
+                                            <td class="text-end text-success fw-bold pe-3">{{ $gs->currency ?? '$' }}{{ number_format($data->gross_profit, 2) }}</td>
                                         </tr>
                                     @empty
                                         <tr>
@@ -349,27 +350,27 @@
                             <tbody>
                                 <tr>
                                     <td class="ps-3 py-3">Gross Sales</td>
-                                    <td class="text-end pe-3 py-3 fw-bold">${{ number_format($summary['totals']['gross_sales'], 2) }}</td>
+                                    <td class="text-end pe-3 py-3 fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($summary['totals']['gross_sales'], 2) }}</td>
                                 </tr>
                                 <tr>
                                     <td class="ps-3 py-3">Discounts</td>
-                                    <td class="text-end pe-3 py-3 text-danger fw-bold">-${{ number_format($summary['totals']['discount_amount'], 2) }}</td>
+                                    <td class="text-end pe-3 py-3 text-danger fw-bold">-{{ $gs->currency ?? '$' }}{{ number_format($summary['totals']['discount_amount'], 2) }}</td>
                                 </tr>
                                 <tr class="bg-light">
                                     <td class="ps-3 py-3 fw-bold text-primary">Net Sales</td>
-                                    <td class="text-end pe-3 py-3 fw-bold text-primary">${{ number_format($summary['totals']['net_sales'], 2) }}</td>
+                                    <td class="text-end pe-3 py-3 fw-bold text-primary">{{ $gs->currency ?? '$' }}{{ number_format($summary['totals']['net_sales'], 2) }}</td>
                                 </tr>
                                 <tr>
                                     <td class="ps-3 py-3">Shipping Revenue</td>
-                                    <td class="text-end pe-3 py-3 fw-bold">${{ number_format($summary['totals']['shipping_revenue'], 2) }}</td>
+                                    <td class="text-end pe-3 py-3 fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($summary['totals']['shipping_revenue'], 2) }}</td>
                                 </tr>
                                 <tr>
                                     <td class="ps-3 py-3">Total Cost (Cost of Goods Sold)</td>
-                                    <td class="text-end pe-3 py-3 text-muted fw-bold">-${{ number_format($summary['totals']['total_cost'], 2) }}</td>
+                                    <td class="text-end pe-3 py-3 text-muted fw-bold">-{{ $gs->currency ?? '$' }}{{ number_format($summary['totals']['total_cost'], 2) }}</td>
                                 </tr>
                                 <tr class="bg-soft-success">
                                     <td class="ps-3 py-3 fw-bold text-success">Gross Profit</td>
-                                    <td class="text-end pe-3 py-3 fw-bold text-success">${{ number_format($summary['totals']['gross_profit'], 2) }}</td>
+                                    <td class="text-end pe-3 py-3 fw-bold text-success">{{ $gs->currency ?? '$' }}{{ number_format($summary['totals']['gross_profit'], 2) }}</td>
                                 </tr>
                                 <tr>
                                     <td class="ps-3 py-3">Gross Margin %</td>
@@ -414,7 +415,7 @@
                                         <tr>
                                             <td class="ps-3 small">{{ $prod->name }}</td>
                                             <td class="text-center">{{ $prod->units_sold }}</td>
-                                            <td class="text-end pe-3 fw-bold">${{ number_format($prod->net_sales, 2) }}</td>
+                                            <td class="text-end pe-3 fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($prod->net_sales, 2) }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -455,7 +456,7 @@
                                         <tr>
                                             <td class="ps-3 fw-medium">{{ $wh->name }}</td>
                                             <td class="text-center">{{ $wh->units_sold }}</td>
-                                            <td class="text-end pe-3 fw-bold">${{ number_format($wh->net_sales, 2) }}</td>
+                                            <td class="text-end pe-3 fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($wh->net_sales, 2) }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -496,7 +497,7 @@
                                         <tr>
                                             <td class="ps-3 fw-medium">{{ $pm->name }}</td>
                                             <td class="text-center">{{ $pm->orders_count }}</td>
-                                            <td class="text-end pe-3 fw-bold">${{ number_format($pm->net_sales, 2) }}</td>
+                                            <td class="text-end pe-3 fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($pm->net_sales, 2) }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -537,7 +538,7 @@
                                         <tr>
                                             <td class="ps-3 fw-medium">{{ $batch->name }}</td>
                                             <td class="text-center">{{ $batch->units_sold }}</td>
-                                            <td class="text-end pe-3 fw-bold">${{ number_format($batch->net_sales, 2) }}</td>
+                                            <td class="text-end pe-3 fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($batch->net_sales, 2) }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>

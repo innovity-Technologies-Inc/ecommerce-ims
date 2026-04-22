@@ -576,6 +576,17 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
 - **Customer Profile Management (REQ-202, REQ-212):**
     - **Service Layer:** `CustomerProfileService` centralizes all logic for updating user records, handling password hashing, and validating current credentials.
     - **UI Architecture:** A beautiful, unified design featuring a clean sidebar on desktop and a vertical stack on mobile. Built with standard Bootstrap 5 components for maximum structural stability and visual consistency.
-    - **Social Login Integration:** Specifically addresses users who registered via Google Auth by allowing them to "set" their first password without requiring a non-existent "Current Password".
+    - **Social Login Integration:** Specifically addresses users who registered via Google/Facebook Auth by allowing them to "set" their first password without requiring a non-existent "Current Password".
     - **Password Visibility Toggle (REQ-203):** Standardized implementation of "Show Password" checkboxes across all security forms.
+
+### **8. Multi-Provider Social Login (REQ-202, REQ-224)**
+- **What:** Allows customers to register and login using third-party identities (Google and Facebook) for a frictionless experience.
+- **How it Works:**
+    - **Providers:** Currently supports **Google** and **Facebook** via Laravel Socialite.
+    - **User Mapping:** The system checks for existing emails. If a match is found, the social ID is linked to the existing account. If not, a new account is created with a generated password.
+    - **Cart Synchronization:** Guest carts are automatically merged into the user's account upon successful social login.
+    - **Security:** Social logins respect the `status` flag; inactive users cannot log in via social providers.
+- **Data:**
+    *   `google_id`, `google_token` stored in `users` table.
+    *   `facebook_id`, `facebook_token` stored in `users` table.
 

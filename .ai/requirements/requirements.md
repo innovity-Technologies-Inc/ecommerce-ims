@@ -230,7 +230,9 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-219:** Stock-Aware Add to Cart Button: Disable the "Add to Cart" button when a product or specific variant is out of stock. Prevent clicks on disabled buttons via JavaScript and maintain consistent visual feedback. (UPDATED)
 - [ ] **REQ-220:** Order Status Transition Update: Allow transitions from 'Processing' to 'Shipped' (already exists) and 'Cancelled' (new). Ensure 'Cancelled' from 'Processing' correctly handles any necessary stock restoration if applicable (though stock is only deducted at 'Shipped' status).
 - [x] **REQ-221:** Standardize Table Serial Numbers: Ensure all administrative tables use the `HelperClass::indexNumberSerialization` method correctly with the `$sl++` increment pattern to maintain accurate row numbering across paginated results. (NEW)
-- [ ] **REQ-222:** Admin Activity Tracking: Add `created_by` and `updated_by` fields (foreign keys to `admins` table) to all relevant database tables. Implement an automated way to populate these fields during admin operations using model observers or traits.
+- [x] **REQ-222:** Admin Activity Tracking: Add `created_by` and `updated_by` fields (foreign keys to `admins` table) to all relevant database tables. Implement an automated way to populate these fields during admin operations using model observers or traits. (NEW)
+- [ ] **REQ-223:** Global Currency Standardization: Replace all hardcoded currency symbols (e.g., "$") in Blade views, emails, and reports with the dynamic currency setting from `HelperClass::generalSettings()->currency`.
+- [ ] **REQ-224:** Facebook OAuth Integration: Implement "Login with Facebook" functionality using Laravel Socialite, following the existing Google OAuth pattern for user creation and authentication.
 
 
 

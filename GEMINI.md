@@ -127,6 +127,10 @@ You MUST strictly follow this sequence for **EVERY** request:
       @endforeach
       ```
 - **Global Data Access:** Use `HelperClass::generalSettings()`, `HelperClass::contactSettings()`, `HelperClass::getCategories()`, etc.
+- **Currency Symbols (MANDATORY):** 
+    - NEVER hardcode currency symbols (e.g., "$") in Blade views, emails, or reports.
+    - ALWAYS use the dynamic symbol from general settings: `{{ \App\HelperClass::generalSettings()->currency ?? '$' }}`.
+    - If a `$gs` variable is already defined in the view (via `HelperClass::generalSettings()`), use `{{ $gs->currency ?? '$' }}`.
 
 ## 6. Database Safety & Data Integrity (CRITICAL)
 

@@ -28,27 +28,63 @@ class SocialLoginController extends Controller
      */
     public function handleGoogleCallback()
     {
+        return $this->handleSocialCallback('google');
+    }
+
+    /**
+     * Redirect the user to the Facebook authentication page.
+     */
+    public function redirectToFacebook()
+    {
+        if (! config('services.facebook.client_id')) {
+            return redirect()->route('login')->withErrors(['error' => 'Facebook Login is currently disabled.']);
+        }
+
+        return Socialite::driver('facebook')->redirect();
+    }
+
+    /**
+     * Obtain the user information from Facebook.
+     */
+    public function handleFacebookCallback()
+    {
+        return $this->handleSocialCallback('facebook');
+    }
+
+    /**
+     * Common logic for handling social callbacks.
+     */
+    protected function handleSocialCallback(string $driver)
+    {
         try {
-            $googleUser = Socialite::driver('google')->user();
+            $socialUser = Socialite::driver($driver)->user();
 
             $oldSessionId = session()->getId();
 
             // Check if user already exists and is inactive
-            $existingUser = User::where('email', $googleUser->email)->first();
+            $existingUser = User::where('email', $socialUser->email)->first();
 
             if ($existingUser && ! $existingUser->status) {
                 return redirect()->route('login')->withErrors(['error' => 'Your account is inactive. Please contact support.']);
             }
 
-            $user = User::updateOrCreate([
-                'email' => $googleUser->email,
-            ], [
-                'name' => $googleUser->name,
-                'google_id' => $googleUser->id,
-                'google_token' => $googleUser->token,
+            $userData = [
+                'name' => $socialUser->name,
                 'status' => $existingUser ? $existingUser->status : 1, // Keep status if exists, else Active
                 'email_verified_at' => $existingUser ? $existingUser->email_verified_at : now(),
-            ]);
+            ];
+
+            if ($driver === 'google') {
+                $userData['google_id'] = $socialUser->id;
+                $userData['google_token'] = $socialUser->token;
+            } elseif ($driver === 'facebook') {
+                $userData['facebook_id'] = $socialUser->id;
+                $userData['facebook_token'] = $socialUser->token;
+            }
+
+            $user = User::updateOrCreate([
+                'email' => $socialUser->email,
+            ], $userData);
 
             Auth::login($user);
 
@@ -63,9 +99,9 @@ class SocialLoginController extends Controller
             ]);
 
         } catch (Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Google Login Error: '.$e->getMessage(), ['exception' => $e]);
+            Log::error(ucfirst($driver).' Login Error: '.$e->getMessage(), ['exception' => $e]);
 
-            return redirect()->route('login')->withErrors(['error' => 'Google Login failed. Please try again.']);
+            return redirect()->route('login')->withErrors(['error' => ucfirst($driver).' Login failed. Please try again.']);
         }
     }
 }

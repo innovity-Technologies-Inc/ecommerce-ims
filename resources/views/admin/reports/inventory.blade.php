@@ -1,6 +1,7 @@
 @extends('admin.structure.app')
 
 @section('content')
+@php $gs = \App\HelperClass::generalSettings(); @endphp
 <div class="container-xxl">
     <div class="d-flex align-items-center justify-content-between mb-4">
         <h4 class="mb-0">Inventory Valuation</h4>
@@ -143,7 +144,7 @@
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted small text-uppercase mb-1">Total Inventory Valuation <i class="bx bx-info-circle small"></i></h6>
-                            <h3 class="mb-0 fw-bold">${{ number_format($report['totals']['total_valuation'], 2) }}</h3>
+                            <h3 class="mb-0 fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($report['totals']['total_valuation'], 2) }}</h3>
                         </div>
                     </div>
                 </div>
@@ -191,8 +192,8 @@
                                         <td>{{ $row->warehouse }}</td>
                                         <td class="small">{{ $row->product }}</td>
                                         <td class="text-center fw-bold">{{ number_format($row->quantity) }}</td>
-                                        <td class="text-end text-muted small">${{ number_format($row->unit_cost, 2) }}</td>
-                                        <td class="text-end pe-3 fw-bold text-dark">${{ number_format($row->valuation, 2) }}</td>
+                                        <td class="text-end text-muted small">{{ $gs->currency ?? '$' }}{{ number_format($row->unit_cost, 2) }}</td>
+                                        <td class="text-end pe-3 fw-bold text-dark">{{ $gs->currency ?? '$' }}{{ number_format($row->valuation, 2) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -211,7 +212,7 @@
                                     <tr>
                                         <td class="ps-3 fw-medium">{{ $row->name }}</td>
                                         <td class="text-center">{{ number_format($row->quantity) }}</td>
-                                        <td class="text-end pe-3 fw-bold">${{ number_format($row->valuation, 2) }}</td>
+                                        <td class="text-end pe-3 fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($row->valuation, 2) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -262,7 +263,7 @@
                                         <tr>
                                             <td class="ps-3 fw-medium">{{ $wh['name'] }}</td>
                                             <td class="text-center">{{ number_format($wh['quantity']) }}</td>
-                                            <td class="text-end pe-3 fw-bold">${{ number_format($wh['valuation'], 2) }}</td>
+                                            <td class="text-end pe-3 fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($wh['valuation'], 2) }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -304,7 +305,7 @@
                                         <tr>
                                             <td class="ps-3 small fw-medium">{{ $prod['name'] }}</td>
                                             <td class="text-center">{{ number_format($prod['quantity']) }}</td>
-                                            <td class="text-end pe-3 fw-bold">${{ number_format($prod['valuation'], 2) }}</td>
+                                            <td class="text-end pe-3 fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($prod['valuation'], 2) }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -351,8 +352,8 @@
                                             <td>{{ $batch['warehouse'] }}</td>
                                             <td class="small">{{ $batch['product'] }}</td>
                                             <td class="text-center fw-bold">{{ number_format($batch['quantity']) }}</td>
-                                            <td class="text-end text-muted small">${{ number_format($batch['unit_cost'], 2) }}</td>
-                                            <td class="text-end pe-3 fw-bold text-dark">${{ number_format($batch['valuation'], 2) }}</td>
+                                            <td class="text-end text-muted small">{{ $gs->currency ?? '$' }}{{ number_format($batch['unit_cost'], 2) }}</td>
+                                            <td class="text-end pe-3 fw-bold text-dark">{{ $gs->currency ?? '$' }}{{ number_format($batch['valuation'], 2) }}</td>
                                         </tr>
                                     @empty
                                         <tr>

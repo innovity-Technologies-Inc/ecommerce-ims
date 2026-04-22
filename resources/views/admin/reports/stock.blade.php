@@ -1,6 +1,7 @@
 @extends('admin.structure.app')
 
 @section('content')
+@php $gs = \App\HelperClass::generalSettings(); @endphp
 <div class="container-xxl">
     <div class="d-flex align-items-center justify-content-between mb-4">
         <h4 class="mb-0">Stock Reports</h4>
@@ -158,7 +159,7 @@
                         </div>
                         <div class="flex-grow-1">
                             <h6 class="text-muted small text-uppercase mb-1">Inventory Value <i class="bx bx-info-circle small"></i></h6>
-                            <h3 class="mb-0 fw-bold text-success">${{ number_format($summary['total_value'], 2) }}</h3>
+                            <h3 class="mb-0 fw-bold text-success">{{ $gs->currency ?? '$' }}{{ number_format($summary['total_value'], 2) }}</h3>
                         </div>
                     </div>
                 </div>
@@ -203,7 +204,7 @@
                                         <td class="ps-3 fw-bold">{{ $row->name }}</td>
                                         <td class="text-center">{{ number_format($row->quantity) }}</td>
                                         <td class="text-center">{{ number_format($row->damaged_quantity) }}</td>
-                                        <td class="text-end pe-3 fw-bold">${{ number_format($row->valuation, 2) }}</td>
+                                        <td class="text-end pe-3 fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($row->valuation, 2) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -237,7 +238,7 @@
                                                 <span class="badge bg-soft-success text-success">Healthy</span>
                                             @endif
                                         </td>
-                                        <td class="text-end pe-3 fw-bold">${{ number_format($row->inventory_value, 2) }}</td>
+                                        <td class="text-end pe-3 fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($row->inventory_value, 2) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -374,7 +375,7 @@
                             <thead class="table-light"><tr><th class="ps-3">Warehouse</th><th class="text-center">Qty</th><th class="text-end pe-3">Value</th></tr></thead>
                             <tbody>
                                 @foreach($breakdowns['warehouse'] as $row)
-                                    <tr><td class="ps-3">{{ $row->name }}</td><td class="text-center">{{ $row->quantity }}</td><td class="text-end pe-3 fw-bold">${{ number_format($row->valuation, 2) }}</td></tr>
+                                    <tr><td class="ps-3">{{ $row->name }}</td><td class="text-center">{{ $row->quantity }}</td><td class="text-end pe-3 fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($row->valuation, 2) }}</td></tr>
                                 @endforeach
                             </tbody>
                         </table>
@@ -402,7 +403,7 @@
                             <thead class="table-light"><tr><th class="ps-3">Product</th><th class="text-center">Qty</th><th class="text-end pe-3">Value</th></tr></thead>
                             <tbody>
                                 @foreach($breakdowns['product'] as $row)
-                                    <tr><td class="ps-3 small">{{ $row->name }}</td><td class="text-center">{{ $row->quantity }}</td><td class="text-end pe-3 fw-bold">${{ number_format($row->valuation, 2) }}</td></tr>
+                                    <tr><td class="ps-3 small">{{ $row->name }}</td><td class="text-center">{{ $row->quantity }}</td><td class="text-end pe-3 fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($row->valuation, 2) }}</td></tr>
                                 @endforeach
                             </tbody>
                         </table>

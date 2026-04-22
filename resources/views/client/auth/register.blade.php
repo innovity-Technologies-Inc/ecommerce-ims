@@ -118,7 +118,7 @@
         padding: 0 10px;
         font-size: 13px;
     }
-    .btn-google-auth {
+    .btn-google-auth, .btn-facebook-auth {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -131,10 +131,20 @@
         color: #4a5568;
         font-weight: 600;
         transition: all 0.3s ease;
+        text-decoration: none;
+        margin-bottom: 10px;
     }
-    .btn-google-auth:hover {
+    .btn-google-auth:hover, .btn-facebook-auth:hover {
         background: #f7fafc;
         border-color: #e2e8f0;
+        color: #4a5568;
+    }
+    .btn-facebook-auth {
+        border-color: #e7f0f7;
+    }
+    .btn-facebook-auth:hover {
+        background: #f0f7ff;
+        border-color: #3b5998;
     }
     .auth-footer {
         margin-top: 20px;
@@ -225,20 +235,34 @@
                     Create Account
                 </button>
 
-                @if(config('services.google.client_id'))
+                @if(config('services.google.client_id') || config('services.facebook.client_id'))
                     <div class="social-auth-divider">
                         <span>OR</span>
                     </div>
 
-                    <a href="{{ route('auth.google') }}" class="btn-google-auth">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48">
-                            <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
-                            <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
-                            <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
-                            <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C43.196,34.212,44,29.351,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
-                        </svg>
-                        Continue with Google
-                    </a>
+                    <div class="d-flex flex-column gap-2">
+                        @if(config('services.google.client_id'))
+                            <a href="{{ route('auth.google') }}" class="btn-google-auth mb-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48">
+                                    <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+                                    <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+                                    <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+                                    <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C43.196,34.212,44,29.351,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+                                </svg>
+                                Continue with Google
+                            </a>
+                        @endif
+
+                        @if(config('services.facebook.client_id'))
+                            <a href="{{ route('auth.facebook') }}" class="btn-facebook-auth mb-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48">
+                                    <path fill="#3F51B5" d="M42,37c0,2.762-2.238,5-5,5H11c-2.761,0-5-2.238-5-5V11c0-2.762,2.239-5,5-5h26c2.762,0,5,2.238,5,5V37z"/>
+                                    <path fill="#FFF" d="M34.368,25H31v13h-5V25h-3v-4h3v-2.41c0-4.088,2.454-6.34,6.159-6.34c1.775,0,3.3,0.132,3.744,0.191l0.048,4.321l-2.559,0.001c-1.984,0-2.367,0.943-2.367,2.324V21h4.757L34.368,25z"/>
+                                </svg>
+                                Continue with Facebook
+                            </a>
+                        @endif
+                    </div>
                 @endif
             </form>
 
