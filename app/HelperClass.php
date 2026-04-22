@@ -65,6 +65,24 @@ class HelperClass
         return $file_path;
     }
 
+    public static function file_upload_from_url($url, $folder_name)
+    {
+        try {
+            $contents = file_get_contents($url);
+            if (!$contents) return null;
+            
+            $file_name = time() . Str::random(10) . '.jpg';
+            $file_path = 'upload/' . $folder_name . '/' . $file_name;
+            
+            Storage::disk('public')->put($file_path, $contents);
+            
+            return $file_path;
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Error uploading file from URL: ' . $e->getMessage());
+            return null;
+        }
+    }
+
     public static function file_delete($file_path)
     {
         Storage::disk('public')->delete($file_path);

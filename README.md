@@ -98,11 +98,13 @@ To enable "Login with Google" or "Login with Facebook", follow these configurati
 1.  Go to the [Meta for Developers](https://developers.facebook.com/) portal and log in.
 2.  Click **"My Apps"** and then **"Create App"**.
 3.  Select **"Authenticate and request data from users with Facebook Login"** (Consumer type).
-4.  Once created, go to **"Use cases"** and click **"Edit"** on the **"Authentication and account creation"** card.
-5.  Under **"Facebook Login" -> "Settings"**, find **"Valid OAuth Redirect URIs"** and add:
+4.  Once created, go to **"Use cases"** in the left sidebar.
+5.  Click **"Edit"** or **"Customize"** on the **"Authentication and account creation"** card.
+6.  **IMPORTANT:** Find the **"email"** permission in the list and click **"Add"**. If you don't do this, you will get an "Invalid Scopes" error.
+7.  Under **"Facebook Login" -> "Settings"**, find **"Valid OAuth Redirect URIs"** and add:
     `https://yourdomain.com/auth/facebook/callback`
     *(Note: For local development, use `http://localhost:8000/auth/facebook/callback`)*.
-6.  Navigate to **"App settings" -> "Basic"** to find your **App ID** and **App Secret**.
+8.  Navigate to **"App settings" -> "Basic"** to find your **App ID** and **App Secret**.
 7.  Update your `.env` file:
     ```env
     FACEBOOK_CLIENT_ID=your_app_id

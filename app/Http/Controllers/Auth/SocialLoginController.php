@@ -40,7 +40,9 @@ class SocialLoginController extends Controller
             return redirect()->route('login')->withErrors(['error' => 'Facebook Login is currently disabled.']);
         }
 
-        return Socialite::driver('facebook')->redirect();
+        return Socialite::driver('facebook')
+            ->scopes(['public_profile', 'email'])
+            ->redirect();
     }
 
     /**
@@ -73,6 +75,20 @@ class SocialLoginController extends Controller
                 'status' => $existingUser ? $existingUser->status : 1, // Keep status if exists, else Active
                 'email_verified_at' => $existingUser ? $existingUser->email_verified_at : now(),
             ];
+
+            // Handle User Photo
+            if ($socialUser->avatar) {
+                // If user already has an image, delete it first
+                if ($existingUser && $existingUser->image) {
+                    \App\HelperClass::file_delete($existingUser->image);
+                }
+                
+                // Download and save social photo
+                $photoPath = \App\HelperClass::file_upload_from_url($socialUser->avatar, 'customers');
+                if ($photoPath) {
+                    $userData['image'] = $photoPath;
+                }
+            }
 
             if ($driver === 'google') {
                 $userData['google_id'] = $socialUser->id;

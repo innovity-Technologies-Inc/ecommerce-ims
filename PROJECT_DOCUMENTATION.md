@@ -583,6 +583,7 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
 - **What:** Allows customers to register and login using third-party identities (Google and Facebook) for a frictionless experience.
 - **How it Works:**
     - **Providers:** Currently supports **Google** and **Facebook** via Laravel Socialite.
+    - **Data Collection:** The system requests access to the user's **Public Profile (Name & Profile Picture)** and **Email Address**. No private photos or libraries are accessed.
     - **User Mapping:** The system checks for existing emails. If a match is found, the social ID is linked to the existing account. If not, a new account is created with a generated password.
     - **Cart Synchronization:** Guest carts are automatically merged into the user's account upon successful social login.
     - **Security:** Social logins respect the `status` flag; inactive users cannot log in via social providers.

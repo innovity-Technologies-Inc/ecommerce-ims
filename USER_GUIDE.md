@@ -154,8 +154,10 @@ To allow customers to log in with their social accounts, you must provide API cr
 **B. Facebook Setup:**
 1.  Go to the [Facebook Developers Portal](https://developers.facebook.com/).
 2.  Create a "Consumer" app and add the "Facebook Login" product.
-3.  Under "Settings -> Basic", get your `App ID` and `App Secret`.
-4.  Under "Facebook Login -> Settings", add your Valid OAuth Redirect URI: `https://yourdomain.com/auth/facebook/callback`.
+3.  Go to **"Use cases"** and click **"Edit/Customize"** on the "Authentication and account creation" card.
+4.  **Crucial:** Click **"Add"** next to the **"email"** permission.
+5.  Under "Settings -> Basic", get your `App ID` and `App Secret`.
+6.  Under "Facebook Login -> Settings", add your Valid OAuth Redirect URI: `https://yourdomain.com/auth/facebook/callback`.
 
 *Note: The **Currency Symbol** set here will be automatically applied to all Purchase Orders, Reports, and customer invoices across the system.*
 
