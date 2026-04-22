@@ -54,18 +54,21 @@ return new class extends Migration
         ];
 
         foreach ($tables as $tableName) {
-            Schema::table($tableName, function (Blueprint $table) {
-                // Drop foreign keys first if they exist
+            Schema::table($tableName, function (Blueprint $table) use ($tableName) {
+                $columns = Schema::getColumnListing($tableName);
+
                 // Note: purchase_orders, stock_adjustments, wastages already had created_by
-                if ($table->getTable() !== 'purchase_orders' &&
-                    $table->getTable() !== 'stock_adjustments' &&
-                    $table->getTable() !== 'wastages') {
-                    $table->dropForeign([$table->getTable().'_created_by_foreign']);
-                    $table->dropColumn('created_by');
+                if (! in_array($tableName, ['purchase_orders', 'stock_adjustments', 'wastages'])) {
+                    if (in_array('created_by', $columns)) {
+                        $table->dropForeign(['created_by']);
+                        $table->dropColumn('created_by');
+                    }
                 }
 
-                $table->dropForeign([$table->getTable().'_updated_by_foreign']);
-                $table->dropColumn('updated_by');
+                if (in_array('updated_by', $columns)) {
+                    $table->dropForeign(['updated_by']);
+                    $table->dropColumn('updated_by');
+                }
             });
         }
     }
