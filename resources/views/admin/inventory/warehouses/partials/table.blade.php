@@ -14,7 +14,7 @@
         @endphp
         @foreach ($warehouses as $index => $data)
         <tr>
-            <td>{{$sl}}</td>
+            <td>{{$sl++}}</td>
             <td>{{$data->name}}</td>
             <td>{{$data->location}}</td>
             <td>

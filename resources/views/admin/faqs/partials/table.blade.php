@@ -10,9 +10,10 @@
             </tr>
         </thead>
         <tbody>
+            @php $sl = \App\HelperClass::indexNumberSerialization($faqs); @endphp
             @forelse($faqs as $faq)
                 <tr>
-                    <td>{{ \App\HelperClass::indexNumberSerialization($faqs) + $loop->index }}</td>
+                    <td>{{ $sl++ }}</td>
                     <td>
                         <span class="text-dark fw-medium">{{ Str::limit($faq->question, 50) }}</span>
                     </td>
