@@ -90,6 +90,43 @@ php artisan serve
 
 The application will be accessible at `http://127.0.0.1:8000`.
 
+## Social Authentication Setup
+
+To enable "Login with Google" or "Login with Facebook", follow these configuration steps:
+
+### 1. Facebook OAuth (Meta Developer Portal)
+1.  Go to the [Meta for Developers](https://developers.facebook.com/) portal and log in.
+2.  Click **"My Apps"** and then **"Create App"**.
+3.  Select **"Authenticate and request data from users with Facebook Login"** (Consumer type).
+4.  Once created, go to **"Use cases"** and click **"Edit"** on the **"Authentication and account creation"** card.
+5.  Under **"Facebook Login" -> "Settings"**, find **"Valid OAuth Redirect URIs"** and add:
+    `https://yourdomain.com/auth/facebook/callback`
+    *(Note: For local development, use `http://localhost:8000/auth/facebook/callback`)*.
+6.  Navigate to **"App settings" -> "Basic"** to find your **App ID** and **App Secret**.
+7.  Update your `.env` file:
+    ```env
+    FACEBOOK_CLIENT_ID=your_app_id
+    FACEBOOK_CLIENT_SECRET=your_app_secret
+    FACEBOOK_REDIRECT_URL="https://yourdomain.com/auth/facebook/callback"
+    ```
+8.  Switch the app to **"Live"** mode in the top navigation bar when ready for production.
+
+### 2. Google OAuth (Google Cloud Console)
+1.  Go to the [Google Cloud Console](https://console.cloud.google.com/).
+2.  Create a new project.
+3.  Navigate to **"APIs & Services" -> "Credentials"**.
+4.  Click **"Create Credentials"** and select **"OAuth client ID"**.
+5.  Configure the Consent Screen if prompted.
+6.  Set Application Type to **"Web application"**.
+7.  Under **"Authorized redirect URIs"**, add:
+    `https://yourdomain.com/auth/google/callback`
+8.  Copy the **Client ID** and **Client Secret** and update your `.env` file:
+    ```env
+    GOOGLE_CLIENT_ID=your_client_id
+    GOOGLE_CLIENT_SECRET=your_client_secret
+    GOOGLE_REDIRECT_URL="https://yourdomain.com/auth/google/callback"
+    ```
+
 ## Automation & Cron Jobs
 
 For the system to function correctly, especially regarding stock notifications and promotions, the following tasks should be automated.
