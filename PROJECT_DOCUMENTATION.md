@@ -586,6 +586,12 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     - **User Mapping:** The system checks for existing emails. If a match is found, the social ID is linked to the existing account. If not, a new account is created with a generated password.
     - **Cart Synchronization:** Guest carts are automatically merged into the user's account upon successful social login.
     - **Security:** Social logins respect the `status` flag; inactive users cannot log in via social providers.
+- **Technical Setup (Required .env keys):**
+    *   **Google:** `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URL`.
+    *   **Facebook:** `FACEBOOK_CLIENT_ID`, `FACEBOOK_CLIENT_SECRET`, `FACEBOOK_REDIRECT_URL`.
+- **Portal Configuration:**
+    *   **Google:** Set "Authorized redirect URIs" to `https://yourdomain.com/auth/google/callback`.
+    *   **Facebook:** Set "Valid OAuth Redirect URIs" to `https://yourdomain.com/auth/facebook/callback`.
 - **Data:**
     *   `google_id`, `google_token` stored in `users` table.
     *   `facebook_id`, `facebook_token` stored in `users` table.

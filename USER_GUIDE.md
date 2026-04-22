@@ -139,8 +139,23 @@ The system automatically monitors your stock levels to prevent stockouts:
 
 ---
 
-## 11. System Settings
-Go to `Settings -> General Settings` to update your **Business Name**, **Authentication Banners** (for Login/Register pages), **Currency Symbol**, and **Notification Email** for Alerts. 
+## 11. System Settings & Social Logins
+Go to `Settings -> General Settings` to update your **Business Name**, **Authentication Banners**, **Currency Symbol**, and **Notification Email**.
+
+### 11.1 Social Login Setup (Google & Facebook)
+To allow customers to log in with their social accounts, you must provide API credentials in your system configuration (`.env` file):
+
+**A. Google Setup:**
+1.  Go to the [Google Cloud Console](https://console.cloud.google.com/).
+2.  Create a project and set up "OAuth 2.0 Client IDs".
+3.  Add your Authorized Redirect URI: `https://yourdomain.com/auth/google/callback`.
+4.  Copy the `Client ID` and `Secret` to your settings.
+
+**B. Facebook Setup:**
+1.  Go to the [Facebook Developers Portal](https://developers.facebook.com/).
+2.  Create a "Consumer" app and add the "Facebook Login" product.
+3.  Under "Settings -> Basic", get your `App ID` and `App Secret`.
+4.  Under "Facebook Login -> Settings", add your Valid OAuth Redirect URI: `https://yourdomain.com/auth/facebook/callback`.
 
 *Note: The **Currency Symbol** set here will be automatically applied to all Purchase Orders, Reports, and customer invoices across the system.*
 
