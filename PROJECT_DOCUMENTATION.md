@@ -210,7 +210,24 @@
     *   `return_items`: Source for calculating return-based efficiency penalties.
     *   `warehouse_stock_limits`: Source for localized alert thresholds.
 
-    ### 3.12 Comprehensive Demo Seeding (REQ-178)
+    ### 3.12 HRM Module (REQ-227)
+    - **What (Business Purpose):** Manages internal staff and appointed users' attendance, work hours, and financial compensation.
+    - **How it Works (Technical Flow):**
+    1. **Configuration:** Admin enables "Time Tracking" and sets "Salary Settings" (Type/Amount) and "Daily Work Hours" in an employee's profile.
+    2. **Automated Tracking:** For tracked users, the system captures the first login of the day as `clock_in` and updates `clock_out` and `total_minutes` upon logout via authentication hooks.
+    3. **Manual Entry:** Admins can manually record attendance for any employee by specifying exact `clock_in` and `clock_out` times.
+    4. **Payslip Generation:** 
+        *   Calculates `total_hours` from `admin_attendances`.
+        *   Calculates `net_salary` based on the salary type (Monthly: fixed, Weekly: fixed x 4, Daily: rate x days worked).
+        *   Generates a unique `payslip_number` and tracks payment status.
+    5. **Filtering:** All views support filtering by Employee, Status, and Date Range (Daily/Weekly/Monthly) using FlexSearch.
+    - **Data & Storage (DB Connectivity):**
+    *   `admin_attendances` link to `admins` via `admin_id`.
+    *   `payslips` link to `admins` and track financial metadata.
+    *   `general_settings` provide the dynamic currency symbol used in all views.
+
+    ### 3.13 Comprehensive Demo Seeding (REQ-178)
+
     - **What (Business Purpose):** Provides a robust, mathematically consistent set of fashion-related data to demonstrate the system's full capabilities across procurement, sales, and inventory management.
     - **How it Works (Technical Flow):**
         1. **Data Population:** The `ProductSeeder` generates 100 unique fashion products across categories like T-Shirts, Jeans, Shoes, and Accessories.

@@ -212,7 +212,34 @@ The system predicts the future value of a customer over a 24-month period using 
 
 ---
 
-## 13. Ready-to-Use Fashion Catalog (Demo Data)
+## 13. HRM & Staff Management (REQ-227)
+Manage your internal team's attendance and financial compensation using the `HRM` module.
+
+### 13.1 Staff Configuration
+Before tracking time, you must configure each staff member's profile:
+1.  Go to `Management -> Admins -> Users`.
+2.  Edit a user and locate the **HRM Settings** section.
+3.  **Time Tracking:** Enable this to automatically track their daily login/logout times.
+4.  **Standard Hours:** Set their expected daily work hours (e.g., 8.0).
+5.  **Salary Settings:** Define their pay rate and type (Daily, Weekly, or Monthly).
+
+### 13.2 Attendance Tracking
+*   **Automatic:** For users with tracking enabled, the system records their first login as "Clock-In" and their final logout as "Clock-Out".
+*   **Manual Entry:** Go to `HRM -> Attendance -> Record Attendance`. Use this to manually enter shifts for any staff member by specifying the date and exact Clock-In/Clock-Out times.
+
+### 13.3 Payslips & Compensation
+1.  **Generation:** Go to `HRM -> Payslips -> Generate Payslip`. Select the employee, month, and year.
+2.  **Calculation:** The system automatically calculates the pay based on:
+    *   **Monthly:** Pays the fixed "Salary Amount".
+    *   **Weekly:** Pays the "Salary Amount" multiplied by 4.
+    *   **Daily:** Pays the "Salary Amount" multiplied by the number of days the employee has attendance records for that month.
+3.  **Management:** View and print professional payslips from the list. You can also update the status to **"Paid"** once the transaction is complete.
+
+*Note: All salary amounts automatically use the currency symbol defined in your General Settings.*
+
+---
+
+## 14. Ready-to-Use Fashion Catalog (Demo Data)
 To help you get started immediately, the system comes pre-loaded with a comprehensive **Fashion Catalog**.
 *   **100+ Products:** T-Shirts, Jeans, Shoes, and Accessories with full descriptions and marketing tags.
 *   **300+ Images:** High-quality fashion photography is automatically assigned to every product.

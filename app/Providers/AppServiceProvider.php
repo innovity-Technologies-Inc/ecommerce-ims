@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
-use App\Models\AdminNotification;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Facades\View;
+use App\Models\Admin;
+use App\Services\HrmService;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -22,14 +24,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Paginator::useBootstrapFive();
+        Event::listen(Login::class, function (Login $event) {
+            if ($event->user instanceof Admin) {
+                app(HrmService::class)->logClockIn($event->user);
+            }
+        });
 
-        // Share unread notifications with the admin header
-        View::composer('admin.structure.partials.header', function ($view) {
-            $view->with([
-                'unreadNotifications' => AdminNotification::unread()->latest()->take(10)->get(),
-                'unreadCount' => AdminNotification::unread()->count(),
-            ]);
+        Event::listen(Logout::class, function (Logout $event) {
+            if ($event->user instanceof Admin) {
+                app(HrmService::class)->logClockOut($event->user);
+            }
         });
     }
 }

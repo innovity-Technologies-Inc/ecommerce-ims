@@ -322,6 +322,25 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
         });
     });
 
+    // HRM Module
+    Route::prefix('hrm')->middleware('permission:hrm.view')->group(function () {
+        // Attendance
+        Route::prefix('attendance')->controller(\App\Http\Controllers\Admin\HrmController::class)->group(function () {
+            Route::get('/', 'attendanceIndex')->name('admin.hrm.attendance.index');
+            Route::get('/create', 'attendanceCreate')->name('admin.hrm.attendance.create')->middleware('permission:hrm.edit');
+            Route::post('/store', 'attendanceStore')->name('admin.hrm.attendance.store')->middleware('permission:hrm.edit');
+        });
+
+        // Payslips
+        Route::prefix('payslip')->controller(\App\Http\Controllers\Admin\HrmController::class)->group(function () {
+            Route::get('/', 'payslipIndex')->name('admin.hrm.payslip.index');
+            Route::get('/create', 'payslipCreate')->name('admin.hrm.payslip.create')->middleware('permission:hrm.edit');
+            Route::post('/generate', 'payslipGenerate')->name('admin.hrm.payslip.generate')->middleware('permission:hrm.edit');
+            Route::get('/{id}', 'payslipShow')->name('admin.hrm.payslip.show');
+            Route::put('/{id}/status', 'updatePayslipStatus')->name('admin.hrm.payslip.update-status')->middleware('permission:hrm.edit');
+        });
+    });
+
     Route::controller(\App\Http\Controllers\Admin\NotificationController::class)->prefix('notifications')->group(function () {
         Route::get('/', 'index')->name('admin.notifications.index');
         Route::get('/fetch-dropdown', 'fetchDropdown')->name('admin.notifications.fetch_dropdown');

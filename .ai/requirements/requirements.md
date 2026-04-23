@@ -235,6 +235,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [ ] **REQ-224:** Facebook OAuth Integration: Implement "Login with Facebook" functionality using Laravel Socialite, following the existing Google OAuth pattern for user creation and authentication.
 - [ ] **REQ-225:** Dynamic Currency Replacement: Replace all remaining hardcoded `$` symbols with the dynamic currency setting from `HelperClass::generalSettings()->currency` in specific Blade templates and emails. (NEW)
 - [ ] **REQ-226:** Dynamic Banners: Make 4 homepage banners and 1 cart page banner dynamic. Admin should be able to upload these from the admin panel with clear size instructions (330x315, 690x315, 1410x230, 690x550).
+- [ ] **REQ-227:** HRM Module: Implement a basic HRM for appointed users (admins/staff). Includes time tracking toggle, daily logged-in time calculation, manual daily work hour entry, salary breakdown (type/amount in profile), and payslip generation with daily/weekly/monthly/range filtering. Uses dynamic currency from general settings.
 
 
 

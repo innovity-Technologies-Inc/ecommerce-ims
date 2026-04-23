@@ -368,6 +368,27 @@
             </li>
             @endcan
 
+            @can('hrm.view')
+            <li class="nav-item">
+                <a class="nav-link menu-arrow {{ Request::routeIs('admin.hrm.*') ? '' : 'collapsed' }}" href="#sidebarHRM" data-bs-toggle="collapse" role="button" aria-expanded="{{ Request::routeIs('admin.hrm.*') ? 'true' : 'false' }}" aria-controls="sidebarHRM">
+                                   <span class="nav-icon">
+                                        <iconify-icon icon="solar:users-group-rounded-bold-duotone"></iconify-icon>
+                                   </span>
+                    <span class="nav-text"> HRM </span>
+                </a>
+                <div class="collapse {{ Request::routeIs('admin.hrm.*') ? 'show' : '' }}" id="sidebarHRM">
+                    <ul class="nav sub-navbar-nav">
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link {{ Request::routeIs('admin.hrm.attendance.*') ? 'active' : '' }}" href="{{ route('admin.hrm.attendance.index') }}">Attendance</a>
+                        </li>
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link {{ Request::routeIs('admin.hrm.payslip.*') ? 'active' : '' }}" href="{{ route('admin.hrm.payslip.index') }}">Payslips</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            @endcan
+
             @can('settings.view')
             <li class="nav-item">
                 <a class="nav-link {{ Request::routeIs('admin.faqs.*') ? 'active' : '' }}" href="{{ route('admin.faqs.index') }}">

@@ -25,7 +25,18 @@ class StoreAdminRequest extends FormRequest
             'password' => ['required', 'confirmed', 'min:8'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,avif', 'max:2048'],
             'role' => ['required', 'exists:roles,name'],
+            'is_time_tracking' => ['nullable', 'boolean'],
+            'salary_type' => ['nullable', 'in:daily,weekly,monthly'],
+            'salary_amount' => ['nullable', 'numeric', 'min:0'],
+            'daily_work_hours' => ['nullable', 'numeric', 'min:0', 'max:24'],
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'is_time_tracking' => $this->has('is_time_tracking') ? 1 : 0,
+        ]);
     }
 
     public function messages(): array
@@ -48,6 +59,10 @@ class StoreAdminRequest extends FormRequest
     {
         return [
             'image' => 'Administrator Image',
+            'is_time_tracking' => 'Time Tracking',
+            'salary_type' => 'Salary Type',
+            'salary_amount' => 'Salary Amount',
+            'daily_work_hours' => 'Daily Work Hours',
         ];
     }
 }

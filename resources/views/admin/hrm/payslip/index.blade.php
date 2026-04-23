@@ -1,0 +1,108 @@
+@extends('admin.structure.app')
+
+@section('content')
+<div class="container-xxl">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h4 class="mb-1">Payslip Management</h4>
+            <p class="text-muted mb-0">Manage employee salaries and generate payslips.</p>
+        </div>
+        @can('hrm.edit')
+        <a href="{{ route('admin.hrm.payslip.create') }}" class="btn btn-primary">
+            <iconify-icon icon="solar:add-circle-bold-duotone" class="me-1"></iconify-icon> Generate Payslip
+        </a>
+        @endcan
+    </div>
+
+    <div class="card">
+        <div class="card-header border-bottom-0 pb-0">
+            <form id="filter-form" class="row g-3">
+                <div class="col-lg-3">
+                    <div class="search-bar">
+                        <input type="text" name="search" class="form-control" placeholder="Search payslip or employee..." value="{{ request('search') }}">
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <select name="admin_id" class="form-control select2">
+                        <option value="">All Employees</option>
+                        @foreach($admins as $admin)
+                            <option value="{{ $admin->id }}" {{ request('admin_id') == $admin->id ? 'selected' : '' }}>{{ $admin->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-lg-2">
+                    <select name="status" class="form-control select2">
+                        <option value="">All Status</option>
+                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Paid</option>
+                        <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                    </select>
+                </div>
+                <div class="col-lg-2">
+                    <select name="month" class="form-control select2">
+                        <option value="">Select Month</option>
+                        @for($m=1; $m<=12; $m++)
+                            <option value="{{ $m }}" {{ request('month', date('n')) == $m ? 'selected' : '' }}>{{ date('F', mktime(0, 0, 0, $m, 1)) }}</option>
+                        @endfor
+                    </select>
+                </div>
+                <div class="col-lg-1">
+                    <select name="year" class="form-control select2">
+                        <option value="">Year</option>
+                        @for($y=date('Y'); $y>=2020; $y--)
+                            <option value="{{ $y }}" {{ request('year', date('Y')) == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endfor
+                    </select>
+                </div>
+                <div class="col-lg-2">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary w-100">Filter</button>
+                        <a href="{{ route('admin.hrm.payslip.index') }}" class="btn btn-soft-secondary w-100">Reset</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="card-body" id="table-container">
+            @include('admin.hrm.payslip.partials.table')
+        </div>
+    </div>
+</div>
+@endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        $('.select2').select2();
+
+        // AJAX Filtering
+        $('#filter-form').on('submit', function(e) {
+            e.preventDefault();
+            let url = "{{ route('admin.hrm.payslip.index') }}";
+            let data = $(this).serialize();
+
+            $.ajax({
+                url: url,
+                data: data,
+                success: function(response) {
+                    $('#table-container').html(response);
+                    window.history.pushState({}, '', url + '?' + data);
+                }
+            });
+        });
+
+        // Pagination AJAX
+        $(document).on('click', '.pagination a', function(e) {
+            e.preventDefault();
+            let url = $(this).attr('href');
+            
+            $.ajax({
+                url: url,
+                success: function(response) {
+                    $('#table-container').html(response);
+                    window.history.pushState({}, '', url);
+                }
+            });
+        });
+    });
+</script>
+@endsection
