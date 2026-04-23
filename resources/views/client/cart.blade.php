@@ -224,11 +224,12 @@
                         </div>
                     </form>
                         @if($cartItems->count() > 0)
+                        @php $c_banner = \App\HelperClass::getBanner('cart_sidebar'); @endphp
                         <div class="row d-flex align-items-stretch">
                             <div class="col-lg-8 col-md-12 mb-res-sm-30px d-flex">
                                 <div class="cart-banner w-100">
-                                    <a href="{{ route('client.products.index') }}" class="d-block h-100">
-                                        <img src="{{ asset('client/assets/images/banner-image/5.jpg') }}" alt="Cart Banner" class="img-fluid w-100 h-100" style="object-fit: cover;">
+                                    <a href="{{ $c_banner->link ?? '#' }}" class="d-block h-100">
+                                        <img src="{{ str_contains($c_banner->image, 'client/') ? asset($c_banner->image) : asset('storage/'.$c_banner->image) }}" alt="Cart Banner" class="img-fluid w-100 h-100" style="object-fit: cover;">
                                     </a>
                                 </div>
                             </div>

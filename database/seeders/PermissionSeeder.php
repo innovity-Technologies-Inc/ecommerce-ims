@@ -64,6 +64,10 @@ class PermissionSeeder extends Seeder
             'sliders.edit',
             'sliders.delete',
 
+            // Banners
+            'banners.view',
+            'banners.edit',
+
             // Homepage Sections
             'homepage_sections.view',
             'homepage_sections.edit',

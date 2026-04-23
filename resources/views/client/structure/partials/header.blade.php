@@ -157,13 +157,13 @@
                                     </li>
                                     @endforeach
                                     <li class="banner-wrapper">
-                                        <a href="{{ route('client.products.index') }}"><img
-                                                src="{{asset('client/assets/images/banner-image/banner-menu.jpg')}}"
+                                        @php $m_banner = \App\HelperClass::getBanner('menu_banner'); @endphp
+                                        <a href="{{ $m_banner->link ?? route('client.products.index') }}"><img
+                                                src="{{ str_contains($m_banner->image, 'client/') ? asset($m_banner->image) : asset('storage/'.$m_banner->image) }}"
                                                 alt=""></a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="menu-dropdown">
+                                                </li>
+                                                </ul>
+                                                </li>                            <li class="menu-dropdown">
                                 <a href="{{ Auth::guard('web')->check() ? route('user.account') : route('login') }}">Account <i class="ion-ios-arrow-down"></i></a>
                                 <ul class="sub-menu">
                                     @if(Auth::guard('web')->check())

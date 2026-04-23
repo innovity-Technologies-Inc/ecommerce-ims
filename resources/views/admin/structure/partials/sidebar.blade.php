@@ -146,6 +146,11 @@
                             <a class="sub-nav-link {{ Request::routeIs('admin.sliders.*') ? 'active' : '' }}" href="{{ route('admin.sliders.index') }}">Sliders</a>
                         </li>
                         @endcan
+                        @can('banners.view')
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link {{ Request::routeIs('admin.banners.*') ? 'active' : '' }}" href="{{ route('admin.banners.index') }}">Manage Banners</a>
+                        </li>
+                        @endcan
                         @can('homepage_sections.view')
                         <li class="sub-nav-item">
                             <a class="sub-nav-link {{ Request::routeIs('admin.sections.bestsellers') ? 'active' : '' }}" href="{{ route('admin.sections.bestsellers') }}">Bestsellers</a>

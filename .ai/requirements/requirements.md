@@ -234,6 +234,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [ ] **REQ-223:** Global Currency Standardization: Replace all hardcoded currency symbols (e.g., "$") in Blade views, emails, and reports with the dynamic currency setting from `HelperClass::generalSettings()->currency`.
 - [ ] **REQ-224:** Facebook OAuth Integration: Implement "Login with Facebook" functionality using Laravel Socialite, following the existing Google OAuth pattern for user creation and authentication.
 - [ ] **REQ-225:** Dynamic Currency Replacement: Replace all remaining hardcoded `$` symbols with the dynamic currency setting from `HelperClass::generalSettings()->currency` in specific Blade templates and emails. (NEW)
+- [ ] **REQ-226:** Dynamic Banners: Make 4 homepage banners and 1 cart page banner dynamic. Admin should be able to upload these from the admin panel with clear size instructions (330x315, 690x315, 1410x230, 690x550).
 
 
 

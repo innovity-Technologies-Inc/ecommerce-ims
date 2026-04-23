@@ -31,6 +31,11 @@ class HelperClass
         return Brand::active()->get();
     }
 
+    public static function getBanner(string $slug)
+    {
+        return \App\Models\Banner::where('slug', $slug)->first();
+    }
+
     public static function wishlistCount()
     {
         if (\Illuminate\Support\Facades\Auth::guard('web')->check()) {
@@ -69,16 +74,19 @@ class HelperClass
     {
         try {
             $contents = file_get_contents($url);
-            if (!$contents) return null;
-            
-            $file_name = time() . Str::random(10) . '.jpg';
-            $file_path = 'upload/' . $folder_name . '/' . $file_name;
-            
+            if (! $contents) {
+                return null;
+            }
+
+            $file_name = time().Str::random(10).'.jpg';
+            $file_path = 'upload/'.$folder_name.'/'.$file_name;
+
             Storage::disk('public')->put($file_path, $contents);
-            
+
             return $file_path;
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Error uploading file from URL: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error('Error uploading file from URL: '.$e->getMessage());
+
             return null;
         }
     }
