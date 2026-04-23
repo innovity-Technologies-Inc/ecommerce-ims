@@ -40,8 +40,8 @@
             </form>
         </div>
 
-        <div id="tableContainer" class="card-body p-0 position-relative">
-            <div id="loadingOverlay" class="position-absolute top-0 start-0 w-100 h-100 d-none d-flex align-items-center justify-content-center" style="z-index: 10; background: rgba(255,255,255,0.5);">
+        <div id="tableContainer" class="card-body p-0 position-relative" style="min-height: 500px;">
+            <div id="loadingOverlay" class="position-absolute top-0 start-0 end-0 bottom-0 d-none d-flex align-items-center justify-content-center" style="z-index: 10; background: rgba(255,255,255,0.7); backdrop-filter: blur(1px);">
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
