@@ -40,7 +40,7 @@
             </form>
         </div>
 
-        <div id="tableContainer" class="card-body p-0 position-relative" style="min-height: 500px;">
+        <div id="tableContainer" class="card-body p-0 position-relative" style="min-height: 500px; overflow-anchor: none;">
             <div id="loadingOverlay" class="position-absolute top-0 start-0 end-0 bottom-0 d-none d-flex align-items-center justify-content-center" style="z-index: 10; background: rgba(255,255,255,0.7); backdrop-filter: blur(1px);">
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Loading...</span>
@@ -52,6 +52,14 @@
         </div>
     </div>
 </div>
+
+<style>
+    /* Disable transitions on page content to prevent scroll anchoring conflicts in Firefox */
+    .page-content {
+        transition: none !important;
+        -webkit-transition: none !important;
+    }
+</style>
 @endsection
 
 @section('scripts')
@@ -63,7 +71,10 @@
         const filterForm = $('#filterForm');
 
         function fetchStock(url = "{{ route('admin.inventory.stock.index') }}") {
-            // Avoid changing height or opacity directly on container to prevent Firefox flickering at bottom
+            // Lock current height before loading to prevent layout shift
+            const currentHeight = tableContainer.outerHeight();
+            tableContainer.css('min-height', currentHeight + 'px');
+
             loadingOverlay.removeClass('d-none');
 
             const params = filterForm.serialize();
@@ -75,10 +86,16 @@
                 success: function(response) {
                     tableContent.html(response);
                     loadingOverlay.addClass('d-none');
+                    
+                    // Allow container to adjust naturally to new content height, 
+                    // but keep the min-height baseline for future loads.
+                    tableContainer.css('min-height', '500px'); 
+                    
                     window.history.pushState({}, '', finalUrl);
                 },
                 error: function() {
                     loadingOverlay.addClass('d-none');
+                    tableContainer.css('min-height', '500px');
                 }
             });
         }
