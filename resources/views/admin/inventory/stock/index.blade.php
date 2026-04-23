@@ -54,27 +54,41 @@
 </div>
 
 <style>
-    /* Disable transitions and smooth scroll to prevent scroll anchoring conflicts in Firefox */
-    .page-content, .wrapper {
+    /* 
+       Firefox Stability Fix: 
+       Disable scroll anchoring and fixed backgrounds which cause flickering 
+       when scrolling to the bottom of pages with dynamic content.
+    */
+    html, body, .wrapper, .page-content, .content-page, #tableContainer {
+        overflow-anchor: none !important;
+    }
+    
+    .page-content {
         transition: none !important;
         -webkit-transition: none !important;
     }
-    
-    html {
-        scroll-behavior: auto !important;
-    }
 
-    /* Force GPU acceleration on the main container to prevent repaint flickering */
+    /* Disable the fixed background gradient only on this page to prevent repaint flickering */
+    .content-page::before {
+        display: none !important;
+    }
+    
     .content-page {
-        will-change: transform;
-        backface-visibility: hidden;
+        background: var(--bs-body-bg) !important;
     }
 
     #tableContainer {
         min-height: 600px;
-        overflow-anchor: none;
-        /* Ensure the container doesn't have any transform that might trigger Firefox bugs */
-        transform: none !important;
+        /* Strict containment prevents Firefox from recalculating the whole page on table updates */
+        contain: size layout style;
+        background: #fff;
+    }
+
+    /* Remove heavy filters for better performance during scroll */
+    #loadingOverlay {
+        background: rgba(255,255,255,0.8) !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
     }
 </style>
 @endsection
@@ -88,13 +102,9 @@
         const filterForm = $('#filterForm');
 
         function fetchStock(url = "{{ route('admin.inventory.stock.index') }}") {
-            // Lock current height and prevent scroll position jumping
-            const currentHeight = tableContainer.outerHeight();
-            tableContainer.css('min-height', currentHeight + 'px');
-            
-            // Record scroll position before update
+            // Record scroll position
             const scrollPos = $(window).scrollTop();
-
+            
             loadingOverlay.removeClass('d-none');
 
             const params = filterForm.serialize();
@@ -106,25 +116,16 @@
                 success: function(response) {
                     tableContent.html(response);
                     
-                    // Use requestAnimationFrame to ensure the DOM update is painted 
-                    // before we release the height lock and restore scroll
-                    requestAnimationFrame(() => {
+                    // Simple stabilization
+                    setTimeout(() => {
                         loadingOverlay.addClass('d-none');
-                        
-                        // Restore scroll position to prevent jumps
                         $(window).scrollTop(scrollPos);
-                        
-                        // Set a stable baseline but allow content to expand
-                        setTimeout(() => {
-                            tableContainer.css('min-height', '600px');
-                        }, 100);
-                    });
+                    }, 50);
                     
                     window.history.pushState({}, '', finalUrl);
                 },
                 error: function() {
                     loadingOverlay.addClass('d-none');
-                    tableContainer.css('min-height', '600px');
                 }
             });
         }
