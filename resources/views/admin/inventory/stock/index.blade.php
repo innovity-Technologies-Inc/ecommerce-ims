@@ -41,7 +41,7 @@
         </div>
 
         <div id="tableContainer" class="card-body p-0 position-relative" style="min-height: 500px; overflow-anchor: none;">
-            <div id="loadingOverlay" class="position-absolute top-0 start-0 end-0 bottom-0 d-none d-flex align-items-center justify-content-center" style="z-index: 10; background: rgba(255,255,255,0.7); backdrop-filter: blur(1px);">
+            <div id="loadingOverlay" class="position-absolute top-0 start-0 end-0 bottom-0 d-none d-flex align-items-center justify-content-center" style="z-index: 10; background: rgba(255,255,255,0.7);">
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
@@ -54,12 +54,8 @@
 </div>
 
 <style>
-    /* 
-       Firefox Stability Fix: 
-       Disable scroll anchoring and fixed backgrounds which cause flickering 
-       when scrolling to the bottom of pages with dynamic content.
-    */
-    html, body, .wrapper, .page-content, .content-page, #tableContainer {
+    /* Firefox Stability Fix */
+    html, body, .wrapper, .page-content, .content-page {
         overflow-anchor: none !important;
     }
     
@@ -68,7 +64,7 @@
         -webkit-transition: none !important;
     }
 
-    /* Disable the fixed background gradient only on this page to prevent repaint flickering */
+    /* Disable the fixed background gradient ONLY on this page to prevent repaint flickering in Firefox */
     .content-page::before {
         display: none !important;
     }
@@ -77,18 +73,9 @@
         background: var(--bs-body-bg) !important;
     }
 
+    /* Containment without 'size' to allow natural height growth */
     #tableContainer {
-        min-height: 600px;
-        /* Strict containment prevents Firefox from recalculating the whole page on table updates */
-        contain: size layout style;
-        background: #fff;
-    }
-
-    /* Remove heavy filters for better performance during scroll */
-    #loadingOverlay {
-        background: rgba(255,255,255,0.8) !important;
-        backdrop-filter: none !important;
-        -webkit-backdrop-filter: none !important;
+        contain: layout style;
     }
 </style>
 @endsection
