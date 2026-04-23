@@ -17,13 +17,13 @@
     <div class="card">
         <div class="card-header border-bottom-0 pb-0">
             <form id="filter-form" class="row g-3">
-                <div class="col-lg-3">
+                <div class="col-lg-4">
                     <div class="search-bar">
-                        <input type="text" name="search" class="form-control" placeholder="Search employee..." value="{{ request('search') }}">
+                        <input type="text" name="search" id="searchInput" class="form-control" placeholder="Search employee..." value="{{ request('search') }}">
                     </div>
                 </div>
                 <div class="col-lg-3">
-                    <select name="admin_id" class="form-select select2">
+                    <select name="admin_id" id="adminFilter" class="form-select select2">
                         <option value="">All Employees</option>
                         @foreach($admins as $admin)
                             <option value="{{ $admin->id }}" {{ request('admin_id') == $admin->id ? 'selected' : '' }}>{{ $admin->name }}</option>
@@ -31,16 +31,10 @@
                     </select>
                 </div>
                 <div class="col-lg-2">
-                    <input type="date" name="start_date" class="form-control" placeholder="Start Date" value="{{ request('start_date') }}">
+                    <input type="date" name="start_date" id="startDateFilter" class="form-control" placeholder="Start Date" value="{{ request('start_date') }}">
                 </div>
-                <div class="col-lg-2">
-                    <input type="date" name="end_date" class="form-control" placeholder="End Date" value="{{ request('end_date') }}">
-                </div>
-                <div class="col-lg-2">
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary w-100">Filter</button>
-                        <a href="{{ route('admin.hrm.attendance.index') }}" class="btn btn-soft-secondary w-100">Reset</a>
-                    </div>
+                <div class="col-lg-3">
+                    <input type="date" name="end_date" id="endDateFilter" class="form-control" placeholder="End Date" value="{{ request('end_date') }}">
                 </div>
             </form>
         </div>
@@ -59,11 +53,10 @@
             width: '100%'
         });
 
-        // AJAX Filtering
-        $('#filter-form').on('submit', function(e) {
-            e.preventDefault();
+        // AJAX live search and filtering
+        function fetchAttendance() {
             let url = "{{ route('admin.hrm.attendance.index') }}";
-            let data = $(this).serialize();
+            let data = $('#filter-form').serialize();
 
             $.ajax({
                 url: url,
@@ -73,6 +66,18 @@
                     window.history.pushState({}, '', url + '?' + data);
                 }
             });
+        }
+
+        // Debounce for search input
+        let debounceTimer;
+        $('#searchInput').on('keyup', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(fetchAttendance, 500);
+        });
+
+        // Immediate triggers for select and dates
+        $('#adminFilter, #startDateFilter, #endDateFilter').on('change', function() {
+            fetchAttendance();
         });
 
         // Pagination AJAX
