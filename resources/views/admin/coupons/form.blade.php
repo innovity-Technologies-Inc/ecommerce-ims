@@ -1,5 +1,6 @@
 @extends('admin.structure.app')
 @section('content')
+@php $gs = \App\HelperClass::generalSettings(); @endphp
 
     <div class="container-xxl">
         <div class="d-flex align-items-center justify-content-between mb-3">
@@ -49,7 +50,7 @@
                                 <div class="col-lg-6">
                                     <label class="form-label">Discount Amount <span class="text-danger">*</span></label>
                                     <div class="input-group">
-                                        <span class="input-group-text" id="amount-addon">{{ old('discount_type', $coupon->discount_type ?? 'percentage') == 'percentage' ? '%' : '$' }}</span>
+                                        <span class="input-group-text" id="amount-addon">{{ old('discount_type', $coupon->discount_type ?? 'percentage') == 'percentage' ? '%' : ($gs->currency ?? '$') }}</span>
                                         <input type="number" name="discount_amount" step="0.01" class="form-control @error('discount_amount') is-invalid @enderror" 
                                             value="{{ old('discount_amount', $coupon->discount_amount ?? '') }}" required>
                                     </div>
@@ -57,14 +58,14 @@
                                 </div>
 
                                 <div class="col-lg-6" id="max_discount_wrapper" style="{{ old('discount_type', $coupon->discount_type ?? 'percentage') == 'fixed' ? 'display: none;' : '' }}">
-                                    <label class="form-label">Maximum Discount Amount</label>
+                                    <label class="form-label">Maximum Discount Amount ({{ $gs->currency ?? '$' }})</label>
                                     <input type="number" name="max_discount_amount" step="0.01" class="form-control @error('max_discount_amount') is-invalid @enderror" 
                                         value="{{ old('max_discount_amount', $coupon->max_discount_amount ?? '') }}">
                                     <small class="text-muted">Maximum limit for percentage discount.</small>
                                     @error('max_discount_amount') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                 </div>
                                 <div class="col-lg-6">
-                                    <label class="form-label">Minimum Spend</label>
+                                    <label class="form-label">Minimum Spend ({{ $gs->currency ?? '$' }})</label>
                                     <input type="number" name="min_spend" step="0.01" class="form-control @error('min_spend') is-invalid @enderror" 
                                         value="{{ old('min_spend', $coupon->min_spend ?? '0') }}">
                                     @error('min_spend') <div class="invalid-feedback">{{ $message }}</div> @enderror
@@ -124,13 +125,14 @@
 @section('scripts')
 <script>
     $(document).ready(function() {
+        const currency = "{{ $gs->currency ?? '$' }}";
         $('#discount_type').on('change', function() {
             if ($(this).val() === 'percentage') {
                 $('#max_discount_wrapper').slideDown();
                 $('#amount-addon').text('%');
             } else {
                 $('#max_discount_wrapper').slideUp();
-                $('#amount-addon').text('$');
+                $('#amount-addon').text(currency);
             }
         });
     });

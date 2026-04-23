@@ -29,9 +29,9 @@
                     <td>
                         @if($coupon->discount_type == 'percentage')
                             {{ number_format($coupon->discount_amount, 0) }}% 
-                            <small class="text-muted">(Max: {{ number_format($coupon->max_discount_amount, 2) }})</small>
+                            <small class="text-muted">(Max: {{ $gs->currency ?? '$' }}{{ number_format($coupon->max_discount_amount, 2) }})</small>
                         @else
-                            {{ number_format($coupon->discount_amount, 2) }}
+                            {{ $gs->currency ?? '$' }}{{ number_format($coupon->discount_amount, 2) }}
                         @endif
                     </td>
                     <td>
@@ -82,4 +82,6 @@
 
 <div class="card-footer border-top">
     {{ $coupons->appends(request()->query())->links() }}
+</div>
+
 </div>
