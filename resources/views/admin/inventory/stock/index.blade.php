@@ -40,8 +40,8 @@
             </form>
         </div>
 
-        <div id="tableContainer" class="card-body p-0 position-relative" style="min-height: 500px; overflow-anchor: none;">
-            <div id="loadingOverlay" class="position-absolute top-0 start-0 end-0 bottom-0 d-none d-flex align-items-center justify-content-center" style="z-index: 10; background: rgba(255,255,255,0.7);">
+        <div id="tableContainer" class="card-body p-0 position-relative">
+            <div id="loadingOverlay" class="position-absolute top-0 start-0 w-100 h-100 d-none d-flex align-items-center justify-content-center" style="z-index: 10; background: rgba(255,255,255,0.5);">
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
@@ -52,32 +52,6 @@
         </div>
     </div>
 </div>
-
-<style>
-    /* Firefox Stability Fix */
-    html, body, .wrapper, .page-content, .content-page {
-        overflow-anchor: none !important;
-    }
-    
-    .page-content {
-        transition: none !important;
-        -webkit-transition: none !important;
-    }
-
-    /* Disable the fixed background gradient ONLY on this page to prevent repaint flickering in Firefox */
-    .content-page::before {
-        display: none !important;
-    }
-    
-    .content-page {
-        background: var(--bs-body-bg) !important;
-    }
-
-    /* Containment without 'size' to allow natural height growth */
-    #tableContainer {
-        contain: layout style;
-    }
-</style>
 @endsection
 
 @section('scripts')
@@ -89,9 +63,7 @@
         const filterForm = $('#filterForm');
 
         function fetchStock(url = "{{ route('admin.inventory.stock.index') }}") {
-            // Record scroll position
-            const scrollPos = $(window).scrollTop();
-            
+            // Avoid changing height or opacity directly on container to prevent Firefox flickering at bottom
             loadingOverlay.removeClass('d-none');
 
             const params = filterForm.serialize();
@@ -102,13 +74,7 @@
                 data: filterForm.serialize(),
                 success: function(response) {
                     tableContent.html(response);
-                    
-                    // Simple stabilization
-                    setTimeout(() => {
-                        loadingOverlay.addClass('d-none');
-                        $(window).scrollTop(scrollPos);
-                    }, 50);
-                    
+                    loadingOverlay.addClass('d-none');
                     window.history.pushState({}, '', finalUrl);
                 },
                 error: function() {
