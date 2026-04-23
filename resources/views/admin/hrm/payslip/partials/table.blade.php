@@ -30,7 +30,7 @@
                             <span>{{ $payslip->admin->name }}</span>
                         </div>
                     </td>
-                    <td>{{ date('F', mktime(0, 0, 0, $payslip->month, 1)) }} {{ $payslip->year }}</td>
+                    <td>{{ $payslip->start_date->format('d M') }} - {{ $payslip->end_date->format('d M, Y') }}</td>
                     <td>{{ number_format($payslip->total_hours, 2) }} hrs</td>
                     <td>{{ \App\HelperClass::generalSettings()->currency ?? '$' }}{{ number_format($payslip->net_salary, 2) }}</td>
                     <td>
@@ -60,5 +60,12 @@
 </div>
 
 <div class="mt-3">
-    {{ $payslips->links() }}
+    <div class="d-flex align-items-center justify-content-between">
+        <div class="text-muted small">
+            Showing <span class="fw-semibold">{{ $payslips->firstItem() ?? 0 }}</span> to <span class="fw-semibold">{{ $payslips->lastItem() ?? 0 }}</span> of <span class="fw-semibold">{{ $payslips->total() }}</span> Results
+        </div>
+        <div>
+            {{ $payslips->appends(request()->all())->links() }}
+        </div>
+    </div>
 </div>

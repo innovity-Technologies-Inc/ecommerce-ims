@@ -32,7 +32,22 @@ This project focuses on a clean, modern, and high-performance e-commerce interfa
     - **Create/Add:** Plus icon (`solar:add-circle-bold-duotone`).
 - **Visual Feedback:** Provide immediate feedback for user actions (e.g., loading spinners on buttons, Toastr for success/error).
 - **Forms:** Labels should always be present; use placeholders appropriately. Use Select2 for all searchable/multi-select dropdowns.
-- **Tables & Pagination:** Use responsive Bootstrap tables with consistent styling for actions. All paginated lists MUST include "Showing X to Y of Z Results" text next to the pagination links.
+- **Tables & Pagination:** Use responsive Bootstrap tables with consistent styling for actions. 
+    - **Pagination Info:** All paginated lists MUST include "Showing X to Y of Z Results" text next to the pagination links.
+    - **Structure:** Use a `d-flex align-items-center justify-content-between` container for pagination components.
+    - **Example Implementation:**
+      ```blade
+      <div class="mt-3">
+          <div class="d-flex align-items-center justify-content-between">
+              <div class="text-muted small">
+                  Showing <span class="fw-semibold">{{ $data->firstItem() ?? 0 }}</span> to <span class="fw-semibold">{{ $data->lastItem() ?? 0 }}</span> of <span class="fw-semibold">{{ $data->total() }}</span> Results
+              </div>
+              <div>
+                  {{ $data->appends(request()->all())->links() }}
+              </div>
+          </div>
+      </div>
+      ```
 ## 5. Performance & Flickering Prevention (STRICT)
 - **Stationary Backgrounds:** Heavy CSS effects (e.g., complex radial gradients, large blurs) MUST be applied to a `fixed` pseudo-element (e.g., `.content-page::before`) rather than the scrollable content container. This prevents GPU-heavy repaints during scrolling, especially in browsers like Firefox.
 - **Stable AJAX Loading:** When updating tables via AJAX, DO NOT use logic that shifts the page layout (e.g., dynamic `min-height` or aggressive `opacity` changes on the whole container). 

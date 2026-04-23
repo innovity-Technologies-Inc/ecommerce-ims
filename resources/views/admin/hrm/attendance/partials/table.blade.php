@@ -56,5 +56,12 @@
 </div>
 
 <div class="mt-3">
-    {{ $attendances->links() }}
+    <div class="d-flex align-items-center justify-content-between">
+        <div class="text-muted small">
+            Showing <span class="fw-semibold">{{ $attendances->firstItem() ?? 0 }}</span> to <span class="fw-semibold">{{ $attendances->lastItem() ?? 0 }}</span> of <span class="fw-semibold">{{ $attendances->total() }}</span> Results
+        </div>
+        <div>
+            {{ $attendances->appends(request()->all())->links() }}
+        </div>
+    </div>
 </div>
