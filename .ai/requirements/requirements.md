@@ -241,5 +241,7 @@ This document lists the high-level requirements for the modules implemented in t
 
 
 
+- [ ] **REQ-228:** Always Show Clock In/Out Button: The Clock In/Out button in the admin header should always be visible to logged-in administrators, regardless of the `is_time_tracking` setting in their profile. (NEW)
+
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.

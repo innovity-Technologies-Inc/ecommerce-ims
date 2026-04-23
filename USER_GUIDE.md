@@ -224,6 +224,7 @@ Before tracking time, you must configure each staff member's profile:
 5.  **Salary Settings:** Define their pay rate and type (Daily, Weekly, or Monthly).
 
 ### 13.2 Attendance Tracking
+*   **The Attendance Button:** A "Clock In/Out" button is **always visible** at the top of every page for all staff members. Use this button to start and end your shift with a single click.
 *   **Automatic:** For users with tracking enabled, the system records their first login as "Clock-In" and their final logout as "Clock-Out".
 *   **Manual Entry:** Go to `HRM -> Attendance -> Record Attendance`. Use this to manually enter shifts for any staff member by specifying the date and exact Clock-In/Clock-Out times.
 

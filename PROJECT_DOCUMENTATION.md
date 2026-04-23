@@ -210,11 +210,12 @@
     *   `return_items`: Source for calculating return-based efficiency penalties.
     *   `warehouse_stock_limits`: Source for localized alert thresholds.
 
-    ### 3.12 HRM Module (REQ-227)
+    ### 3.12 HRM Module (REQ-227, REQ-228)
     - **What (Business Purpose):** Manages internal staff and appointed users' attendance, work hours, and financial compensation.
     - **How it Works (Technical Flow):**
     1. **Configuration:** Admin enables "Time Tracking" and sets "Salary Settings" (Type/Amount) and "Daily Work Hours" in an employee's profile.
-    2. **Automated Tracking:** For tracked users, the system captures the first login of the day as `clock_in` and updates `clock_out` and `total_minutes` upon logout via authentication hooks.
+    2. **Attendance Button (REQ-228):** The "Clock In/Out" button is **always visible** to all logged-in administrators in the top header, regardless of their individual "Time Tracking" toggle setting.
+    3. **Automated Tracking:** For tracked users, the system captures the first login of the day as `clock_in` and updates `clock_out` and `total_minutes` upon logout via authentication hooks.
     3. **Manual Entry:** Admins can manually record attendance for any employee by specifying exact `clock_in` and `clock_out` times.
     4. **Payslip Generation:** 
         *   Calculates `total_hours` from `admin_attendances` within the selected `start_date` and `end_date`.

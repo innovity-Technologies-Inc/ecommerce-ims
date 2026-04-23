@@ -18,6 +18,7 @@ class Admin extends Authenticatable
         'password',
         'image',
         'is_time_tracking',
+        'is_clocked_in',
         'salary_type',
         'salary_amount',
         'daily_work_hours',
@@ -34,6 +35,7 @@ class Admin extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_time_tracking' => 'boolean',
+            'is_clocked_in' => 'boolean',
             'salary_amount' => 'decimal:2',
             'daily_work_hours' => 'decimal:2',
         ];

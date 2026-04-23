@@ -17,7 +17,6 @@
             </div>
 
             <div class="d-flex align-items-center gap-2">
-                @if(auth('admin')->user()->is_time_tracking)
                 <div class="topbar-item">
                     <form action="{{ route('admin.hrm.attendance.toggle') }}" method="POST">
                         @csrf
@@ -27,7 +26,6 @@
                         </button>
                     </form>
                 </div>
-                @endif
 
                 <!-- Theme Color (Light/Dark) -->
 
