@@ -10,25 +10,27 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-6 mx-auto">
+        <div class="col-lg-12">
             <div class="card">
                 <form action="{{ route('admin.hrm.payslip.generate') }}" method="POST">
                     @csrf
                     <div class="card-body">
-                        <div class="mb-3">
-                            <label class="form-label">Employee <span class="text-danger">*</span></label>
-                            <select name="admin_id" class="form-control select2" required>
-                                <option value="">Select Employee</option>
-                                @foreach($admins as $admin)
-                                    <option value="{{ $admin->id }}" {{ old('admin_id') == $admin->id ? 'selected' : '' }}>{{ $admin->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('admin_id')
-                                <div class="text-danger small">{{ $message }}</div>
-                            @enderror
-                        </div>
-
                         <div class="row">
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Employee <span class="text-danger">*</span></label>
+                                    <select name="admin_id" class="form-select select2" required>
+                                        <option value="">Select Employee</option>
+                                        @foreach($admins as $admin)
+                                            <option value="{{ $admin->id }}" {{ old('admin_id') == $admin->id ? 'selected' : '' }}>{{ $admin->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('admin_id')
+                                        <div class="text-danger small">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
                             <div class="col-lg-6">
                                 <div class="mb-3">
                                     <label class="form-label">Start Date <span class="text-danger">*</span></label>
@@ -55,7 +57,7 @@
                         </div>
                     </div>
                     <div class="card-footer border-top">
-                        <button type="submit" class="btn btn-primary w-100">Generate Now</button>
+                        <button type="submit" class="btn btn-primary">Generate Now</button>
                     </div>
                 </form>
             </div>
@@ -67,7 +69,10 @@
 @section('scripts')
 <script>
     $(document).ready(function() {
-        $('.select2').select2();
+        $('.select2').select2({
+            theme: 'bootstrap-5',
+            width: '100%'
+        });
     });
 </script>
 @endsection

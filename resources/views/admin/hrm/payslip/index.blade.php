@@ -23,7 +23,7 @@
                     </div>
                 </div>
                 <div class="col-lg-2">
-                    <select name="admin_id" class="form-control select2">
+                    <select name="admin_id" class="form-select select2">
                         <option value="">All Employees</option>
                         @foreach($admins as $admin)
                             <option value="{{ $admin->id }}" {{ request('admin_id') == $admin->id ? 'selected' : '' }}>{{ $admin->name }}</option>
@@ -31,7 +31,7 @@
                     </select>
                 </div>
                 <div class="col-lg-2">
-                    <select name="status" class="form-control select2">
+                    <select name="status" class="form-select select2">
                         <option value="">All Status</option>
                         <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                         <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Paid</option>
@@ -62,7 +62,10 @@
 @section('scripts')
 <script>
     $(document).ready(function() {
-        $('.select2').select2();
+        $('.select2').select2({
+            theme: 'bootstrap-5',
+            width: '100%'
+        });
 
         // AJAX Filtering
         $('#filter-form').on('submit', function(e) {

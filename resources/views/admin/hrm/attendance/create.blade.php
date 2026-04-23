@@ -10,33 +10,37 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-6 mx-auto">
+        <div class="col-lg-12">
             <div class="card">
                 <form action="{{ route('admin.hrm.attendance.store') }}" method="POST">
                     @csrf
                     <div class="card-body">
-                        <div class="mb-3">
-                            <label class="form-label">Employee <span class="text-danger">*</span></label>
-                            <select name="admin_id" class="form-control select2" required>
-                                <option value="">Select Employee</option>
-                                @foreach($admins as $admin)
-                                    <option value="{{ $admin->id }}" {{ old('admin_id') == $admin->id ? 'selected' : '' }}>{{ $admin->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('admin_id')
-                                <div class="text-danger small">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Date <span class="text-danger">*</span></label>
-                            <input type="date" name="date" class="form-control" value="{{ old('date', date('Y-m-d')) }}" required>
-                            @error('date')
-                                <div class="text-danger small">{{ $message }}</div>
-                            @enderror
-                        </div>
-
                         <div class="row">
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Employee <span class="text-danger">*</span></label>
+                                    <select name="admin_id" class="form-select select2" required>
+                                        <option value="">Select Employee</option>
+                                        @foreach($admins as $admin)
+                                            <option value="{{ $admin->id }}" {{ old('admin_id') == $admin->id ? 'selected' : '' }}>{{ $admin->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('admin_id')
+                                        <div class="text-danger small">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Date <span class="text-danger">*</span></label>
+                                    <input type="date" name="date" class="form-control" value="{{ old('date', date('Y-m-d')) }}" required>
+                                    @error('date')
+                                        <div class="text-danger small">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
                             <div class="col-lg-6">
                                 <div class="mb-3">
                                     <label class="form-label">Clock In <span class="text-danger">*</span></label>
@@ -46,6 +50,7 @@
                                     @enderror
                                 </div>
                             </div>
+
                             <div class="col-lg-6">
                                 <div class="mb-3">
                                     <label class="form-label">Clock Out <span class="text-danger">*</span></label>
@@ -70,7 +75,10 @@
 @section('scripts')
 <script>
     $(document).ready(function() {
-        $('.select2').select2();
+        $('.select2').select2({
+            theme: 'bootstrap-5',
+            width: '100%'
+        });
     });
 </script>
 @endsection
