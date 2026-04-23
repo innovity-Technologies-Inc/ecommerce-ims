@@ -18,6 +18,8 @@ class Payslip extends Model
         'net_salary',
         'status',
         'payment_date',
+        'start_date',
+        'end_date',
     ];
 
     protected function casts(): array
@@ -27,6 +29,8 @@ class Payslip extends Model
             'total_hours' => 'decimal:2',
             'net_salary' => 'decimal:2',
             'payment_date' => 'date',
+            'start_date' => 'date',
+            'end_date' => 'date',
         ];
     }
 

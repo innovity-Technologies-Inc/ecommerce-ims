@@ -39,20 +39,10 @@
                     </select>
                 </div>
                 <div class="col-lg-2">
-                    <select name="month" class="form-control select2">
-                        <option value="">Select Month</option>
-                        @for($m=1; $m<=12; $m++)
-                            <option value="{{ $m }}" {{ request('month', date('n')) == $m ? 'selected' : '' }}>{{ date('F', mktime(0, 0, 0, $m, 1)) }}</option>
-                        @endfor
-                    </select>
+                    <input type="date" name="start_date" class="form-control" placeholder="Start Date" value="{{ request('start_date') }}">
                 </div>
                 <div class="col-lg-1">
-                    <select name="year" class="form-control select2">
-                        <option value="">Year</option>
-                        @for($y=date('Y'); $y>=2020; $y--)
-                            <option value="{{ $y }}" {{ request('year', date('Y')) == $y ? 'selected' : '' }}>{{ $y }}</option>
-                        @endfor
-                    </select>
+                    <input type="date" name="end_date" class="form-control" placeholder="End Date" value="{{ request('end_date') }}">
                 </div>
                 <div class="col-lg-2">
                     <div class="d-flex gap-2">

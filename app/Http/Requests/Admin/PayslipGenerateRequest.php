@@ -15,8 +15,8 @@ class PayslipGenerateRequest extends FormRequest
     {
         return [
             'admin_id' => ['required', 'exists:admins,id'],
-            'month' => ['required', 'integer', 'between:1,12'],
-            'year' => ['required', 'integer', 'min:2020'],
+            'start_date' => ['required', 'date'],
+            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
         ];
     }
 }

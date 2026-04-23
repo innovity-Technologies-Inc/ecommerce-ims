@@ -42,7 +42,7 @@
                     </div>
                     <div class="col-6 text-end">
                         <h6 class="text-muted text-uppercase fw-bold mb-2">Pay Period:</h6>
-                        <h5 class="mb-1">{{ date('F', mktime(0, 0, 0, $payslip->month, 1)) }} {{ $payslip->year }}</h5>
+                        <h5 class="mb-1">{{ $payslip->start_date->format('d M, Y') }} to {{ $payslip->end_date->format('d M, Y') }}</h5>
                         <p class="mb-0 text-muted">Status: 
                             <span class="badge {{ $payslip->status === 'paid' ? 'bg-success' : 'bg-warning' }}">
                                 {{ strtoupper($payslip->status) }}
@@ -65,7 +65,7 @@
                                 <td class="text-end text-capitalize">{{ $payslip->salary_type }}</td>
                             </tr>
                             <tr>
-                                <td>Standard Salary Rate</td>
+                                <td>Base Salary Rate</td>
                                 <td class="text-end">{{ \App\HelperClass::generalSettings()->currency ?? '$' }}{{ number_format($payslip->salary_amount, 2) }}</td>
                             </tr>
                             <tr>

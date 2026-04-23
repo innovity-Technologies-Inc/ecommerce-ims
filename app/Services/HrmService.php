@@ -30,8 +30,6 @@ class HrmService
         // Custom filters for range
         if (! empty($params['start_date']) && ! empty($params['end_date'])) {
             $query->whereBetween('date', [$params['start_date'], $params['end_date']]);
-        } elseif (! empty($params['month']) && ! empty($params['year'])) {
-            $query->whereMonth('date', $params['month'])->whereYear('date', $params['year']);
         }
 
         $flexSearch = app(FlexSearch::class);
@@ -133,11 +131,8 @@ class HrmService
             $filters['status'] = $params['status'];
         }
 
-        if (! empty($params['month'])) {
-            $query->where('month', $params['month']);
-        }
-        if (! empty($params['year'])) {
-            $query->where('year', $params['year']);
+        if (! empty($params['start_date']) && ! empty($params['end_date'])) {
+            $query->whereBetween('start_date', [$params['start_date'], $params['end_date']]);
         }
 
         $flexSearch = app(FlexSearch::class);
@@ -155,39 +150,40 @@ class HrmService
     public function generatePayslip(array $data): Payslip
     {
         $admin = Admin::findOrFail($data['admin_id']);
-        $month = $data['month'];
-        $year = $data['year'];
+        $startDate = Carbon::parse($data['start_date']);
+        $endDate = Carbon::parse($data['end_date']);
+        $totalDays = $startDate->diffInDays($endDate) + 1;
 
-        // Check if already exists
+        // Check if already exists for this exact range
         $existing = Payslip::where('admin_id', $admin->id)
-            ->where('month', $month)
-            ->where('year', $year)
+            ->where('start_date', $startDate->toDateString())
+            ->where('end_date', $endDate->toDateString())
             ->first();
 
         if ($existing) {
-            throw new \Exception('Payslip already exists for this user and month.');
+            throw new \Exception('Payslip already exists for this user and date range.');
         }
 
-        // Calculate total hours from attendance
+        // Calculate total hours from attendance in range
         $totalMinutes = AdminAttendance::where('admin_id', $admin->id)
-            ->whereMonth('date', $month)
-            ->whereYear('date', $year)
+            ->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
             ->sum('total_minutes');
 
         $totalHours = $totalMinutes / 60;
 
-        // Calculate Net Salary based on salary type
+        // Calculate Net Salary based on salary type and range
         $netSalary = 0;
         if ($admin->salary_type === 'monthly') {
-            $netSalary = $admin->salary_amount;
+            // Prorate if not a full month
+            $daysInMonth = $startDate->daysInMonth;
+            $netSalary = ($admin->salary_amount / $daysInMonth) * $totalDays;
         } elseif ($admin->salary_type === 'weekly') {
-            // Simple logic: weekly * 4
-            $netSalary = $admin->salary_amount * 4;
+            // Prorate based on 7 days
+            $netSalary = ($admin->salary_amount / 7) * $totalDays;
         } elseif ($admin->salary_type === 'daily') {
-            // Daily rate * total days worked
+            // Daily rate * days worked in range
             $daysWorked = AdminAttendance::where('admin_id', $admin->id)
-                ->whereMonth('date', $month)
-                ->whereYear('date', $year)
+                ->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
                 ->count();
             $netSalary = $admin->salary_amount * $daysWorked;
         }
@@ -195,8 +191,10 @@ class HrmService
         return Payslip::create([
             'admin_id' => $admin->id,
             'payslip_number' => 'PS-'.strtoupper(Str::random(8)),
-            'month' => $month,
-            'year' => $year,
+            'month' => $startDate->month,
+            'year' => $startDate->year,
+            'start_date' => $startDate->toDateString(),
+            'end_date' => $endDate->toDateString(),
             'salary_type' => $admin->salary_type ?? 'monthly',
             'salary_amount' => $admin->salary_amount,
             'total_hours' => $totalHours,

@@ -31,26 +31,18 @@
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label class="form-label">Month <span class="text-danger">*</span></label>
-                                    <select name="month" class="form-control select2" required>
-                                        @for($m=1; $m<=12; $m++)
-                                            <option value="{{ $m }}" {{ old('month', date('n')) == $m ? 'selected' : '' }}>{{ date('F', mktime(0, 0, 0, $m, 1)) }}</option>
-                                        @endfor
-                                    </select>
-                                    @error('month')
+                                    <label class="form-label">Start Date <span class="text-danger">*</span></label>
+                                    <input type="date" name="start_date" class="form-control" value="{{ old('start_date', date('Y-m-01')) }}" required>
+                                    @error('start_date')
                                         <div class="text-danger small">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="mb-3">
-                                    <label class="form-label">Year <span class="text-danger">*</span></label>
-                                    <select name="year" class="form-control select2" required>
-                                        @for($y=date('Y'); $y>=2020; $y--)
-                                            <option value="{{ $y }}" {{ old('year', date('Y')) == $y ? 'selected' : '' }}>{{ $y }}</option>
-                                        @endfor
-                                    </select>
-                                    @error('year')
+                                    <label class="form-label">End Date <span class="text-danger">*</span></label>
+                                    <input type="date" name="end_date" class="form-control" value="{{ old('end_date', date('Y-m-t')) }}" required>
+                                    @error('end_date')
                                         <div class="text-danger small">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -59,7 +51,7 @@
 
                         <div class="alert alert-info">
                             <iconify-icon icon="solar:info-circle-bold-duotone" class="me-1"></iconify-icon>
-                            Payslip will be calculated based on the employee's salary settings and recorded attendance for the selected period.
+                            Payslip will be calculated based on the employee's salary settings and recorded attendance for the selected date range.
                         </div>
                     </div>
                     <div class="card-footer border-top">
