@@ -66,7 +66,6 @@ class AdminService
             'password' => Hash::make($data['password']),
             'image' => $imagePath,
             'is_time_tracking' => $data['is_time_tracking'] ?? false,
-            'salary_type' => $data['salary_type'] ?? null,
             'salary_amount' => $data['salary_amount'] ?? 0,
             'daily_work_hours' => $data['daily_work_hours'] ?? 8,
         ]);
@@ -97,7 +96,6 @@ class AdminService
             'name' => $data['name'],
             'email' => $data['email'],
             'is_time_tracking' => $data['is_time_tracking'] ?? false,
-            'salary_type' => $data['salary_type'] ?? null,
             'salary_amount' => $data['salary_amount'] ?? 0,
             'daily_work_hours' => $data['daily_work_hours'] ?? 8,
         ];

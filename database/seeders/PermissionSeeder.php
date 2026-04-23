@@ -129,6 +129,10 @@ class PermissionSeeder extends Seeder
             'supplier_rma.create',
             'supplier_rma.edit',
             'supplier_rma.delete',
+
+            // HRM
+            'hrm.view',
+            'hrm.edit',
         ];
 
         foreach ($permissions as $permission) {

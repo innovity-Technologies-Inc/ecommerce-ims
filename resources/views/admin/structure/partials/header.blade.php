@@ -16,9 +16,21 @@
                 </div>
             </div>
 
-            <div class="d-flex align-items-center gap-1">
+            <div class="d-flex align-items-center gap-2">
+                @if(auth('admin')->user()->is_time_tracking)
+                <div class="topbar-item">
+                    <form action="{{ route('admin.hrm.attendance.toggle') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn {{ auth('admin')->user()->is_clocked_in ? 'btn-soft-danger' : 'btn-soft-success' }} btn-sm d-flex align-items-center gap-1">
+                            <iconify-icon icon="{{ auth('admin')->user()->is_clocked_in ? 'solar:stopwatch-play-bold-duotone' : 'solar:stopwatch-bold-duotone' }}"></iconify-icon>
+                            {{ auth('admin')->user()->is_clocked_in ? 'Clock Out' : 'Clock In' }}
+                        </button>
+                    </form>
+                </div>
+                @endif
 
                 <!-- Theme Color (Light/Dark) -->
+
                 <div class="topbar-item">
                     <button type="button" class="topbar-button" id="light-dark-mode">
                         <iconify-icon icon="solar:moon-bold-duotone" class="fs-24 align-middle"></iconify-icon>

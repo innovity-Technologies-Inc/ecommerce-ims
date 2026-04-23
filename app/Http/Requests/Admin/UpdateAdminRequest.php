@@ -28,9 +28,8 @@ class UpdateAdminRequest extends FormRequest
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,avif', 'max:2048'],
             'role' => ['required', 'exists:roles,name'],
             'is_time_tracking' => ['nullable', 'boolean'],
-            'salary_type' => ['nullable', 'in:daily,weekly,monthly'],
             'salary_amount' => ['nullable', 'numeric', 'min:0'],
-            'daily_work_hours' => ['nullable', 'numeric', 'min:0', 'max:24'],
+            'daily_work_hours' => ['nullable', 'numeric', 'min:0.1', 'max:24'],
         ];
     }
 

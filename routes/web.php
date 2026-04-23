@@ -326,6 +326,7 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     Route::prefix('hrm')->middleware('permission:hrm.view')->group(function () {
         // Attendance
         Route::prefix('attendance')->controller(\App\Http\Controllers\Admin\HrmController::class)->group(function () {
+            Route::post('/toggle', 'toggleAttendance')->name('admin.hrm.attendance.toggle');
             Route::get('/', 'attendanceIndex')->name('admin.hrm.attendance.index');
             Route::get('/create', 'attendanceCreate')->name('admin.hrm.attendance.create')->middleware('permission:hrm.edit');
             Route::post('/store', 'attendanceStore')->name('admin.hrm.attendance.store')->middleware('permission:hrm.edit');

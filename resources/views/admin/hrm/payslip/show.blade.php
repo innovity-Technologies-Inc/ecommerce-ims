@@ -61,15 +61,11 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>Salary Type</td>
-                                <td class="text-end text-capitalize">{{ $payslip->salary_type }}</td>
+                                <td>Hourly Salary Rate</td>
+                                <td class="text-end text-primary fw-bold">{{ \App\HelperClass::generalSettings()->currency ?? '$' }}{{ number_format($payslip->salary_amount, 2) }} / hr</td>
                             </tr>
                             <tr>
-                                <td>Base Salary Rate</td>
-                                <td class="text-end">{{ \App\HelperClass::generalSettings()->currency ?? '$' }}{{ number_format($payslip->salary_amount, 2) }}</td>
-                            </tr>
-                            <tr>
-                                <td>Total Work Hours</td>
+                                <td>Total Actual Hours Worked</td>
                                 <td class="text-end">{{ number_format($payslip->total_hours, 2) }} hrs</td>
                             </tr>
                             <tr class="fw-bold bg-light">

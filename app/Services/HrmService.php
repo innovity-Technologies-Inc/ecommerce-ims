@@ -62,18 +62,14 @@ class HrmService
     }
 
     /**
-     * Log Clock-In (On Login).
+     * Manual Clock-In via Button
      */
-    public function logClockIn(Admin $admin): void
+    public function clockIn(Admin $admin): void
     {
-        if (! $admin->is_time_tracking) {
-            return;
-        }
-
         $today = Carbon::today()->toDateString();
-        $now = Carbon::now()->toTimeString();
+        $now = Carbon::now();
 
-        // Only set clock_in if it's the first login of the day
+        // 1. Update/Create Today's Attendance Record
         $attendance = AdminAttendance::where('admin_id', $admin->id)
             ->where('date', $today)
             ->first();
@@ -82,19 +78,27 @@ class HrmService
             AdminAttendance::create([
                 'admin_id' => $admin->id,
                 'date' => $today,
-                'clock_in' => $now,
+                'clock_in' => $now->toTimeString(),
                 'total_minutes' => 0,
                 'is_manual' => false,
             ]);
         }
+
+        // 2. Update Admin status and session start
+        $admin->update([
+            'is_clocked_in' => true,
+            'last_login_at' => $now,
+        ]);
     }
 
     /**
-     * Log Clock-Out (On Logout).
+     * Manual Clock-Out via Button
      */
-    public function logClockOut(Admin $admin): void
+    public function clockOut(Admin $admin): void
     {
-        if (! $admin->is_time_tracking) {
+        if (! $admin->last_login_at) {
+            $admin->update(['is_clocked_in' => false]);
+
             return;
         }
 
@@ -106,14 +110,24 @@ class HrmService
             ->first();
 
         if ($attendance && ! $attendance->is_manual) {
-            $clockIn = Carbon::parse($attendance->clock_in);
-            $totalMinutes = $clockIn->diffInMinutes($now);
+            // Calculate minutes for this session
+            $sessionStart = Carbon::parse($admin->last_login_at);
+            $sessionMinutes = $sessionStart->diffInMinutes($now);
 
+            // Accumulate time
+            $attendance->increment('total_minutes', $sessionMinutes);
+
+            // Update final clock_out for display
             $attendance->update([
                 'clock_out' => $now->toTimeString(),
-                'total_minutes' => $totalMinutes,
             ]);
         }
+
+        // Reset status
+        $admin->update([
+            'is_clocked_in' => false,
+            'last_login_at' => null,
+        ]);
     }
 
     /**
@@ -152,7 +166,6 @@ class HrmService
         $admin = Admin::findOrFail($data['admin_id']);
         $startDate = Carbon::parse($data['start_date']);
         $endDate = Carbon::parse($data['end_date']);
-        $totalDays = $startDate->diffInDays($endDate) + 1;
 
         // Check if already exists for this exact range
         $existing = Payslip::where('admin_id', $admin->id)
@@ -171,22 +184,12 @@ class HrmService
 
         $totalHours = $totalMinutes / 60;
 
-        // Calculate Net Salary based on salary type and range
-        $netSalary = 0;
-        if ($admin->salary_type === 'monthly') {
-            // Prorate if not a full month
-            $daysInMonth = $startDate->daysInMonth;
-            $netSalary = ($admin->salary_amount / $daysInMonth) * $totalDays;
-        } elseif ($admin->salary_type === 'weekly') {
-            // Prorate based on 7 days
-            $netSalary = ($admin->salary_amount / 7) * $totalDays;
-        } elseif ($admin->salary_type === 'daily') {
-            // Daily rate * days worked in range
-            $daysWorked = AdminAttendance::where('admin_id', $admin->id)
-                ->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
-                ->count();
-            $netSalary = $admin->salary_amount * $daysWorked;
-        }
+        /**
+         * Logic: Direct Hourly Rate based Calculation
+         * Formula: Hourly Salary Rate * Actual Hours Worked
+         */
+        $hourlyRate = $admin->salary_amount ?? 0;
+        $netSalary = $hourlyRate * $totalHours;
 
         return Payslip::create([
             'admin_id' => $admin->id,
@@ -195,7 +198,7 @@ class HrmService
             'year' => $startDate->year,
             'start_date' => $startDate->toDateString(),
             'end_date' => $endDate->toDateString(),
-            'salary_type' => $admin->salary_type ?? 'monthly',
+            'salary_type' => 'daily', // Implicitly hours based
             'salary_amount' => $admin->salary_amount,
             'total_hours' => $totalHours,
             'net_salary' => $netSalary,

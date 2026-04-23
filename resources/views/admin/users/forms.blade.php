@@ -111,34 +111,20 @@
                                     </div>
                                 </div>
 
-                                <div class="col-lg-4">
+                                <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="salary_type" class="form-label">Salary Type</label>
-                                        <select name="salary_type" id="salary_type" class="form-control">
-                                            <option value="">Select Type</option>
-                                            <option value="daily" {{ (isset($user) && $user->salary_type == 'daily') || old('salary_type') == 'daily' ? 'selected' : '' }}>Daily</option>
-                                            <option value="weekly" {{ (isset($user) && $user->salary_type == 'weekly') || old('salary_type') == 'weekly' ? 'selected' : '' }}>Weekly</option>
-                                            <option value="monthly" {{ (isset($user) && $user->salary_type == 'monthly') || old('salary_type') == 'monthly' ? 'selected' : '' }}>Monthly</option>
-                                        </select>
-                                        @error('salary_type')
-                                        <span class="small text-danger">{{$message}}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-4">
-                                    <div class="mb-3">
-                                        <label for="salary_amount" class="form-label">Salary Amount ({{ \App\HelperClass::generalSettings()->currency ?? '$' }})</label>
+                                        <label for="salary_amount" class="form-label">Hourly Salary Rate ({{ \App\HelperClass::generalSettings()->currency ?? '$' }})</label>
                                         <input type="number" name="salary_amount" id="salary_amount" class="form-control" step="0.01" placeholder="0.00" value="{{isset($user) ? $user->salary_amount : old('salary_amount', 0)}}">
+                                        <small class="text-muted">Set the amount paid per 1 hour of work.</small>
                                         @error('salary_amount')
                                         <span class="small text-danger">{{$message}}</span>
                                         @enderror
                                     </div>
                                 </div>
 
-                                <div class="col-lg-4">
+                                <div class="col-lg-6">
                                     <div class="mb-3">
-                                        <label for="daily_work_hours" class="form-label">Daily Work Hours</label>
+                                        <label for="daily_work_hours" class="form-label">Standard Daily Work Hours</label>
                                         <input type="number" name="daily_work_hours" id="daily_work_hours" class="form-control" step="0.1" placeholder="8.0" value="{{isset($user) ? $user->daily_work_hours : old('daily_work_hours', 8)}}">
                                         @error('daily_work_hours')
                                         <span class="small text-danger">{{$message}}</span>

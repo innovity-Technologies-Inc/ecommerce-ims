@@ -217,8 +217,11 @@
     2. **Automated Tracking:** For tracked users, the system captures the first login of the day as `clock_in` and updates `clock_out` and `total_minutes` upon logout via authentication hooks.
     3. **Manual Entry:** Admins can manually record attendance for any employee by specifying exact `clock_in` and `clock_out` times.
     4. **Payslip Generation:** 
-        *   Calculates `total_hours` from `admin_attendances`.
-        *   Calculates `net_salary` based on the salary type (Monthly: fixed, Weekly: fixed x 4, Daily: rate x days worked).
+        *   Calculates `total_hours` from `admin_attendances` within the selected `start_date` and `end_date`.
+        *   **Salary Calculation Scenarios:**
+            *   **Hourly Rate (Direct):** The system calculates pay based on a fixed hourly rate configured in the staff profile.
+                *   *Formula:* `Hourly Salary Rate * Actual Hours Worked`.
+                *   *Scenario:* A staff with a $10/hr rate who works 12.5 hours results in $125.
         *   Generates a unique `payslip_number` and tracks payment status.
     5. **Filtering:** All views support filtering by Employee, Status, and Date Range (Daily/Weekly/Monthly) using FlexSearch.
     - **Data & Storage (DB Connectivity):**

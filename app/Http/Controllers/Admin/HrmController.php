@@ -18,6 +18,27 @@ class HrmController extends Controller
     ) {}
 
     /**
+     * Toggle Clock-In / Clock-Out
+     */
+    public function toggleAttendance(): RedirectResponse
+    {
+        $admin = auth('admin')->user();
+
+        if ($admin->is_clocked_in) {
+            $this->hrmService->clockOut($admin);
+            $message = 'Clocked out successfully.';
+        } else {
+            $this->hrmService->clockIn($admin);
+            $message = 'Clocked in successfully.';
+        }
+
+        return back()->with([
+            'message' => $message,
+            'alert-type' => 'success',
+        ]);
+    }
+
+    /**
      * Display attendance list.
      */
     public function attendanceIndex(Request $request): View|string
