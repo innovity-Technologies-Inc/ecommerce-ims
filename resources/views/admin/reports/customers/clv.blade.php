@@ -1,6 +1,7 @@
 @extends('admin.structure.app')
 
 @section('content')
+@php $gs = \App\HelperClass::generalSettings(); @endphp
 <div class="container-xxl">
     <div class="d-flex align-items-center justify-content-between mb-4">
         <div class="d-flex align-items-center">

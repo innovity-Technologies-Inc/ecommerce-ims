@@ -1,5 +1,6 @@
 @extends('client.structure.app')
 @section('content')
+    @php $gs = \App\HelperClass::generalSettings(); @endphp
     <style>
         .status-dot {
             transition: all 0.3s ease;
@@ -193,7 +194,7 @@
                                                             <ul class="list-unstyled mb-0 text-muted">
                                                                 <li class="mb-2"><strong class="text-dark">Payment Method:</strong> {{ $order->payment_method }}</li>
                                                                 <li class="mb-2"><strong class="text-dark">Date:</strong> {{ $order->created_at->format('M d, Y') }}</li>
-                                                                <li class="mb-0"><strong class="text-dark">Grand Total:</strong> <span class="text-primary fw-bold">${{ number_format($order->total_amount, 2) }}</span></li>
+                                                                <li class="mb-0"><strong class="text-dark">Grand Total:</strong> <span class="text-primary fw-bold">{{ $gs->currency ?? '$' }}{{ number_format($order->total_amount, 2) }}</span></li>
                                                             </ul>
                                                         </div>
                                                     </div>
@@ -219,8 +220,9 @@
                                                                     </td>
                                                                     <td class="product-quantity text-center text-dark">{{ $item->quantity }}</td>
                                                                     <td class="product-subtotal text-end pe-3">
-                                                                        <span class="fw-bold text-dark">${{ number_format($item->total_price, 2) }}</span>
+                                                                        <span class="fw-bold text-dark">{{ $gs->currency ?? '$' }}{{ number_format($item->total_price, 2) }}</span>
                                                                     </td>
+
                                                                 </tr>
                                                             @endforeach
                                                         </tbody>

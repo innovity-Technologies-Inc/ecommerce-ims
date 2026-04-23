@@ -1,6 +1,7 @@
 @extends('client.structure.app')
 
 @section('content')
+@php $gs = \App\HelperClass::generalSettings(); @endphp
     <style>
         @media (max-width: 767px) {
             .cart-table-content table thead {
@@ -177,10 +178,10 @@
                                                 </td>
                                                 <td class="product-price-decimal">
                                                     @if($item->product_discount > 0)
-                                                        <span class="amount">${{ number_format($item->price, 2) }}</span>
-                                                        <span class="old-price text-decoration-line-through ms-2" style="color: #999; font-size: 0.9em;">${{ number_format($item->regular_price, 2) }}</span>
+                                                        <span class="amount">{{ $gs->currency ?? '$' }}{{ number_format($item->price, 2) }}</span>
+                                                        <span class="old-price text-decoration-line-through ms-2" style="color: #999; font-size: 0.9em;">{{ $gs->currency ?? '$' }}{{ number_format($item->regular_price, 2) }}</span>
                                                     @else
-                                                        <span class="amount">${{ number_format($item->price, 2) }}</span>
+                                                        <span class="amount">{{ $gs->currency ?? '$' }}{{ number_format($item->price, 2) }}</span>
                                                     @endif
                                                 </td>
                                                 <td class="product-quantity">
@@ -189,7 +190,7 @@
                                                     </div>
                                                 </td>
                                                 <td class="product-subtotal">
-                                                    $<span id="subtotal-{{ $item->id }}">{{ number_format($item->subtotal, 2) }}</span>
+                                                    {{ $gs->currency ?? '$' }}<span id="subtotal-{{ $item->id }}">{{ number_format($item->subtotal, 2) }}</span>
                                                 </td>
                                                 <td class="product-remove">
                                                     <a href="javascript:void(0)" class="remove-from-cart" data-cart-id="{{ $item->id }}"><i class="ion-android-close"></i></a>
@@ -236,7 +237,7 @@
                                     <div class="title-wrap">
                                         <h4 class="cart-bottom-title section-bg-gary-cart">Cart Total</h4>
                                     </div>
-                                    <h5>Subtotal <span class="cart-total-display">${{ number_format($cartItems->sum('subtotal'), 2) }}</span></h5>
+                                    <h5>Subtotal <span class="cart-total-display">{{ $gs->currency ?? '$' }}{{ number_format($cartItems->sum('subtotal'), 2) }}</span></h5>
                                     <div class="total-shipping">
                                         <h5>Shipping Method</h5>
                                         <ul id="shipping-methods-list" class="list-unstyled">
@@ -253,7 +254,7 @@
                                                         <label class="flex-grow-1 mb-0" for="method-{{ $method->id }}" style="cursor: pointer;">
                                                             <div class="d-flex justify-content-between align-items-center">
                                                                 <span class="fw-bold text-dark fs-15">{{ $method->name }}</span>
-                                                                <span class="fw-bold text-dark fs-15">${{ number_format($method->price, 2) }}</span>
+                                                                <span class="fw-bold text-dark fs-15">{{ $gs->currency ?? '$' }}{{ number_format($method->price, 2) }}</span>
                                                             </div>
                                                             @if($method->short_description)
                                                                 <div class="mt-1">
@@ -268,8 +269,8 @@
                                             @endforeach
                                         </ul>
                                     </div>
-                                    <h4 class="grand-totall-title">Shipping <span id="shipping-total-display">${{ number_format($selectedShippingMethod ? $selectedShippingMethod->price : 0, 2) }}</span></h4>
-                                    <h4 class="grand-totall-title">Grand Total <span class="grand-total-display">${{ number_format($cartItems->sum('subtotal') + ($selectedShippingMethod ? $selectedShippingMethod->price : 0), 2) }}</span></h4>
+                                    <h4 class="grand-totall-title">Shipping <span id="shipping-total-display">{{ $gs->currency ?? '$' }}{{ number_format($selectedShippingMethod ? $selectedShippingMethod->price : 0, 2) }}</span></h4>
+                                    <h4 class="grand-totall-title">Grand Total <span class="grand-total-display">{{ $gs->currency ?? '$' }}{{ number_format($cartItems->sum('subtotal') + ($selectedShippingMethod ? $selectedShippingMethod->price : 0), 2) }}</span></h4>
                                     <a href="{{ route('checkout.index') }}" class="proceed-checkout-btn">Proceed to Checkout</a>
                                 </div>
                             </div>
@@ -297,8 +298,8 @@
                 },
                 success: function(response) {
                     if (response.status === 'success') {
-                        $('#shipping-total-display').text('$' + response.shipping_price);
-                        $('.grand-total-display').text('$' + response.grand_total);
+                        $('#shipping-total-display').text("{{ $gs->currency ?? '$' }}" + response.shipping_price);
+                        $('.grand-total-display').text("{{ $gs->currency ?? '$' }}" + response.grand_total);
                         toastr.success('Shipping method updated!');
                     }
                 },

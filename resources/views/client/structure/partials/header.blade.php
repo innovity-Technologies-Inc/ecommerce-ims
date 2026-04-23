@@ -211,7 +211,7 @@
                         <div class="cart-info d-flex">
                             <div class="mini-cart-warp">
                                 <a href="#offcanvas-cart" class="count-cart color-black offcanvas-toggle">
-                                    <span class="amount-tag">${{ number_format(\App\HelperClass::getCartItems()->sum('subtotal'), 2) }}</span>
+                                    <span class="amount-tag">{{ $gs->currency ?? '$' }}{{ number_format(\App\HelperClass::getCartItems()->sum('subtotal'), 2) }}</span>
                                     <span class="item-quantity-tag">{{ sprintf('%02d', \App\HelperClass::cartCount()) }}</span>
                                 </a>
                             </div>

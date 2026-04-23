@@ -1,6 +1,7 @@
 @extends('admin.structure.app')
 
 @section('content')
+@php $gs = \App\HelperClass::generalSettings(); @endphp
 <div class="container-xxl" id="performance-detail-report">
     <div class="d-flex align-items-center justify-content-between mb-4 no-print">
         <div>
@@ -159,7 +160,7 @@
                 <div class="card border-0 shadow-sm mb-4 border-top border-primary border-4 aesthetic-card" data-bs-toggle="tooltip" title="Total procurement value of all saleable units currently in this warehouse">
                     <div class="card-body p-4 text-center">
                         <div class="avatar-lg bg-soft-primary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
-                            <i class="bx bx-dollar-circle fs-1 text-primary"></i>
+                            <i class="bx bx-wallet fs-1 text-primary"></i>
                         </div>
                         <h6 class="text-muted text-uppercase fw-bold small mb-2">Live Inventory Value <i class="bx bx-info-circle small"></i></h6>
                         <h2 class="fw-bold text-dark mb-3">{{ $gs->currency ?? '$' }}{{ number_format($report['inventory_value'] ?? 0, 2) }}</h2>

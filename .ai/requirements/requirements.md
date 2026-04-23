@@ -233,6 +233,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [x] **REQ-222:** Admin Activity Tracking: Add `created_by` and `updated_by` fields (foreign keys to `admins` table) to all relevant database tables. Implement an automated way to populate these fields during admin operations using model observers or traits. (NEW)
 - [ ] **REQ-223:** Global Currency Standardization: Replace all hardcoded currency symbols (e.g., "$") in Blade views, emails, and reports with the dynamic currency setting from `HelperClass::generalSettings()->currency`.
 - [ ] **REQ-224:** Facebook OAuth Integration: Implement "Login with Facebook" functionality using Laravel Socialite, following the existing Google OAuth pattern for user creation and authentication.
+- [ ] **REQ-225:** Dynamic Currency Replacement: Replace all remaining hardcoded `$` symbols with the dynamic currency setting from `HelperClass::generalSettings()->currency` in specific Blade templates and emails. (NEW)
 
 
 

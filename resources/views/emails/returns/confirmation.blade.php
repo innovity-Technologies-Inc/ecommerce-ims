@@ -1,3 +1,4 @@
+@php $gs = \App\HelperClass::generalSettings(); @endphp
 <x-mail::message>
 # Return Request Received
 
@@ -13,7 +14,7 @@ We have received your return request for Order **#{{ $returnRequest->order->orde
 | Product | Variant | Qty | Price |
 | :--- | :--- | :---: | :---: |
 @foreach($returnRequest->returnItems as $item)
-| {{ $item->product->name }} | {{ $item->productVariant->variant_name ?? 'N/A' }} | {{ $item->quantity }} | ${{ number_format($item->total_price, 2) }} |
+| {{ $item->product->name }} | {{ $item->productVariant->variant_name ?? 'N/A' }} | {{ $item->quantity }} | {{ $gs->currency ?? '$' }}{{ number_format($item->total_price, 2) }} |
 @endforeach
 </x-mail::table>
 

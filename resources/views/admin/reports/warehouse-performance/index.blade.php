@@ -97,7 +97,7 @@
                                     </span>
                                 </td>
                                 <td class="text-center fw-bold">{{ number_format($row['stock_turnover'], 2) }}x</td>
-                                <td class="text-center d-none d-print-table-cell-custom">${{ number_format($row['inventory_value'], 2) }}</td>
+                                <td class="text-center d-none d-print-table-cell-custom">{{ $gs->currency ?? '$' }}{{ number_format($row['inventory_value'], 2) }}</td>
                                 <td class="text-center text-muted small">{{ number_format($row['slow_moving_percent'], 1) }}%</td>
                                 <td class="text-end pe-3 actions-column">
                                     <a href="{{ route('admin.reports.warehouse-performance.show', [$row['warehouse_id'], 'start_date' => $filters['start_date'], 'end_date' => $filters['end_date']]) }}" 
@@ -256,6 +256,10 @@
             printWin.print();
             printWin.close();
         }, 500);
+    }
+</script>
+@endsection
+);
     }
 </script>
 @endsection

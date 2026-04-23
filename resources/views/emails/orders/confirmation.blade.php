@@ -1,3 +1,4 @@
+@php $gs = \App\HelperClass::generalSettings(); @endphp
 <x-mail::message>
 # Order Confirmation
 
@@ -12,17 +13,17 @@ Your order has been placed successfully and is currently being processed.
 | Product | Qty | Price | Subtotal |
 | :--- | :---: | :---: | ---: |
 @foreach($order->orderItems as $item)
-| {{ $item->product_name }}{{ $item->variant_name ? ' (' . $item->variant_name . ')' : '' }} | {{ $item->quantity }} | ${{ number_format($item->regular_price, 2) }} | ${{ number_format($item->regular_price * $item->quantity, 2) }} |
+| {{ $item->product_name }}{{ $item->variant_name ? ' (' . $item->variant_name . ')' : '' }} | {{ $item->quantity }} | {{ $gs->currency ?? '$' }}{{ number_format($item->regular_price, 2) }} | {{ $gs->currency ?? '$' }}{{ number_format($item->regular_price * $item->quantity, 2) }} |
 @endforeach
-| **Gross Subtotal** | | | ${{ number_format($order->orderItems->sum(fn($i) => $i->regular_price * $i->quantity), 2) }} |
+| **Gross Subtotal** | | | {{ $gs->currency ?? '$' }}{{ number_format($order->orderItems->sum(fn($i) => $i->regular_price * $i->quantity), 2) }} |
 @if($order->product_discount > 0)
-| Product Discount | | | -${{ number_format($order->product_discount, 2) }} |
+| Product Discount | | | -{{ $gs->currency ?? '$' }}{{ number_format($order->product_discount, 2) }} |
 @endif
 @if($order->discount > 0)
-| Coupon Discount | | | -${{ number_format($order->discount, 2) }} |
+| Coupon Discount | | | -{{ $gs->currency ?? '$' }}{{ number_format($order->discount, 2) }} |
 @endif
-| Shipping | | | ${{ number_format($order->shipping_charge, 2) }} |
-| **Grand Total** | | | **${{ number_format($order->total_amount, 2) }}** |
+| Shipping | | | {{ $gs->currency ?? '$' }}{{ number_format($order->shipping_charge, 2) }} |
+| **Grand Total** | | | **{{ $gs->currency ?? '$' }}{{ number_format($order->total_amount, 2) }}** |
 </x-mail::table>
 
 **Shipping Address:**

@@ -81,7 +81,7 @@
                                     <span class="badge bg-soft-primary text-primary px-3">{{ $customer->orders_count }}</span>
                                 </td>
                                 <td class="text-end fw-bold text-dark">
-                                    ${{ number_format($customer->orders_sum_total_amount ?? 0, 2) }}
+                                    {{ $gs->currency ?? '$' }}{{ number_format($customer->orders_sum_total_amount ?? 0, 2) }}
                                 </td>
                                 <td class="text-center small">
                                     {{ $customer->last_order_date ? \Carbon\Carbon::parse($customer->last_order_date)->format('d M, Y') : 'N/A' }}

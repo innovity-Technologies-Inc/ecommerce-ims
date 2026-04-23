@@ -1,5 +1,6 @@
 @extends('client.structure.app')
 @section('content')
+@php $gs = \App\HelperClass::generalSettings(); @endphp
     <style>
         @media (max-width: 767px) {
             .cart-table-content table thead {

@@ -50,7 +50,7 @@
                                                 </span>
                                             @endif
                                         </td>
-                                        <td class="text-end pe-3">${{ number_format($item->total_price, 2) }}</td>
+                                        <td class="text-end pe-3">{{ $gs->currency ?? '$' }}{{ number_format($item->total_price, 2) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -576,6 +576,10 @@
             
             if (!valid) return false;
         });
+    });
+</script>
+@endsection
+
     });
 </script>
 @endsection

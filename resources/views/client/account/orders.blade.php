@@ -1,5 +1,6 @@
 @extends('client.structure.app')
 @section('content')
+@php $gs = \App\HelperClass::generalSettings(); @endphp
     <style>
         @media (max-width: 767px) {
             .cart-table-content table thead {
@@ -122,7 +123,7 @@
                                                                 </span>
                                                             </td>
                                                             <td class="product-subtotal">
-                                                                <span class="fw-bold text-dark">${{ number_format($order->total_amount, 2) }}</span>
+                                                                <span class="fw-bold text-dark">{{ $gs->currency ?? '$' }}{{ number_format($order->total_amount, 2) }}</span>
                                                             </td>
                                                             <td class="product-wishlist-cart text-end pe-3">
                                                                 <div class="d-flex justify-content-end gap-2">

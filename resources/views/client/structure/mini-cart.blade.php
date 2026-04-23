@@ -1,6 +1,7 @@
 @php
     $cartItems = \App\HelperClass::getCartItems();
     $total = $cartItems->sum('subtotal');
+    $gs = \App\HelperClass::generalSettings();
 @endphp
 <div class="inner">
     <div class="head">
@@ -26,10 +27,10 @@
                             @endif
                             <span class="quantity-price">{{ $item->quantity }} x 
                                 @if($item->product_discount > 0)
-                                    <span class="amount">${{ number_format($item->price, 2) }}</span>
-                                    <span class="old-price text-decoration-line-through ms-1" style="color: #999; font-size: 0.85em;">${{ number_format($item->regular_price, 2) }}</span>
+                                    <span class="amount">{{ $gs->currency ?? '$' }}{{ number_format($item->price, 2) }}</span>
+                                    <span class="old-price text-decoration-line-through ms-1" style="color: #999; font-size: 0.85em;">{{ $gs->currency ?? '$' }}{{ number_format($item->regular_price, 2) }}</span>
                                 @else
-                                    <span class="amount">${{ number_format($item->price, 2) }}</span>
+                                    <span class="amount">{{ $gs->currency ?? '$' }}{{ number_format($item->price, 2) }}</span>
                                 @endif
                             </span>
                             <a href="javascript:void(0)" class="remove remove-from-cart" data-cart-id="{{ $item->id }}">×</a>
@@ -45,9 +46,9 @@
         @endif
     </div>
     <div class="shopping-cart-total">
-        <h4>Subtotal : <span>${{ number_format($total, 2) }}</span></h4>
+        <h4>Subtotal : <span>{{ $gs->currency ?? '$' }}{{ number_format($total, 2) }}</span></h4>
         {{-- You can add shipping/tax logic here if needed --}}
-        <h4 class="shop-total">Total : <span>${{ number_format($total, 2) }}</span></h4>
+        <h4 class="shop-total">Total : <span>{{ $gs->currency ?? '$' }}{{ number_format($total, 2) }}</span></h4>
     </div>
     <div class="foot">
         <div class="buttons">

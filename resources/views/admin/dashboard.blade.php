@@ -1,5 +1,6 @@
 @extends('admin.structure.app')
 @section('content')
+@php $gs = \App\HelperClass::generalSettings(); @endphp
 
 <div class="container-xxl">
     <div class="row">
@@ -12,7 +13,7 @@
                             <h4 class="mb-0 text-dark">{{ $gs->currency ?? '$' }}{{ number_format($summary['todaySales'], 2) }}</h4>
                         </div>
                         <div class="avatar-md bg-soft-primary rounded">
-                            <i class="bx bx-dollar-circle avatar-title fs-24 text-primary"></i>
+                            <i class="bx bx-wallet avatar-title fs-24 text-primary"></i>
                         </div>
                     </div>
                 </div>

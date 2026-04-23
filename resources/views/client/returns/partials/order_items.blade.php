@@ -1,4 +1,5 @@
 <div class="table-content table-responsive cart-table-content mt-4">
+    @php $gs = \App\HelperClass::generalSettings(); @endphp
     <table class="w-100">
         <thead>
             <tr>
@@ -33,7 +34,7 @@
                         </div>
                     </td>
                     <td class="product-subtotal text-end pe-3">
-                        <span class="fw-bold text-dark">${{ number_format($item->unit_price, 2) }}</span>
+                        <span class="fw-bold text-dark">{{ $gs->currency ?? '$' }}{{ number_format($item->unit_price, 2) }}</span>
                     </td>
                 </tr>
             @endforeach

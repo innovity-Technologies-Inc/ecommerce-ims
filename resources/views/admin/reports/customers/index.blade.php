@@ -189,11 +189,14 @@
                 <div class="card-body d-flex flex-column justify-content-center text-center py-4">
                     <i class="bx bx-wallet position-absolute end-0 bottom-0 text-white opacity-25" style="font-size: 100px; transform: translate(20%, 20%);"></i>
                     <h6 class="text-white text-uppercase fw-bold mb-2 small">Average Order Value</h6>
-                    <h2 class="mb-0 display-6 fw-bold text-white">${{ number_format($stats['avg_order_value'], 2) }}</h2>
+                    <h2 class="mb-0 display-6 fw-bold text-white">{{ $gs->currency ?? '$' }}{{ number_format($stats['avg_order_value'], 2) }}</h2>
                     <p class="extra-small text-white mt-3 mb-0">Calculated from all delivered orders in the selected period.</p>
                 </div>
             </div>
         </div>
     </div>
+</div>
+@endsection
+   </div>
 </div>
 @endsection

@@ -1,6 +1,7 @@
 @extends('client.structure.app', ['title' => 'Checkout', 'section' => 'Checkout'])
 
 @section('content')
+@php $gs = \App\HelperClass::generalSettings(); @endphp
 <!-- checkout area start -->
 <div class="checkout-area mtb-60px">
     <div class="container">
@@ -105,10 +106,10 @@
                                                 </span>
                                                 <span class="order-price">
                                                     @if($item->product_discount > 0)
-                                                        <span class="text-decoration-line-through me-2" style="color: #999; font-size: 0.85em;">${{ number_format($item->regular_price * $item->quantity, 2) }}</span>
-                                                        ${{ number_format($item->subtotal, 2) }}
+                                                        <span class="text-decoration-line-through me-2" style="color: #999; font-size: 0.85em;">{{ $gs->currency ?? '$' }}{{ number_format($item->regular_price * $item->quantity, 2) }}</span>
+                                                        {{ $gs->currency ?? '$' }}{{ number_format($item->subtotal, 2) }}
                                                     @else
-                                                        ${{ number_format($item->subtotal, 2) }}
+                                                        {{ $gs->currency ?? '$' }}{{ number_format($item->subtotal, 2) }}
                                                     @endif
                                                 </span>
                                             </li>
@@ -118,19 +119,19 @@
                                 <div class="your-order-bottom">
                                     <ul>
                                         <li class="your-order-shipping">Shipping ({{ $selectedShippingMethod->name }})</li>
-                                        <li>${{ number_format($selectedShippingMethod->price, 2) }}</li>
+                                        <li>{{ $gs->currency ?? '$' }}{{ number_format($selectedShippingMethod->price, 2) }}</li>
                                     </ul>
                                 </div>
                                 <div class="your-order-bottom coupon-discount-row" style="{{ session('coupon') ? 'margin-top: 15px !important;' : 'display: none; margin-top: 15px !important;' }}">
                                     <ul>
                                         <li class="your-order-shipping">Discount ({{ session('coupon.code') }}) <a href="javascript:void(0)" id="remove-coupon-btn" class="text-danger small"><i class="fa fa-trash-o"></i></a></li>
-                                        <li>-$<span id="discount-amount">{{ number_format(session('coupon.discount', 0), 2) }}</span></li>
+                                        <li>-{{ $gs->currency ?? '$' }}<span id="discount-amount">{{ number_format(session('coupon.discount', 0), 2) }}</span></li>
                                     </ul>
                                 </div>
                                 <div class="your-order-total">
                                     <ul>
                                         <li class="order-total">Total</li>
-                                        <li>$<span id="grand-total">{{ number_format($grandTotal - session('coupon.discount', 0), 2) }}</span></li>
+                                        <li>{{ $gs->currency ?? '$' }}<span id="grand-total">{{ number_format($grandTotal - session('coupon.discount', 0), 2) }}</span></li>
                                     </ul>
                                 </div>
                             </div>
@@ -319,13 +320,13 @@
                                     <div class="coupon-left">
                                         <div class="coupon-code-badge">${coupon.code}</div>
                                         <h6 class="fw-bold mb-1" style="color: #253237;">
-                                            ${coupon.discount_type === 'percentage' ? coupon.discount_amount + '%' : '$' + parseFloat(coupon.discount_amount).toFixed(2)} OFF
+                                            ${coupon.discount_type === 'percentage' ? coupon.discount_amount + '%' : '{{ $gs->currency ?? '$' }}' + parseFloat(coupon.discount_amount).toFixed(2)} OFF
                                         </h6>
                                         <p class="text-muted mb-2 small" style="font-size: 12px; line-height: 1.4;">
                                             Apply this code to get a discount on ${coupon.apply_for === 'total_product_price' ? 'your product subtotal' : 'shipping charges'}.
                                         </p>
                                         <div class="d-flex align-items-center gap-3 mt-2">
-                                            <span class="small text-muted"><i class="fa fa-shopping-bag me-1"></i> Min: $${parseFloat(coupon.min_spend).toFixed(2)}</span>
+                                            <span class="small text-muted"><i class="fa fa-shopping-bag me-1"></i> Min: {{ $gs->currency ?? '$' }}${parseFloat(coupon.min_spend).toFixed(2)}</span>
                                             <span class="small text-muted"><i class="fa fa-calendar me-1"></i> Exp: ${new Date(coupon.expired_on).toLocaleDateString()}</span>
                                         </div>
                                         ${!isEligible ? `
