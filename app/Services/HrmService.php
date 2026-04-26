@@ -19,6 +19,9 @@ class HrmService
      */
     public function getAllAttendances(array $params = [], int $perPage = 10): LengthAwarePaginator
     {
+        if (isset($params['is_print']) && $params['is_print'] == '1') {
+            $perPage = 10000; // Large number to get all records
+        }
         $query = AdminAttendance::with('admin');
 
         $filters = [];
@@ -158,6 +161,9 @@ class HrmService
      */
     public function getAllPayslipGenerations(array $params = [], int $perPage = 10): LengthAwarePaginator
     {
+        if (isset($params['is_print']) && $params['is_print'] == '1') {
+            $perPage = 10000;
+        }
         $query = PayslipGeneration::query();
 
         if (! empty($params['start_date']) && ! empty($params['end_date'])) {

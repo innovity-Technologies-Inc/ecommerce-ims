@@ -170,38 +170,62 @@
     function printBatchReport() {
         const url = new URL(window.location.href);
         url.searchParams.set('is_print', '1');
-        
-        const printWin = window.open(url.href, '_blank');
-        if (!printWin) {
-            alert('Please allow popups to print reports.');
-        }
+        window.open(url.href, '_blank');
     }
 
     $(document).ready(function() {
         if (new URLSearchParams(window.location.search).has('is_print')) {
-            // Hide everything except the main table and its container
-            $('.no-print, .btn-group, .btn, iconify-icon, .card-header, .card-footer, .pagination, .dropdown, .topbar, .left-side-menu, .footer, .row.g-3.mb-4').attr('style', 'display:none !important');
-            $('body').css('background', 'white');
-            $('.card').css('border', 'none').css('box-shadow', 'none');
+            // Hide everything
+            $('body > *').hide();
             
-            // Add printable header
-            if (!$('.print-header').length) {
-                $('<div class="print-header text-center mb-4">' +
-                    '<h2 style="margin-bottom:5px;">{{ \App\HelperClass::generalSettings()->business_name ?? "Smart Ecom" }}</h2>' +
-                    '<h3 style="margin-bottom:10px;">Payslip Generation Batch Details</h3>' +
-                    '<p style="margin:2px;">Batch: {{ $generation->title }}</p>' +
-                    '<p style="margin:2px;">Period: {{ $generation->start_date->format("d M, Y") }} - {{ $generation->end_date->format("d M, Y") }}</p>' +
-                    '<hr style="margin:20px 0;">' +
-                  '</div>').prependTo('.card-body');
-            }
+            // Create a print container
+            const printContainer = $('<div class="print-container"></div>').appendTo('body');
+            
+            // Add business header
+            const bName = "{{ \App\HelperClass::generalSettings()->business_name ?? 'Smart Ecom' }}";
+            const generatedAt = new Date().toLocaleString();
+            
+            printContainer.append(`
+                <div class="text-center mb-4 border-bottom pb-3">
+                    <h1 style="font-weight: bold; margin-bottom: 5px;">${bName}</h1>
+                    <h3 style="margin-bottom: 10px;">Payslip Generation Batch Details</h3>
+                    <p style="margin: 0; color: #666;">Batch: {{ $generation->title }}</p>
+                    <p style="margin: 0; color: #666;">Period: {{ $generation->start_date->format("d M, Y") }} - {{ $generation->end_date->format("d M, Y") }}</p>
+                    <p style="margin: 0; color: #666; font-size: 11px;">Generated: ${generatedAt}</p>
+                </div>
+            `);
 
-            setTimeout(function() {
+            // Clone the table and clean it
+            const tableClone = $('.table-responsive').clone();
+            tableClone.find('.no-print, .btn-group, .btn, iconify-icon, .modal').remove();
+            
+            printContainer.append(tableClone);
+
+            // Apply print-specific styles
+            $('<style>')
+                .prop('type', 'text/css')
+                .html(`
+                    @media print {
+                        @page { size: auto; margin: 1.5cm; }
+                        body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; display: block !important; }
+                        .print-container { display: block !important; width: 100% !important; }
+                        table { width: 100% !important; border-collapse: collapse !important; margin-top: 20px !important; }
+                        th, td { border: 1px solid #000 !important; padding: 8px 5px !important; font-size: 10px !important; color: black !important; text-align: center !important; }
+                        th { background-color: #f8f9fa !important; font-weight: bold !important; -webkit-print-color-adjust: exact; }
+                        .badge { border: 1px solid #000; padding: 2px 4px; border-radius: 3px; font-size: 9px; color: black !important; background: transparent !important; }
+                        .fw-bold { font-weight: bold !important; }
+                        .d-flex { display: flex !important; }
+                        .align-items-center { align-items: center !important; }
+                        .gap-2 { gap: 0.5rem !important; }
+                        img { max-width: 30px !important; height: auto !important; }
+                    }
+                `)
+                .appendTo('head');
+
+            setTimeout(() => {
                 window.print();
-            }, 500);
-
-            window.onafterprint = function() {
-                window.close();
-            };
+                if (confirm('Close this print tab?')) window.close();
+            }, 800);
         }
     });
 </script>

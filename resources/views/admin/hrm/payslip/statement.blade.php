@@ -36,19 +36,21 @@
         .total-label { font-size: 16px; font-weight: 700; color: #166534; }
         .total-amount { font-size: 24px; font-weight: 800; color: #15803d; }
 
-        .signature-section { margin-top: 100px; display: flex; justify-content: space-between; padding: 0 20px; }
+        .signature-section { margin-top: 120px; display: flex; justify-content: space-between; padding: 0 20px; }
         .signature-box { width: 220px; text-align: center; }
-        .signature-line { border-top: 1px solid #9ca3af; margin-bottom: 8px; }
-        .signature-text { font-size: 12px; font-weight: 600; color: #4b5563; }
+        .signature-line { border-top: 2px solid #333; margin-bottom: 8px; }
+        .signature-text { font-size: 13px; font-weight: 700; color: #111; }
 
-        .footer-note { margin-top: 60px; text-align: center; color: #9ca3af; font-size: 11px; border-top: 1px dashed #e5e7eb; padding-top: 20px; }
+        .footer-note { margin-top: 80px; text-align: center; color: #6b7280; font-size: 11px; border-top: 1px dashed #e5e7eb; padding-top: 20px; }
 
         @media print {
-            body { background: #fff; margin: 0; padding: 0; }
-            .statement-container { margin: 0; max-width: 100%; }
-            .payslip-box { box-shadow: none; border: none; padding: 40px; }
+            @page { size: portrait; margin: 1cm; }
+            body { background: #fff !important; margin: 0; padding: 0; display: block !important; }
+            .statement-container { margin: 0; max-width: 100% !important; padding: 0 !important; }
+            .payslip-box { box-shadow: none !important; border: 1px solid #eee !important; padding: 40px !important; margin: 0 !important; }
             .no-print { display: none !important; }
-            .total-box { -webkit-print-color-adjust: exact; background-color: #f0fdf4 !important; }
+            .total-box { -webkit-print-color-adjust: exact !background-color: #f0fdf4 !important; border: 1px solid #bbf7d0 !important; }
+            .header-section { border-bottom: 2px solid #10b981 !important; }
         }
     </style>
 </head>
@@ -87,16 +89,16 @@
                     <span>Bank Transfer / Cash</span>
                 </div>
             </div>
-            <div class="info-group">
-                <div class="info-item text-md-end">
+            <div class="info-group" style="text-align: right;">
+                <div class="info-item">
                     <label>Pay Period</label>
                     <span>{{ $payslip->start_date->format('d M, Y') }} - {{ $payslip->end_date->format('d M, Y') }}</span>
                 </div>
-                <div class="info-item text-md-end">
+                <div class="info-item">
                     <label>Statement Date</label>
                     <span>{{ $payslip->created_at->format('d M, Y') }}</span>
                 </div>
-                <div class="info-item text-md-end">
+                <div class="info-item">
                     <label>Status</label>
                     <span class="text-success text-uppercase">{{ $payslip->status }}</span>
                 </div>
