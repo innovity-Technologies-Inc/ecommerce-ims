@@ -68,18 +68,25 @@
             const printContainer = $('<div class="print-container"></div>').appendTo('body');
             
             // Add business header
-            const bName = "{{ \App\HelperClass::generalSettings()->business_name ?? 'Smart Ecom' }}";
+            const gs = {
+                business_name: "{{ \App\HelperClass::generalSettings()->business_name ?? 'Smart Ecom' }}",
+                light_logo: "{{ \App\HelperClass::generalSettings()->light_logo ? asset('storage/' . \App\HelperClass::generalSettings()->light_logo) : '' }}"
+            };
             const dateRange = '{{ request("start_date") ?? "All Time" }} to {{ request("end_date") ?? "Present" }}';
             const generatedAt = new Date().toLocaleString();
             
-            printContainer.append(`
+            let headerHtml = `
                 <div class="text-center mb-4 border-bottom pb-3">
-                    <h1 style="font-weight: bold; margin-bottom: 5px;">${bName}</h1>
+                    <div class="d-flex align-items-center justify-content-center gap-3 mb-2">
+                        ${gs.light_logo ? `<img src="${gs.light_logo}" alt="logo" style="max-height: 50px;">` : ''}
+                        <h1 style="font-weight: bold; margin: 0;">${gs.business_name}</h1>
+                    </div>
                     <h3 style="margin-bottom: 10px;">Payslip Generations Report</h3>
                     <p style="margin: 0; color: #666;">Period: ${dateRange}</p>
                     <p style="margin: 0; color: #666; font-size: 11px;">Generated: ${generatedAt}</p>
                 </div>
-            `);
+            `;
+            printContainer.append(headerHtml);
 
             // Clone the table and clean it
             const tableClone = $('.table-responsive').clone();
@@ -92,7 +99,7 @@
                 .prop('type', 'text/css')
                 .html(`
                     @media print {
-                        @page { size: auto; margin: 1.5cm; }
+                        @page { size: auto; margin: 1.0cm; }
                         body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; display: block !important; }
                         .print-container { display: block !important; width: 100% !important; padding: 20px !important; }
                         table { width: 100% !important; border-collapse: collapse !important; margin-top: 20px !important; }
@@ -100,6 +107,11 @@
                         th { background-color: #f8f9fa !important; font-weight: bold !important; -webkit-print-color-adjust: exact; }
                         .badge { border: 1px solid #000; padding: 2px 4px; border-radius: 3px; font-size: 9px; color: black !important; background: transparent !important; }
                         .fw-bold { font-weight: bold !important; }
+                        .d-flex { display: flex !important; }
+                        .align-items-center { align-items: center !important; }
+                        .justify-content-center { justify-content: center !important; }
+                        .gap-3 { gap: 1rem !important; }
+                        img { max-height: 50px !important; width: auto !important; }
                     }
                 `)
                 .appendTo('head');
@@ -107,7 +119,7 @@
             setTimeout(() => {
                 window.print();
                 if (confirm('Close this print tab?')) window.close();
-            }, 1000);
+            }, 500);
         }
 
         // AJAX live search and filtering
