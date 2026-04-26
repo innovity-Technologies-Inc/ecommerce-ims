@@ -116,7 +116,8 @@
                                                     <h5 class="modal-title">Update Status: {{ $payslip->payslip_number }}</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
-                                                <form action="{{ route('admin.hrm.payslip.status.update', $payslip->id) }}" method="POST">
+                                                <form action="{{ route('admin.hrm.payslip.update-status', $payslip->id) }}" method="POST">
+                                                    @method('PUT')
                                                     @csrf
                                                     <div class="modal-body">
                                                         <div class="mb-3">
