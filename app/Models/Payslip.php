@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Payslip extends Model
 {
     protected $fillable = [
+        'payslip_generation_id',
         'admin_id',
         'payslip_number',
         'month',
@@ -32,6 +33,14 @@ class Payslip extends Model
             'start_date' => 'date',
             'end_date' => 'date',
         ];
+    }
+
+    /**
+     * Get the generation batch this payslip belongs to.
+     */
+    public function generation(): BelongsTo
+    {
+        return $this->belongsTo(PayslipGeneration::class, 'payslip_generation_id');
     }
 
     /**

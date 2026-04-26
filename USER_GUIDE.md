@@ -229,15 +229,15 @@ Before tracking time, you must configure each staff member's profile:
 *   **Manual Entry:** Go to `HRM -> Attendance -> Record Attendance`. Use this to manually enter shifts for any staff member by specifying the date and exact Clock-In/Clock-Out times.
 
 ### 13.3 Payslips & Compensation
-1.  **Generation:** Go to `HRM -> Payslips -> Generate Payslip`. Select the employee and the **Date Range** (Start and End).
-2.  **Calculation Scenarios:** The system is intelligent and calculates pay based on your selected date range and the employee's contract type:
-
+1.  **Bulk Generation:** Go to `HRM -> Payslips -> Generate New Batch`.
+    *   **Generation Title:** Provide a name for the batch (e.g., "April 2026 Week 1").
+    *   **Date Range:** Select the **Start** and **End** dates for the period you want to pay for.
+2.  **How it Works:** The system will automatically scan all employee attendance records within your selected date range and calculate their net salary based on their individual hourly rates.
     *   **Calculation Scenario: Hourly Pay**
-        If you have a staff member with an **Hourly Rate of $10**:
-        *   If they work **5 hours** during your selected range, they will be paid **$50**.
+        If a staff member has an **Hourly Rate of $10**:
+        *   If they work **5 hours** during the period, they will be paid **$50**.
         *   If they work **12 hours and 30 minutes** (12.5 hrs), they will be paid **$125**.
-
-3.  **Management:** View and print professional payslips from the list. You can also update the status to **"Paid"** once the transaction is complete.
+3.  **Management:** The main Payslip list now shows **Generation Batches**. Click the **Eye icon** to view the full list of all employee payslips within that specific batch. You can update individual statuses to **"Paid"** once you have processed their payments.
 
 *Note: All salary amounts automatically use the currency symbol defined in your General Settings.*
 

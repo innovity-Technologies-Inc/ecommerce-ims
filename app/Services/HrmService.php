@@ -5,9 +5,11 @@ namespace App\Services;
 use App\Models\Admin;
 use App\Models\AdminAttendance;
 use App\Models\Payslip;
+use App\Models\PayslipGeneration;
 use Carbon\Carbon;
 use DaiyanMozumder\LaravelFlexSearch\FlexSearch;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class HrmService
@@ -88,8 +90,8 @@ class HrmService
      */
     public function clockIn(Admin $admin): void
     {
-        $today = Carbon::today()->toDateString();
-        $now = Carbon::now();
+        $now = now();
+        $today = $now->toDateString();
 
         // 1. Update/Create Today's Attendance Record
         $attendance = AdminAttendance::where('admin_id', $admin->id)
@@ -124,17 +126,16 @@ class HrmService
             return;
         }
 
-        $today = Carbon::today()->toDateString();
-        $now = Carbon::now();
+        $now = now();
+        $startDate = $admin->last_login_at->toDateString();
 
         $attendance = AdminAttendance::where('admin_id', $admin->id)
-            ->where('date', $today)
+            ->where('date', $startDate)
             ->first();
 
         if ($attendance && ! $attendance->is_manual) {
             // Calculate minutes for this session
-            $sessionStart = Carbon::parse($admin->last_login_at);
-            $sessionMinutes = $sessionStart->diffInMinutes($now);
+            $sessionMinutes = $admin->last_login_at->diffInMinutes($now);
 
             // Accumulate time
             $attendance->increment('total_minutes', $sessionMinutes);
@@ -153,25 +154,11 @@ class HrmService
     }
 
     /**
-     * Get all payslips with filtering.
+     * Get all payslip generations with filtering.
      */
-    public function getAllPayslips(array $params = [], int $perPage = 10): LengthAwarePaginator
+    public function getAllPayslipGenerations(array $params = [], int $perPage = 10): LengthAwarePaginator
     {
-        $query = Payslip::with('admin');
-
-        $filters = [];
-        if (! empty($params['status'])) {
-            $filters['status'] = $params['status'];
-        }
-
-        // Role filtering
-        if (! empty($params['role_id'])) {
-            $query->whereHas('admin', function ($q) use ($params) {
-                $q->whereHas('roles', function ($rq) use ($params) {
-                    $rq->where('id', $params['role_id']);
-                });
-            });
-        }
+        $query = PayslipGeneration::query();
 
         if (! empty($params['start_date']) && ! empty($params['end_date'])) {
             $query->whereBetween('start_date', [$params['start_date'], $params['end_date']]);
@@ -179,9 +166,9 @@ class HrmService
 
         $flexSearch = app(FlexSearch::class);
         $searchTerm = $params['search'] ?? null;
-        $searchableColumns = ['payslip_number', 'admin.name'];
+        $searchableColumns = ['title'];
 
-        $query = $flexSearch->apply($query, $filters, $searchTerm, $searchableColumns);
+        $query = $flexSearch->apply($query, [], $searchTerm, $searchableColumns);
 
         // Sorting
         $sort = $params['sort'] ?? 'latest';
@@ -189,65 +176,94 @@ class HrmService
             $query->latest();
         } elseif ($sort === 'oldest') {
             $query->oldest();
-        } elseif ($sort === 'name_asc') {
-            $query->join('admins', 'payslips.admin_id', '=', 'admins.id')
-                ->orderBy('admins.name', 'asc')
-                ->select('payslips.*');
-        } elseif ($sort === 'name_desc') {
-            $query->join('admins', 'payslips.admin_id', '=', 'admins.id')
-                ->orderBy('admins.name', 'desc')
-                ->select('payslips.*');
         }
 
         return $query->paginate($perPage);
     }
 
     /**
-     * Generate Payslip.
+     * Get payslip generation details with individual payslips.
      */
-    public function generatePayslip(array $data): Payslip
+    public function getPayslipGenerationDetails(int $id): PayslipGeneration
     {
-        $admin = Admin::findOrFail($data['admin_id']);
+        return PayslipGeneration::with(['payslips.admin'])->findOrFail($id);
+    }
+
+    /**
+     * Generate Bulk Payslips.
+     */
+    public function generateBulkPayslips(array $data): PayslipGeneration
+    {
         $startDate = Carbon::parse($data['start_date']);
         $endDate = Carbon::parse($data['end_date']);
+        $title = $data['title'];
 
-        // Check if already exists for this exact range
-        $existing = Payslip::where('admin_id', $admin->id)
-            ->where('start_date', $startDate->toDateString())
-            ->where('end_date', $endDate->toDateString())
-            ->first();
+        // Check if a Generation with same title or same exact range exists.
+        $existing = PayslipGeneration::where('title', $title)
+            ->orWhere(function ($q) use ($startDate, $endDate) {
+                $q->where('start_date', $startDate->toDateString())
+                    ->where('end_date', $endDate->toDateString());
+            })->first();
 
         if ($existing) {
-            throw new \Exception('Payslip already exists for this user and date range.');
+            throw new \Exception('A payslip generation with this title or exact date range already exists.');
         }
 
-        // Calculate total hours from attendance in range
-        $totalMinutes = AdminAttendance::where('admin_id', $admin->id)
-            ->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
-            ->sum('total_minutes');
+        return DB::transaction(function () use ($startDate, $endDate, $title) {
+            $generation = PayslipGeneration::create([
+                'title' => $title,
+                'start_date' => $startDate->toDateString(),
+                'end_date' => $endDate->toDateString(),
+            ]);
 
-        $totalHours = $totalMinutes / 60;
+            $admins = Admin::all();
+            $totalEmployees = 0;
+            $totalAmount = 0;
 
-        /**
-         * Logic: Direct Hourly Rate based Calculation
-         * Formula: Hourly Salary Rate * Actual Hours Worked
-         */
-        $hourlyRate = $admin->salary_amount ?? 0;
-        $netSalary = $hourlyRate * $totalHours;
+            foreach ($admins as $admin) {
+                // Calculate total hours from attendance in range
+                $totalMinutes = AdminAttendance::where('admin_id', $admin->id)
+                    ->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
+                    ->sum('total_minutes');
 
-        return Payslip::create([
-            'admin_id' => $admin->id,
-            'payslip_number' => 'PS-'.strtoupper(Str::random(8)),
-            'month' => $startDate->month,
-            'year' => $startDate->year,
-            'start_date' => $startDate->toDateString(),
-            'end_date' => $endDate->toDateString(),
-            'salary_type' => 'daily', // Implicitly hours based
-            'salary_amount' => $admin->salary_amount,
-            'total_hours' => $totalHours,
-            'net_salary' => $netSalary,
-            'status' => 'pending',
-        ]);
+                if ($totalMinutes <= 0) {
+                    continue; // Skip employees with no work
+                }
+
+                $totalHours = $totalMinutes / 60;
+                $hourlyRate = $admin->salary_amount ?? 0;
+                $netSalary = $hourlyRate * $totalHours;
+
+                Payslip::create([
+                    'payslip_generation_id' => $generation->id,
+                    'admin_id' => $admin->id,
+                    'payslip_number' => 'PS-'.strtoupper(Str::random(8)),
+                    'month' => $startDate->month,
+                    'year' => $startDate->year,
+                    'start_date' => $startDate->toDateString(),
+                    'end_date' => $endDate->toDateString(),
+                    'salary_type' => 'daily', // Defaulting to hours-based
+                    'salary_amount' => $admin->salary_amount,
+                    'total_hours' => $totalHours,
+                    'net_salary' => $netSalary,
+                    'status' => 'pending',
+                ]);
+
+                $totalEmployees++;
+                $totalAmount += $netSalary;
+            }
+
+            if ($totalEmployees === 0) {
+                throw new \Exception('No work attendance found for any employee in the selected date range.');
+            }
+
+            $generation->update([
+                'total_employees' => $totalEmployees,
+                'total_amount' => $totalAmount,
+            ]);
+
+            return $generation;
+        });
     }
 
     /**

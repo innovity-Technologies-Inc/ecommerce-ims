@@ -210,25 +210,24 @@
     *   `return_items`: Source for calculating return-based efficiency penalties.
     *   `warehouse_stock_limits`: Source for localized alert thresholds.
 
-    ### 3.12 HRM Module (REQ-227, REQ-228)
+    ### 3.12 HRM Module (REQ-227, REQ-228, REQ-229)
     - **What (Business Purpose):** Manages internal staff and appointed users' attendance, work hours, and financial compensation.
     - **How it Works (Technical Flow):**
     1. **Configuration:** Admin enables "Time Tracking" and sets "Salary Settings" (Type/Amount) and "Daily Work Hours" in an employee's profile.
-    2. **Attendance Button (REQ-228):** The "Clock In/Out" button is **always visible** to all logged-in administrators in the top header, regardless of their individual "Time Tracking" toggle setting.
-    3. **Automated Tracking:** For tracked users, the system captures the first login of the day as `clock_in` and updates `clock_out` and `total_minutes` upon logout via authentication hooks.
-    3. **Manual Entry:** Admins can manually record attendance for any employee by specifying exact `clock_in` and `clock_out` times.
-    4. **Payslip Generation:** 
-        *   Calculates `total_hours` from `admin_attendances` within the selected `start_date` and `end_date`.
-        *   **Salary Calculation Scenarios:**
-            *   **Hourly Rate (Direct):** The system calculates pay based on a fixed hourly rate configured in the staff profile.
-                *   *Formula:* `Hourly Salary Rate * Actual Hours Worked`.
-                *   *Scenario:* A staff with a $10/hr rate who works 12.5 hours results in $125.
-        *   Generates a unique `payslip_number` and tracks payment status.
-    5. **Filtering:** All views support filtering by Employee, Status, and Date Range (Daily/Weekly/Monthly) using FlexSearch.
+    2. **Attendance Button (REQ-228):** The "Clock In/Out" button is **always visible** to all logged-in administrators in the top header.
+    3. **Automated Tracking:** For tracked users, the system captures the first login of the day as `clock_in` and updates `clock_out` and `total_minutes` upon logout or manual toggle.
+    4. **Bulk Payslip Generation (REQ-229):** 
+        *   Instead of single-employee generation, admins create **Payslip Generations** (batches).
+        *   Admins provide a **Title** (e.g., "April 2026 Week 1") and a **Date Range**.
+        *   The system scans all employees with attendance records in that range and creates individual payslips linked to the batch.
+        *   **Salary Calculation:** The system calculates pay based on a fixed hourly rate configured in the staff profile.
+            *   *Formula:* `Hourly Salary Rate * Actual Hours Worked`.
+    5. **Filtering:** All views support filtering and sorting using FlexSearch.
     - **Data & Storage (DB Connectivity):**
-    *   `admin_attendances` link to `admins` via `admin_id`.
-    *   `payslips` link to `admins` and track financial metadata.
-    *   `general_settings` provide the dynamic currency symbol used in all views.
+    *   `admin_attendances`: link to `admins` via `admin_id`.
+    *   `payslip_generations`: Stores batch metadata (title, range, total payout).
+    *   `payslips`: Stores individual employee payouts linked to a generation batch.
+    *   `general_settings`: provide the dynamic currency symbol and timezone settings.
 
     ### 3.13 Comprehensive Demo Seeding (REQ-178)
 

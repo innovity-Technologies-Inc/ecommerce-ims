@@ -3,48 +3,27 @@
         <thead class="bg-light-accent text-dark">
             <tr>
                 <th>SL</th>
-                <th>Payslip #</th>
-                <th>Employee</th>
+                <th>Generation Title</th>
                 <th>Period</th>
-                <th>Work Hours</th>
-                <th>Net Salary</th>
-                <th>Status</th>
+                <th>Employees</th>
+                <th>Total Amount</th>
+                <th>Generated At</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
-            @php $sl = \App\HelperClass::indexNumberSerialization($payslips); @endphp
-            @forelse($payslips as $payslip)
+            @php $sl = \App\HelperClass::indexNumberSerialization($generations); @endphp
+            @forelse($generations as $generation)
                 <tr>
                     <td>{{ $sl++ }}</td>
-                    <td><span class="fw-bold">{{ $payslip->payslip_number }}</span></td>
-                    <td>
-                        <div class="d-flex align-items-center gap-2">
-                            @if($payslip->admin->image)
-                                <img src="{{ asset('storage/' . $payslip->admin->image) }}" alt="" class="avatar-xs rounded-circle">
-                            @else
-                                <div class="avatar-xs d-flex align-items-center justify-content-center bg-soft-primary text-primary rounded-circle">
-                                    {{ substr($payslip->admin->name, 0, 1) }}
-                                </div>
-                            @endif
-                            <span>{{ $payslip->admin->name }}</span>
-                        </div>
-                    </td>
-                    <td>{{ $payslip->start_date->format('d M') }} - {{ $payslip->end_date->format('d M, Y') }}</td>
-                    <td>{{ number_format($payslip->total_hours, 2) }} hrs</td>
-                    <td>{{ \App\HelperClass::generalSettings()->currency ?? '$' }}{{ number_format($payslip->net_salary, 2) }}</td>
-                    <td>
-                        @if($payslip->status === 'paid')
-                            <span class="badge bg-soft-success text-success">Paid</span>
-                        @elseif($payslip->status === 'cancelled')
-                            <span class="badge bg-soft-danger text-danger">Cancelled</span>
-                        @else
-                            <span class="badge bg-soft-warning text-warning">Pending</span>
-                        @endif
-                    </td>
+                    <td><span class="fw-bold">{{ $generation->title }}</span></td>
+                    <td>{{ $generation->start_date->format('d M') }} - {{ $generation->end_date->format('d M, Y') }}</td>
+                    <td><span class="badge bg-soft-info text-info">{{ $generation->total_employees }} Employees</span></td>
+                    <td class="fw-bold">{{ \App\HelperClass::generalSettings()->currency ?? '$' }}{{ number_format($generation->total_amount, 2) }}</td>
+                    <td>{{ $generation->created_at->format('d M, Y h:i A') }}</td>
                     <td>
                         <div class="d-flex gap-2">
-                            <a href="{{ route('admin.hrm.payslip.show', $payslip->id) }}" class="btn btn-soft-primary btn-sm">
+                            <a href="{{ route('admin.hrm.payslip.show', $generation->id) }}" class="btn btn-soft-primary btn-sm">
                                 <iconify-icon icon="solar:eye-broken"></iconify-icon>
                             </a>
                         </div>
@@ -52,7 +31,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="8" class="text-center">No payslips found.</td>
+                    <td colspan="7" class="text-center">No payslip generations found.</td>
                 </tr>
             @endforelse
         </tbody>
@@ -60,5 +39,5 @@
 </div>
 
 <div class="mt-3">
-    {{ $payslips->appends(request()->all())->links() }}
+    {{ $generations->appends(request()->all())->links() }}
 </div>

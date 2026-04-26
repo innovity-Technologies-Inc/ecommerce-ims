@@ -82,14 +82,13 @@ class HrmController extends Controller
      */
     public function payslipIndex(Request $request): View|string
     {
-        $payslips = $this->hrmService->getAllPayslips($request->all());
-        $roles = Role::all();
+        $generations = $this->hrmService->getAllPayslipGenerations($request->all());
 
         if ($request->ajax()) {
-            return view('admin.hrm.payslip.partials.table', compact('payslips'))->render();
+            return view('admin.hrm.payslip.partials.table', compact('generations'))->render();
         }
 
-        return view('admin.hrm.payslip.index', compact('payslips', 'roles'));
+        return view('admin.hrm.payslip.index', compact('generations'));
     }
 
     /**
@@ -97,9 +96,7 @@ class HrmController extends Controller
      */
     public function payslipCreate(): View
     {
-        $admins = Admin::all();
-
-        return view('admin.hrm.payslip.create', compact('admins'));
+        return view('admin.hrm.payslip.create');
     }
 
     /**
@@ -108,10 +105,10 @@ class HrmController extends Controller
     public function payslipGenerate(PayslipGenerateRequest $request): RedirectResponse
     {
         try {
-            $this->hrmService->generatePayslip($request->validated());
+            $this->hrmService->generateBulkPayslips($request->validated());
 
             return redirect()->route('admin.hrm.payslip.index')->with([
-                'message' => 'Payslip generated successfully.',
+                'message' => 'Payslips generated successfully for all employees.',
                 'alert-type' => 'success',
             ]);
         } catch (\Exception $e) {
@@ -127,9 +124,9 @@ class HrmController extends Controller
      */
     public function payslipShow(int $id): View
     {
-        $payslip = \App\Models\Payslip::with('admin')->findOrFail($id);
+        $generation = $this->hrmService->getPayslipGenerationDetails($id);
 
-        return view('admin.hrm.payslip.show', compact('payslip'));
+        return view('admin.hrm.payslip.show', compact('generation'));
     }
 
     /**
