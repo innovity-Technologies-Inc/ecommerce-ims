@@ -230,6 +230,9 @@
                 `)
                 .appendTo('head');
 
+            // Set clean title for print header
+            document.title = "Report";
+
             setTimeout(() => {
                 window.print();
                 if (confirm('Close this print tab?')) window.close();

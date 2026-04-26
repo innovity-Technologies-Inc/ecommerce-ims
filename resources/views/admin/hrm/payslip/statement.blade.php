@@ -157,6 +157,9 @@
 <script>
     window.onload = function() {
         if (!new URLSearchParams(window.location.search).has('no_auto_print')) {
+            // Set clean title for print header
+            document.title = "Salary Statement";
+            
             setTimeout(function() {
                 window.print();
             }, 500);
