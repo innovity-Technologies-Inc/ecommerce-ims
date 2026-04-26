@@ -48,8 +48,8 @@
                         </div>
 
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <iconify-icon icon="solar:play-circle-bold-duotone" class="me-1"></iconify-icon> Generate All Payslips
+                            <button type="submit" class="btn btn-primary btn-lg d-flex align-items-center justify-content-center gap-1">
+                                <iconify-icon icon="solar:play-circle-bold-duotone"></iconify-icon> Generate All Payslips
                             </button>
                         </div>
                     </form>
