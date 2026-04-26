@@ -274,6 +274,16 @@
     - **Data & Storage:**
         - **Source:** `general_settings.currency` field.
 
+    ### 3.17 WhatsApp Floating Chat Widget (REQ-230)
+    - **What (Business Purpose):** Provides a direct and easy way for customers to contact the business via WhatsApp, increasing engagement and lead conversion.
+    - **How it Works (Technical Flow):**
+    1. **Visibility:** The widget only appears if "WhatsApp Status" is enabled in Contact Settings.
+    2. **Interaction:** Users click the floating emerald icon to open a chat window.
+    3. **Messaging:** Users type a message and click "Send".
+    4. **Redirection:** The system generates a `wa.me` link with the encoded message and opens it in a new tab.
+    - **Data & Storage:**
+    *   `contact_settings`: Stores the WhatsApp number (`whatsapp_url`) and the toggle status (`whatsapp_status`).
+
     ### 3.16 Performance & UX Optimizations (REQ-196)
     - **What (Business Purpose):** Improves the stability and responsiveness of data-heavy reports to provide a professional user experience.
     - **How it Works (Technical Flow):**

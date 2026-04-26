@@ -242,7 +242,8 @@ This document lists the high-level requirements for the modules implemented in t
 
 
 - [ ] **REQ-228:** Always Show Clock In/Out Button: The Clock In/Out button in the admin header should always be visible to logged-in administrators, regardless of the `is_time_tracking` setting in their profile. (DONE)
-- [ ] **REQ-229:** Bulk Payslip Generation: Admins can generate payslips for all employees at once for a specific date range with a generation title. Index shows generation batches, details show all individual payslips in that batch. (NEW)
+- [ ] **REQ-229:** Bulk Payslip Generation: Admins can generate payslips for all employees at once for a specific date range with a generation title. Index shows generation batches, details show all individual payslips in that batch. (DONE)
+- [ ] **REQ-230:** WhatsApp Floating Chat Widget: A floating WhatsApp icon on the client-side that opens a chat window. Users can type a message and send it directly to the configured WhatsApp number. (NEW)
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.

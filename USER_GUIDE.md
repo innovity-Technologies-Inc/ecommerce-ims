@@ -243,7 +243,18 @@ Before tracking time, you must configure each staff member's profile:
 
 ---
 
-## 14. Ready-to-Use Fashion Catalog (Demo Data)
+## 14. Customer Engagement
+### 14.1 WhatsApp Chat Widget
+*   **Feature:** A floating "Chat with us" button appears on the bottom right of the website for customers.
+*   **How to Enable:** Go to `Settings -> Contact Settings`.
+*   **Setup:** 
+    *   Enter your WhatsApp phone number (with country code, e.g., `8801700000000`) in the **WhatsApp URL/Number** field.
+    *   Set the **WhatsApp Status** to "Active".
+*   **Usage:** Customers can type a message directly on your site, and clicking "Send" will open their WhatsApp app to continue the conversation with you.
+
+---
+
+## 15. Ready-to-Use Fashion Catalog (Demo Data)
 To help you get started immediately, the system comes pre-loaded with a comprehensive **Fashion Catalog**.
 *   **100+ Products:** T-Shirts, Jeans, Shoes, and Accessories with full descriptions and marketing tags.
 *   **300+ Images:** High-quality fashion photography is automatically assigned to every product.

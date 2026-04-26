@@ -78,10 +78,10 @@
 
 @stack('scripts')
 @include('client.structure.partials.cart-scripts')
+@include('client.structure.partials.whatsapp-widget')
 
 
-{{-- Toastr --}}
- <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+{{-- Toastr --}} <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
 <script>
     @if (Session::has('message'))
