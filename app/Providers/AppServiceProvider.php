@@ -40,7 +40,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Standard for Global Web browsing
         RateLimiter::for('global', function (Request $request) {
-            return Limit::perMinute(60)->by($request->ip());
+            return Limit::perMinute(120)->by($request->ip());
         });
 
         // Dynamically set timezone from database settings
