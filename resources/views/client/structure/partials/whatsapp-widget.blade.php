@@ -44,7 +44,7 @@
         .whatsapp-widget {
             position: fixed;
             bottom: 30px;
-            right: 30px;
+            right: 90px; /* Offset to the left of ScrollUp button on desktop */
             z-index: 999999;
             font-family: 'Open Sans', sans-serif;
         }
@@ -83,7 +83,7 @@
         .whatsapp-chat-window {
             position: absolute;
             bottom: 70px;
-            right: 0;
+            right: -60px; /* Adjust to fit screen when button is offset */
             width: 320px;
             background: white;
             border-radius: 12px;
@@ -198,7 +198,7 @@
         /* Mobile Adjustments */
         @media (max-width: 576px) {
             .whatsapp-widget {
-                bottom: 85px; /* Positioned above the ScrollUp button */
+                bottom: 85px; /* Stacked above the ScrollUp button */
                 right: 20px;
             }
             .whatsapp-chat-window {
@@ -218,7 +218,7 @@
             }
         }
         
-        /* Standardize ScrollUp position at the bottom */
+        /* Standardize ScrollUp position */
         #scrollUp {
             bottom: 30px !important;
             right: 20px !important;
@@ -262,17 +262,14 @@
                     // 1. Extract only digits from the URL or number provided
                     let phoneNumber = baseUrl.replace(/[^0-9]/g, '');
                     
-                    // 2. Intelligent correction for common mistakes (like leading zero)
-                    // If it's a 11-digit number starting with 0 (Standard BD local), prepend 88
+                    // 2. Intelligent correction for common mistakes
                     if (phoneNumber.length === 11 && phoneNumber.startsWith('0')) {
                         phoneNumber = '88' + phoneNumber;
-                    } 
-                    // If it still starts with a 0 but isn't 11 digits, strip the leading 0
-                    else if (phoneNumber.startsWith('0')) {
+                    } else if (phoneNumber.startsWith('0')) {
                         phoneNumber = phoneNumber.substring(1);
                     }
                     
-                    // 3. Use the more robust api.whatsapp.com endpoint
+                    // 3. Robust API endpoint
                     const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMessage}`;
                     
                     window.open(whatsappUrl, '_blank');
