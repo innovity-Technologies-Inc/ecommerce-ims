@@ -59,12 +59,5 @@
 </div>
 
 <div class="mt-3">
-    <div class="d-flex align-items-center justify-content-between">
-        <div class="text-muted small">
-            Showing <span class="fw-semibold">{{ $purchaseOrders->firstItem() ?? 0 }}</span> to <span class="fw-semibold">{{ $purchaseOrders->lastItem() ?? 0 }}</span> of <span class="fw-semibold">{{ $purchaseOrders->total() }}</span> Results
-        </div>
-        <div>
-            {{ $purchaseOrders->links() }}
-        </div>
-    </div>
+    {{ $purchaseOrders->links() }}
 </div>
