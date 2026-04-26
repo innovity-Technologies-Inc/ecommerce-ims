@@ -13,7 +13,9 @@ class Admin extends Authenticatable
     use HasFactory, HasRoles, Notifiable;
 
     protected $fillable = [
+        'employee_id',
         'name',
+        'designation',
         'email',
         'password',
         'image',

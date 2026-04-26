@@ -195,4 +195,14 @@ class HelperClass
             'min_regular_price' => $minReg,
         ];
     }
+
+    /**
+     * Convert number to words (Taka).
+     */
+    public static function numberToWords($number): string
+    {
+        $f = new \NumberFormatter('en', \NumberFormatter::SPELLOUT);
+        $words = $f->format($number);
+        return ucfirst(str_replace('-', ' ', $words)) . ' Bangladeshi Taka Only.';
+    }
 }
