@@ -197,12 +197,12 @@ class HelperClass
     }
 
     /**
-     * Convert number to words (Taka).
+     * Convert number to words (Dynamic Currency).
      */
-    public static function numberToWords($number): string
+    public static function numberToWords($number, $currencyName = 'Bangladeshi Taka'): string
     {
         $f = new \NumberFormatter('en', \NumberFormatter::SPELLOUT);
         $words = $f->format($number);
-        return ucfirst(str_replace('-', ' ', $words)) . ' Bangladeshi Taka Only.';
+        return ucfirst(str_replace('-', ' ', $words)) . ' ' . ($currencyName ?? 'Bangladeshi Taka') . ' Only.';
     }
 }

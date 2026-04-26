@@ -25,9 +25,17 @@
                             </div>
                             <div class="col-lg-4">
                                 <div class="mb-3">
-                                    <label for="currency" class="form-label">Currency (e.g. $, €)</label>
+                                    <label for="currency" class="form-label">Currency Symbol (e.g. $, £)</label>
                                     <input type="text" name="currency" id="currency" class="form-control" value="{{ old('currency', $setting->currency ?? '') }}">
                                     @error('currency') <span class="text-danger small">{{ $message }}</span> @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                    <label for="currency_name" class="form-label">Currency Name (e.g. Pounds, Dollars)</label>
+                                    <input type="text" name="currency_name" id="currency_name" class="form-control" value="{{ old('currency_name', $setting->currency_name ?? '') }}">
+                                    @error('currency_name') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
                             </div>
 

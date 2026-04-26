@@ -91,7 +91,7 @@
             <li><strong>Employee Name:</strong> {{ $admin->name }}</li>
             <li><strong>Employee ID:</strong> {{ $admin->employee_id ?? 'SE-' . str_pad($admin->id, 3, '0', STR_PAD_LEFT) }}</li>
             <li><strong>Designation:</strong> {{ $admin->designation ?? 'N/A' }}</li>
-            <li><strong>Pay Period:</strong> {{ $payslip->start_date->format('F Y') }}</li>
+            <li><strong>Pay Period:</strong> {{ $payslip->generation->title ?? $payslip->start_date->format('F Y') }}</li>
             <li><strong>Payment Date:</strong> {{ $payslip->payment_date ? $payslip->payment_date->format('F d, Y') : date('F d, Y') }}</li>
             <li><strong>Payment Mode:</strong> {{ $payslip->payment_mode ?? 'Cash' }}</li>
         </ul>
@@ -123,14 +123,12 @@
         <div class="section-title">Net Pay Summary</div>
         <div class="summary-section">
             <div class="summary-item"><strong>• Total Gross Pay:</strong> {{ number_format($netSalary, 2) }} {{ $gs->currency ?? 'BDT' }}</div>
-            <div class="summary-item"><strong>• Total Deductions:</strong> 0.00 {{ $gs->currency ?? 'BDT' }}</div>
-            <div class="summary-item"><strong>• Net Salary Payable:</strong> {{ number_format($netSalary, 2) }} {{ $gs->currency ?? 'BDT' }}</div>
-            <div class="summary-item"><strong>• Amount in Words:</strong> {{ \App\HelperClass::numberToWords($netSalary) }}</div>
+            <div class="summary-item"><strong>• Amount in Words:</strong> {{ \App\HelperClass::numberToWords($netSalary, $gs->currency_name) }}</div>
         </div>
 
         <div class="section-title">Acknowledgment of Receipt</div>
         <div class="ack-box">
-            I, <strong>{{ $admin->name }}</strong>, hereby confirm that I have received the total net amount of <strong>{{ number_format($netSalary, 2) }} {{ $gs->currency ?? 'BDT' }}</strong> ({{ \App\HelperClass::numberToWords($netSalary) }}) for the month of <strong>{{ $payslip->start_date->format('F Y') }}</strong>. I acknowledge that this amount represents the full and final settlement of my salary and allowances for the specified period, and I have no further claims regarding this payment.
+            I, <strong>{{ $admin->name }}</strong>, hereby confirm that I have received the total net amount of <strong>{{ number_format($netSalary, 2) }} {{ $gs->currency ?? 'BDT' }}</strong> ({{ \App\HelperClass::numberToWords($netSalary, $gs->currency_name) }}) for the period of <strong>{{ $payslip->generation->title ?? $payslip->start_date->format('F Y') }}</strong>. I acknowledge that this amount represents the full and final settlement of my salary and allowances for the specified period, and I have no further claims regarding this payment.
         </div>
 
         <div class="signature-grid">
