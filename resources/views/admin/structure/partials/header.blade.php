@@ -78,7 +78,14 @@
                         // Digital Clock Logic
                         function updateClock() {
                             const now = new Date();
-                            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+                            const timezone = "{{ config('app.timezone', 'UTC') }}";
+                            const timeString = now.toLocaleTimeString('en-US', { 
+                                hour: '2-digit', 
+                                minute: '2-digit', 
+                                second: '2-digit', 
+                                hour12: true,
+                                timeZone: timezone
+                            });
                             const clockElement = document.getElementById('digital-clock');
                             if (clockElement) {
                                 clockElement.textContent = timeString;
