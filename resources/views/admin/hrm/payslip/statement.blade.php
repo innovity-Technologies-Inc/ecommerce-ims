@@ -102,46 +102,26 @@
             <li><strong>Payment Mode:</strong> {{ $payslip->payment_mode ?? 'Cash' }}</li>
         </ul>
 
-        <div class="section-title">Earnings & Deductions Breakdown</div>
+        <div class="section-title">Salary Explanation</div>
         <table class="breakdown-table">
             <thead>
                 <tr>
-                    <th>Earnings Description</th>
-                    <th>Amount ({{ $gs->currency ?? 'BDT' }})</th>
-                    <th>Deductions</th>
-                    <th>Amount ({{ $gs->currency ?? 'BDT' }})</th>
+                    <th>Description</th>
+                    <th class="text-center">Rate</th>
+                    <th class="text-center">Total Hours</th>
+                    <th class="text-end">Total Amount</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>Basic Salary (60%)</td>
-                    <td>{{ number_format($basic, 2) }}</td>
-                    <td>Professional Tax</td>
-                    <td>0.00</td>
-                </tr>
-                <tr>
-                    <td>House Rent Allowance (20%)</td>
-                    <td>{{ number_format($houseRent, 2) }}</td>
-                    <td>Provident Fund</td>
-                    <td>0.00</td>
-                </tr>
-                <tr>
-                    <td>Medical Allowance (10%)</td>
-                    <td>{{ number_format($medical, 2) }}</td>
-                    <td>Advance/Loan</td>
-                    <td>0.00</td>
-                </tr>
-                <tr>
-                    <td>Conveyance Allowance (10%)</td>
-                    <td>{{ number_format($conveyance, 2) }}</td>
-                    <td>Other Deductions</td>
-                    <td>0.00</td>
+                    <td>Work Salary (Hourly Basis)</td>
+                    <td class="text-center">{{ \App\HelperClass::generalSettings()->currency ?? '$' }}{{ number_format($payslip->salary_amount, 2) }}/hr</td>
+                    <td class="text-center">{{ number_format($payslip->total_hours, 2) }} hrs</td>
+                    <td class="text-end">{{ \App\HelperClass::generalSettings()->currency ?? '$' }}{{ number_format($payslip->net_salary, 2) }}</td>
                 </tr>
                 <tr class="bg-light-gray">
-                    <td>Gross Earnings</td>
-                    <td>{{ number_format($netSalary, 2) }}</td>
-                    <td>Total Deductions</td>
-                    <td>0.00</td>
+                    <td colspan="3" class="text-end">Gross Earnings</td>
+                    <td class="text-end">{{ \App\HelperClass::generalSettings()->currency ?? '$' }}{{ number_format($payslip->net_salary, 2) }}</td>
                 </tr>
             </tbody>
         </table>
