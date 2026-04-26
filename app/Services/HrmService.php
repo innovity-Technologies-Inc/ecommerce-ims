@@ -20,11 +20,17 @@ class HrmService
         $query = AdminAttendance::with('admin');
 
         $filters = [];
-        if (! empty($params['admin_id'])) {
-            $filters['admin_id'] = $params['admin_id'];
-        }
         if (! empty($params['date'])) {
             $filters['date'] = $params['date'];
+        }
+
+        // Role filtering
+        if (! empty($params['role_id'])) {
+            $query->whereHas('admin', function ($q) use ($params) {
+                $q->whereHas('roles', function ($rq) use ($params) {
+                    $rq->where('id', $params['role_id']);
+                });
+            });
         }
 
         // Custom filters for range
@@ -38,7 +44,23 @@ class HrmService
 
         $query = $flexSearch->apply($query, $filters, $searchTerm, $searchableColumns);
 
-        return $query->latest('date')->paginate($perPage);
+        // Sorting
+        $sort = $params['sort'] ?? 'latest';
+        if ($sort === 'latest') {
+            $query->latest('date')->latest('created_at');
+        } elseif ($sort === 'oldest') {
+            $query->oldest('date')->oldest('created_at');
+        } elseif ($sort === 'name_asc') {
+            $query->join('admins', 'admin_attendances.admin_id', '=', 'admins.id')
+                ->orderBy('admins.name', 'asc')
+                ->select('admin_attendances.*');
+        } elseif ($sort === 'name_desc') {
+            $query->join('admins', 'admin_attendances.admin_id', '=', 'admins.id')
+                ->orderBy('admins.name', 'desc')
+                ->select('admin_attendances.*');
+        }
+
+        return $query->paginate($perPage);
     }
 
     /**
@@ -138,11 +160,17 @@ class HrmService
         $query = Payslip::with('admin');
 
         $filters = [];
-        if (! empty($params['admin_id'])) {
-            $filters['admin_id'] = $params['admin_id'];
-        }
         if (! empty($params['status'])) {
             $filters['status'] = $params['status'];
+        }
+
+        // Role filtering
+        if (! empty($params['role_id'])) {
+            $query->whereHas('admin', function ($q) use ($params) {
+                $q->whereHas('roles', function ($rq) use ($params) {
+                    $rq->where('id', $params['role_id']);
+                });
+            });
         }
 
         if (! empty($params['start_date']) && ! empty($params['end_date'])) {
@@ -155,7 +183,23 @@ class HrmService
 
         $query = $flexSearch->apply($query, $filters, $searchTerm, $searchableColumns);
 
-        return $query->latest()->paginate($perPage);
+        // Sorting
+        $sort = $params['sort'] ?? 'latest';
+        if ($sort === 'latest') {
+            $query->latest();
+        } elseif ($sort === 'oldest') {
+            $query->oldest();
+        } elseif ($sort === 'name_asc') {
+            $query->join('admins', 'payslips.admin_id', '=', 'admins.id')
+                ->orderBy('admins.name', 'asc')
+                ->select('payslips.*');
+        } elseif ($sort === 'name_desc') {
+            $query->join('admins', 'payslips.admin_id', '=', 'admins.id')
+                ->orderBy('admins.name', 'desc')
+                ->select('payslips.*');
+        }
+
+        return $query->paginate($perPage);
     }
 
     /**

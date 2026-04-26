@@ -10,6 +10,7 @@ use App\Services\HrmService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Spatie\Permission\Models\Role;
 
 class HrmController extends Controller
 {
@@ -44,13 +45,13 @@ class HrmController extends Controller
     public function attendanceIndex(Request $request): View|string
     {
         $attendances = $this->hrmService->getAllAttendances($request->all());
-        $admins = Admin::all();
+        $roles = Role::all();
 
         if ($request->ajax()) {
             return view('admin.hrm.attendance.partials.table', compact('attendances'))->render();
         }
 
-        return view('admin.hrm.attendance.index', compact('attendances', 'admins'));
+        return view('admin.hrm.attendance.index', compact('attendances', 'roles'));
     }
 
     /**
@@ -82,13 +83,13 @@ class HrmController extends Controller
     public function payslipIndex(Request $request): View|string
     {
         $payslips = $this->hrmService->getAllPayslips($request->all());
-        $admins = Admin::all();
+        $roles = Role::all();
 
         if ($request->ajax()) {
             return view('admin.hrm.payslip.partials.table', compact('payslips'))->render();
         }
 
-        return view('admin.hrm.payslip.index', compact('payslips', 'admins'));
+        return view('admin.hrm.payslip.index', compact('payslips', 'roles'));
     }
 
     /**

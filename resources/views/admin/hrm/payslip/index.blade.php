@@ -17,16 +17,16 @@
     <div class="card">
         <div class="card-header border-bottom-0 pb-0">
             <form id="filter-form" class="row g-3">
-                <div class="col-lg-3">
+                <div class="col-lg-2">
                     <div class="search-bar">
-                        <input type="text" name="search" id="searchInput" class="form-control" placeholder="Search payslip or employee..." value="{{ request('search') }}">
+                        <input type="text" name="search" id="searchInput" class="form-control" placeholder="Search..." value="{{ request('search') }}">
                     </div>
                 </div>
-                <div class="col-lg-3">
-                    <select name="admin_id" id="adminFilter" class="form-select select2">
-                        <option value="">All Employees</option>
-                        @foreach($admins as $admin)
-                            <option value="{{ $admin->id }}" {{ request('admin_id') == $admin->id ? 'selected' : '' }}>{{ $admin->name }}</option>
+                <div class="col-lg-2">
+                    <select name="role_id" id="roleFilter" class="form-select select2">
+                        <option value="">All Roles</option>
+                        @foreach($roles as $role)
+                            <option value="{{ $role->id }}" {{ request('role_id') == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -39,10 +39,18 @@
                     </select>
                 </div>
                 <div class="col-lg-2">
-                    <input type="date" name="start_date" id="startDateFilter" class="form-control" placeholder="Start Date" value="{{ request('start_date') }}">
+                    <select name="sort" id="sortFilter" class="form-select select2">
+                        <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Latest</option>
+                        <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest</option>
+                        <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>A to Z</option>
+                        <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Z to A</option>
+                    </select>
                 </div>
                 <div class="col-lg-2">
-                    <input type="date" name="end_date" id="endDateFilter" class="form-control" placeholder="End Date" value="{{ request('end_date') }}">
+                    <input type="date" name="start_date" id="startDateFilter" class="form-control" value="{{ request('start_date') }}">
+                </div>
+                <div class="col-lg-2">
+                    <input type="date" name="end_date" id="endDateFilter" class="form-control" value="{{ request('end_date') }}">
                 </div>
             </form>
         </div>
@@ -84,7 +92,7 @@
         });
 
         // Immediate triggers for select and dates
-        $('#adminFilter, #statusFilter, #startDateFilter, #endDateFilter').on('change', function() {
+        $('#roleFilter, #statusFilter, #sortFilter, #startDateFilter, #endDateFilter').on('change', function() {
             fetchPayslips();
         });
 
