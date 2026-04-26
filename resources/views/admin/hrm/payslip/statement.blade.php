@@ -56,6 +56,8 @@
 </head>
 <body>
 
+@php $gs = \App\HelperClass::generalSettings(); @endphp
+
 <div class="statement-container">
     <div class="no-print mb-4 text-center">
         <button onclick="window.print()" class="btn btn-primary px-4 py-2 fw-bold">Print Statement</button>
@@ -63,10 +65,14 @@
     </div>
 
     <div class="payslip-box">
-        <div class="header-section d-flex justify-content-between align-items-start">
-            <div>
-                <div class="company-name text-uppercase">{{ \App\HelperClass::generalSettings()->business_name ?? 'Smart Ecom' }}</div>
-                <div class="text-muted small">Employee Remuneration Advice</div>
+        <div class="header-section d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+                @if($gs->light_logo)
+                    <img src="{{ asset('storage/' . $gs->light_logo) }}" alt="logo" style="max-height: 50px;">
+                @endif
+                <div>
+                    <div class="company-name text-uppercase">{{ $gs->business_name ?? 'Smart Ecom' }}</div>
+                </div>
             </div>
             <div class="text-end">
                 <div class="statement-label mb-2">Salary Statement</div>
