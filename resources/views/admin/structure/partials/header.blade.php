@@ -17,6 +17,13 @@
             </div>
 
             <div class="d-flex align-items-center gap-2">
+                <div class="topbar-item d-none d-md-flex me-1">
+                    <div class="d-flex align-items-center gap-1 bg-soft-secondary px-2 py-1 rounded border border-dashed border-secondary">
+                        <iconify-icon icon="solar:clock-circle-bold-duotone" class="fs-18 text-secondary"></iconify-icon>
+                        <span id="digital-clock" class="fw-bold fs-13 text-secondary">--:--:-- --</span>
+                    </div>
+                </div>
+
                 <div class="topbar-item">
                     <form action="{{ route('admin.hrm.attendance.toggle') }}" method="POST">
                         @csrf
@@ -68,6 +75,19 @@
 
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
+                        // Digital Clock Logic
+                        function updateClock() {
+                            const now = new Date();
+                            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+                            const clockElement = document.getElementById('digital-clock');
+                            if (clockElement) {
+                                clockElement.textContent = timeString;
+                            }
+                        }
+                        setInterval(updateClock, 1000);
+                        updateClock();
+
+                        // Notification Logic
                         function refreshNotifications() {
                             // Only poll if tab is visible to save resources
                             if (document.hidden) return;
