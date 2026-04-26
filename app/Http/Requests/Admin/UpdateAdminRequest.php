@@ -22,7 +22,9 @@ class UpdateAdminRequest extends FormRequest
         $id = $this->route('admin') ?? $this->id;
 
         return [
+            'employee_id' => ['nullable', 'string', 'max:50', 'unique:admins,employee_id,'.$id],
             'name' => ['required', 'string', 'max:255'],
+            'designation' => ['nullable', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:admins,email,'.$id],
             'password' => ['nullable', 'confirmed', 'min:8'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,avif', 'max:2048'],

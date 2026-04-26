@@ -111,6 +111,11 @@
                 .html(`
                     @media print {
                         @page { size: auto; margin: 1.0cm; }
+                        /* Hide default browser header/footer text */
+                        @page :left { content: ""; }
+                        @page :right { content: ""; }
+                        @page :first { content: ""; }
+                        
                         body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; display: block !important; }
                         .print-container { display: block !important; width: 100% !important; padding: 20px !important; }
                         table { width: 100% !important; border-collapse: collapse !important; margin-top: 20px !important; }

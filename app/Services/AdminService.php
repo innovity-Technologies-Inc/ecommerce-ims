@@ -61,7 +61,9 @@ class AdminService
         }
 
         $admin = Admin::create([
+            'employee_id' => $data['employee_id'] ?? null,
             'name' => $data['name'],
+            'designation' => $data['designation'] ?? null,
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'image' => $imagePath,
@@ -93,7 +95,9 @@ class AdminService
         $admin = Admin::findOrFail($id);
 
         $updateData = [
+            'employee_id' => $data['employee_id'] ?? null,
             'name' => $data['name'],
+            'designation' => $data['designation'] ?? null,
             'email' => $data['email'],
             'is_time_tracking' => $data['is_time_tracking'] ?? false,
             'salary_amount' => $data['salary_amount'] ?? 0,

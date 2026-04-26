@@ -22,9 +22,29 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="mb-3">
+                                        <label for="employee_id" class="form-label">Employee ID</label>
+                                        <input type="text" name="employee_id" id="employee_id" class="form-control" placeholder="e.g. SE-001" value="{{isset($user) ? $user->employee_id : old('employee_id')}}">
+                                        @error('employee_id')
+                                        <span class="small text-danger">{{$message}}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
                                         <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
                                         <input type="text" name="name" id="name" class="form-control" placeholder="name" value="{{isset($user) ? $user->name : old('name')}}" required>
                                         @error('name')
+                                        <span class="small text-danger">{{$message}}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="designation" class="form-label">Designation</label>
+                                        <input type="text" name="designation" id="designation" class="form-control" placeholder="e.g. Software Engineer" value="{{isset($user) ? $user->designation : old('designation')}}">
+                                        @error('designation')
                                         <span class="small text-danger">{{$message}}</span>
                                         @enderror
                                     </div>
