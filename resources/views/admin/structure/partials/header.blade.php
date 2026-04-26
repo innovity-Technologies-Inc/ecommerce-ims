@@ -18,9 +18,9 @@
 
             <div class="d-flex align-items-center gap-2">
                 <div class="topbar-item d-none d-md-flex me-1">
-                    <div class="d-flex align-items-center gap-1 bg-soft-secondary px-2 py-1 rounded border border-dashed border-secondary">
-                        <iconify-icon icon="solar:clock-circle-bold-duotone" class="fs-18 text-secondary"></iconify-icon>
-                        <span id="digital-clock" class="fw-bold fs-13 text-secondary">--:--:-- --</span>
+                    <div class="clock-display">
+                        <iconify-icon icon="solar:clock-circle-bold-duotone" class="fs-18 clock-icon"></iconify-icon>
+                        <span id="digital-clock" class="fs-13">--:--:-- --</span>
                     </div>
                 </div>
 

@@ -353,6 +353,38 @@
             width: 80px !important;
             height: 80px !important;
         }
+
+        /* Digital Clock Aesthetic */
+        .clock-display {
+            background: rgba(16, 185, 129, 0.08) !important;
+            border: 1px solid rgba(16, 185, 129, 0.2) !important;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.1);
+            padding: 4px 12px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .clock-display:hover {
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+            border-color: rgba(16, 185, 129, 0.5) !important;
+            background: rgba(16, 185, 129, 0.12) !important;
+        }
+
+        #digital-clock {
+            color: #10b981 !important;
+            text-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+            font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+            letter-spacing: 0.5px;
+            font-weight: 700 !important;
+        }
+
+        .clock-icon {
+            color: #10b981 !important;
+            filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.4));
+        }
     </style>
 
     <!-- Theme Config js (Require in all Page) -->
