@@ -360,45 +360,47 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::controller(FrontendController::class)->group(function () {
-    Route::get('/', 'home')->name('home');
-    Route::get('/products', 'products')->name('client.products.index');
-    Route::get('/product/{slug}', 'productDetails')->name('client.products.details');
-    Route::match(['get', 'post'], '/track-order', 'trackOrder')->name('client.track_order');
-    Route::get('/order/{order_id}/invoice', 'publicInvoice')->name('client.public_invoice');
-    Route::get('/contact', 'contact')->name('client.contact');
-    Route::post('/contact/send', 'storeContactMessage')->name('client.contact.send');
+Route::middleware('throttle:global')->group(function () {
+    Route::controller(FrontendController::class)->group(function () {
+        Route::get('/', 'home')->name('home');
+        Route::get('/products', 'products')->name('client.products.index');
+        Route::get('/product/{slug}', 'productDetails')->name('client.products.details');
+        Route::match(['get', 'post'], '/track-order', 'trackOrder')->name('client.track_order');
+        Route::get('/order/{order_id}/invoice', 'publicInvoice')->name('client.public_invoice');
+        Route::get('/contact', 'contact')->name('client.contact');
+        Route::post('/contact/send', 'storeContactMessage')->name('client.contact.send');
 
-    // Policies & FAQ
-    Route::get('/privacy-policy', 'privacyPolicy')->name('client.privacy_policy');
-    Route::get('/return-policy', 'returnPolicy')->name('client.return_policy');
-    Route::get('/faq', 'faq')->name('client.faq');
+        // Policies & FAQ
+        Route::get('/privacy-policy', 'privacyPolicy')->name('client.privacy_policy');
+        Route::get('/return-policy', 'returnPolicy')->name('client.return_policy');
+        Route::get('/faq', 'faq')->name('client.faq');
 
-    Route::prefix('returns')->name('client.returns.')->controller(\App\Http\Controllers\Client\ReturnController::class)->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::get('/order-details', 'getOrderDetails')->name('order_details');
-        Route::post('/store', 'store')->name('store');
-        Route::get('/track', 'track')->name('track');
+        Route::prefix('returns')->name('client.returns.')->controller(\App\Http\Controllers\Client\ReturnController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/order-details', 'getOrderDetails')->name('order_details');
+            Route::post('/store', 'store')->name('store');
+            Route::get('/track', 'track')->name('track');
+        });
     });
-});
 
-// Cart Routes
-Route::prefix('cart')->name('cart.')->group(function () {
-    Route::get('/', [CartController::class, 'index'])->name('index');
-    Route::post('/add', [CartController::class, 'addToCart'])->name('add');
-    Route::post('/update', [CartController::class, 'updateQuantity'])->name('update');
-    Route::post('/remove', [CartController::class, 'removeItem'])->name('remove');
-    Route::post('/update-shipping', [CartController::class, 'updateShippingMethod'])->name('update_shipping');
-});
+    // Cart Routes
+    Route::prefix('cart')->name('cart.')->group(function () {
+        Route::get('/', [CartController::class, 'index'])->name('index');
+        Route::post('/add', [CartController::class, 'addToCart'])->name('add');
+        Route::post('/update', [CartController::class, 'updateQuantity'])->name('update');
+        Route::post('/remove', [CartController::class, 'removeItem'])->name('remove');
+        Route::post('/update-shipping', [CartController::class, 'updateShippingMethod'])->name('update_shipping');
+    });
 
-// Checkout Routes
-Route::prefix('checkout')->name('checkout.')->group(function () {
-    Route::get('/', [CheckoutController::class, 'index'])->name('index');
-    Route::post('/store', [CheckoutController::class, 'store'])->name('store');
-    Route::get('/success/{order_id}', [CheckoutController::class, 'success'])->name('success');
-    Route::post('/apply-coupon', [CouponApplyController::class, 'apply'])->name('apply_coupon');
-    Route::post('/remove-coupon', [CouponApplyController::class, 'remove'])->name('remove_coupon');
-    Route::get('/available-coupons', [CouponApplyController::class, 'availableCoupons'])->name('available_coupons');
+    // Checkout Routes
+    Route::prefix('checkout')->name('checkout.')->group(function () {
+        Route::get('/', [CheckoutController::class, 'index'])->name('index');
+        Route::post('/store', [CheckoutController::class, 'store'])->name('store');
+        Route::get('/success/{order_id}', [CheckoutController::class, 'success'])->name('success');
+        Route::post('/apply-coupon', [CouponApplyController::class, 'apply'])->name('apply_coupon');
+        Route::post('/remove-coupon', [CouponApplyController::class, 'remove'])->name('remove_coupon');
+        Route::get('/available-coupons', [CouponApplyController::class, 'availableCoupons'])->name('available_coupons');
+    });
 });
 
 Route::middleware(['auth:web', 'verified'])->prefix('user')->controller(CustomerController::class)->group(function () {
