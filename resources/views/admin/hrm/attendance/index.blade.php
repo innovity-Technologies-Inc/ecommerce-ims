@@ -106,14 +106,9 @@
                 .prop('type', 'text/css')
                 .html(`
                     @media print {
-                        @page { size: auto; margin: 1.0cm; }
-                        /* Hide default browser header/footer text */
-                        @page :left { content: ""; }
-                        @page :right { content: ""; }
-                        @page :first { content: ""; }
-                        
-                        body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; display: block !important; }
-                        .print-container { display: block !important; width: 100% !important; padding: 20px !important; }
+                        @page { margin: 0; }
+                        body { margin: 1.6cm !important; background: white !important; color: black !important; display: block !important; }
+                        .print-container { display: block !important; width: 100% !important; }
                         table { width: 100% !important; border-collapse: collapse !important; margin-top: 20px !important; }
                         th, td { border: 1px solid #000 !important; padding: 8px 5px !important; font-size: 10px !important; color: black !important; text-align: center !important; }
                         th { background-color: #f8f9fa !important; font-weight: bold !important; -webkit-print-color-adjust: exact; }
@@ -127,7 +122,7 @@
                 `)
                 .appendTo('head');
 
-            // Set empty title for print header to remove browser-added text
+            // Set empty title to remove browser-added site name/URL from top/bottom
             document.title = " ";
 
             setTimeout(() => {

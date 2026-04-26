@@ -22,9 +22,9 @@
                     <td class="fw-bold">{{ \App\HelperClass::generalSettings()->currency ?? '$' }}{{ number_format($generation->total_amount, 2) }}</td>
                     <td>{{ $generation->created_at->format('d M, Y h:i A') }}</td>
                     <td>
-                        <div class="d-flex gap-2">
-                            <a href="{{ route('admin.hrm.payslip.show', $generation->id) }}" class="btn btn-soft-primary btn-sm">
-                                <iconify-icon icon="solar:eye-broken"></iconify-icon>
+                        <div class="d-flex align-items-center gap-1">
+                            <a href="{{ route('admin.hrm.payslip.show', $generation->id) }}" class="btn btn-soft-primary btn-sm d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="View Details">
+                                <iconify-icon icon="solar:eye-broken" class="fs-18"></iconify-icon>
                             </a>
                         </div>
                     </td>

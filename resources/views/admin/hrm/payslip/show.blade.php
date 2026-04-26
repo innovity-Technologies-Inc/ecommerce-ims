@@ -112,12 +112,12 @@
                                     <span class="badge {{ $statusClass }}">{{ ucfirst($payslip->status) }}</span>
                                 </td>
                                 <td>
-                                    <div class="d-flex gap-2">
-                                        <a href="{{ route('admin.hrm.payslip.statement', $payslip->id) }}" target="_blank" class="btn btn-soft-primary btn-sm" title="Salary Statement">
-                                            <iconify-icon icon="solar:printer-minimalistic-bold-duotone"></iconify-icon>
+                                    <div class="d-flex align-items-center gap-1">
+                                        <a href="{{ route('admin.hrm.payslip.statement', $payslip->id) }}" target="_blank" class="btn btn-soft-primary btn-sm d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Salary Statement">
+                                            <iconify-icon icon="solar:printer-minimalistic-bold-duotone" class="fs-18"></iconify-icon>
                                         </a>
-                                        <button type="button" class="btn btn-soft-info btn-sm" data-bs-toggle="modal" data-bs-target="#updateStatus{{ $payslip->id }}">
-                                            <iconify-icon icon="solar:pen-new-square-bold-duotone"></iconify-icon>
+                                        <button type="button" class="btn btn-soft-info btn-sm d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" data-bs-toggle="modal" data-bs-target="#updateStatus{{ $payslip->id }}" title="Update Status">
+                                            <iconify-icon icon="solar:pen-new-square-bold-duotone" class="fs-18"></iconify-icon>
                                         </button>
                                     </div>
 
@@ -209,9 +209,9 @@
                 .prop('type', 'text/css')
                 .html(`
                     @media print {
-                        @page { size: auto; margin: 1.0cm; }
-                        body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; display: block !important; }
-                        .print-container { display: block !important; width: 100% !important; padding: 20px !important; }
+                        @page { margin: 0; }
+                        body { margin: 1.6cm !important; background: white !important; color: black !important; display: block !important; }
+                        .print-container { display: block !important; width: 100% !important; }
                         table { width: 100% !important; border-collapse: collapse !important; margin-top: 20px !important; }
                         th, td { border: 1px solid #000 !important; padding: 8px 5px !important; font-size: 10px !important; color: black !important; text-align: center !important; }
                         th { background-color: #f8f9fa !important; font-weight: bold !important; -webkit-print-color-adjust: exact; }
@@ -226,7 +226,7 @@
                 `)
                 .appendTo('head');
 
-            // Set empty title for print header to remove browser-added text
+            // Set empty title to remove browser-added site name/URL from top/bottom
             document.title = " ";
 
             setTimeout(() => {

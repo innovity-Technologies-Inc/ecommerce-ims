@@ -45,12 +45,13 @@
         .sig-text { font-size: 12px; font-weight: 700; }
 
         @media print {
-            @page { size: portrait; margin: 1cm; }
-            body { background: #fff !important; margin: 0; padding: 0; }
-            .statement-container { margin: 0; max-width: 100% !important; }
-            .payslip-box { box-shadow: none !important; border: 1px solid #eee !important; padding: 40px !important; }
+            @page { margin: 0; }
+            body { background: #fff !important; margin: 1.6cm !important; padding: 0; display: block !important; }
+            .statement-container { margin: 0; max-width: 100% !important; padding: 0 !important; }
+            .payslip-box { box-shadow: none !important; border: 1px solid #eee !important; padding: 40px !important; margin: 0 !important; }
             .no-print { display: none !important; }
-            .section-title, .header-section { -webkit-print-color-adjust: exact; }
+            .total-box { -webkit-print-color-adjust: exact; background-color: #f0fdf4 !important; border: 1px solid #bbf7d0 !important; }
+            .header-section { border-bottom: 2px solid #10b981 !important; }
         }
     </style>
 </head>
