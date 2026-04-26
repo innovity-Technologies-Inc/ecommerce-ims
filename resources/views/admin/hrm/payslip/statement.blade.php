@@ -181,7 +181,8 @@
 <script>
     window.onload = function() {
         if (!new URLSearchParams(window.location.search).has('no_auto_print')) {
-            document.title = "Salary Statement - {{ $admin->name }} - {{ $payslip->start_date->format('F Y') }}";
+            // Set empty title for print header to remove browser-added text
+            document.title = " ";
             setTimeout(function() {
                 window.print();
             }, 500);

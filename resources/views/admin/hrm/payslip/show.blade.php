@@ -230,8 +230,8 @@
                 `)
                 .appendTo('head');
 
-            // Set clean title for print header
-            document.title = "Report";
+            // Set empty title for print header to remove browser-added text
+            document.title = " ";
 
             setTimeout(() => {
                 window.print();
