@@ -8,15 +8,9 @@
             <p class="text-muted mb-0">Period: {{ $generation->start_date->format('d M, Y') }} - {{ $generation->end_date->format('d M, Y') }}</p>
         </div>
         <div class="d-flex align-items-center gap-2">
-            <div class="dropdown">
-                <button class="btn btn-soft-success dropdown-toggle d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <iconify-icon icon="solar:export-bold-duotone"></iconify-icon> Export
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="{{ route('admin.hrm.payslip.batch.export', [$generation->id, 'type' => 'excel']) }}">Excel (.xlsx)</a></li>
-                    <li><a class="dropdown-item" href="{{ route('admin.hrm.payslip.batch.export', [$generation->id, 'type' => 'csv']) }}">CSV (.csv)</a></li>
-                </ul>
-            </div>
+            <a href="{{ route('admin.hrm.payslip.batch.export', $generation->id) }}" class="btn btn-soft-success d-flex align-items-center gap-1">
+                <iconify-icon icon="solar:export-bold-duotone"></iconify-icon> Export Excel
+            </a>
             <button type="button" class="btn btn-soft-secondary d-flex align-items-center gap-1" onclick="printBatchReport()">
                 <iconify-icon icon="solar:printer-bold-duotone"></iconify-icon> Print
             </button>

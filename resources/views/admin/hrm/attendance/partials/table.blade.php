@@ -68,9 +68,11 @@
         
         // Add printable header
         if (!$('.print-header').length) {
+            let employeeName = $('#searchInput').val() || 'All Employees';
             $('<div class="print-header text-center mb-4">' +
                 '<h2>{{ \App\HelperClass::generalSettings()->business_name ?? "Smart Ecom" }}</h2>' +
                 '<h4>Attendance Report</h4>' +
+                '<p>Employee: ' + employeeName + '</p>' +
                 '<p>Period: {{ request("start_date") ?? "All Time" }} to {{ request("end_date") ?? "Present" }}</p>' +
               '</div>').prependTo('.card-body');
         }

@@ -15,110 +15,6 @@ use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Permission\Models\Role;
 
 class HrmController extends Controller
-...
-    /**
-     * Export attendance data.
-     */
-    public function attendanceExport(Request $request)
-    {
-        $params = $request->all();
-        $attendances = $this->hrmService->getAllAttendances($params, 10000); // Higher limit for export
-
-        $headings = ['SL', 'Employee', 'Date', 'Clock In', 'Clock Out', 'Total Hours', 'Type'];
-        $exportData = [];
-        $sl = 1;
-
-        foreach ($attendances as $row) {
-            $exportData[] = [
-                $sl++,
-                $row->admin->name ?? 'N/A',
-                $row->date->format('Y-m-d'),
-                $row->clock_in ?? 'N/A',
-                $row->clock_out ?? 'N/A',
-                number_format($row->total_minutes / 60, 2),
-                $row->is_manual ? 'Manual' : 'Auto',
-            ];
-        }
-
-        $title = 'Attendance Report';
-        $fileName = 'attendance_report_'.now()->format('Ymd_His');
-
-        if ($request->type === 'csv') {
-            return Excel::download(new HrmExport($exportData, $headings, $title), $fileName.'.csv', \Maatwebsite\Excel\Excel::CSV);
-        }
-
-        return Excel::download(new HrmExport($exportData, $headings, $title), $fileName.'.xlsx');
-    }
-
-    /**
-     * Export payslip generations.
-     */
-    public function payslipExport(Request $request)
-    {
-        $params = $request->all();
-        $generations = $this->hrmService->getAllPayslipGenerations($params, 10000);
-
-        $headings = ['SL', 'Batch Title', 'Start Date', 'End Date', 'Total Employees', 'Total Amount', 'Generated At'];
-        $exportData = [];
-        $sl = 1;
-
-        foreach ($generations as $row) {
-            $exportData[] = [
-                $sl++,
-                $row->title,
-                $row->start_date->format('Y-m-d'),
-                $row->end_date->format('Y-m-d'),
-                $row->total_employees,
-                number_format($row->total_amount, 2, '.', ''),
-                $row->created_at->format('Y-m-d H:i:s'),
-            ];
-        }
-
-        $title = 'Payslip Generations Report';
-        $fileName = 'payslip_generations_'.now()->format('Ymd_His');
-
-        if ($request->type === 'csv') {
-            return Excel::download(new HrmExport($exportData, $headings, $title), $fileName.'.csv', \Maatwebsite\Excel\Excel::CSV);
-        }
-
-        return Excel::download(new HrmExport($exportData, $headings, $title), $fileName.'.xlsx');
-    }
-
-    /**
-     * Export individual payslips from a generation batch.
-     */
-    public function payslipBatchExport(int $id, Request $request)
-    {
-        $generation = $this->hrmService->getPayslipGenerationDetails($id);
-
-        $headings = ['SL', 'Payslip #', 'Employee', 'Period', 'Work Hours', 'Hourly Rate', 'Net Salary', 'Status', 'Payment Date'];
-        $exportData = [];
-        $sl = 1;
-
-        foreach ($generation->payslips as $row) {
-            $exportData[] = [
-                $sl++,
-                $row->payslip_number,
-                $row->admin->name ?? 'N/A',
-                $row->start_date->format('d M') . ' - ' . $row->end_date->format('d M, Y'),
-                number_format($row->total_hours, 2),
-                number_format($row->salary_amount, 2, '.', ''),
-                number_format($row->net_salary, 2, '.', ''),
-                ucfirst($row->status),
-                $row->payment_date ? $row->payment_date->format('Y-m-d') : 'N/A',
-            ];
-        }
-
-        $title = 'Payslips - ' . $generation->title;
-        $fileName = 'payslips_batch_'.now()->format('Ymd_His');
-
-        if ($request->type === 'csv') {
-            return Excel::download(new HrmExport($exportData, $headings, $title), $fileName.'.csv', \Maatwebsite\Excel\Excel::CSV);
-        }
-
-        return Excel::download(new HrmExport($exportData, $headings, $title), $fileName.'.xlsx');
-    }
-
 {
     public function __construct(
         protected HrmService $hrmService
@@ -184,6 +80,36 @@ class HrmController extends Controller
     }
 
     /**
+     * Export attendance data.
+     */
+    public function attendanceExport(Request $request)
+    {
+        $params = $request->all();
+        $attendances = $this->hrmService->getAllAttendances($params, 10000); // Higher limit for export
+
+        $headings = ['SL', 'Employee', 'Date', 'Clock In', 'Clock Out', 'Total Hours', 'Type'];
+        $exportData = [];
+        $sl = 1;
+
+        foreach ($attendances as $row) {
+            $exportData[] = [
+                $sl++,
+                $row->admin->name ?? 'N/A',
+                $row->date->format('Y-m-d'),
+                $row->clock_in ?? 'N/A',
+                $row->clock_out ?? 'N/A',
+                number_format($row->total_minutes / 60, 2),
+                $row->is_manual ? 'Manual' : 'Auto',
+            ];
+        }
+
+        $title = 'Attendance Report';
+        $fileName = 'attendance_report_'.now()->format('Ymd_His').'.xlsx';
+
+        return Excel::download(new HrmExport($exportData, $headings, $title), $fileName);
+    }
+
+    /**
      * Display payslip list.
      */
     public function payslipIndex(Request $request): View|string
@@ -226,6 +152,36 @@ class HrmController extends Controller
     }
 
     /**
+     * Export payslip generations.
+     */
+    public function payslipExport(Request $request)
+    {
+        $params = $request->all();
+        $generations = $this->hrmService->getAllPayslipGenerations($params, 10000);
+
+        $headings = ['SL', 'Batch Title', 'Start Date', 'End Date', 'Total Employees', 'Total Amount', 'Generated At'];
+        $exportData = [];
+        $sl = 1;
+
+        foreach ($generations as $row) {
+            $exportData[] = [
+                $sl++,
+                $row->title,
+                $row->start_date->format('Y-m-d'),
+                $row->end_date->format('Y-m-d'),
+                $row->total_employees,
+                number_format($row->total_amount, 2, '.', ''),
+                $row->created_at->format('Y-m-d H:i:s'),
+            ];
+        }
+
+        $title = 'Payslip Generations Report';
+        $fileName = 'payslip_generations_'.now()->format('Ymd_His').'.xlsx';
+
+        return Excel::download(new HrmExport($exportData, $headings, $title), $fileName);
+    }
+
+    /**
      * Show payslip details.
      */
     public function payslipShow(int $id): View
@@ -233,6 +189,37 @@ class HrmController extends Controller
         $generation = $this->hrmService->getPayslipGenerationDetails($id);
 
         return view('admin.hrm.payslip.show', compact('generation'));
+    }
+
+    /**
+     * Export individual payslips from a generation batch.
+     */
+    public function payslipBatchExport(int $id, Request $request)
+    {
+        $generation = $this->hrmService->getPayslipGenerationDetails($id);
+
+        $headings = ['SL', 'Payslip #', 'Employee', 'Period', 'Work Hours', 'Hourly Rate', 'Net Salary', 'Status', 'Payment Date'];
+        $exportData = [];
+        $sl = 1;
+
+        foreach ($generation->payslips as $row) {
+            $exportData[] = [
+                $sl++,
+                $row->payslip_number,
+                $row->admin->name ?? 'N/A',
+                $row->start_date->format('d M') . ' - ' . $row->end_date->format('d M, Y'),
+                number_format($row->total_hours, 2),
+                number_format($row->salary_amount, 2, '.', ''),
+                number_format($row->net_salary, 2, '.', ''),
+                ucfirst($row->status),
+                $row->payment_date ? $row->payment_date->format('Y-m-d') : 'N/A',
+            ];
+        }
+
+        $title = 'Payslips - ' . $generation->title;
+        $fileName = 'payslips_batch_'.now()->format('Ymd_His').'.xlsx';
+
+        return Excel::download(new HrmExport($exportData, $headings, $title), $fileName);
     }
 
     /**
