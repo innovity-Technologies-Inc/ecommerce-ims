@@ -330,6 +330,7 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
             Route::get('/', 'attendanceIndex')->name('admin.hrm.attendance.index');
             Route::get('/create', 'attendanceCreate')->name('admin.hrm.attendance.create')->middleware('permission:hrm.edit');
             Route::post('/store', 'attendanceStore')->name('admin.hrm.attendance.store')->middleware('permission:hrm.edit');
+            Route::get('/export', 'attendanceExport')->name('admin.hrm.attendance.export');
         });
 
         // Payslips
@@ -337,7 +338,10 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
             Route::get('/', 'payslipIndex')->name('admin.hrm.payslip.index');
             Route::get('/create', 'payslipCreate')->name('admin.hrm.payslip.create')->middleware('permission:hrm.edit');
             Route::post('/generate', 'payslipGenerate')->name('admin.hrm.payslip.generate')->middleware('permission:hrm.edit');
+            Route::get('/export', 'payslipExport')->name('admin.hrm.payslip.export');
             Route::get('/{id}', 'payslipShow')->name('admin.hrm.payslip.show');
+            Route::get('/{id}/export', 'payslipBatchExport')->name('admin.hrm.payslip.batch.export');
+            Route::get('/statement/{id}', 'payslipStatement')->name('admin.hrm.payslip.statement');
             Route::put('/{id}/status', 'updatePayslipStatus')->name('admin.hrm.payslip.update-status')->middleware('permission:hrm.edit');
         });
     });

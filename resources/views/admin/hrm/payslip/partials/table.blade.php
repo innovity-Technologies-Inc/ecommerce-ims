@@ -38,6 +38,30 @@
     </table>
 </div>
 
-<div class="mt-3">
+<div class="mt-3 no-print">
     {{ $generations->appends(request()->all())->links() }}
 </div>
+
+@if(request()->has('is_print'))
+<script>
+    $(document).ready(function() {
+        $('.no-print, .btn-group, .btn, iconify-icon, .card-header, .card-footer, .pagination, .dropdown, .search-bar, .topbar, .main-nav, .footer').hide();
+        $('body').css('background', 'white');
+        $('.card').css('border', 'none').css('box-shadow', 'none');
+        
+        // Add printable header
+        if (!$('.print-header').length) {
+            $('<div class="print-header text-center mb-4">' +
+                '<h2>{{ \App\HelperClass::generalSettings()->business_name ?? "Smart Ecom" }}</h2>' +
+                '<h4>Payslip Generations Report</h4>' +
+                '<p>Period: {{ request("start_date") ?? "All Time" }} to {{ request("end_date") ?? "Present" }}</p>' +
+              '</div>').prependTo('.card-body');
+        }
+
+        window.print();
+        setTimeout(function() {
+            if (confirm('Close this print tab?')) window.close();
+        }, 500);
+    });
+</script>
+@endif

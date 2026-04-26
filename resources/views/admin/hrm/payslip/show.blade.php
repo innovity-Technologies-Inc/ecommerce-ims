@@ -7,9 +7,23 @@
             <h4 class="mb-1">Generation Details: {{ $generation->title }}</h4>
             <p class="text-muted mb-0">Period: {{ $generation->start_date->format('d M, Y') }} - {{ $generation->end_date->format('d M, Y') }}</p>
         </div>
-        <a href="{{ route('admin.hrm.payslip.index') }}" class="btn btn-secondary d-flex align-items-center gap-1">
-            <iconify-icon icon="solar:arrow-left-bold-duotone"></iconify-icon> Back to List
-        </a>
+        <div class="d-flex align-items-center gap-2">
+            <div class="dropdown">
+                <button class="btn btn-soft-success dropdown-toggle d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <iconify-icon icon="solar:export-bold-duotone"></iconify-icon> Export
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="{{ route('admin.hrm.payslip.batch.export', [$generation->id, 'type' => 'excel']) }}">Excel (.xlsx)</a></li>
+                    <li><a class="dropdown-item" href="{{ route('admin.hrm.payslip.batch.export', [$generation->id, 'type' => 'csv']) }}">CSV (.csv)</a></li>
+                </ul>
+            </div>
+            <button type="button" class="btn btn-soft-secondary d-flex align-items-center gap-1" onclick="printBatchReport()">
+                <iconify-icon icon="solar:printer-bold-duotone"></iconify-icon> Print
+            </button>
+            <a href="{{ route('admin.hrm.payslip.index') }}" class="btn btn-secondary d-flex align-items-center gap-1">
+                <iconify-icon icon="solar:arrow-left-bold-duotone"></iconify-icon> Back to List
+            </a>
+        </div>
     </div>
 
     <div class="row g-3 mb-4">
@@ -104,9 +118,14 @@
                                     <span class="badge {{ $statusClass }}">{{ ucfirst($payslip->status) }}</span>
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-soft-info btn-sm" data-bs-toggle="modal" data-bs-target="#updateStatus{{ $payslip->id }}">
-                                        <iconify-icon icon="solar:pen-new-square-bold-duotone"></iconify-icon>
-                                    </button>
+                                    <div class="d-flex gap-2">
+                                        <a href="{{ route('admin.hrm.payslip.statement', $payslip->id) }}" target="_blank" class="btn btn-soft-primary btn-sm" title="Salary Statement">
+                                            <iconify-icon icon="solar:printer-minimalistic-bold-duotone"></iconify-icon>
+                                        </a>
+                                        <button type="button" class="btn btn-soft-info btn-sm" data-bs-toggle="modal" data-bs-target="#updateStatus{{ $payslip->id }}">
+                                            <iconify-icon icon="solar:pen-new-square-bold-duotone"></iconify-icon>
+                                        </button>
+                                    </div>
 
                                     <!-- Modal -->
                                     <div class="modal fade" id="updateStatus{{ $payslip->id }}" tabindex="-1" aria-hidden="true">
@@ -150,4 +169,40 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    function printBatchReport() {
+        const url = new URL(window.location.href);
+        url.searchParams.set('is_print', '1');
+        
+        const printWin = window.open(url.href, '_blank');
+        if (!printWin) {
+            alert('Please allow popups to print reports.');
+        }
+    }
+
+    $(document).ready(function() {
+        if (new URLSearchParams(window.location.search).has('is_print')) {
+            $('.no-print, .btn-group, .btn, iconify-icon, .card-header, .card-footer, .pagination, .dropdown, .topbar, .main-nav, .footer').hide();
+            $('body').css('background', 'white');
+            $('.card').css('border', 'none').css('box-shadow', 'none');
+            
+            // Add printable header
+            if (!$('.print-header').length) {
+                $('<div class="print-header text-center mb-4">' +
+                    '<h2>{{ \App\HelperClass::generalSettings()->business_name ?? "Smart Ecom" }}</h2>' +
+                    '<h4>Payslip Generation Batch: {{ $generation->title }}</h4>' +
+                    '<p>Period: {{ $generation->start_date->format("d M, Y") }} - {{ $generation->end_date->format("d M, Y") }}</p>' +
+                  '</div>').prependTo('.card-body');
+            }
+
+            window.print();
+            setTimeout(function() {
+                if (confirm('Close this print tab?')) window.close();
+            }, 500);
+        }
+    });
+</script>
 @endsection

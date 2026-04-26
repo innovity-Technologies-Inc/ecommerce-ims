@@ -7,11 +7,25 @@
             <h4 class="mb-1">Payslip Management</h4>
             <p class="text-muted mb-0">Manage employee salaries and bulk generate payslips.</p>
         </div>
-        @can('hrm.edit')
-        <a href="{{ route('admin.hrm.payslip.create') }}" class="btn btn-primary d-flex align-items-center gap-1">
-            <iconify-icon icon="solar:add-circle-bold-duotone"></iconify-icon> Generate New Batch
-        </a>
-        @endcan
+        <div class="d-flex align-items-center gap-2">
+            <div class="dropdown">
+                <button class="btn btn-soft-success dropdown-toggle d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <iconify-icon icon="solar:export-bold-duotone"></iconify-icon> Export
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="{{ route('admin.hrm.payslip.export', array_merge(request()->all(), ['type' => 'excel'])) }}">Excel (.xlsx)</a></li>
+                    <li><a class="dropdown-item" href="{{ route('admin.hrm.payslip.export', array_merge(request()->all(), ['type' => 'csv'])) }}">CSV (.csv)</a></li>
+                </ul>
+            </div>
+            <button type="button" class="btn btn-soft-secondary d-flex align-items-center gap-1" onclick="printFullReport()">
+                <iconify-icon icon="solar:printer-bold-duotone"></iconify-icon> Print
+            </button>
+            @can('hrm.edit')
+            <a href="{{ route('admin.hrm.payslip.create') }}" class="btn btn-primary d-flex align-items-center gap-1">
+                <iconify-icon icon="solar:add-circle-bold-duotone"></iconify-icon> Generate New Batch
+            </a>
+            @endcan
+        </div>
     </div>
 
     <div class="card">
@@ -92,5 +106,15 @@
             });
         });
     });
+
+    function printFullReport() {
+        const url = new URL(window.location.href);
+        url.searchParams.set('is_print', '1');
+        
+        const printWin = window.open(url.href, '_blank');
+        if (!printWin) {
+            alert('Please allow popups to print reports.');
+        }
+    }
 </script>
 @endsection
