@@ -198,7 +198,7 @@
         /* Mobile Adjustments */
         @media (max-width: 576px) {
             .whatsapp-widget {
-                bottom: 100px; /* Increased from 80px to clear the ScrollUp button */
+                bottom: 85px; /* Positioned above the ScrollUp button */
                 right: 20px;
             }
             .whatsapp-chat-window {
@@ -212,17 +212,25 @@
             .whatsapp-floating-btn {
                 padding: 12px;
                 border-radius: 50%;
-                width: 50px;
-                height: 50px;
+                width: 45px;
+                height: 45px;
                 justify-content: center;
             }
         }
         
-        /* Ensure ScrollUp button doesn't hide behind widget */
+        /* Standardize ScrollUp position at the bottom */
         #scrollUp {
             bottom: 30px !important;
-            right: 30px !important;
+            right: 20px !important;
             z-index: 999998 !important;
+            width: 45px !important;
+            height: 45px !important;
+            line-height: 45px !important;
+            text-align: center !important;
+            background-color: #333 !important;
+            color: #fff !important;
+            border-radius: 50% !important;
+            display: block !important;
         }
     </style>
 
