@@ -8,8 +8,8 @@
             <p class="text-muted mb-0">Manage employee salaries and bulk generate payslips.</p>
         </div>
         @can('hrm.edit')
-        <a href="{{ route('admin.hrm.payslip.create') }}" class="btn btn-primary">
-            <iconify-icon icon="solar:add-circle-bold-duotone" class="me-1"></iconify-icon> Generate New Batch
+        <a href="{{ route('admin.hrm.payslip.create') }}" class="btn btn-primary d-flex align-items-center gap-1">
+            <iconify-icon icon="solar:add-circle-bold-duotone"></iconify-icon> Generate New Batch
         </a>
         @endcan
     </div>

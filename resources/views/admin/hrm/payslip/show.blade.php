@@ -7,8 +7,8 @@
             <h4 class="mb-1">Generation Details: {{ $generation->title }}</h4>
             <p class="text-muted mb-0">Period: {{ $generation->start_date->format('d M, Y') }} - {{ $generation->end_date->format('d M, Y') }}</p>
         </div>
-        <a href="{{ route('admin.hrm.payslip.index') }}" class="btn btn-secondary">
-            <iconify-icon icon="solar:arrow-left-bold-duotone" class="me-1"></iconify-icon> Back to List
+        <a href="{{ route('admin.hrm.payslip.index') }}" class="btn btn-secondary d-flex align-items-center gap-1">
+            <iconify-icon icon="solar:arrow-left-bold-duotone"></iconify-icon> Back to List
         </a>
     </div>
 

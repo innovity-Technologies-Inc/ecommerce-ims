@@ -8,8 +8,8 @@
             <p class="text-muted mb-0">Track and manage employee work hours.</p>
         </div>
         @can('hrm.edit')
-        <a href="{{ route('admin.hrm.attendance.create') }}" class="btn btn-primary">
-            <iconify-icon icon="solar:add-circle-bold-duotone" class="me-1"></iconify-icon> Record Attendance
+        <a href="{{ route('admin.hrm.attendance.create') }}" class="btn btn-primary d-flex align-items-center gap-1">
+            <iconify-icon icon="solar:add-circle-bold-duotone"></iconify-icon> Record Attendance
         </a>
         @endcan
     </div>
