@@ -45,7 +45,7 @@
             position: fixed;
             bottom: 30px;
             right: 30px;
-            z-index: 9999;
+            z-index: 999999;
             font-family: 'Open Sans', sans-serif;
         }
 
@@ -198,18 +198,20 @@
         /* Mobile Adjustments */
         @media (max-width: 576px) {
             .whatsapp-widget {
-                bottom: 20px;
+                bottom: 80px;
                 right: 20px;
             }
             .whatsapp-chat-window {
                 width: 280px;
-                right: -10px;
+                right: 0px;
+                bottom: 60px;
             }
             .whatsapp-btn-text {
                 display: none;
             }
             .whatsapp-floating-btn {
                 padding: 12px;
+                border-radius: 50%;
             }
         }
     </style>
