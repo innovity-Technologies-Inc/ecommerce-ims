@@ -69,18 +69,14 @@
             
             // Add business header
             const gs = {
-                business_name: "{{ \App\HelperClass::generalSettings()->business_name ?? 'Smart Ecom' }}",
-                light_logo: "{{ \App\HelperClass::generalSettings()->light_logo ? asset('storage/' . \App\HelperClass::generalSettings()->light_logo) : '' }}"
+                business_name: "{{ \App\HelperClass::generalSettings()->business_name ?? 'Smart Ecom' }}"
             };
             const dateRange = '{{ request("start_date") ?? "All Time" }} to {{ request("end_date") ?? "Present" }}';
             const generatedAt = new Date().toLocaleString();
             
             let headerHtml = `
                 <div class="text-center mb-4 border-bottom pb-3">
-                    <div class="d-flex align-items-center justify-content-center gap-3 mb-2">
-                        ${gs.light_logo ? `<img src="${gs.light_logo}" alt="logo" style="max-height: 50px;">` : ''}
-                        <h1 style="font-weight: bold; margin: 0;">${gs.business_name}</h1>
-                    </div>
+                    <h1 style="font-weight: bold; margin-bottom: 10px;">${gs.business_name}</h1>
                     <h3 style="margin-bottom: 10px;">Payslip Generations Report</h3>
                     <p style="margin: 0; color: #666;">Period: ${dateRange}</p>
                     <p style="margin: 0; color: #666; font-size: 11px;">Generated: ${generatedAt}</p>

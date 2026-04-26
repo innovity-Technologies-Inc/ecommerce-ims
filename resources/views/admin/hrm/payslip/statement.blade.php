@@ -78,9 +78,6 @@
     <div class="payslip-box">
         <div class="header-section d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center gap-3">
-                @if($gs->light_logo)
-                    <img src="{{ asset('storage/' . $gs->light_logo) }}" alt="logo" style="max-height: 60px;">
-                @endif
                 <div class="company-name text-uppercase">{{ $gs->business_name ?? 'Smart Ecom' }}</div>
             </div>
             <div class="text-end">
