@@ -116,9 +116,11 @@
                                         <a href="{{ route('admin.hrm.payslip.statement', $payslip->id) }}" target="_blank" class="btn btn-soft-primary btn-sm d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Salary Statement">
                                             <iconify-icon icon="solar:printer-minimalistic-bold-duotone" class="fs-18"></iconify-icon>
                                         </a>
-                                        <button type="button" class="btn btn-soft-info btn-sm d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" data-bs-toggle="modal" data-bs-target="#updateStatus{{ $payslip->id }}" title="Update Status">
-                                            <iconify-icon icon="solar:pen-new-square-bold-duotone" class="fs-18"></iconify-icon>
-                                        </button>
+                                        @if($payslip->status !== 'paid')
+                                            <button type="button" class="btn btn-soft-info btn-sm d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" data-bs-toggle="modal" data-bs-target="#updateStatus{{ $payslip->id }}" title="Update Status">
+                                                <iconify-icon icon="solar:pen-new-square-bold-duotone" class="fs-18"></iconify-icon>
+                                            </button>
+                                        @endif
                                     </div>
 
                                     <!-- Modal -->
