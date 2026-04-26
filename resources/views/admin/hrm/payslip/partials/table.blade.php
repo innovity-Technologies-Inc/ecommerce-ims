@@ -43,25 +43,36 @@
 </div>
 
 @if(request()->has('is_print'))
+<style>
+    @media print {
+        .no-print, .btn-group, .btn, iconify-icon, .card-header, .card-footer, .pagination, .dropdown, .search-bar, .topbar, .main-nav, .footer, .left-side-menu, .header-title, .breadcrumb, .navbar-header, .navbar-custom { display: none !important; }
+        body { background: white !important; margin: 0 !important; padding: 0 !important; }
+        .page-content { margin: 0 !important; padding: 0 !important; }
+        .card { border: none !important; box-shadow: none !important; }
+        .table { width: 100% !important; border-collapse: collapse !important; }
+        .table th { background-color: #f8f9fa !important; -webkit-print-color-adjust: exact; }
+    }
+</style>
 <script>
-    $(document).ready(function() {
-        $('.no-print, .btn-group, .btn, iconify-icon, .card-header, .card-footer, .pagination, .dropdown, .search-bar, .topbar, .main-nav, .footer').hide();
-        $('body').css('background', 'white');
-        $('.card').css('border', 'none').css('box-shadow', 'none');
+    window.onload = function() {
+        $('.no-print, .btn-group, .btn, iconify-icon, .card-header, .card-footer, .pagination, .dropdown, .search-bar, .topbar, .left-side-menu, .footer').attr('style', 'display:none !important');
         
-        // Add printable header
         if (!$('.print-header').length) {
             $('<div class="print-header text-center mb-4">' +
-                '<h2>{{ \App\HelperClass::generalSettings()->business_name ?? "Smart Ecom" }}</h2>' +
-                '<h4>Payslip Generations Report</h4>' +
-                '<p>Period: {{ request("start_date") ?? "All Time" }} to {{ request("end_date") ?? "Present" }}</p>' +
-              '</div>').prependTo('.card-body');
+                '<h2 style="margin-bottom:5px;">{{ \App\HelperClass::generalSettings()->business_name ?? "Smart Ecom" }}</h2>' +
+                '<h3 style="margin-bottom:10px;">Payslip Generations Report</h3>' +
+                '<p style="margin:2px;">Period: {{ request("start_date") ?? "All Time" }} to {{ request("end_date") ?? "Present" }}</p>' +
+                '<hr style="margin:20px 0;">' +
+              '</div>').prependTo('.table-responsive');
         }
 
-        window.print();
         setTimeout(function() {
-            if (confirm('Close this print tab?')) window.close();
+            window.print();
         }, 500);
-    });
+
+        window.onafterprint = function() {
+            window.close();
+        };
+    };
 </script>
 @endif

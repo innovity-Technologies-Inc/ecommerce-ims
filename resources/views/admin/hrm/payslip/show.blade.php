@@ -179,23 +179,29 @@
 
     $(document).ready(function() {
         if (new URLSearchParams(window.location.search).has('is_print')) {
-            $('.no-print, .btn-group, .btn, iconify-icon, .card-header, .card-footer, .pagination, .dropdown, .topbar, .main-nav, .footer').hide();
+            // Hide everything except the main table and its container
+            $('.no-print, .btn-group, .btn, iconify-icon, .card-header, .card-footer, .pagination, .dropdown, .topbar, .left-side-menu, .footer, .row.g-3.mb-4').attr('style', 'display:none !important');
             $('body').css('background', 'white');
             $('.card').css('border', 'none').css('box-shadow', 'none');
             
             // Add printable header
             if (!$('.print-header').length) {
                 $('<div class="print-header text-center mb-4">' +
-                    '<h2>{{ \App\HelperClass::generalSettings()->business_name ?? "Smart Ecom" }}</h2>' +
-                    '<h4>Payslip Generation Batch: {{ $generation->title }}</h4>' +
-                    '<p>Period: {{ $generation->start_date->format("d M, Y") }} - {{ $generation->end_date->format("d M, Y") }}</p>' +
+                    '<h2 style="margin-bottom:5px;">{{ \App\HelperClass::generalSettings()->business_name ?? "Smart Ecom" }}</h2>' +
+                    '<h3 style="margin-bottom:10px;">Payslip Generation Batch Details</h3>' +
+                    '<p style="margin:2px;">Batch: {{ $generation->title }}</p>' +
+                    '<p style="margin:2px;">Period: {{ $generation->start_date->format("d M, Y") }} - {{ $generation->end_date->format("d M, Y") }}</p>' +
+                    '<hr style="margin:20px 0;">' +
                   '</div>').prependTo('.card-body');
             }
 
-            window.print();
             setTimeout(function() {
-                if (confirm('Close this print tab?')) window.close();
+                window.print();
             }, 500);
+
+            window.onafterprint = function() {
+                window.close();
+            };
         }
     });
 </script>
