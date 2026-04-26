@@ -18,6 +18,7 @@ class GeneralSettingRequest extends FormRequest
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string'],
             'currency' => ['nullable', 'string', 'max:10'],
+            'timezone' => ['nullable', 'string', 'max:100'],
             'notify_email' => ['nullable', 'email', 'max:255'],
             'primary_color' => ['nullable', 'string', 'max:20'],
             'secondary_color' => ['nullable', 'string', 'max:20'],

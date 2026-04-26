@@ -33,6 +33,7 @@ class SettingsService
             'meta_title',
             'meta_description',
             'currency',
+            'timezone',
             'notify_email',
             'login_banner',
             'register_banner',

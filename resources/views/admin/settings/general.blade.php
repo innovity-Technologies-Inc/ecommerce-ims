@@ -33,6 +33,20 @@
 
                             <div class="col-lg-4">
                                 <div class="mb-3">
+                                    <label for="timezone" class="form-label">Timezone</label>
+                                    <select name="timezone" id="timezone" class="form-select select2_list">
+                                        @foreach(DateTimeZone::listIdentifiers() as $timezone)
+                                            <option value="{{ $timezone }}" {{ old('timezone', $setting->timezone ?? 'UTC') == $timezone ? 'selected' : '' }}>
+                                                {{ $timezone }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('timezone') <span class="text-danger small">{{ $message }}</span> @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <div class="mb-3">
                                     <label for="notify_email" class="form-label">Notification Email (Low Stock Alerts)</label>
                                     <input type="email" name="notify_email" id="notify_email" class="form-control" value="{{ old('notify_email', $setting->notify_email ?? '') }}" placeholder="alerts@example.com">
                                     @error('notify_email') <span class="text-danger small">{{ $message }}</span> @enderror

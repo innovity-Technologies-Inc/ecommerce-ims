@@ -20,6 +20,7 @@ class GeneralSetting extends Model
         'meta_description',
         'favicon',
         'currency',
+        'timezone',
         'notify_email',
         'primary_color',
         'secondary_color',
