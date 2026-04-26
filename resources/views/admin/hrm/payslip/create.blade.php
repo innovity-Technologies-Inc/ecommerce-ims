@@ -12,8 +12,8 @@
         </a>
     </div>
 
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
+    <div class="row">
+        <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
                     <form action="{{ route('admin.hrm.payslip.generate') }}" method="POST">
