@@ -49,7 +49,7 @@
             .statement-container { margin: 0; max-width: 100% !important; padding: 0 !important; }
             .payslip-box { box-shadow: none !important; border: 1px solid #eee !important; padding: 40px !important; margin: 0 !important; }
             .no-print { display: none !important; }
-            .total-box { -webkit-print-color-adjust: exact !background-color: #f0fdf4 !important; border: 1px solid #bbf7d0 !important; }
+            .total-box { -webkit-print-color-adjust: exact; background-color: #f0fdf4 !important; border: 1px solid #bbf7d0 !important; }
             .header-section { border-bottom: 2px solid #10b981 !important; }
         }
     </style>

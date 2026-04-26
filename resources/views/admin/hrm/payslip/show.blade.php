@@ -208,7 +208,7 @@
                     @media print {
                         @page { size: auto; margin: 1.5cm; }
                         body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; display: block !important; }
-                        .print-container { display: block !important; width: 100% !important; }
+                        .print-container { display: block !important; width: 100% !important; padding: 20px !important; }
                         table { width: 100% !important; border-collapse: collapse !important; margin-top: 20px !important; }
                         th, td { border: 1px solid #000 !important; padding: 8px 5px !important; font-size: 10px !important; color: black !important; text-align: center !important; }
                         th { background-color: #f8f9fa !important; font-weight: bold !important; -webkit-print-color-adjust: exact; }
@@ -225,7 +225,7 @@
             setTimeout(() => {
                 window.print();
                 if (confirm('Close this print tab?')) window.close();
-            }, 800);
+            }, 1000);
         }
     });
 </script>
