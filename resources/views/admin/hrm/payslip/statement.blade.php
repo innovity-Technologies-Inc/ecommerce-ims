@@ -79,12 +79,9 @@
         <div class="header-section d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center gap-3">
                 @if($gs->light_logo)
-                    <img src="{{ asset('storage/' . $gs->light_logo) }}" alt="logo" style="max-height: 55px;">
+                    <img src="{{ asset('storage/' . $gs->light_logo) }}" alt="logo" style="max-height: 60px;">
                 @endif
-                <div>
-                    <div class="company-name text-uppercase">{{ $gs->business_name ?? 'Smart Ecom' }}</div>
-                    <div class="text-muted small" style="letter-spacing: 1px;">Human Resources Department</div>
-                </div>
+                <div class="company-name text-uppercase">{{ $gs->business_name ?? 'Smart Ecom' }}</div>
             </div>
             <div class="text-end">
                 <div class="statement-label mb-2">Salary Statement</div>
