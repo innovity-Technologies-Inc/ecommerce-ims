@@ -308,6 +308,14 @@
         2. **Internal Scrolling:** `overflow-y: auto` is enabled, allowing users to scroll through long lists within a fixed-size container.
         3. **Consistency:** This standard applies to all Select2 instances across the admin panel, including single and multi-select variants.
 
+    ### 3.20 Custom 419 (Session Expired) Page (REQ-239)
+    - **What (Business Purpose):** Replaces the generic Laravel "Page Expired" error with a professional, brand-aligned feedback loop that helps users recover from session timeouts without confusion.
+    - **How it Works (Technical Flow):**
+        1. **Override:** Uses Laravel's error view override pattern (`resources/views/errors/419.blade.php`).
+        2. **Visual Feedback:** Implements an animated Emerald glow background with a modern glassmorphism card.
+        3. **Recovery Path:** Features a prominent "Login Again" button that points directly to the administrative login portal.
+        4. **Responsive Design:** Optimized for all screen sizes with Inter & Monaco typography.
+
     ### 3.16 Performance & UX Optimizations (REQ-196)
     - **What (Business Purpose):** Improves the stability and responsiveness of data-heavy reports to provide a professional user experience.
     - **How it Works (Technical Flow):**
