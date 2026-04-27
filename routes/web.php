@@ -45,6 +45,14 @@ Route::get('/test-419-admin', function () {
     return view('errors.admin-419');
 });
 
+Route::get('/test-404-client', function () {
+    return view('errors.404');
+});
+
+Route::get('/test-404-admin', function () {
+    return view('errors.admin-404');
+});
+
 Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     Route::get('/', function () {
         return redirect()->route('admin.dashboard');

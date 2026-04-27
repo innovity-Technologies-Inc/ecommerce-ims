@@ -252,7 +252,8 @@ This document lists the high-level requirements for the modules implemented in t
 - [ ] **REQ-236:** Attendance Timezone Alignment: Ensure that manual and automatic clock-in/out operations in the HRM module strictly use the business timezone defined in General Settings. The UI should also clearly display the active timezone and default to business time to avoid local browser time confusion. (DONE)
 - [ ] **REQ-237:** Fix Auto Clock-In/Out with Existing Records: Ensure that the navbar clock-in/out button correctly records time even if a manual or previous automatic record exists for the same day, preventing data loss when multiple sessions occur. (DONE)
 - [ ] **REQ-238:** Remove Action Column from HRM Print Views: Ensure that the "Action" column is completely removed from all printed reports in the HRM module (Attendance and Payslips) to maintain a clean, professional appearance. (DONE)
-- [ ] **REQ-239:** Custom 419 (Page Expired) View: Replace the default Laravel 419 error page with a beautifully designed view featuring a glowing emerald aesthetic, informing users that their session has expired and providing a direct "Login Again" button. (NEW)
+- [ ] **REQ-239:** Custom 419 (Page Expired) View: Replace the default Laravel 419 error page with a beautifully designed view featuring a glowing emerald aesthetic, informing users that their session has expired and providing a direct "Login Again" button. (DONE)
+- [ ] **REQ-240:** Custom 404 (Not Found) View: Replace the default Laravel 404 error page with a beautifully designed view that dynamically detects the user's context (Admin vs. Client) and provides appropriate recovery paths (Dashboard vs. Shop). (NEW)
 
 
 ## Other

@@ -318,6 +318,15 @@
             - **Client Context:** Shows "Go to Homepage" pointing to the store's front page.
         4. **Responsive Design:** Optimized for all screen sizes with Inter & Monaco typography.
 
+    ### 3.21 Custom 404 (Not Found) Page (REQ-240)
+    - **What (Business Purpose):** Replaces the default "404 Not Found" screen with a context-aware navigation recovery page that prevents user drop-off.
+    - **How it Works (Technical Flow):**
+        1. **Context Detection:** Similar to the 419 page, it detects if the requested URL was within the `/admin` prefix.
+        2. **Tailored Experiences:**
+            - **Admin Error:** Shows a dark, security-themed page with a direct link back to the **Admin Dashboard**.
+            - **Client Error:** Shows a light, shop-aligned page with a direct link back to the **Home Store**.
+        3. **Visual Consistency:** Synchronized typographical scales and structural layouts with the session-expired modules.
+
     ### 3.16 Performance & UX Optimizations (REQ-196)
     - **What (Business Purpose):** Improves the stability and responsiveness of data-heavy reports to provide a professional user experience.
     - **How it Works (Technical Flow):**
