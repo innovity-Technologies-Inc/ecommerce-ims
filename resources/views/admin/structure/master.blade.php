@@ -139,6 +139,11 @@
             color: var(--bs-body-color);
         }
 
+        .select2-container--bootstrap-5 .select2-results__options {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
         .select2-container--bootstrap-5 .select2-results__option--highlighted {
             background-color: #0d6efd;
             color: white;

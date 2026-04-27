@@ -295,6 +295,13 @@
         4. **Responsive UI:** The clock block is responsive and automatically hides on smaller mobile devices (`d-none d-md-flex`) to maintain a clean header layout.
     - **Visuals:** Follows the Emerald Dark theme with a monospace digital font and glowing accents.
 
+    ### 3.19 Select2 Dropdown Height Standardization (REQ-235)
+    - **What (Business Purpose):** Improves user experience on pages with large datasets (e.g., Timezones, Categories) by preventing dropdowns from extending beyond the visible viewport.
+    - **How it Works (Technical Flow):**
+        1. **Global CSS Override:** A standard `max-height: 250px` is applied to the Select2 results container via the `admin.structure.master` layout.
+        2. **Internal Scrolling:** `overflow-y: auto` is enabled, allowing users to scroll through long lists within a fixed-size container.
+        3. **Consistency:** This standard applies to all Select2 instances across the admin panel, including single and multi-select variants.
+
     ### 3.16 Performance & UX Optimizations (REQ-196)
     - **What (Business Purpose):** Improves the stability and responsiveness of data-heavy reports to provide a professional user experience.
     - **How it Works (Technical Flow):**
