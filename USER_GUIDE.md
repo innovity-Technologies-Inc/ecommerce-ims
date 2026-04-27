@@ -225,6 +225,10 @@ Before tracking time, you must configure each staff member's profile:
 
 ### 13.2 Attendance Tracking
 *   **The Attendance Button:** A "Clock In/Out" button is **always visible** at the top of every page for all staff members. Use this button to start and end your shift with a single click.
+*   **Multiple Sessions & Break Support:** The system supports multiple clock-ins and clock-outs within the same day. 
+    *   **Time Accumulation:** Every time you click "Clock Out", the system calculates the duration of that session and **adds** it to your total for the day.
+    *   **Session Tracking:** Your "Clock-In" time will always show the time of your **first session**, while "Clock-Out" will update to show the **most recent** time you finished working.
+    *   **Mixed Entry:** The button works seamlessly even if a manual record was previously entered for you, ensuring no work time is lost.
 *   **Automatic:** For users with tracking enabled, the system records their first login as "Clock-In" and their final logout as "Clock-Out".
 *   **Manual Entry:** Go to `HRM -> Attendance -> Record Attendance`. Use this to manually enter shifts for any staff member by specifying the date and exact Clock-In/Clock-Out times.
 
