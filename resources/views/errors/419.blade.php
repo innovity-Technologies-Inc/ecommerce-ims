@@ -138,9 +138,16 @@
         <h1>Session Expired</h1>
         <p>Security token mismatch or inactivity timeout. <br><strong>Please login again to continue your task.</strong></p>
         
-        <a href="{{ url('/admin/login') }}" class="btn-login">
-            <iconify-icon icon="solar:login-bold-duotone"></iconify-icon>
-            Login Again
+        @php
+            $isAdmin = request()->is('admin/*') || str_contains(url()->previous(), '/admin');
+            $redirectUrl = $isAdmin ? url('/admin/login') : url('/');
+            $btnText = $isAdmin ? 'Login Again' : 'Go to Homepage';
+            $btnIcon = $isAdmin ? 'solar:login-bold-duotone' : 'solar:home-smile-bold-duotone';
+        @endphp
+
+        <a href="{{ $redirectUrl }}" class="btn-login">
+            <iconify-icon icon="{{ $btnIcon }}"></iconify-icon>
+            {{ $btnText }}
         </a>
 
         <div class="footer-text">

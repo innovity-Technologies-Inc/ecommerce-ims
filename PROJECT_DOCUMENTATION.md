@@ -313,7 +313,9 @@
     - **How it Works (Technical Flow):**
         1. **Override:** Uses Laravel's error view override pattern (`resources/views/errors/419.blade.php`).
         2. **Visual Feedback:** Implements an animated Emerald glow background with a modern glassmorphism card.
-        3. **Recovery Path:** Features a prominent "Login Again" button that points directly to the administrative login portal.
+        3. **Dynamic Recovery Path:** The view intelligently detects the user's previous context (Admin vs. Client) and adjusts the primary action button:
+            - **Admin Context:** Shows "Login Again" pointing to the Admin Login portal.
+            - **Client Context:** Shows "Go to Homepage" pointing to the store's front page.
         4. **Responsive Design:** Optimized for all screen sizes with Inter & Monaco typography.
 
     ### 3.16 Performance & UX Optimizations (REQ-196)

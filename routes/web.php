@@ -37,6 +37,10 @@ Route::get('/test', function () {
     return view('dashboard');
 });
 
+Route::get('/test-419', function () {
+    return view('errors.419');
+});
+
 Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     Route::get('/', function () {
         return redirect()->route('admin.dashboard');

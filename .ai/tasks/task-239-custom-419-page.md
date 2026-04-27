@@ -13,8 +13,10 @@ Replace the default Laravel 419 error page with a beautifully designed emerald-t
     - A dark background and emerald glow effect.
     - Large "419" or "Session Expired" typography.
     - Descriptive text: "Please login again to continue your task."
-    - A "Login Again" button that redirects to the login page.
-3. Ensure responsiveness.
+3. Implement dynamic redirect logic in Blade:
+    - If the user was on an `/admin` route, show "Login Again" pointing to the admin login.
+    - Otherwise, show "Go to Homepage" pointing to the client store homepage.
+4. Ensure responsiveness.
 
 ## 3. Verification Criteria
 - [x] Verify that the custom 419 page is displayed when a CSRF token mismatch occurs.
