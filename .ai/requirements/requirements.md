@@ -246,7 +246,8 @@ This document lists the high-level requirements for the modules implemented in t
 - [ ] **REQ-230:** WhatsApp Floating Chat Widget: A floating WhatsApp icon on the client-side that opens a chat window. Users can type a message and send it directly to the configured WhatsApp number. (NEW)
 - [x] **REQ-231:** Fix Report View Section Error: Resolve the `InvalidArgumentException` ("Cannot end a section without first starting one") in Customer and Warehouse Performance reports caused by redundant `@endsection` directives in Blade templates. (NEW)
 - [ ] **REQ-232:** Fix Missing NumberFormatter Class: Resolve the "Class NumberFormatter not found" error on staging by implementing a fallback or alternative for `numberToWords` that does not require the PHP `intl` extension. (NEW)
-- [ ] **REQ-233:** Fix Recency Decimal Precision: Limit the Recency value display in the RFM Analysis report to 2 decimal places using `number_format()`. (NEW)
+- [ ] **REQ-233:** Fix Recency Decimal Precision: Limit the Recency value display in the RFM Analysis report to 2 decimal places using `number_format()`. (DONE)
+- [ ] **REQ-234:** Navbar Date and Clock: Display the current date and a real-time digital clock in the admin topbar for better visibility. (NEW)
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.

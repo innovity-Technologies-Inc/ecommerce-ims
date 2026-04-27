@@ -373,12 +373,16 @@
             background: rgba(16, 185, 129, 0.12) !important;
         }
 
-        #digital-clock {
+        #digital-clock, #current-date {
             color: #10b981 !important;
             text-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
             font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
             letter-spacing: 0.5px;
             font-weight: 700 !important;
+        }
+
+        #current-date {
+            opacity: 0.85;
         }
 
         .clock-icon {
