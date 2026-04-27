@@ -11,95 +11,115 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Session Expired - {{ \App\HelperClass::generalSettings()->business_name ?? 'Smart Ecom' }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Monaco&display=swap" rel="stylesheet">
+    
+    <!-- Existing Client Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    
+    <!-- Existing Client CSS -->
+    <link rel="stylesheet" href="{{asset('client/assets/css/vendor/vendor.min.css')}}">
+    <link rel="stylesheet" href="{{asset('client/assets/css/plugins/plugins.min.css')}}">
+    <link rel="stylesheet" href="{{asset('client/assets/css/style.css')}}">
+    
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
     <style>
-        :root {
-            --emerald-primary: #10b981;
-            --emerald-glow: rgba(16, 185, 129, 0.4);
-            --bg-dark: #0f172a;
-        }
-
         body {
-            margin: 0; padding: 0;
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-dark);
-            color: #f8fafc;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             height: 100vh;
-            display: flex; align-items: center; justify-content: center;
-            overflow: hidden;
+            margin: 0;
         }
 
-        .background-glow {
-            position: absolute; width: 500px; height: 500px;
-            background: radial-gradient(circle, var(--emerald-glow) 0%, transparent 70%);
-            filter: blur(60px); z-index: -1;
-            animation: pulse 8s infinite alternate;
+        .expired-card {
+            text-align: center;
+            padding: 50px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid #ebebeb;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1) translate(-10%, -10%); opacity: 0.5; }
-            100% { transform: scale(1.3) translate(20%, 20%); opacity: 0.8; }
-        }
-
-        .container {
-            text-align: center; padding: 2rem;
-            max-width: 500px; width: 90%;
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: 24px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-
-        .icon-box {
-            width: 100px; height: 100px;
-            background: var(--emerald-glow);
+        .icon-circle {
+            width: 120px;
+            height: 120px;
+            background: #f0fdf4;
+            color: #10b981;
             border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 2rem;
-            border: 2px solid var(--emerald-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 60px;
         }
 
-        .error-code {
-            font-family: 'Monaco', monospace;
-            font-size: 5rem; font-weight: 800;
-            margin: 0; color: #fff;
-            text-shadow: 0 0 20px var(--emerald-glow);
+        .error-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 32px;
+            color: #222;
+            margin-bottom: 15px;
         }
 
-        h1 { font-size: 1.75rem; font-weight: 700; margin: 1rem 0; }
-        p { color: #94a3b8; font-size: 1.1rem; line-height: 1.6; margin-bottom: 2.5rem; }
+        .error-text {
+            font-family: 'Open Sans', sans-serif;
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 35px;
+        }
 
-        .btn-home {
-            display: inline-flex; align-items: center; gap: 0.75rem;
-            background: var(--emerald-primary); color: #fff;
-            padding: 1rem 2.5rem; border-radius: 12px;
-            text-decoration: none; font-weight: 600;
+        .btn-shop {
+            background-color: #222;
+            color: #fff;
+            padding: 15px 40px;
+            border-radius: 5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
         }
 
-        .btn-home:hover {
+        .btn-shop:hover {
+            background-color: #10b981;
+            color: #fff;
             transform: translateY(-3px);
-            background: #059669;
-            box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .code-hint {
+            margin-top: 40px;
+            font-size: 12px;
+            color: #ccc;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
     </style>
 </head>
 <body>
-    <div class="background-glow"></div>
-    <div class="container">
-        <div class="icon-box">
-            <iconify-icon icon="solar:cart-large-minimalistic-bold-duotone" style="font-size: 60px; color: #fff;"></iconify-icon>
+    <div class="expired-card">
+        <div class="icon-circle">
+            <iconify-icon icon="solar:bag-heart-bold-duotone"></iconify-icon>
         </div>
-        <div class="error-code">419</div>
-        <h1>Shopping Session Expired</h1>
-        <p>For your security, your shopping session has timed out. <br><strong>Please return to the store to continue your task.</strong></p>
         
-        <a href="{{ url('/') }}" class="btn-home">
-            <iconify-icon icon="solar:home-smile-bold-duotone" style="font-size: 24px;"></iconify-icon>
-            Back to Shop
+        <h1 class="error-title">Session Expired</h1>
+        <p class="error-text">
+            For your security, your shopping session has timed out due to inactivity. 
+            <br><strong>Please return to the store to continue your shopping.</strong>
+        </p>
+        
+        <a href="{{ url('/') }}" class="btn-shop">
+            <iconify-icon icon="solar:home-smile-bold-duotone" style="font-size: 20px;"></iconify-icon>
+            Back to Home Store
         </a>
+
+        <div class="code-hint">Error Code: 419</div>
     </div>
 </body>
 </html>
