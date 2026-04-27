@@ -212,7 +212,7 @@
     *   `return_items`: Source for calculating return-based efficiency penalties.
     *   `warehouse_stock_limits`: Source for localized alert thresholds.
 
-    ### 3.12 HRM Module (REQ-227, REQ-228, REQ-229, REQ-236, REQ-237)
+    ### 3.12 HRM Module (REQ-227, REQ-228, REQ-229, REQ-236, REQ-237, REQ-238)
     - **What (Business Purpose):** Manages internal staff and appointed users' attendance, work hours, and financial compensation.
     - **How it Works (Technical Flow):**
     1. **Configuration:** Admin enables "Time Tracking" and sets "Salary Settings" (Type/Amount) and "Daily Work Hours" in an employee's profile.
@@ -222,15 +222,15 @@
         - **Multiple Sessions:** If a user clocks out and in multiple times, the system **accumulates** the total work time in the `total_minutes` column.
         - **Clock-Out Synchronization:** Every clock-out event updates the `clock_out` time to the latest timestamp, ensuring the "Last Seen" or "Last Active" status is reflected.
         - **Mixed Entry Support:** The automatic button functionality works seamlessly even if a manual attendance record was previously created for the same day, ensuring no work session is left unrecorded.
-    4. **Timezone Synchronization (REQ-236):** 
- All attendance operations (manual storage and automated toggles) strictly use the business timezone defined in **General Settings**. This ensures that "Hours Worked" and "Clock In" times are accurate to the business's local operations regardless of the server's hardware timezone.
+    4. **Timezone Synchronization (REQ-236):** All attendance operations (manual storage and automated toggles) strictly use the business timezone defined in **General Settings**. This ensures that "Hours Worked" and "Clock In" times are accurate to the business's local operations regardless of the server's hardware timezone.
     5. **Bulk Payslip Generation (REQ-229):** 
         *   Instead of single-employee generation, admins create **Payslip Generations** (batches).
         *   Admins provide a **Title** (e.g., "April 2026 Week 1") and a **Date Range**.
         *   The system scans all employees with attendance records in that range and creates individual payslips linked to the batch.
         *   **Salary Calculation:** The system calculates pay based on a fixed hourly rate configured in the staff profile.
             *   *Formula:* `Hourly Salary Rate * Actual Hours Worked`.
-    5. **Filtering:** All views support filtering and sorting using FlexSearch.
+    6. **Print Layout Optimization (REQ-238):** All printed reports (Attendance and Payslips) are automatically cleaned of operational UI elements. Specifically, the **"Action" column** is dynamically removed during the print cloning process to ensure a professional, data-focused document.
+    7. **Filtering:** All views support filtering and sorting using FlexSearch.
     - **Data & Storage (DB Connectivity):**
     *   `admin_attendances`: link to `admins` via `admin_id`.
     *   `payslip_generations`: Stores batch metadata (title, range, total payout).

@@ -86,6 +86,15 @@
 
             // Clone the table and clean it
             const tableClone = $('.table-responsive').clone();
+            
+            // Remove Action column from the cloned table
+            const actionHeaderIndex = tableClone.find('th:contains("Action")').index();
+            if (actionHeaderIndex !== -1) {
+                tableClone.find('tr').each(function() {
+                    $(this).find('td, th').eq(actionHeaderIndex).remove();
+                });
+            }
+
             tableClone.find('.no-print, .btn-group, .btn, iconify-icon').remove();
             
             printContainer.append(tableClone);
