@@ -17,12 +17,9 @@
             </div>
 
             <div class="d-flex align-items-center gap-2">
-                <div class="topbar-item d-none d-lg-flex me-1">
+                <div class="topbar-item d-none d-md-flex me-1">
                     <div class="clock-display">
-                        <iconify-icon icon="solar:calendar-date-bold-duotone" class="fs-18 clock-icon"></iconify-icon>
-                        <span id="current-date" class="fs-13 fw-bold text-uppercase me-2">-- --- ----</span>
-                        <div class="vr" style="height: 15px; background-color: rgba(16, 185, 129, 0.3);"></div>
-                        <iconify-icon icon="solar:clock-circle-bold-duotone" class="fs-18 clock-icon ms-2"></iconify-icon>
+                        <iconify-icon icon="solar:clock-circle-bold-duotone" class="fs-18 clock-icon"></iconify-icon>
                         <span id="digital-clock" class="fs-13">--:--:-- --</span>
                     </div>
                 </div>
@@ -94,19 +91,6 @@
                             const clockElement = document.getElementById('digital-clock');
                             if (clockElement) {
                                 clockElement.textContent = timeString;
-                            }
-
-                            // Update Date
-                            const dateString = now.toLocaleDateString('en-US', {
-                                weekday: 'short',
-                                year: 'numeric',
-                                month: 'short',
-                                day: '2-digit',
-                                timeZone: timezone
-                            });
-                            const dateElement = document.getElementById('current-date');
-                            if (dateElement) {
-                                dateElement.textContent = dateString;
                             }
                         }
                         setInterval(updateClock, 1000);

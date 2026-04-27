@@ -287,12 +287,12 @@
     *   `contact_settings`: Stores the WhatsApp number (`whatsapp_url`) and the toggle status (`whatsapp_status`).
 
     ### 3.18 Admin Navbar Clock (REQ-234)
-    - **What (Business Purpose):** Improves administrative productivity and awareness by providing a real-time date and digital clock directly in the navbar.
+    - **What (Business Purpose):** Improves administrative productivity and awareness by providing a real-time digital clock directly in the navbar.
     - **How it Works (Technical Flow):**
         1. **Rendering:** A custom `clock-display` container is injected into the admin topbar.
         2. **Real-Time Logic:** A JavaScript `setInterval` updates the time every 1000ms.
         3. **Consistency:** Uses the system's configured timezone (`config('app.timezone')`) to ensure the time matches the server's operational log.
-        4. **Responsive UI:** The date/clock block is responsive and automatically hides on smaller mobile devices (`d-none d-lg-flex`) to maintain a clean header layout.
+        4. **Responsive UI:** The clock block is responsive and automatically hides on smaller mobile devices (`d-none d-md-flex`) to maintain a clean header layout.
     - **Visuals:** Follows the Emerald Dark theme with a monospace digital font and glowing accents.
 
     ### 3.16 Performance & UX Optimizations (REQ-196)
