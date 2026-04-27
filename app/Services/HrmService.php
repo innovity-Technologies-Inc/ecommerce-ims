@@ -73,8 +73,9 @@ class HrmService
      */
     public function storeManualAttendance(array $data): AdminAttendance
     {
-        $clockIn = Carbon::parse($data['clock_in']);
-        $clockOut = Carbon::parse($data['clock_out']);
+        $timezone = \App\HelperClass::generalSettings()->timezone ?? config('app.timezone');
+        $clockIn = Carbon::parse($data['clock_in'], $timezone);
+        $clockOut = Carbon::parse($data['clock_out'], $timezone);
         $totalMinutes = $clockIn->diffInMinutes($clockOut);
 
         return AdminAttendance::updateOrCreate(
@@ -93,7 +94,8 @@ class HrmService
      */
     public function clockIn(Admin $admin): void
     {
-        $now = now();
+        $timezone = \App\HelperClass::generalSettings()->timezone ?? config('app.timezone');
+        $now = Carbon::now($timezone);
         $today = $now->toDateString();
 
         // 1. Update/Create Today's Attendance Record
@@ -129,7 +131,8 @@ class HrmService
             return;
         }
 
-        $now = now();
+        $timezone = \App\HelperClass::generalSettings()->timezone ?? config('app.timezone');
+        $now = Carbon::now($timezone);
         $startDate = $admin->last_login_at->toDateString();
 
         $attendance = AdminAttendance::where('admin_id', $admin->id)
@@ -277,10 +280,11 @@ class HrmService
      */
     public function updatePayslipStatus(int $id, string $status, ?string $paymentDate = null): Payslip
     {
+        $timezone = \App\HelperClass::generalSettings()->timezone ?? config('app.timezone');
         $payslip = Payslip::findOrFail($id);
         $payslip->update([
             'status' => $status,
-            'payment_date' => $status === 'paid' ? ($paymentDate ?? now()->toDateString()) : null,
+            'payment_date' => $status === 'paid' ? ($paymentDate ?? Carbon::now($timezone)->toDateString()) : null,
         ]);
 
         return $payslip;

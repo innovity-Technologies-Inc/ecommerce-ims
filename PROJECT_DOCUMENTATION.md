@@ -212,13 +212,14 @@
     *   `return_items`: Source for calculating return-based efficiency penalties.
     *   `warehouse_stock_limits`: Source for localized alert thresholds.
 
-    ### 3.12 HRM Module (REQ-227, REQ-228, REQ-229)
+    ### 3.12 HRM Module (REQ-227, REQ-228, REQ-229, REQ-236)
     - **What (Business Purpose):** Manages internal staff and appointed users' attendance, work hours, and financial compensation.
     - **How it Works (Technical Flow):**
     1. **Configuration:** Admin enables "Time Tracking" and sets "Salary Settings" (Type/Amount) and "Daily Work Hours" in an employee's profile.
     2. **Attendance Button (REQ-228):** The "Clock In/Out" button is **always visible** to all logged-in administrators in the top header.
     3. **Automated Tracking:** For tracked users, the system captures the first login of the day as `clock_in` and updates `clock_out` and `total_minutes` upon logout or manual toggle.
-    4. **Bulk Payslip Generation (REQ-229):** 
+    4. **Timezone Synchronization (REQ-236):** All attendance operations (manual storage and automated toggles) strictly use the business timezone defined in **General Settings**. This ensures that "Hours Worked" and "Clock In" times are accurate to the business's local operations regardless of the server's hardware timezone.
+    5. **Bulk Payslip Generation (REQ-229):** 
         *   Instead of single-employee generation, admins create **Payslip Generations** (batches).
         *   Admins provide a **Title** (e.g., "April 2026 Week 1") and a **Date Range**.
         *   The system scans all employees with attendance records in that range and creates individual payslips linked to the batch.

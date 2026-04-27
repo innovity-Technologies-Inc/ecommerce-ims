@@ -248,7 +248,8 @@ This document lists the high-level requirements for the modules implemented in t
 - [ ] **REQ-232:** Fix Missing NumberFormatter Class: Resolve the "Class NumberFormatter not found" error on staging by implementing a fallback or alternative for `numberToWords` that does not require the PHP `intl` extension. (NEW)
 - [ ] **REQ-233:** Fix Recency Decimal Precision: Limit the Recency value display in the RFM Analysis report to 2 decimal places using `number_format()`. (DONE)
 - [ ] **REQ-234:** Navbar Clock: Display a real-time digital clock in the admin topbar for better visibility. (DONE)
-- [ ] **REQ-235:** Select2 Dropdown Height Limit: Restrict the maximum height of Select2 dropdown results and enable internal scrolling to prevent the dropdown from extending to the bottom of the page when many options (like timezones) are present. (NEW)
+- [ ] **REQ-235:** Select2 Dropdown Height Limit: Restrict the maximum height of Select2 dropdown results and enable internal scrolling to prevent the dropdown from extending to the bottom of the page when many options (like timezones) are present. (DONE)
+- [ ] **REQ-236:** Attendance Timezone Alignment: Ensure that manual and automatic clock-in/out operations in the HRM module strictly use the business timezone defined in General Settings for all timestamp calculations and parsing. (NEW)
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.
