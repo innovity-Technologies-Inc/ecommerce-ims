@@ -19,4 +19,4 @@ Resolve the `Error: Class "NumberFormatter" not found` in `app/HelperClass.php` 
 - [x] Run `./vendor/bin/pint --dirty` to maintain project styling.
 
 ## 4. Documentation Update
-- Update `PROJECT_DOCUMENTATION.md` to mention the dependency on the `intl` extension or the implemented fallback.
+- [x] Update `PROJECT_DOCUMENTATION.md` to mention the dependency on the `intl` extension or the implemented fallback.
