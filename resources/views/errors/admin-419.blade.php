@@ -60,7 +60,7 @@
 
         .error-code {
             font-family: 'Monaco', monospace;
-            font-size: 5rem;
+            font-size: 3.5rem;
             font-weight: 800;
             margin: 0;
             background: linear-gradient(to bottom, #fff, var(--emerald-primary));
@@ -69,14 +69,15 @@
             line-height: 1;
         }
 
-        h1 { font-size: 2rem; font-weight: 800; margin: 1rem 0; }
-        p { color: #94a3b8; font-size: 1.1rem; line-height: 1.6; margin-bottom: 2.5rem; }
+        h1 { font-size: 1.5rem; font-weight: 800; margin: 0.75rem 0; }
+        p { color: #94a3b8; font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem; }
 
         .btn-action {
             display: inline-flex; align-items: center; gap: 0.75rem;
             background: var(--emerald-primary); color: #fff;
-            padding: 1.1rem 3rem; border-radius: 16px;
+            padding: 0.8rem 2.5rem; border-radius: 12px;
             text-decoration: none; font-weight: 700;
+            font-size: 0.95rem;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.5);
         }

@@ -44,38 +44,39 @@
         }
 
         .icon-circle {
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             background: #f0fdf4;
             color: #10b981;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 30px;
-            font-size: 60px;
+            margin: 0 auto 25px;
+            font-size: 50px;
         }
 
         .error-title {
             font-family: 'DM Serif Display', serif;
-            font-size: 32px;
+            font-size: 26px;
             color: #222;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .error-text {
             font-family: 'Open Sans', sans-serif;
             color: #666;
-            font-size: 16px;
+            font-size: 14px;
             line-height: 1.6;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
         }
 
         .btn-shop {
             background-color: #222;
             color: #fff;
-            padding: 15px 40px;
+            padding: 12px 35px;
             border-radius: 5px;
+            font-size: 14px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
