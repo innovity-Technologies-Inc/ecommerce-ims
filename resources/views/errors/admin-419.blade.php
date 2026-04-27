@@ -71,15 +71,15 @@
             line-height: 1;
         }
 
-        h1 { font-size: 1.5rem; font-weight: 800; margin: 0.75rem 0; }
-        p { color: #94a3b8; font-size: 0.95rem; line-height: 1.6; margin-bottom: 2rem; }
+        h1 { font-size: 26px; font-weight: 800; margin: 0.75rem 0; }
+        p { color: #94a3b8; font-size: 14px; line-height: 1.6; margin-bottom: 2rem; }
 
         .btn-action {
             display: inline-flex; align-items: center; gap: 0.75rem;
             background: var(--emerald-primary); color: #fff;
-            padding: 0.8rem 2.5rem; border-radius: 12px;
+            padding: 12px 35px; border-radius: 5px;
             text-decoration: none; font-weight: 700;
-            font-size: 0.95rem;
+            font-size: 14px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.5);
         }
