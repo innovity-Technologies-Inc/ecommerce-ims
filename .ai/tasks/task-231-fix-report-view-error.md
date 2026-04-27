@@ -21,4 +21,5 @@ Resolve the `InvalidArgumentException` ("Cannot end a section without first star
 - [x] Run `./vendor/bin/pint --dirty` to ensure styling is maintained.
 
 ## 4. Documentation Update
-- Update `PROJECT_DOCUMENTATION.md` to reflect this fix in the troubleshooting or reporting module section.
+- [x] Update `PROJECT_DOCUMENTATION.md` to reflect this fix in the troubleshooting or reporting module section.
+- [x] Update `.ai/guidelines/coding-style.md` to include a strict rule about Blade Section Integrity.

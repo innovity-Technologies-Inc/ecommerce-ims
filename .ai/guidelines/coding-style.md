@@ -103,6 +103,7 @@ You MUST strictly follow this sequence for **EVERY** request:
 
 ### **Frontend JavaScript & Scripts (STRICT)**
 - **Script Sections:** Always use `@section('scripts')` for including JavaScript in Blade views. Do NOT use `@push('scripts')` as the master layout utilizes `@yield('scripts')`.
+- **Blade Section Integrity (STRICT):** Every `@section` MUST have exactly one corresponding `@endsection`. When performing tool-assisted search-and-replace on Blade files, you MUST verify that redundant `@endsection` directives or trailing garbage characters are not accidentally appended to the end of the file.
 - **Dynamic Metadata:** When passing metadata from PHP/Eloquent to dynamic JavaScript (e.g., product IDs, prices), always use `data-*` attributes on HTML elements.
 - **PROHIBITED:** Never generate nested PHP loops (`@foreach`) inside `<script>` tags to handle lookups. Use data attributes or JSON-encoded objects instead.
 - **Event Binding:** For dynamic elements or standard buttons, prefer robust event delegation or direct binding: `$(document).on('click', '#id', ...)` or `$('#id').on('click', ...)`.
