@@ -6,12 +6,6 @@
         <div>
             <h4 class="mb-1">Record Attendance</h4>
             <p class="text-muted mb-0">Manually record work hours for an employee.</p>
-            <div class="mt-2">
-                <span class="badge bg-soft-success text-success border border-success px-2 py-1">
-                    <iconify-icon icon="solar:clock-circle-bold-duotone" class="align-middle me-1"></iconify-icon>
-                    <strong>Business Time:</strong> {{ now()->format('h:i A') }} ({{ $gs->timezone ?? config('app.timezone') }})
-                </span>
-            </div>
         </div>
         <a href="{{ route('admin.hrm.attendance.index') }}" class="btn btn-secondary d-flex align-items-center gap-1">
             <iconify-icon icon="solar:arrow-left-bold-duotone"></iconify-icon> Back to List
