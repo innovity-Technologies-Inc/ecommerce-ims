@@ -21,6 +21,7 @@ Replace the default Laravel 419 error page with a beautifully designed emerald-t
 ## 3. Verification Criteria
 - [x] Verify that the custom 419 page is displayed when a CSRF token mismatch occurs.
 - [x] Verify the layout and glow effect match the project theme.
+- [x] Verify that the Admin card is compact (max-width: 500px) and well-balanced.
 - [x] Run `./vendor/bin/pint --dirty` to maintain project styling.
 
 ## 4. Documentation Update
