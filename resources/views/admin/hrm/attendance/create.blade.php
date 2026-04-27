@@ -6,6 +6,12 @@
         <div>
             <h4 class="mb-1">Record Attendance</h4>
             <p class="text-muted mb-0">Manually record work hours for an employee.</p>
+            <div class="mt-2">
+                <span class="badge bg-soft-success text-success border border-success px-2 py-1">
+                    <iconify-icon icon="solar:clock-circle-bold-duotone" class="align-middle me-1"></iconify-icon>
+                    <strong>Business Time:</strong> {{ now()->format('h:i A') }} ({{ $gs->timezone ?? config('app.timezone') }})
+                </span>
+            </div>
         </div>
         <a href="{{ route('admin.hrm.attendance.index') }}" class="btn btn-secondary d-flex align-items-center gap-1">
             <iconify-icon icon="solar:arrow-left-bold-duotone"></iconify-icon> Back to List
@@ -32,21 +38,21 @@
                     <div class="col-lg-6">
                         <div class="mb-3">
                             <label for="date" class="form-label">Date <span class="text-danger">*</span></label>
-                            <input type="date" name="date" id="date" class="form-control" value="{{ old('date', date('Y-m-d')) }}" required>
+                            <input type="date" name="date" id="date" class="form-control" value="{{ old('date', now()->format('Y-m-d')) }}" required>
                             @error('date') <span class="text-danger small">{{ $message }}</span> @enderror
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="mb-3">
                             <label for="clock_in" class="form-label">Clock In Time <span class="text-danger">*</span></label>
-                            <input type="time" name="clock_in" id="clock_in" class="form-control" value="{{ old('clock_in') }}" required>
+                            <input type="time" name="clock_in" id="clock_in" class="form-control" value="{{ old('clock_in', now()->format('H:i')) }}" required>
                             @error('clock_in') <span class="text-danger small">{{ $message }}</span> @enderror
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="mb-3">
                             <label for="clock_out" class="form-label">Clock Out Time <span class="text-danger">*</span></label>
-                            <input type="time" name="clock_out" id="clock_out" class="form-control" value="{{ old('clock_out') }}" required>
+                            <input type="time" name="clock_out" id="clock_out" class="form-control" value="{{ old('clock_out', now()->addHours(8)->format('H:i')) }}" required>
                             @error('clock_out') <span class="text-danger small">{{ $message }}</span> @enderror
                         </div>
                     </div>

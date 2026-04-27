@@ -10,12 +10,15 @@ Ensure all attendance-related operations use the dynamic business timezone from 
 ## 2. Implementation Steps
 1. Modify `app/Services/HrmService.php`:
     - Inject the business timezone when parsing manual `clock_in` and `clock_out` times.
-    - Ensure `now()` calls and manual parsing use `Carbon::now($timezone)` where applicable or rely on the correctly set application timezone.
-    - Verify that `storeManualAttendance` correctly calculates `totalMinutes` using the business timezone.
+    - Ensure `now()` calls and manual parsing use `Carbon::now($timezone)` where applicable.
+2. Modify `resources/views/admin/hrm/attendance/create.blade.php`:
+    - Add a "Business Time" indicator showing the active timezone and current business time.
+    - Set default values for `date`, `clock_in`, and `clock_out` based on the business timezone.
 
 ## 3. Verification Criteria
 - [x] Verified that `storeManualAttendance` uses the dynamic business timezone for parsing.
 - [x] Verified that `clockIn` and `clockOut` use `Carbon::now($timezone)` to ensure accuracy.
+- [x] Verify that the Attendance Create form displays the correct business timezone.
 - [x] Run `./vendor/bin/pint --dirty` to maintain project styling.
 
 ## 4. Documentation Update

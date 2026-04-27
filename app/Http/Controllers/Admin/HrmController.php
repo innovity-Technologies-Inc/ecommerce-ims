@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\Admin\HrmExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AttendanceRequest;
 use App\Http\Requests\Admin\PayslipGenerateRequest;
-use App\Exports\Admin\HrmExport;
 use App\Models\Admin;
 use App\Services\HrmService;
 use Illuminate\Http\RedirectResponse;
@@ -62,8 +62,9 @@ class HrmController extends Controller
     public function attendanceCreate(): View
     {
         $admins = Admin::all();
+        $gs = \App\HelperClass::generalSettings();
 
-        return view('admin.hrm.attendance.create', compact('admins'));
+        return view('admin.hrm.attendance.create', compact('admins', 'gs'));
     }
 
     /**
@@ -207,7 +208,7 @@ class HrmController extends Controller
                 $sl++,
                 $row->payslip_number,
                 $row->admin->name ?? 'N/A',
-                $row->start_date->format('d M') . ' - ' . $row->end_date->format('d M, Y'),
+                $row->start_date->format('d M').' - '.$row->end_date->format('d M, Y'),
                 number_format($row->total_hours, 2),
                 number_format($row->salary_amount, 2, '.', ''),
                 number_format($row->net_salary, 2, '.', ''),
@@ -216,7 +217,7 @@ class HrmController extends Controller
             ];
         }
 
-        $title = 'Payslips - ' . $generation->title;
+        $title = 'Payslips - '.$generation->title;
         $fileName = 'payslips_batch_'.now()->format('Ymd_His').'.xlsx';
 
         return Excel::download(new HrmExport($exportData, $headings, $title), $fileName);
