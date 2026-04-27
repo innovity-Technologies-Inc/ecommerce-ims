@@ -158,6 +158,7 @@
         *   **High-Fidelity Printing:** Implements a specialized `printFullReport` JS logic that captures all records (bypassing pagination) and renders a clean, professional PDF-ready snapshot with business branding, report headers, and consistent table formatting.
         *   **Detailed View Filter Preservation (REQ-142):** Filter forms in Sales, Inventory, and Stock reports automatically preserve the current detailed `view` state (e.g., "Batch Aging" or "Movement History") using hidden request parameters. This ensures that applying new date or entity filters maintains the user's active report context instead of redirecting them to the main dashboard.
         *   **Technical Maintenance (REQ-231):** Resolved an `InvalidArgumentException` in report templates by removing redundant `@endsection` directives, ensuring stable rendering across all report views.
+        *   **Server Compatibility (REQ-232):** Implemented a pure PHP fallback for the `NumberFormatter` class in `HelperClass::numberToWords()`. This ensures the application remains functional on servers where the PHP `intl` extension is not enabled.
 - **Data & Storage (DB Connectivity):**
     *   `inventory_levels`: The primary source for current quantity snapshots.
     *   `batch_products`: Linked to provide `unit_cost` for valuation metrics.
