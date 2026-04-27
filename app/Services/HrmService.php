@@ -111,6 +111,11 @@ class HrmService
                 'total_minutes' => 0,
                 'is_manual' => false,
             ]);
+        } elseif (! $attendance->clock_in) {
+            // If record exists (maybe from a manual entry without time), set the start time
+            $attendance->update([
+                'clock_in' => $now->toTimeString(),
+            ]);
         }
 
         // 2. Update Admin status and session start
@@ -139,7 +144,7 @@ class HrmService
             ->where('date', $startDate)
             ->first();
 
-        if ($attendance && ! $attendance->is_manual) {
+        if ($attendance) {
             // Calculate minutes for this session
             $sessionMinutes = $admin->last_login_at->diffInMinutes($now);
 
