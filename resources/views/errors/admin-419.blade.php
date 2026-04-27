@@ -36,12 +36,14 @@
         }
 
         .container {
-            text-align: center; padding: 2rem;
-            max-width: 500px; width: 90%;
+            text-align: center; 
+            padding: 50px;
+            max-width: 500px; 
+            width: 90%;
             background: rgba(30, 41, 59, 0.7);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: 24px;
+            border-radius: 15px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
