@@ -588,6 +588,7 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     - **Route Verification Mandate:** All Blade routes must be verified using `php artisan route:list` before implementation to prevent fictional route errors.
 
 - **Detailed Formulas & Calculations:**
+    *   **Recency Formatting (REQ-233):** All Recency values in the RFM Analysis table are formatted using `number_format($val, 2)` to ensure a clean UI with exactly 2 decimal places.
     - **Average Order Value (AOV):** `Total Revenue / Total Number of Orders`.
     - **Recency:** `Current Date - Last Order Date (in days)`.
     - **Frequency:** `Total count of non-cancelled orders`.

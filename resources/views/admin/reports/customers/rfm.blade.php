@@ -89,7 +89,7 @@
                                 <td class="ps-3 fw-bold">{{ $stat['name'] }}</td>
                                 <td class="text-center">
                                     <span class="badge {{ $stat['recency'] <= 30 ? 'bg-soft-success text-success' : ($stat['recency'] <= 90 ? 'bg-soft-warning text-warning' : 'bg-soft-danger text-danger') }} px-3">
-                                        {{ $stat['recency'] }} Days
+                                        {{ number_format($stat['recency'], 2) }} Days
                                     </span>
                                 </td>
                                 <td class="text-center">
