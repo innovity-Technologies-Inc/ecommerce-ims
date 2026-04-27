@@ -259,7 +259,3 @@
     }
 </script>
 @endsection
-);
-    }
-</script>
-@endsection
