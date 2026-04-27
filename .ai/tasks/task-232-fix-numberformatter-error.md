@@ -20,3 +20,4 @@ Resolve the `Error: Class "NumberFormatter" not found` in `app/HelperClass.php` 
 
 ## 4. Documentation Update
 - [x] Update `PROJECT_DOCUMENTATION.md` to mention the dependency on the `intl` extension or the implemented fallback.
+- [x] Update `README.md` to include instructions for installing the `php-intl` extension.

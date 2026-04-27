@@ -10,8 +10,26 @@ install the project on your local environment.
 Ensure you have the following installed:
 
 - PHP 8.3 or higher
+- **Required PHP Extensions:** `intl`, `bcmath`, `curl`, `mbstring`, `openssl`, `xml`, `zip`
 - Composer
 - MySQL or PostgreSQL
+
+> **Note on `php-intl`:** This extension is required for high-fidelity "Number to Words" conversion (used in Payslips/Invoices). While the project includes a pure PHP fallback, it is highly recommended to enable `intl` for optimal performance.
+
+#### How to install `php-intl`:
+- **Ubuntu/Debian:**
+  ```bash
+  sudo apt-get install php8.3-intl
+  sudo service apache2 restart # or sudo service php8.3-fpm restart
+  ```
+- **CentOS/RHEL:**
+  ```bash
+  sudo yum install php-intl
+  ```
+- **Windows (XAMPP/Laragon/Herd):**
+  1. Open your `php.ini` file.
+  2. Find `;extension=intl` and remove the semicolon (`;`) to uncomment it.
+  3. Restart your server.
 
 ### 2. Database Setup
 
