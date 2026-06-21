@@ -22,14 +22,14 @@ Fully dockerize the Laravel application with a production-ready and local-develo
 6. **Documentation:** Update `PROJECT_DOCUMENTATION.md` and `USER_GUIDE.md` to document the Docker environment.
 
 ## 3. Verification Criteria
-- [ ] Verify Docker build succeeds.
-- [ ] Spin up containers using `docker compose up -d`.
-- [ ] Verify app connects to DB and Redis.
-- [ ] Verify Laravel queue worker and scheduler containers start up.
-- [ ] Run pint to ensure file format/cleanliness.
-- [ ] Run `php artisan optimize`.
-- [ ] Document setup instructions clearly.
+- [x] Verify Docker build succeeds.
+- [x] Spin up containers using `docker compose up -d`.
+- [x] Verify app connects to DB and Redis.
+- [x] Verify Laravel queue worker and scheduler containers start up.
+- [x] Run pint to ensure file format/cleanliness.
+- [x] Run `php artisan optimize`.
+- [x] Document setup instructions clearly.
 
 ## 4. Documentation Update
-- [ ] Update `PROJECT_DOCUMENTATION.md` under a new deployment/Docker section.
-- [ ] Update `USER_GUIDE.md` under setup instructions.
+- [x] Update `PROJECT_DOCUMENTATION.md` under a new deployment/Docker section.
+- [x] Update `USER_GUIDE.md` under setup instructions.
