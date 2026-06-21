@@ -671,3 +671,32 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     *   `google_id`, `google_token` stored in `users` table.
     *   `facebook_id`, `facebook_token` stored in `users` table.
 
+---
+
+### **12. Dockerized Environment Architecture (REQ-241)**
+
+- **What (Business Purpose):** Standardizes local development and production environments across different developer platforms (e.g. Windows 11 with WSL2 + Docker Desktop) to ensure environment parity, ease of onboarding, and robust zero-downtime deployment pipelines.
+- **How it Works (Technical Flow):**
+    1. **Multi-Stage Build (Dockerfile):**
+       - **Asset Builder Stage:** Compiles frontend assets (`npm run build` using Node.js 20) to generate Vite bundles.
+       - **PHP Base Stage:** Installs PHP 8.3-fpm on Alpine, adding necessary system packages and PHP extensions (pdo_mysql, gd, zip, bcmath, opcache, redis, intl, mbstring).
+       - **Production Stage:** Merges the built frontend assets and composer production-optimized vendor dependencies.
+    2. **Container Network & Layout:**
+       - **Web Container (Nginx):** Serves static files and forwards dynamic PHP requests to the App container.
+       - **App Container (PHP-FPM):** Processes PHP and interacts with the database/redis.
+       - **Database Container (MySQL 8):** Dedicated database storage.
+       - **Redis Container (Cache/Queue):** Dedicated in-memory storage for queues and session caches.
+       - **Queue Worker Container:** Dedicated container running `php artisan queue:work` to offload asynchronous jobs.
+       - **Scheduler Container:** Runs a shell loop executing `php artisan schedule:run` every 60 seconds.
+    3. **Startup Workflow (entrypoint.sh):**
+       - Copies `.env.example` to `.env` if missing.
+       - Tests and waits for database connectivity before running other commands.
+       - Automatically runs `composer install` and `php artisan key:generate` in development if missing.
+       - Runs database migrations (`php artisan migrate`) automatically.
+       - Adjusts permissions of storage and cache directories to `www-data` dynamically.
+- **Data & Storage (Container Volumes & DB Connectivity):**
+    - `app_code` (Shared Named Volume): Shares the application codebase and built public assets from the `app` container to the `web` container.
+    - `db_data` (MySQL Persistence): Mounts `/var/lib/mysql` to preserve database records across restarts.
+    - `redis_data` (Redis Persistence): Mounts `/data` to preserve redis cache and queue jobs.
+    - In local development (`docker-compose.override.yml`), host volumes mount `.:/var/www/html` with `:cached` for fast WSL2 disk access, overriding container contents.
+

@@ -266,4 +266,73 @@ To help you get started immediately, the system comes pre-loaded with a comprehe
 *   **Segmented Hubs:** Data is distributed across **20 USA-based Warehouses** and linked to **15 Professional Suppliers**.
 
 ---
+
+## 16. Docker Environment Setup & Execution (REQ-241)
+For portable, isolated, and identical setups across developers (especially on **Windows 11 with WSL2 + Docker Desktop**), use the provided Docker integration.
+
+### 16.1 First-Time Setup
+1.  **Clone the project** to your local environment.
+2.  Ensure you have **WSL2** installed and **Docker Desktop** configured to use the WSL2 backend.
+3.  Ensure your IDE/Terminal is running inside the WSL2 Linux environment for the best file system performance.
+4.  Copy your env file (if not already done; the container entrypoint will do this automatically if missed):
+    ```bash
+    cp .env.example .env
+    ```
+
+### 16.2 Start the Containers
+Run the following command from the root of the project to build and start all required services:
+```bash
+docker compose up -d --build
+```
+This command starts:
+*   `smart-ecom-db` (MySQL 8 database on port `3306`)
+*   `smart-ecom-redis` (Redis cache on port `6379`)
+*   `smart-ecom-app` (PHP 8.3 application backend on port `9000`)
+*   `smart-ecom-web` (Nginx web server on port `80`)
+*   `smart-ecom-queue` (Laravel queue worker)
+*   `smart-ecom-scheduler` (Laravel schedule runner)
+
+### 16.3 Common Commands & Operations
+Run commands inside the running PHP container using `docker compose exec`:
+
+*   **Access the application shell:**
+    ```bash
+    docker compose exec app bash
+    ```
+*   **Generate Application Security Key:**
+    ```bash
+    docker compose exec app php artisan key:generate
+    ```
+*   **Run Database Migrations:**
+    ```bash
+    docker compose exec app php artisan migrate
+    ```
+*   **Seed the Database (with 100 fashion products, images, warehouses, POs, and HRM data):**
+    ```bash
+    docker compose exec app php artisan db:seed
+    ```
+*   **Run Optimization (Clear & Cache configs):**
+    ```bash
+    docker compose exec app php artisan optimize
+    ```
+*   **Run Code Style Linter:**
+    ```bash
+    docker compose exec app ./vendor/bin/pint --dirty
+    ```
+
+### 16.4 Troubleshooting & Logs
+*   **View real-time logs:**
+    ```bash
+    docker compose logs -f
+    ```
+*   **Stop the environment (preserving database data):**
+    ```bash
+    docker compose down
+    ```
+*   **Destroy environment (wiping database volumes):**
+    ```bash
+    docker compose down -v
+    ```
+
+---
 *For further assistance, please contact your system administrator.*
