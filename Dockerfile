@@ -1,25 +1,23 @@
 # ==========================================
 # Stage 1: PHP Application Base
 # ==========================================
-FROM php:8.3-fpm-alpine AS app-base
+FROM php:8.3-fpm AS app-base
 
 # Install system dependencies
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y \
     bash \
     curl \
-    libpng-dev \
-    libzip-dev \
     zip \
     unzip \
     git \
-    icu-dev \
-    libjpeg-turbo-dev \
-    freetype-dev \
-    oniguruma-dev
+    && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions using docker-php-extension-installer
-COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
-RUN install-php-extensions pdo_mysql gd zip bcmath opcache redis intl mbstring
+# Install official PHP extension installer helper
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+# Install PHP extensions required by the project (Redis removed)
+RUN chmod +x /usr/local/bin/install-php-extensions && \
+    install-php-extensions pdo_mysql bcmath zip gd opcache intl mbstring curl xml
 
 # Configure PHP production defaults
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"

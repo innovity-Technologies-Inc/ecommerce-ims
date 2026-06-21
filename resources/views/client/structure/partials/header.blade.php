@@ -158,9 +158,11 @@
                                     @endforeach
                                     <li class="banner-wrapper">
                                         @php $m_banner = \App\HelperClass::getBanner('menu_banner'); @endphp
+                                        @if($m_banner)
                                         <a href="{{ $m_banner->link ?? route('client.products.index') }}"><img
                                                 src="{{ str_contains($m_banner->image, 'client/') ? asset($m_banner->image) : asset('storage/'.$m_banner->image) }}"
                                                 alt=""></a>
+                                        @endif
                                                 </li>
                                                 </ul>
                                                 </li>                            <li class="menu-dropdown">

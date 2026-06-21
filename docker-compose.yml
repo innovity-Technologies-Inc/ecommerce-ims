@@ -20,18 +20,15 @@ services:
       - DB_DATABASE=laravel
       - DB_USERNAME=laravel
       - DB_PASSWORD=secret
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
       - QUEUE_CONNECTION=database
       - SESSION_DRIVER=database
       - CACHE_STORE=database
     depends_on:
       - db
-      - redis
 
   # Nginx Web Server
   web:
-    image: nginx:alpine
+    image: nginx:latest
     container_name: smart-ecom-web
     restart: unless-stopped
     ports:
@@ -62,16 +59,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # Cache & Queue Server (Redis)
-  redis:
-    image: redis:alpine
-    container_name: smart-ecom-redis
-    restart: unless-stopped
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-
   # Queue Worker
   queue-worker:
     build:
@@ -91,13 +78,10 @@ services:
       - DB_DATABASE=laravel
       - DB_USERNAME=laravel
       - DB_PASSWORD=secret
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
       - QUEUE_CONNECTION=database
     depends_on:
       - app
       - db
-      - redis
 
   # Laravel Scheduler
   scheduler:
@@ -118,15 +102,11 @@ services:
       - DB_DATABASE=laravel
       - DB_USERNAME=laravel
       - DB_PASSWORD=secret
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
       - QUEUE_CONNECTION=database
     depends_on:
       - app
       - db
-      - redis
 
 volumes:
   app_code:
   db_data:
-  redis_data:

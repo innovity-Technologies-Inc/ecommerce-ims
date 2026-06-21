@@ -42,8 +42,24 @@ if [ "${APP_ENV}" = "local" ]; then
         php artisan key:generate --no-interaction
     fi
 
+    echo "Clearing cached configurations to prevent Docker path issues..."
+    php artisan config:clear
+    php artisan cache:clear
+    php artisan route:clear
+
     echo "Running database migrations..."
     php artisan migrate --no-interaction
+
+    # Run seeders only if they haven't been run before
+    if [ ! -f "storage/logs/seeded.lock" ]; then
+        echo "First boot detected. Running database seeders..."
+        php artisan db:seed --no-interaction || true
+        echo "Pre-compiling views to speed up initial load time..."
+        php artisan view:cache
+        touch storage/logs/seeded.lock
+    else
+        echo "Database seeders already ran previously. Skipping to protect existing data..."
+    fi
 
 else
     echo "Running in production mode..."

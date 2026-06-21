@@ -678,10 +678,10 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
 - **What (Business Purpose):** Standardizes local development and production environments across different developer platforms (e.g. Windows 11 with WSL2 + Docker Desktop) to ensure environment parity, ease of onboarding, and robust zero-downtime deployment pipelines.
 - **How it Works (Technical Flow):**
     1. **Multi-Stage Build (Dockerfile):**
-       - **PHP Base Stage:** Installs PHP 8.3-fpm on Alpine, adding necessary system packages and PHP extensions (pdo_mysql, gd, zip, bcmath, opcache, redis, intl, mbstring).
+       - **PHP Base Stage:** Installs PHP 8.3-fpm on Debian, adding necessary system packages and PHP extensions (pdo_mysql, gd, zip, bcmath, opcache, intl, mbstring, curl, xml).
        - **Production Stage:** Copies the application code and installs composer production-optimized vendor dependencies.
     2. **Container Network & Layout:**
-       - **Web Container (Nginx):** Serves static files and forwards dynamic PHP requests to the App container.
+       - **Web Container (Nginx):** Serves static files and forwards dynamic PHP requests to the App container. Configured with a 300s fastcgi_read_timeout to prevent WSL2 bottleneck timeouts.
        - **App Container (PHP-FPM):** Processes PHP and interacts with the database/redis.
        - **Database Container (MySQL 8):** Dedicated database storage.
        - **Redis Container (Cache/Queue):** Dedicated in-memory storage for queues and session caches.
@@ -691,11 +691,12 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
        - Copies `.env.example` to `.env` if missing.
        - Tests and waits for database connectivity before running other commands.
        - Automatically runs `composer install` and `php artisan key:generate` in development if missing.
+       - Clears specific caches (`config:clear`, `cache:clear`, `route:clear`) without wiping the compiled views cache to maintain performance.
        - Runs database migrations (`php artisan migrate`) automatically.
+       - On the very first boot (indicated by the lack of `seeded.lock`), runs database seeders and pre-compiles views (`php artisan view:cache`) to prevent slow initial load times on WSL2.
        - Adjusts permissions of storage and cache directories to `www-data` dynamically.
 - **Data & Storage (Container Volumes & DB Connectivity):**
     - `app_code` (Shared Named Volume): Shares the application codebase and built public assets from the `app` container to the `web` container.
     - `db_data` (MySQL Persistence): Mounts `/var/lib/mysql` to preserve database records across restarts.
     - `redis_data` (Redis Persistence): Mounts `/data` to preserve redis cache and queue jobs.
     - In local development (`docker-compose.override.yml`), host volumes mount `.:/var/www/html` with `:cached` for fast WSL2 disk access, overriding container contents.
-
