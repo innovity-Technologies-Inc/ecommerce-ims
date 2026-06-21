@@ -1,15 +1,5 @@
 # ==========================================
-# Stage 1: Build frontend assets (Vite)
-# ==========================================
-FROM node:20-alpine AS asset-builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-
-# ==========================================
-# Stage 2: PHP Application Base
+# Stage 1: PHP Application Base
 # ==========================================
 FROM php:8.3-fpm-alpine AS app-base
 
@@ -42,15 +32,12 @@ WORKDIR /var/www/html
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # ==========================================
-# Stage 3: Production Release Build
+# Stage 2: Production Release Build
 # ==========================================
 FROM app-base AS production
 
 # Copy project files
 COPY . .
-
-# Copy built frontend assets from asset-builder stage
-COPY --from=asset-builder /app/public/build ./public/build
 
 # Install production dependencies
 ENV COMPOSER_ALLOW_SUPERUSER=1

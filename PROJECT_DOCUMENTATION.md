@@ -678,9 +678,8 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
 - **What (Business Purpose):** Standardizes local development and production environments across different developer platforms (e.g. Windows 11 with WSL2 + Docker Desktop) to ensure environment parity, ease of onboarding, and robust zero-downtime deployment pipelines.
 - **How it Works (Technical Flow):**
     1. **Multi-Stage Build (Dockerfile):**
-       - **Asset Builder Stage:** Compiles frontend assets (`npm run build` using Node.js 20) to generate Vite bundles.
        - **PHP Base Stage:** Installs PHP 8.3-fpm on Alpine, adding necessary system packages and PHP extensions (pdo_mysql, gd, zip, bcmath, opcache, redis, intl, mbstring).
-       - **Production Stage:** Merges the built frontend assets and composer production-optimized vendor dependencies.
+       - **Production Stage:** Copies the application code and installs composer production-optimized vendor dependencies.
     2. **Container Network & Layout:**
        - **Web Container (Nginx):** Serves static files and forwards dynamic PHP requests to the App container.
        - **App Container (PHP-FPM):** Processes PHP and interacts with the database/redis.
