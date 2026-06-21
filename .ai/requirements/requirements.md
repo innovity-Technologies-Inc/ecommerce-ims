@@ -255,7 +255,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [ ] **REQ-239:** Custom 419 (Page Expired) View: Replace the default Laravel 419 error page with a beautifully designed view featuring a glowing emerald aesthetic, informing users that their session has expired and providing a direct "Login Again" button. (DONE)
 - [ ] **REQ-240:** Custom 404 (Not Found) View: Replace the default Laravel 404 error page with a beautifully designed view that dynamically detects the user's context (Admin vs. Client) and provides appropriate recovery paths (Dashboard vs. Shop). (NEW)
 - [x] **REQ-241:** Dockerization: Fully dockerize the Laravel application with production-ready structure (Nginx, PHP 8.3, MySQL 8, Redis, queue worker, scheduler cron, and development overrides). (NEW)
-- [ ] **REQ-242:** Simplify Docker Setup: Remove Node/npm/Alpine.js assets compilation building stage from Docker configurations since the user does not use npm or Alpine.js. (NEW)
+- [x] **REQ-242:** Simplify Docker Setup: Remove Node/npm/Alpine.js assets compilation building stage from Docker configurations since the user does not use npm or Alpine.js. (NEW)
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.
