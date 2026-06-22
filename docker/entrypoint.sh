@@ -29,7 +29,7 @@ echo "Database is up!"
 # In local environment, run developer-specific commands
 if [ "${APP_ENV}" = "local" ]; then
     echo "Running in local development mode..."
-    
+
     # Install dependencies if vendor folder doesn't exist
     if [ ! -d "vendor" ]; then
         echo "vendor folder not found. Running composer install..."
@@ -63,20 +63,22 @@ if [ "${APP_ENV}" = "local" ]; then
 
 else
     echo "Running in production mode..."
-    
+
     # Generate app key if not set (fallback)
     if ! grep -q "APP_KEY=base64:" .env || [ -z "$(grep APP_KEY= .env | cut -d= -f2)" ]; then
         echo "Generating application key..."
         php artisan key:generate --no-interaction
     fi
 
+
+    echo "Running database migrations..."
+    php artisan migrate --force --no-interaction
+
     echo "Caching configurations, routes, and views..."
     php artisan config:cache
     php artisan route:cache
     php artisan view:cache
 
-    echo "Running database migrations..."
-    php artisan migrate --force --no-interaction
 fi
 
 # Adjust folder permissions
