@@ -23,7 +23,7 @@
             @endphp
             @foreach($nav_brands as $brand)
                 <div class="brand-slider-item">
-                    <a href="#"><img src="{{ asset('storage/' . $brand->icon) }}" alt="{{ $brand->name }}"></a>
+                    <a href="#"><img src="{{ \App\HelperClass::file_url($brand->icon) }}" alt="{{ $brand->name }}"></a>
                 </div>
             @endforeach
         </div>

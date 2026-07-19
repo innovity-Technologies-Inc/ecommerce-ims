@@ -243,7 +243,7 @@
                         <div class="avatar-container">
                             <div class="account-avatar">
                                 @if($user->image)
-                                    <img src="{{ asset('storage/'.$user->image) }}" alt="{{ $user->name }}">
+                                    <img src="{{ \App\HelperClass::file_url($user->image) }}" alt="{{ $user->name }}">
                                 @else
                                     {{ strtoupper(substr($user->name, 0, 1)) }}
                                 @endif

@@ -31,7 +31,7 @@
                                     <tr>
                                         <td class="ps-3">
                                             <div class="d-flex align-items-center gap-3">
-                                                <img src="{{ $item->product->primaryImage ? asset('storage/'.$item->product->primaryImage->image_path) : asset('admin_assets/images/no-image.png') }}" class="rounded-pill" style="width: 40px; height: 40px; object-fit: cover;">
+                                                <img src="{{ $item->product->primaryImage ? \App\HelperClass::file_url($item->product->primaryImage->image_path) : asset('admin_assets/images/no-image.png') }}" class="rounded-pill" style="width: 40px; height: 40px; object-fit: cover;">
                                                 <div>
                                                     <h6 class="mb-0 fs-14">{{ $item->product->name }}</h6>
                                                     @if($item->productVariant)
@@ -70,15 +70,15 @@
                     <div class="row g-2">
                         @forelse($request->returnImages as $image)
                             <div class="col-md-3 col-sm-4 col-6">
-                                <a href="{{ asset('storage/' . $image->image_path) }}" target="_blank">
-                                    <img src="{{ asset('storage/' . $image->image_path) }}" class="img-fluid rounded border shadow-sm" style="height: 150px; width: 100%; object-fit: cover;">
+                                <a href="{{ \App\HelperClass::file_url($image->image_path) }}" target="_blank">
+                                    <img src="{{ \App\HelperClass::file_url($image->image_path) }}" class="img-fluid rounded border shadow-sm" style="height: 150px; width: 100%; object-fit: cover;">
                                 </a>
                             </div>
                         @empty
                             @if($request->image)
                                 <div class="col-md-3 col-sm-4 col-6">
-                                    <a href="{{ asset('storage/' . $request->image) }}" target="_blank">
-                                        <img src="{{ asset('storage/' . $request->image) }}" class="img-fluid rounded border shadow-sm" style="height: 150px; width: 100%; object-fit: cover;">
+                                    <a href="{{ \App\HelperClass::file_url($request->image) }}" target="_blank">
+                                        <img src="{{ \App\HelperClass::file_url($request->image) }}" class="img-fluid rounded border shadow-sm" style="height: 150px; width: 100%; object-fit: cover;">
                                     </a>
                                     <small class="text-muted d-block mt-1">Primary Image</small>
                                 </div>

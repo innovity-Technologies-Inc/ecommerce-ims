@@ -46,7 +46,7 @@
 
                                         @if(isset($brand) && $brand->icon)
                                             <div class="mt-2">
-                                                <img src="{{ asset('storage/'.$brand->icon) }}" alt="{{ $brand->name }}" class="avatar-lg rounded">
+                                                <img src="{{ \App\HelperClass::file_url($brand->icon) }}" alt="{{ $brand->name }}" class="avatar-lg rounded">
                                             </div>
                                         @endif
 

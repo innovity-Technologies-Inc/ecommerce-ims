@@ -167,7 +167,7 @@
                                             <tr id="cart-row-{{ $item->id }}">
                                                 <td class="product-thumbnail">
                                                     <a href="{{ route('client.products.details', $item->product_slug) }}">
-                                                        <img class="img-responsive ml-15px" src="{{ $item->image ? asset('storage/'.$item->image) : asset('client/assets/images/product-image/mini-cart/1.jpg') }}" alt="{{ $item->product_name }}" style="max-width: 80px;" />
+                                                        <img class="img-responsive ml-15px" src="{{ $item->image ? \App\HelperClass::file_url($item->image) : asset('client/assets/images/product-image/mini-cart/1.jpg') }}" alt="{{ $item->product_name }}" style="max-width: 80px;" />
                                                     </a>
                                                 </td>
                                                 <td class="product-name">
@@ -229,7 +229,7 @@
                             <div class="col-lg-8 col-md-12 mb-res-sm-30px d-flex">
                                 <div class="cart-banner w-100">
                                     <a href="{{ $c_banner->link ?? '#' }}" class="d-block h-100">
-                                        <img src="{{ str_contains($c_banner->image, 'client/') ? asset($c_banner->image) : asset('storage/'.$c_banner->image) }}" alt="Cart Banner" class="img-fluid w-100 h-100" style="object-fit: cover;">
+                                        <img src="{{ str_contains($c_banner->image, 'client/') ? asset($c_banner->image) : \App\HelperClass::file_url($c_banner->image) }}" alt="Cart Banner" class="img-fluid w-100 h-100" style="object-fit: cover;">
                                     </a>
                                 </div>
                             </div>

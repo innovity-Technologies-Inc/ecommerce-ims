@@ -61,7 +61,7 @@
 
                                         @if(isset($category) && $category->icon)
                                             <div class="mt-2">
-                                                <img src="{{ asset('storage/'.$category->icon) }}" alt="{{ $category->name }}" class="avatar-lg rounded">
+                                                <img src="{{ \App\HelperClass::file_url($category->icon) }}" alt="{{ $category->name }}" class="avatar-lg rounded">
                                             </div>
                                         @endif
 

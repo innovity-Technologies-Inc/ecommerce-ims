@@ -57,7 +57,7 @@
                                 <button class="dropdown-toggle header-action-btn hover-style-default color-white d-flex align-items-center"
                                         data-bs-toggle="dropdown">
                                     @if(Auth::guard('web')->check() && Auth::guard('web')->user()->image)
-                                        <img src="{{ asset('storage/'.Auth::guard('web')->user()->image) }}" alt="" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; margin-right: 5px;">
+                                        <img src="{{ \App\HelperClass::file_url(Auth::guard('web')->user()->image) }}" alt="" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; margin-right: 5px;">
                                     @endif
                                     Settings <i class="ion-ios-arrow-down ms-1"></i>
                                 </button>
@@ -114,7 +114,7 @@
                 <!-- Logo Start -->
                 <div class="col-md-2 col-sm-2">
                     <div class="logo">
-                        <a href="{{ route('home') }}"><img src="{{ $gs->light_logo ? asset('storage/'.$gs->light_logo) : asset('client/assets/images/logo/logo.jpg') }}" alt="{{ $gs->business_name ?? '' }}" style="max-height: 50px; width: auto;"></a>
+                        <a href="{{ route('home') }}"><img src="{{ $gs->light_logo ? \App\HelperClass::file_url($gs->light_logo) : asset('client/assets/images/logo/logo.jpg') }}" alt="{{ $gs->business_name ?? '' }}" style="max-height: 50px; width: auto;"></a>
                     </div>
                 </div>
                 <!-- Logo End -->
@@ -138,7 +138,7 @@
                                             <li class="mega-menu-title">
                                                 <a href="{{ route('client.products.index', ['category_nav' => $category->id]) }}">
                                                     @if($category->icon)
-                                                        <img src="{{ asset('storage/'.$category->icon) }}" alt="" style="width: 20px; height: 20px; object-fit: contain; margin-right: 5px;">
+                                                        <img src="{{ \App\HelperClass::file_url($category->icon) }}" alt="" style="width: 20px; height: 20px; object-fit: contain; margin-right: 5px;">
                                                     @endif
                                                     {{ $category->name }}
                                                 </a>
@@ -147,7 +147,7 @@
                                                <li>
                                                    <a href="{{ route('client.products.index', ['category_nav' => $subcategory->id]) }}">
                                                        @if($subcategory->icon)
-                                                           <img src="{{ asset('storage/'.$subcategory->icon) }}" alt="" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px;">
+                                                           <img src="{{ \App\HelperClass::file_url($subcategory->icon) }}" alt="" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px;">
                                                        @endif
                                                        {{ $subcategory->name }}
                                                    </a>
@@ -160,7 +160,7 @@
                                         @php $m_banner = \App\HelperClass::getBanner('menu_banner'); @endphp
                                         @if($m_banner)
                                         <a href="{{ $m_banner->link ?? route('client.products.index') }}"><img
-                                                src="{{ str_contains($m_banner->image, 'client/') ? asset($m_banner->image) : asset('storage/'.$m_banner->image) }}"
+                                                src="{{ str_contains($m_banner->image, 'client/') ? asset($m_banner->image) : \App\HelperClass::file_url($m_banner->image) }}"
                                                 alt=""></a>
                                         @endif
                                                 </li>
@@ -231,7 +231,7 @@
             <div class="row justify-content-between align-items-center">
                 <div class="col-6 col-sm-6">
                     <div class="logo m-0 p-0 text-start">
-                        <a href="{{ route('home') }}" class="d-inline-block"><img src="{{ $gs->light_logo ? asset('storage/'.$gs->light_logo) : asset('client/assets/images/logo/logo.jpg') }}" alt="{{ $gs->business_name ?? '' }}" style="max-height: 40px; width: auto; display: block;"></a>
+                        <a href="{{ route('home') }}" class="d-inline-block"><img src="{{ $gs->light_logo ? \App\HelperClass::file_url($gs->light_logo) : asset('client/assets/images/logo/logo.jpg') }}" alt="{{ $gs->business_name ?? '' }}" style="max-height: 40px; width: auto; display: block;"></a>
                     </div>
                 </div>
                 <div class="col-6 col-sm-6">
@@ -241,7 +241,7 @@
                             <button class="dropdown-toggle border-0 bg-transparent p-0 header-action-btn hover-style-default"
                                     data-bs-toggle="dropdown" style="font-size: 20px;">
                                 @if(Auth::guard('web')->check() && Auth::guard('web')->user()->image)
-                                    <img src="{{ asset('storage/'.Auth::guard('web')->user()->image) }}" alt="" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
+                                    <img src="{{ \App\HelperClass::file_url(Auth::guard('web')->user()->image) }}" alt="" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
                                 @else
                                     <i class="ion-person"></i>
                                 @endif
@@ -314,7 +314,7 @@
         <div class="user-info-offcanvas d-flex align-items-center p-3 border-bottom mb-3">
             <div class="user-avatar-offcanvas me-3">
                 @if(Auth::user()->image)
-                    <img src="{{ asset('storage/'.Auth::user()->image) }}" alt="" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                    <img src="{{ \App\HelperClass::file_url(Auth::user()->image) }}" alt="" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
                 @else
                     <div style="width: 50px; height: 50px; border-radius: 50%; background: #7AAACE; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px;">
                         {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
@@ -357,7 +357,7 @@
                         <li>
                             <a href="{{ route('client.products.index', ['category_nav' => $category->id]) }}">
                                 @if($category->icon)
-                                    <img src="{{ asset('storage/'.$category->icon) }}" alt="" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px;">
+                                    <img src="{{ \App\HelperClass::file_url($category->icon) }}" alt="" style="width: 16px; height: 16px; object-fit: contain; margin-right: 5px;">
                                 @endif
                                 <span class="menu-text">{{ $category->name }}</span>
                             </a>
@@ -367,7 +367,7 @@
                                 <li>
                                     <a href="{{ route('client.products.index', ['category_nav' => $subcategory->id]) }}">
                                         @if($subcategory->icon)
-                                            <img src="{{ asset('storage/'.$subcategory->icon) }}" alt="" style="width: 14px; height: 14px; object-fit: contain; margin-right: 5px;">
+                                            <img src="{{ \App\HelperClass::file_url($subcategory->icon) }}" alt="" style="width: 14px; height: 14px; object-fit: contain; margin-right: 5px;">
                                         @endif
                                         {{ $subcategory->name }}
                                     </a>

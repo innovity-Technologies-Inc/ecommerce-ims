@@ -81,7 +81,7 @@
                                 @forelse($product->images->sortByDesc('is_primary') as $image)
                                     <div class="swiper-slide">
                                         <div class="swiper-zoom-container">
-                                            <img src="{{ asset('storage/'.$image->image_path) }}" alt="{{ $product->name }}">
+                                            <img src="{{ \App\HelperClass::file_url($image->image_path) }}" alt="{{ $product->name }}">
                                         </div>
                                     </div>
                                 @empty
@@ -100,7 +100,7 @@
                                 @foreach($product->images->sortByDesc('is_primary') as $image)
                                     <div class="swiper-slide">
                                         <div class="thumb-img-wrapper border rounded p-1 shadow-sm transition-all">
-                                            <img src="{{ asset('storage/'.$image->image_path) }}" alt="{{ $product->name }}">
+                                            <img src="{{ \App\HelperClass::file_url($image->image_path) }}" alt="{{ $product->name }}">
                                         </div>
                                     </div>
                                 @endforeach
@@ -278,7 +278,7 @@
                     <div class="img-block">
                         <a href="{{ route('client.products.details', $item->slug) }}" class="thumbnail">
                             @if($item->primaryImage)
-                                <img class="first-img" src="{{ asset('storage/'.$item->primaryImage->image_path) }}" alt="{{ $item->name }}">
+                                <img class="first-img" src="{{ \App\HelperClass::file_url($item->primaryImage->image_path) }}" alt="{{ $item->name }}">
                             @else
                                 <img class="first-img" src="{{ asset('client/assets/images/product-image/organic/product-1.jpg') }}" alt="">
                             @endif

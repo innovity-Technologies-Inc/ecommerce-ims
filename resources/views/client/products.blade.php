@@ -103,14 +103,14 @@
                                                             <div class="img-block">
                                                                 <a href="{{ route('client.products.details', $product->slug) }}" class="thumbnail">
                                                                     @if($product->primaryImage)
-                                                                        <img class="first-img" src="{{ asset('storage/' . $product->primaryImage->image_path) }}" alt="{{ $product->name }}">
+                                                                        <img class="first-img" src="{{ \App\HelperClass::file_url($product->primaryImage->image_path) }}" alt="{{ $product->name }}">
                                                                         @php
                                                                             $secondImage = $product->images->where('is_primary', false)->first();
                                                                         @endphp
                                                                         @if($secondImage)
-                                                                            <img class="second-img" src="{{ asset('storage/' . $secondImage->image_path) }}" alt="{{ $product->name }}">
+                                                                            <img class="second-img" src="{{ \App\HelperClass::file_url($secondImage->image_path) }}" alt="{{ $product->name }}">
                                                                         @else
-                                                                            <img class="second-img" src="{{ asset('storage/' . $product->primaryImage->image_path) }}" alt="{{ $product->name }}">
+                                                                            <img class="second-img" src="{{ \App\HelperClass::file_url($product->primaryImage->image_path) }}" alt="{{ $product->name }}">
                                                                         @endif
                                                                     @else
                                                                         <img class="first-img" src="{{ asset('client/assets/images/product-image/organic/product-1.jpg') }}" alt="">

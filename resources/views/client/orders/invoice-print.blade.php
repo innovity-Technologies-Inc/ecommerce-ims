@@ -59,7 +59,7 @@
                             <td class="title" style="padding-left: 0;">
                                 @php $gs = \App\HelperClass::generalSettings(); @endphp
                                 @if($gs && $gs->dark_logo)
-                                    <img src="{{ asset('storage/'.$gs->dark_logo) }}" style="width:100%; max-width:180px;">
+                                    <img src="{{ \App\HelperClass::file_url($gs->dark_logo) }}" style="width:100%; max-width:180px;">
                                 @else
                                     <h2 style="margin:0;">{{ config('app.name') }}</h2>
                                 @endif

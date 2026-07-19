@@ -48,7 +48,7 @@
                     <td class="product-thumbnail">
                         <a href="{{ route('client.products.details', $product->slug) }}">
                             @if($product->primaryImage)
-                                <img src="{{ asset('storage/'.$product->primaryImage->image_path) }}" alt="{{ $product->name }}" style="max-width: 100px;">
+                                <img src="{{ \App\HelperClass::file_url($product->primaryImage->image_path) }}" alt="{{ $product->name }}" style="max-width: 100px;">
                             @else
                                 <img src="{{ asset('client/assets/images/product-image/mini-cart/1.1.jpg') }}" alt="No Image" style="max-width: 100px;">
                             @endif

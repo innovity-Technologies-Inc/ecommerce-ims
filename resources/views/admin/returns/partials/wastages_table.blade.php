@@ -17,7 +17,7 @@
                     <td class="ps-3">{{ $sl++ }}</td>
                     <td>
                         <div class="d-flex align-items-center gap-3">
-                            <img src="{{ $wastage->product->primaryImage ? asset('storage/'.$wastage->product->primaryImage->image_path) : asset('admin_assets/images/no-image.png') }}" class="rounded-pill" style="width: 35px; height: 35px; object-fit: cover;">
+                            <img src="{{ $wastage->product->primaryImage ? \App\HelperClass::file_url($wastage->product->primaryImage->image_path) : asset('admin_assets/images/no-image.png') }}" class="rounded-pill" style="width: 35px; height: 35px; object-fit: cover;">
                             <div>
                                 <h6 class="mb-0 fs-13">{{ $wastage->product->name }}</h6>
                                 @if($wastage->productVariant)

@@ -15,7 +15,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ $gs->favicon ? asset('storage/'.$gs->favicon) : asset('admin_assets/assets/images/favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ $gs->favicon ? \App\HelperClass::file_url($gs->favicon) : asset('admin_assets/assets/images/favicon.ico') }}">
 
     <!-- Vendor css (Require in all Page) -->
     <link href="{{asset('admin_assets/assets/css/vendor.min.css')}}" rel="stylesheet" type="text/css" />

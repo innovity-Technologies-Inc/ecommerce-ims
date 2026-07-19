@@ -216,7 +216,7 @@
                                                 @php $primaryImg = $product->images->where('is_primary', true)->first(); @endphp
                                                 @if($primaryImg)
                                                     <div class="mt-2">
-                                                        <img src="{{ asset('storage/'.$primaryImg->image_path) }}" class="img-thumbnail" style="height: 100px; width: 100px; object-fit: contain;">
+                                                        <img src="{{ \App\HelperClass::file_url($primaryImg->image_path) }}" class="img-thumbnail" style="height: 100px; width: 100px; object-fit: contain;">
                                                     </div>
                                                 @endif
                                             @endif
@@ -238,7 +238,7 @@
                                                     @foreach($product->images->where('is_primary', false) as $image)
                                                         <div class="col-md-3 mb-3">
                                                             <div class="position-relative">
-                                                                <img src="{{ asset('storage/'.$image->image_path) }}" class="img-thumbnail bg-light" style="height: 80px; width: 100%; object-fit: contain;">
+                                                                <img src="{{ \App\HelperClass::file_url($image->image_path) }}" class="img-thumbnail bg-light" style="height: 80px; width: 100%; object-fit: contain;">
                                                             </div>
                                                         </div>
                                                     @endforeach

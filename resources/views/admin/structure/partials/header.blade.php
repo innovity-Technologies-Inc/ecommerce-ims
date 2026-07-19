@@ -130,9 +130,9 @@
                         <span class="d-flex align-items-center">
                             @php($adminUser = Auth::guard('admin')->user())
                             @if($adminUser->avatar)
-                                <img class="rounded-circle avatar-sm" src="{{ asset('storage/' . $adminUser->avatar) }}" alt="avatar">
+                                <img class="rounded-circle avatar-sm" src="{{ \App\HelperClass::file_url($adminUser->avatar) }}" alt="avatar">
                             @elseif($adminUser->image)
-                                <img class="rounded-circle avatar-sm" src="{{ asset('storage/' . $adminUser->image) }}" alt="avatar">
+                                <img class="rounded-circle avatar-sm" src="{{ \App\HelperClass::file_url($adminUser->image) }}" alt="avatar">
                             @else
                                 <img class="rounded-circle avatar-sm" src="{{ asset('admin_assets/images/users/avatar-1.jpg') }}" alt="avatar">
                             @endif

@@ -26,7 +26,7 @@
                             <div class="col-12 text-center mb-2">
                                 <p class="text-muted mb-2">Current Image Preview</p>
                                 <div class="p-2 border rounded bg-light d-inline-block">
-                                    <img src="{{ str_contains($banner->image, 'client/') ? asset($banner->image) : asset('storage/'.$banner->image) }}" 
+                                    <img src="{{ str_contains($banner->image, 'client/') ? asset($banner->image) : \App\HelperClass::file_url($banner->image) }}" 
                                          class="img-fluid rounded" alt="Current Banner" style="max-height: 250px;">
                                 </div>
                             </div>

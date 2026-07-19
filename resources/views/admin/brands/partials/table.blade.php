@@ -19,7 +19,7 @@
             <td>{{$sl++}}</td>
             <td>
                 @if($data->icon)
-                    <img src="{{ asset('storage/'.$data->icon) }}" alt="{{ $data->name }}" class="avatar-sm rounded">
+                    <img src="{{ \App\HelperClass::file_url($data->icon) }}" alt="{{ $data->name }}" class="avatar-sm rounded">
                 @else
                     <span class="text-muted">No Icon</span>
                 @endif

@@ -221,7 +221,7 @@
                 @php($gs = \App\HelperClass::generalSettings())
                 <div class="auth-logo mb-4">
                     <a href="{{route('admin.login')}}">
-                        <img src="{{ ($gs && $gs->dark_logo) ? asset('storage/'.$gs->dark_logo) : asset('admin_assets/assets/images/logo-dark.png') }}" height="45" alt="logo">
+                        <img src="{{ ($gs && $gs->dark_logo) ? \App\HelperClass::file_url($gs->dark_logo) : asset('admin_assets/assets/images/logo-dark.png') }}" height="45" alt="logo">
                     </a>
                 </div>
                 <h3 class="text-white fw-bold mb-1">Welcome Back</h3>

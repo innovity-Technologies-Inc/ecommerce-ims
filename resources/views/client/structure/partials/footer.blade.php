@@ -11,7 +11,7 @@
                 <div class="col-md-6 col-lg-4">
                     <!-- footer logo -->
                     <div class="footer-logo">
-                        <a href="{{ route('home') }}"><img src="{{ $gs->light_logo ? asset('storage/'.$gs->light_logo) : asset('client/assets/images/logo/footer-logo.png') }}" alt="{{ $gs->business_name ?? '' }}" style="max-height: 40px; width: auto;"></a>
+                        <a href="{{ route('home') }}"><img src="{{ $gs->light_logo ? \App\HelperClass::file_url($gs->light_logo) : asset('client/assets/images/logo/footer-logo.png') }}" alt="{{ $gs->business_name ?? '' }}" style="max-height: 40px; width: auto;"></a>
                     </div>
                     <!-- footer logo -->
                     <div class="about-footer">

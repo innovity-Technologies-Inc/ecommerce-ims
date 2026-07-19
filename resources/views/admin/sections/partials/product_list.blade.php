@@ -3,7 +3,7 @@
     <div class="d-flex align-items-center">
         @php
             $imagePath = $product->primaryImage ? $product->primaryImage->image_path : 'admin_assets/assets/images/logo-sm.png';
-            $imageUrl = $product->primaryImage ? asset('storage/' . $imagePath) : asset($imagePath);
+            $imageUrl = $product->primaryImage ? \App\HelperClass::file_url($imagePath) : asset($imagePath);
             $priceData = \App\HelperClass::getProductPriceRange($product);
             $gs = \App\HelperClass::generalSettings();
         @endphp

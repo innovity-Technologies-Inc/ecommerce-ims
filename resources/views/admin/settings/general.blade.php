@@ -66,7 +66,7 @@
                                     <label for="dark_logo" class="form-label">Dark Logo</label>
                                     <input type="file" name="dark_logo" id="dark_logo" class="form-control">
                                     @if(isset($setting->dark_logo))
-                                        <img src="{{ asset('storage/'.$setting->dark_logo) }}" alt="Dark Logo" class="img-fluid mt-2 rounded bg-light p-1" style="max-height: 50px;">
+                                        <img src="{{ \App\HelperClass::file_url($setting->dark_logo) }}" alt="Dark Logo" class="img-fluid mt-2 rounded bg-light p-1" style="max-height: 50px;">
                                     @endif
                                     @error('dark_logo') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
@@ -76,7 +76,7 @@
                                     <label for="light_logo" class="form-label">Light Logo</label>
                                     <input type="file" name="light_logo" id="light_logo" class="form-control">
                                     @if(isset($setting->light_logo))
-                                        <img src="{{ asset('storage/'.$setting->light_logo) }}" alt="Light Logo" class="img-fluid mt-2 rounded bg-dark p-1" style="max-height: 50px;">
+                                        <img src="{{ \App\HelperClass::file_url($setting->light_logo) }}" alt="Light Logo" class="img-fluid mt-2 rounded bg-dark p-1" style="max-height: 50px;">
                                     @endif
                                     @error('light_logo') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
@@ -86,7 +86,7 @@
                                     <label for="favicon" class="form-label">Favicon</label>
                                     <input type="file" name="favicon" id="favicon" class="form-control">
                                     @if(isset($setting->favicon))
-                                        <img src="{{ asset('storage/'.$setting->favicon) }}" alt="Favicon" class="img-fluid mt-2 rounded" style="max-height: 32px;">
+                                        <img src="{{ \App\HelperClass::file_url($setting->favicon) }}" alt="Favicon" class="img-fluid mt-2 rounded" style="max-height: 32px;">
                                     @endif
                                     @error('favicon') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
@@ -97,7 +97,7 @@
                                     <label for="breadcrumb_image" class="form-label">Breadcrumb Image</label>
                                     <input type="file" name="breadcrumb_image" id="breadcrumb_image" class="form-control">
                                     @if(isset($setting->breadcrumb_image))
-                                        <img src="{{ asset('storage/'.$setting->breadcrumb_image) }}" alt="Breadcrumb" class="img-fluid mt-2 rounded" style="max-height: 100px;">
+                                        <img src="{{ \App\HelperClass::file_url($setting->breadcrumb_image) }}" alt="Breadcrumb" class="img-fluid mt-2 rounded" style="max-height: 100px;">
                                     @endif
                                     @error('breadcrumb_image') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
@@ -108,7 +108,7 @@
                                     <label for="login_banner" class="form-label">Login Page Banner (450x600 recommended)</label>
                                     <input type="file" name="login_banner" id="login_banner" class="form-control">
                                     @if(isset($setting->login_banner))
-                                        <img src="{{ asset('storage/'.$setting->login_banner) }}" alt="Login Banner" class="img-fluid mt-2 rounded border" style="max-height: 100px;">
+                                        <img src="{{ \App\HelperClass::file_url($setting->login_banner) }}" alt="Login Banner" class="img-fluid mt-2 rounded border" style="max-height: 100px;">
                                     @endif
                                     @error('login_banner') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>
@@ -119,7 +119,7 @@
                                     <label for="register_banner" class="form-label">Registration Page Banner (450x650 recommended)</label>
                                     <input type="file" name="register_banner" id="register_banner" class="form-control">
                                     @if(isset($setting->register_banner))
-                                        <img src="{{ asset('storage/'.$setting->register_banner) }}" alt="Register Banner" class="img-fluid mt-2 rounded border" style="max-height: 100px;">
+                                        <img src="{{ \App\HelperClass::file_url($setting->register_banner) }}" alt="Register Banner" class="img-fluid mt-2 rounded border" style="max-height: 100px;">
                                     @endif
                                     @error('register_banner') <span class="text-danger small">{{ $message }}</span> @enderror
                                 </div>

@@ -1,5 +1,5 @@
 @if($featuredSection && $featuredSection->is_visible && $featuredProducts->isNotEmpty())
-<section class="feature-area-2" style="background-image: url('{{ $featuredSection->background_image ? asset('storage/'.$featuredSection->background_image) : asset('client/assets/images/feature-bg/feature-bg.jpg') }}'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+<section class="feature-area-2" style="background-image: url('{{ $featuredSection->background_image ? \App\HelperClass::file_url($featuredSection->background_image) : asset('client/assets/images/feature-bg/feature-bg.jpg') }}'); background-size: cover; background-position: center; background-repeat: no-repeat;">
     <div class="container">
         <div class="row">
             <!-- Content side -->

@@ -37,7 +37,7 @@
                     <span class="badge bg-soft-info text-info">{{ $recommended_sizes[$banner->slug] ?? 'N/A' }}</span>
                 </div>
                 <div class="card-body text-center p-0 overflow-hidden" style="height: 200px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
-                    <img src="{{ str_contains($banner->image, 'client/') ? asset($banner->image) : asset('storage/'.$banner->image) }}" 
+                    <img src="{{ str_contains($banner->image, 'client/') ? asset($banner->image) : \App\HelperClass::file_url($banner->image) }}" 
                          class="img-fluid" alt="Banner" style="max-height: 100%; object-fit: contain;">
                 </div>
                 <div class="card-body bg-white border-top">

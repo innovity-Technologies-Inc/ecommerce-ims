@@ -16,7 +16,7 @@
                 <td class="ps-3">{{ ($products->currentPage() - 1) * $products->perPage() + $loop->iteration }}</td>
                 <td>
                     <div class="d-flex align-items-center">
-                        <img src="{{ asset('storage/' . ($product->primaryImage?->image_path ?? '')) }}" alt="" class="avatar-sm rounded me-2">
+                        <img src="{{ \App\HelperClass::file_url(($product->primaryImage?->image_path ?? '')) }}" alt="" class="avatar-sm rounded me-2">
                         <h5 class="fs-14 my-1"><a href="{{ route('admin.products.show', $product->id) }}" class="text-reset">{{ $product->name }}</a></h5>
                     </div>
                 </td>

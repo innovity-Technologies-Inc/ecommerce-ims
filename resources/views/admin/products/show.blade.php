@@ -17,7 +17,7 @@
             <div class="card">
                 <div class="card-body">
                     @if($product->primaryImage)
-                        <img id="main-product-image" src="{{ asset('storage/'.$product->primaryImage->image_path) }}" alt="{{ $product->name }}" class="img-fluid rounded mb-3">
+                        <img id="main-product-image" src="{{ \App\HelperClass::file_url($product->primaryImage->image_path) }}" alt="{{ $product->name }}" class="img-fluid rounded mb-3">
                     @else
                         <div class="bg-light rounded d-flex align-items-center justify-content-center mb-3" style="height: 300px;">
                             <span class="text-muted">No Image</span>
@@ -26,11 +26,11 @@
                     <div class="row g-2">
                         @foreach($product->images as $image)
                             <div class="col-3">
-                                <img src="{{ asset('storage/'.$image->image_path) }}" 
+                                <img src="{{ \App\HelperClass::file_url($image->image_path) }}" 
                                      alt="{{ $product->name }}" 
                                      class="img-fluid rounded border thumbnail-image {{ $image->is_primary ? 'border-primary border-2' : '' }} bg-light" 
                                      style="cursor: pointer; height: 60px; width: 100%; object-fit: contain;"
-                                     data-full-image="{{ asset('storage/'.$image->image_path) }}">
+                                     data-full-image="{{ \App\HelperClass::file_url($image->image_path) }}">
                             </div>
                         @endforeach
                     </div>

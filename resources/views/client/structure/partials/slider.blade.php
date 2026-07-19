@@ -4,7 +4,7 @@
     <div class="slider-active-3 owl-carousel slider-hm8 owl-dot-style">
         @foreach($sliders as $slider)
         <!-- Slider Single Item Start -->
-        <div class="slider-height-6 d-flex align-items-start justify-content-start bg-img" style="background-image: url('{{ asset('storage/'.$slider->image) }}');">
+        <div class="slider-height-6 d-flex align-items-start justify-content-start bg-img" style="background-image: url('{{ \App\HelperClass::file_url($slider->image) }}');">
             <div class="container">
                 <div class="slider-content-1 slider-animated-1 text-left">
                     @if($slider->subtext)

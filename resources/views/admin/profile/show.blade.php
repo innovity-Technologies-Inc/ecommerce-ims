@@ -13,7 +13,7 @@
                     <div class="position-relative mb-4">
                         @php($adminAvatar = $admin->avatar ?? $admin->image)
                         @if($adminAvatar)
-                            <img src="{{ asset('storage/' . $adminAvatar) }}" alt="{{ $admin->name }}" class="rounded-circle img-thumbnail shadow-sm" style="width: 150px; height: 150px; object-fit: cover;">
+                            <img src="{{ \App\HelperClass::file_url($adminAvatar) }}" alt="{{ $admin->name }}" class="rounded-circle img-thumbnail shadow-sm" style="width: 150px; height: 150px; object-fit: cover;">
                         @else
                             <div class="mx-auto" style="width: 150px; height: 150px;">
                                 <span class="avatar-title bg-soft-primary text-primary rounded-circle d-flex align-items-center justify-content-center h-100 w-100 fw-bold" style="font-size: 64px;">
@@ -165,9 +165,9 @@
                 <div class="modal-body text-center">
                     <div class="mb-3">
                         @if($admin->avatar)
-                            <img src="{{ asset('storage/' . $admin->avatar) }}" alt="{{ $admin->name }}" class="rounded-circle img-thumbnail mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+                            <img src="{{ \App\HelperClass::file_url($admin->avatar) }}" alt="{{ $admin->name }}" class="rounded-circle img-thumbnail mb-3" style="width: 120px; height: 120px; object-fit: cover;">
                         @elseif($admin->image)
-                            <img src="{{ asset('storage/' . $admin->image) }}" alt="{{ $admin->name }}" class="rounded-circle img-thumbnail mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+                            <img src="{{ \App\HelperClass::file_url($admin->image) }}" alt="{{ $admin->name }}" class="rounded-circle img-thumbnail mb-3" style="width: 120px; height: 120px; object-fit: cover;">
                         @endif
                         <input class="form-control" type="file" id="avatar" name="avatar" required>
                         <div class="form-text mt-2">Recommended: Square image, max 2MB.</div>

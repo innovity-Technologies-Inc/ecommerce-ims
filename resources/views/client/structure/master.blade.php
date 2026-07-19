@@ -16,7 +16,7 @@
     {!! NoCaptcha::renderJs() !!}
 
     <!-- Favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="{{ $gs->favicon ? asset('storage/'.$gs->favicon) : asset('client/assets/images/favicon/favicon.png') }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ $gs->favicon ? \App\HelperClass::file_url($gs->favicon) : asset('client/assets/images/favicon/favicon.png') }}">
 
     <!-- Google Fonts -->
     <link href="../../css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">

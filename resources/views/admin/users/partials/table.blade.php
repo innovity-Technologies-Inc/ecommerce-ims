@@ -18,7 +18,7 @@
         <tr>
             <td>{{$sl++}}</td>
             <td>
-                <img src="{{ $data->image ? asset('storage/' . $data->image) : asset('admin_assets/images/users/avatar-1.jpg') }}" alt="" class="avatar-sm rounded-circle me-2">
+                <img src="{{ $data->image ? \App\HelperClass::file_url($data->image) : asset('admin_assets/images/users/avatar-1.jpg') }}" alt="" class="avatar-sm rounded-circle me-2">
             </td>
            <td>{{$data->name}}</td>
             <td>{{$data->email}}</td>

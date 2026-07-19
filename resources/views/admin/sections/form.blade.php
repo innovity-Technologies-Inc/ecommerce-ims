@@ -50,7 +50,7 @@
                                 <input type="file" name="background_image" id="background_image" class="filepond">
                                 @if($section->background_image)
                                     <div class="mt-2 text-center bg-light p-2 rounded">
-                                        <img src="{{ asset('storage/'.$section->background_image) }}" alt="background" class="img-fluid rounded" style="max-height: 100px;">
+                                        <img src="{{ \App\HelperClass::file_url($section->background_image) }}" alt="background" class="img-fluid rounded" style="max-height: 100px;">
                                     </div>
                                 @endif
                             </div>
@@ -87,7 +87,7 @@
                                             <div class="d-flex align-items-center">
                                                 @php
                                                     $imagePath = $product->primaryImage ? $product->primaryImage->image_path : 'admin_assets/assets/images/logo-sm.png';
-                                                    $imageUrl = $product->primaryImage ? asset('storage/' . $imagePath) : asset($imagePath);
+                                                    $imageUrl = $product->primaryImage ? \App\HelperClass::file_url($imagePath) : asset($imagePath);
                                                     $priceData = \App\HelperClass::getProductPriceRange($product);
                                                     $gs = \App\HelperClass::generalSettings();
                                                 @endphp

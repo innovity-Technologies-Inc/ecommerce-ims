@@ -20,9 +20,9 @@
                             <label for="avatar" class="form-label">Profile Avatar</label>
                             <div class="d-flex align-items-center gap-3 mb-2">
                                 @if($admin->avatar)
-                                    <img src="{{ asset('storage/' . $admin->avatar) }}" alt="{{ $admin->name }}" class="rounded-circle img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
+                                    <img src="{{ \App\HelperClass::file_url($admin->avatar) }}" alt="{{ $admin->name }}" class="rounded-circle img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
                                 @elseif($admin->image)
-                                    <img src="{{ asset('storage/' . $admin->image) }}" alt="{{ $admin->name }}" class="rounded-circle img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
+                                    <img src="{{ \App\HelperClass::file_url($admin->image) }}" alt="{{ $admin->name }}" class="rounded-circle img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
                                 @else
                                     <div class="avatar-lg">
                                         <span class="avatar-title bg-soft-primary text-primary fs-20 rounded-circle">

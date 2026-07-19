@@ -14,7 +14,7 @@
                 <tr>
                     <td class="product-thumbnail text-start ps-3">
                         <div class="d-flex align-items-center gap-3 py-2">
-                            <img src="{{ $item->product->primaryImage ? asset('storage/'.$item->product->primaryImage->image_path) : asset('admin_assets/images/no-image.png') }}" class="rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                            <img src="{{ $item->product->primaryImage ? \App\HelperClass::file_url($item->product->primaryImage->image_path) : asset('admin_assets/images/no-image.png') }}" class="rounded" style="width: 50px; height: 50px; object-fit: cover;">
                         </div>
                     </td>
                     <td class="product-name">

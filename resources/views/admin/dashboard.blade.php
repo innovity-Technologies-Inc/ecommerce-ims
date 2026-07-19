@@ -303,7 +303,7 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <img src="{{ asset('storage/' . ($product->primaryImage?->image_path ?? '')) }}" alt="" class="avatar-sm rounded me-2">
+                                            <img src="{{ \App\HelperClass::file_url(($product->primaryImage?->image_path ?? '')) }}" alt="" class="avatar-sm rounded me-2">
                                             <div>
                                                 <h5 class="fs-14 my-1"><a href="{{ route('admin.products.show', $product->id) }}" class="text-reset">{{ $product->name }}</a></h5>
                                                 <span class="text-muted fs-12">{{ $product->category?->name ?? 'N/A' }}</span>
@@ -343,7 +343,7 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <img src="{{ asset('storage/' . ($product->primaryImage?->image_path ?? '')) }}" alt="" class="avatar-sm rounded me-2">
+                                            <img src="{{ \App\HelperClass::file_url(($product->primaryImage?->image_path ?? '')) }}" alt="" class="avatar-sm rounded me-2">
                                             <div>
                                                 <h5 class="fs-14 my-1"><a href="{{ route('admin.products.show', $product->id) }}" class="text-reset">{{ $product->name }}</a></h5>
                                                 <span class="text-muted fs-12">{{ $product->category?->name ?? 'N/A' }}</span>
@@ -401,7 +401,7 @@
                                 <tr>
                                     <td class="ps-3">
                                         <div class="d-flex align-items-center">
-                                            <img src="{{ asset('storage/' . ($item['image'] ?? '')) }}" alt="" class="avatar-sm rounded me-2">
+                                            <img src="{{ \App\HelperClass::file_url(($item['image'] ?? '')) }}" alt="" class="avatar-sm rounded me-2">
                                             <div>
                                                 <h5 class="fs-14 my-1 text-truncate" style="max-width: 200px;">
                                                     <a href="{{ route('admin.products.show', $item['product_id']) }}" class="text-reset">{{ $item['name'] }}</a>

@@ -28,7 +28,7 @@
         border-color: #7AAACE;
     }
     .auth-side-banner {
-        background: {{ isset($gs->login_banner) ? 'url('.asset('storage/'.$gs->login_banner).')' : 'linear-gradient(135deg, #7AAACE, #9CC2E2)' }};
+        background: {{ isset($gs->login_banner) ? 'url('.\App\HelperClass::file_url($gs->login_banner).')' : 'linear-gradient(135deg, #7AAACE, #9CC2E2)' }};
         background-size: cover;
         background-position: center;
         width: 45%;

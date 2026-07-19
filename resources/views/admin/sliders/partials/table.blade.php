@@ -19,7 +19,7 @@
         <tr>
             <td>{{$sl++}}</td>
             <td>
-                <img src="{{ asset('storage/'.$data->image) }}" alt="{{ $data->title }}" class="avatar-lg rounded">
+                <img src="{{ \App\HelperClass::file_url($data->image) }}" alt="{{ $data->title }}" class="avatar-lg rounded">
             </td>
             <td>
                 <p class="mb-0 fw-bold">{{ $data->title }}</p>

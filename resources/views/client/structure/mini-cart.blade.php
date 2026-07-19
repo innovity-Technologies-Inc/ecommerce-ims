@@ -15,7 +15,7 @@
                     <li>
                         <a href="{{ route('client.products.details', $item->product_slug) }}" class="image">
                             <img
-                                src="{{ $item->image ? asset('storage/'.$item->image) : asset('client/assets/images/product-image/mini-cart/1.jpg') }}"
+                                src="{{ $item->image ? \App\HelperClass::file_url($item->image) : asset('client/assets/images/product-image/mini-cart/1.jpg') }}"
                                 alt="{{ $item->product_name }}">
                         </a>
                         <div class="content">

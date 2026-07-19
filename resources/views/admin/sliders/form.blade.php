@@ -95,7 +95,7 @@
 
                                         @if(isset($slider) && $slider->image)
                                             <div class="mt-2">
-                                                <img src="{{ asset('storage/'.$slider->image) }}" alt="{{ $slider->title }}" class="avatar-lg rounded">
+                                                <img src="{{ \App\HelperClass::file_url($slider->image) }}" alt="{{ $slider->title }}" class="avatar-lg rounded">
                                             </div>
                                         @endif
 

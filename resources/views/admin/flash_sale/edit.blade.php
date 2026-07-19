@@ -76,7 +76,7 @@
                                             <div class="d-flex align-items-center">
                                                 @php
                                                     $imagePath = $item->product->primaryImage ? $item->product->primaryImage->image_path : 'admin_assets/assets/images/logo-sm.png';
-                                                    $imageUrl = $item->product->primaryImage ? asset('storage/' . $imagePath) : asset($imagePath);
+                                                    $imageUrl = $item->product->primaryImage ? \App\HelperClass::file_url($imagePath) : asset($imagePath);
                                                     $priceData = \App\HelperClass::getProductPriceRange($item->product);
                                                     $gs = \App\HelperClass::generalSettings();
                                                 @endphp

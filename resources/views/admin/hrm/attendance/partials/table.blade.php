@@ -19,7 +19,7 @@
                     <td>
                         <div class="d-flex align-items-center gap-2">
                             @if($attendance->admin->image)
-                                <img src="{{ asset('storage/' . $attendance->admin->image) }}" alt="" class="avatar-xs rounded-circle">
+                                <img src="{{ \App\HelperClass::file_url($attendance->admin->image) }}" alt="" class="avatar-xs rounded-circle">
                             @else
                                 <div class="avatar-xs d-flex align-items-center justify-content-center bg-soft-primary text-primary rounded-circle">
                                     {{ substr($attendance->admin->name, 0, 1) }}
