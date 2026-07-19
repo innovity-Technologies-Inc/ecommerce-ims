@@ -67,7 +67,13 @@ class HelperClass
         $file_name = time().Str::random(10).'.'.$file->getClientOriginalExtension();
         $file_path = 'upload/'.$folder_name.'/'.$file_name;
 
-        Storage::disk('minio')->put($file_path, file_get_contents($file), 'public');
+        $disk = config('filesystems.default', 'local');
+
+        if ($disk === 'public' || $disk === 'local') {
+            $file->storeAs('upload/'.$folder_name, $file_name, 'public');
+        } else {
+            Storage::disk($disk)->put($file_path, file_get_contents($file), 'public');
+        }
 
         return $file_path;
     }
@@ -83,7 +89,13 @@ class HelperClass
             $file_name = time().Str::random(10).'.jpg';
             $file_path = 'upload/'.$folder_name.'/'.$file_name;
 
-            Storage::disk('minio')->put($file_path, $contents, 'public');
+            $disk = config('filesystems.default', 'local');
+
+            if ($disk === 'public' || $disk === 'local') {
+                Storage::disk('public')->put($file_path, $contents);
+            } else {
+                Storage::disk($disk)->put($file_path, $contents, 'public');
+            }
 
             return $file_path;
         } catch (\Exception $e) {
@@ -96,12 +108,18 @@ class HelperClass
     public static function file_delete(?string $file_path): void
     {
         if ($file_path) {
-            Storage::disk('minio')->delete($file_path);
+            $disk = config('filesystems.default', 'local');
+
+            if ($disk === 'public' || $disk === 'local') {
+                Storage::disk('public')->delete($file_path);
+            } else {
+                Storage::disk($disk)->delete($file_path);
+            }
         }
     }
 
     /**
-     * Get the public URL for a file stored in MinIO.
+     * Get the public URL for a file stored dynamically.
      */
     public static function file_url(?string $file_path): ?string
     {
@@ -109,7 +127,20 @@ class HelperClass
             return null;
         }
 
-        return Storage::disk('minio')->url($file_path);
+        // If it's a seeded local asset (starts with 'client/' or 'admin_assets/'), load it locally
+        if (str_starts_with($file_path, 'client/') || str_starts_with($file_path, 'admin_assets/')) {
+            return asset($file_path);
+        }
+
+        $disk = config('filesystems.default', 'local');
+
+        // If the default disk is S3-compatible (minio or s3), get the storage url
+        if ($disk === 'minio' || $disk === 's3') {
+            return Storage::disk($disk)->url($file_path);
+        }
+
+        // Otherwise (public, local, etc.), fall back to standard Laravel local asset function
+        return asset('storage/'.$file_path);
     }
 
     public static function getProductTotalStock($product)
