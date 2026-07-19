@@ -18,7 +18,7 @@
                     <h5 class="card-title mb-0">Banner Details</h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('admin.banners.update', $banner->id) }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('admin.banners.update', $banner->slug) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 

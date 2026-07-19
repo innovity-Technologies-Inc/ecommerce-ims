@@ -6,11 +6,6 @@
 <div class="container-xxl">
     <div class="d-flex align-items-center justify-content-between mb-4">
         <h4 class="mb-0">Manage Dynamic Banners</h4>
-        @can('banners.edit')
-        <a href="{{ route('admin.banners.create') }}" class="btn btn-primary btn-sm d-flex align-items-center">
-            <iconify-icon icon="solar:add-circle-bold-duotone" class="fs-18 me-1"></iconify-icon> Add Banner
-        </a>
-        @endcan
     </div>
 
     <div class="row">
@@ -48,7 +43,7 @@
                 <div class="card-body bg-white border-top">
                     <p class="text-muted small mb-3">{{ $descriptions[$banner->slug] ?? 'Dynamic banner placement.' }}</p>
                     <div class="d-grid">
-                        <a href="{{ route('admin.banners.edit', $banner->id) }}" class="btn btn-primary btn-sm">
+                        <a href="{{ route('admin.banners.edit', $banner->slug) }}" class="btn btn-primary btn-sm">
                             <i class="bx bx-edit-alt me-1"></i> Update Banner
                         </a>
                     </div>
