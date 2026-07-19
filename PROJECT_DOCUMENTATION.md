@@ -712,7 +712,7 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     2. **HelperClass:** Generates a unique filename (`time() + Str::random(10) + extension`) and calls `Storage::disk('minio')->put($path, $contents, 'public')`.
     3. **Laravel S3 Driver:** Uses `league/flysystem-aws-s3-v3` to send the file to MinIO via the S3-compatible API on port `9000`.
     4. **MinIO Container:** Receives the file, stores it inside the designated bucket (e.g. `smart-ecom-dev` or `smart-ecom-production`) under `minio_data` Docker volume.
-    5. **URL Generation:** `HelperClass::file_url($path)` or `Storage::disk('minio')->url($path)` returns `http://localhost:9000/{bucket}/{path}` for browser access.
+    5. **URL Generation:** `HelperClass::file_url($path)` or `Storage::disk('minio')->url($path)` returns `http://localhost:9090/{bucket}/{path}` for browser access.
     6. **Deletion:** `HelperClass::file_delete($path)` calls `Storage::disk('minio')->delete($path)`.
     7. **Bucket Bootstrapping:** On first `docker compose up`, the `minio-init` one-shot container (using `minio/mc`) creates both `smart-ecom-dev` and `smart-ecom-production` buckets and sets anonymous `download` policy so public file URLs work without authentication.
 
@@ -729,7 +729,7 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
 | `MINIO_SECRET_KEY` | `minioadmin` | MinIO root password |
 | `MINIO_BUCKET` | `smart-ecom-dev` | Default bucket name (dev: `smart-ecom-dev`, prod: `smart-ecom-production`) |
 | `MINIO_ENDPOINT` | `http://minio:9000` | Internal Docker API URL (used by Laravel) |
-| `MINIO_URL` | `http://localhost:9000/smart-ecom-dev` | Public URL prefix (used by browser) |
+| `MINIO_URL` | `http://localhost:9090/smart-ecom-dev` | Public URL prefix (used by browser) |
 | `FILESYSTEM_DISK` | `minio` | Laravel default disk |
 
 - **Web Console:** MinIO admin dashboard available at `http://localhost:9001` (credentials: `MINIO_ACCESS_KEY` / `MINIO_SECRET_KEY`).
