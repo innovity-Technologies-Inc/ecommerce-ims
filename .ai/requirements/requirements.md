@@ -256,7 +256,7 @@ This document lists the high-level requirements for the modules implemented in t
 - [ ] **REQ-240:** Custom 404 (Not Found) View: Replace the default Laravel 404 error page with a beautifully designed view that dynamically detects the user's context (Admin vs. Client) and provides appropriate recovery paths (Dashboard vs. Shop). (NEW)
 - [x] **REQ-241:** Dockerization: Fully dockerize the Laravel application with production-ready structure (Nginx, PHP 8.3, MySQL 8, Redis, queue worker, scheduler cron, and development overrides). (NEW)
 - [x] **REQ-242:** Simplify Docker Setup: Remove Node/npm/Alpine.js assets compilation building stage from Docker configurations since the user does not use npm or Alpine.js. (NEW)
-- [ ] **REQ-243:** MinIO Object Storage Integration: Integrate MinIO as a self-hosted, S3-compatible object storage backend. Add MinIO as a Docker service (ports 9000 API, 9001 console), define a `minio` filesystem disk in `config/filesystems.php`, add all required `.env` variables, install `league/flysystem-aws-s3-v3`, and update `HelperClass::file_upload()` to route uploads through MinIO. (NEW)
+- [x] **REQ-243:** MinIO Object Storage Integration: Integrate MinIO as a self-hosted, S3-compatible object storage backend. Add MinIO as a Docker service (ports 9000 API, 9001 console), define a `minio` filesystem disk in `config/filesystems.php`, add all required `.env` variables, install `league/flysystem-aws-s3-v3`, and update `HelperClass::file_upload()` to route uploads through MinIO. (NEW)
 
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.

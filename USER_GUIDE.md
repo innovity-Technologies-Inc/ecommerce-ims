@@ -340,10 +340,10 @@ All uploaded files (product images, banners, avatars, etc.) are stored in the **
 *   **Access the MinIO Web Console** at: `http://localhost:9001`
     *   **Username:** `minioadmin` (or your `MINIO_ACCESS_KEY` value from `.env`)
     *   **Password:** `minioadmin` (or your `MINIO_SECRET_KEY` value from `.env`)
-*   From the console you can browse all uploaded files inside the `smart-ecom` bucket, manage access policies, and monitor storage usage.
-*   **Direct file URLs** follow this pattern: `http://localhost:9000/smart-ecom/upload/{folder}/{filename}`
+*   From the console you can browse all uploaded files inside the configured bucket (e.g. `smart-ecom-dev` or `smart-ecom-production`), manage access policies, and monitor storage usage.
+*   **Direct file URLs** follow this pattern: `http://localhost:9000/{bucket-name}/upload/{folder}/{filename}`
 
-> **Note:** If you upload a file and the image doesn't appear in the browser, ensure the `minio` container is running (`docker compose ps`) and the bucket has the `download` anonymous policy set (handled automatically by the `minio-init` container on first boot).
+> **Note:** If you upload a file and the image doesn't appear in the browser, ensure the `minio` container is running (`docker compose ps`) and the buckets have the `download` anonymous policy set (handled automatically by the `minio-init` container on first boot).
 
 ---
 *For further assistance, please contact your system administrator.*

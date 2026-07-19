@@ -19,13 +19,13 @@ Integrate MinIO as a self-hosted, S3-compatible object storage backend for the s
 8. **Commit:** Stage all and commit with `feat: integrate MinIO object storage (REQ-243)`.
 
 ## 3. Verification Criteria
-- [ ] `composer require` installs without errors.
-- [ ] `docker compose up -d` starts `minio` and `minio-init` cleanly.
-- [ ] MinIO console accessible at `http://localhost:9001`.
-- [ ] `php artisan optimize` runs without errors.
-- [ ] File uploads in the admin panel are saved to MinIO bucket.
-- [ ] Public URLs resolve correctly.
+- [x] `composer require` installs without errors.
+- [x] `docker compose up -d` starts `minio` and `minio-init` cleanly (setting up both `smart-ecom-dev` and `smart-ecom-production` buckets).
+- [x] MinIO console accessible at `http://localhost:9001`.
+- [x] `php artisan optimize` runs without errors.
+- [x] File uploads in the admin panel are saved to MinIO bucket.
+- [x] Public URLs resolve correctly.
 
 ## 4. Documentation Update
-- [ ] Update `PROJECT_DOCUMENTATION.md` with MinIO section (What, How, Data & Storage).
-- [ ] Update `USER_GUIDE.md` to mention MinIO console access.
+- [x] Update `PROJECT_DOCUMENTATION.md` with MinIO section (What, How, Data & Storage).
+- [x] Update `USER_GUIDE.md` to mention MinIO console access.
