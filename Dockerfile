@@ -22,6 +22,7 @@ RUN chmod +x /usr/local/bin/install-php-extensions && \
 # Configure PHP production defaults
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+COPY docker/php/custom.ini /usr/local/etc/php/conf.d/custom.ini
 
 # Set working directory
 WORKDIR /var/www/html
