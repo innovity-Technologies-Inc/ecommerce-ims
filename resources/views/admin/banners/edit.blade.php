@@ -33,7 +33,7 @@
 
                             <div class="col-12">
                                 <label class="form-label fw-bold">New Image</label>
-                                <input type="file" name="image" class="form-control @error('image') is-invalid @enderror">
+                                <input type="file" name="image" class="filepond @error('image') is-invalid @enderror">
                                 <div class="mt-2 alert alert-soft-warning border-0">
                                     <i class="bx bx-info-circle me-1"></i> 
                                     Recommended Size: <strong class="text-dark">{{ $recommended_size }}</strong>. 
