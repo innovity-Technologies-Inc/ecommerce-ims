@@ -334,5 +334,16 @@ Run commands inside the running PHP container using `docker compose exec`:
     docker compose down -v
     ```
 
+### MinIO Object Storage Console
+All uploaded files (product images, banners, avatars, etc.) are stored in the **MinIO** container, not on the local disk.
+
+*   **Access the MinIO Web Console** at: `http://localhost:9001`
+    *   **Username:** `minioadmin` (or your `MINIO_ACCESS_KEY` value from `.env`)
+    *   **Password:** `minioadmin` (or your `MINIO_SECRET_KEY` value from `.env`)
+*   From the console you can browse all uploaded files inside the `smart-ecom` bucket, manage access policies, and monitor storage usage.
+*   **Direct file URLs** follow this pattern: `http://localhost:9000/smart-ecom/upload/{folder}/{filename}`
+
+> **Note:** If you upload a file and the image doesn't appear in the browser, ensure the `minio` container is running (`docker compose ps`) and the bucket has the `download` anonymous policy set (handled automatically by the `minio-init` container on first boot).
+
 ---
 *For further assistance, please contact your system administrator.*

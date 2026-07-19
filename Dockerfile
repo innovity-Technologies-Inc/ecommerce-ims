@@ -48,5 +48,7 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
+EXPOSE 9000
+
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["php-fpm"]

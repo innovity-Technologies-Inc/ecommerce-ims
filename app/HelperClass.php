@@ -62,15 +62,17 @@ class HelperClass
         return $sl;
     }
 
-    public static function file_upload($file, $folder_name)
+    public static function file_upload($file, $folder_name): string
     {
         $file_name = time().Str::random(10).'.'.$file->getClientOriginalExtension();
-        $file_path = $file->storeAs('upload/'.$folder_name, $file_name, 'public');
+        $file_path = 'upload/'.$folder_name.'/'.$file_name;
+
+        Storage::disk('minio')->put($file_path, file_get_contents($file), 'public');
 
         return $file_path;
     }
 
-    public static function file_upload_from_url($url, $folder_name)
+    public static function file_upload_from_url($url, $folder_name): ?string
     {
         try {
             $contents = file_get_contents($url);
@@ -81,7 +83,7 @@ class HelperClass
             $file_name = time().Str::random(10).'.jpg';
             $file_path = 'upload/'.$folder_name.'/'.$file_name;
 
-            Storage::disk('public')->put($file_path, $contents);
+            Storage::disk('minio')->put($file_path, $contents, 'public');
 
             return $file_path;
         } catch (\Exception $e) {
@@ -91,9 +93,23 @@ class HelperClass
         }
     }
 
-    public static function file_delete($file_path)
+    public static function file_delete(?string $file_path): void
     {
-        Storage::disk('public')->delete($file_path);
+        if ($file_path) {
+            Storage::disk('minio')->delete($file_path);
+        }
+    }
+
+    /**
+     * Get the public URL for a file stored in MinIO.
+     */
+    public static function file_url(?string $file_path): ?string
+    {
+        if (! $file_path) {
+            return null;
+        }
+
+        return Storage::disk('minio')->url($file_path);
     }
 
     public static function getProductTotalStock($product)

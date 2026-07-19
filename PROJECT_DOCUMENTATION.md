@@ -700,3 +700,36 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
     - `db_data` (MySQL Persistence): Mounts `/var/lib/mysql` to preserve database records across restarts.
     - `redis_data` (Redis Persistence): Mounts `/data` to preserve redis cache and queue jobs.
     - In local development (`docker-compose.override.yml`), host volumes mount `.:/var/www/html` with `:cached` for fast WSL2 disk access, overriding container contents.
+
+---
+
+### 3.X MinIO Object Storage (REQ-243)
+
+- **What (Business Purpose):** MinIO replaces local disk storage for all file uploads (product images, banners, admin avatars, return photos, etc.). It provides a self-hosted, S3-compatible object storage server that works identically in local development (Docker) and production environments. Files are stored in a named volume `minio_data`, surviving container restarts.
+
+- **How it Works (Technical Flow):**
+    1. **Upload Request:** A Service class calls `HelperClass::file_upload($file, 'folder')`.
+    2. **HelperClass:** Generates a unique filename (`time() + Str::random(10) + extension`) and calls `Storage::disk('minio')->put($path, $contents, 'public')`.
+    3. **Laravel S3 Driver:** Uses `league/flysystem-aws-s3-v3` to send the file to MinIO via the S3-compatible API on port `9000`.
+    4. **MinIO Container:** Receives the file, stores it inside the `smart-ecom` bucket under `minio_data` Docker volume.
+    5. **URL Generation:** `HelperClass::file_url($path)` or `Storage::disk('minio')->url($path)` returns `http://localhost:9000/smart-ecom/{path}` for browser access.
+    6. **Deletion:** `HelperClass::file_delete($path)` calls `Storage::disk('minio')->delete($path)`.
+    7. **Bucket Bootstrapping:** On first `docker compose up`, the `minio-init` one-shot container (using `minio/mc`) creates the `smart-ecom` bucket and sets anonymous `download` policy so public file URLs work without authentication.
+
+- **Data & Storage (DB Connectivity):**
+    - Files are **not** stored in the database. Only the **relative path** (e.g., `upload/products/169xxxxx.jpg`) is saved in the relevant model column (`products.image`, `general_settings.logo`, etc.).
+    - `minio_data` Docker volume → MinIO container → `smart-ecom` bucket → path-based file storage.
+    - The `minio` disk in `config/filesystems.php` uses `use_path_style_endpoint: true` (mandatory for MinIO; unlike AWS which uses virtual-hosted style).
+
+- **Key Configuration:**
+
+| Variable | Default (Docker) | Purpose |
+|---|---|---|
+| `MINIO_ACCESS_KEY` | `minioadmin` | MinIO root username |
+| `MINIO_SECRET_KEY` | `minioadmin` | MinIO root password |
+| `MINIO_BUCKET` | `smart-ecom` | Default bucket name |
+| `MINIO_ENDPOINT` | `http://minio:9000` | Internal Docker API URL (used by Laravel) |
+| `MINIO_URL` | `http://localhost:9000/smart-ecom` | Public URL prefix (used by browser) |
+| `FILESYSTEM_DISK` | `minio` | Laravel default disk |
+
+- **Web Console:** MinIO admin dashboard available at `http://localhost:9001` (credentials: `MINIO_ACCESS_KEY` / `MINIO_SECRET_KEY`).

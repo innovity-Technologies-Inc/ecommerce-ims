@@ -49,7 +49,7 @@ if [ "${APP_ENV}" = "local" ]; then
     php artisan config:clear
     php artisan cache:clear
     php artisan route:clear
-
+vdjhbhedj
 
     # Run seeders only if they haven't been run before
     if [ ! -f "storage/logs/seeded.lock" ]; then
