@@ -59,9 +59,10 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     });
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard')->middleware('permission:dashboard.view');
 
-    // Manage Banners
     Route::prefix('banners')->controller(\App\Http\Controllers\Admin\BannerController::class)->group(function () {
         Route::get('/', 'index')->name('admin.banners.index')->middleware('permission:banners.view');
+        Route::get('/create', 'create')->name('admin.banners.create')->middleware('permission:banners.edit');
+        Route::post('/', 'store')->name('admin.banners.store')->middleware('permission:banners.edit');
         Route::get('/{id}/edit', 'edit')->name('admin.banners.edit')->middleware('permission:banners.edit');
         Route::put('/{id}/update', 'update')->name('admin.banners.update')->middleware('permission:banners.edit');
     });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreBannerRequest;
 use App\Http\Requests\Admin\UpdateBannerRequest;
 use App\Services\BannerService;
 use Illuminate\Http\RedirectResponse;
@@ -59,6 +60,34 @@ class BannerController extends Controller
 
         return back()->with([
             'message' => 'Failed to update banner.',
+            'alert-type' => 'error',
+        ]);
+    }
+
+    /**
+     * Show the form for creating a new banner.
+     */
+    public function create(): View
+    {
+        return view('admin.banners.create');
+    }
+
+    /**
+     * Store a newly created banner in storage.
+     */
+    public function store(StoreBannerRequest $request): RedirectResponse
+    {
+        $result = $this->bannerService->storeBanner($request->validated());
+
+        if ($result) {
+            return redirect()->route('admin.banners.index')->with([
+                'message' => 'Banner created successfully.',
+                'alert-type' => 'success',
+            ]);
+        }
+
+        return back()->with([
+            'message' => 'Failed to create banner.',
             'alert-type' => 'error',
         ]);
     }

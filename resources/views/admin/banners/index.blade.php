@@ -6,6 +6,11 @@
 <div class="container-xxl">
     <div class="d-flex align-items-center justify-content-between mb-4">
         <h4 class="mb-0">Manage Dynamic Banners</h4>
+        @can('banners.edit')
+        <a href="{{ route('admin.banners.create') }}" class="btn btn-primary btn-sm d-flex align-items-center">
+            <iconify-icon icon="solar:add-circle-bold-duotone" class="fs-18 me-1"></iconify-icon> Add Banner
+        </a>
+        @endcan
     </div>
 
     <div class="row">

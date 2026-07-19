@@ -57,4 +57,22 @@ class BannerService
             return false;
         }
     }
+
+    /**
+     * Store new banner.
+     */
+    public function storeBanner(array $data)
+    {
+        try {
+            if (isset($data['image'])) {
+                $data['image'] = HelperClass::file_upload($data['image'], 'banners');
+            }
+
+            return Banner::create($data);
+        } catch (\Exception $e) {
+            Log::error('Error storing banner: '.$e->getMessage());
+
+            return false;
+        }
+    }
 }
