@@ -19,6 +19,53 @@
             right: -5px !important;
         }
     }
+    @media (min-width: 992px) {
+        .header-navigation .row {
+            display: flex !important;
+            align-items: center !important;
+        }
+        .header-navigation .logo {
+            margin: 0 !important;
+        }
+        .header-navigation .col-md-10 {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+        }
+        .header-navigation .main-navigation {
+            margin: 0 !important;
+            float: none !important;
+        }
+        .header-navigation .header_account_area {
+            margin: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: flex-end !important;
+        }
+        .header-navigation .header_account_list {
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+        .header-navigation .header_account_list > a {
+            display: flex !important;
+            align-items: center !important;
+            line-height: 1 !important;
+        }
+        .header-navigation .contact-link {
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+        .header-navigation .cart-info {
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+    }
 </style>
 <header class="main-header">
     <!-- Header Top Start -->
