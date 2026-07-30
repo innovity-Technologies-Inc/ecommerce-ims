@@ -45,13 +45,26 @@
         .header-navigation .header_account_list {
             margin-top: 0 !important;
             margin-bottom: 0 !important;
-            display: flex !important;
+            display: inline-flex !important;
             align-items: center !important;
+            height: 100% !important;
         }
         .header-navigation .header_account_list > a {
-            display: flex !important;
+            display: inline-flex !important;
             align-items: center !important;
+            justify-content: center !important;
+            width: 28px !important;
+            height: 28px !important;
             line-height: 1 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        .header-navigation .header_account_list > a i {
+            display: inline-block !important;
+            line-height: 1 !important;
+            font-size: 28px !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
         .header-navigation .contact-link {
             margin-top: 0 !important;
