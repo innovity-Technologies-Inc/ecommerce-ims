@@ -762,4 +762,15 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
 - **Data & Storage (DB Connectivity):**
     - The dynamic social settings are retrieved from the `contact_settings` model, which maps database records representing external URLs. The removal strictly limits menu rendering without altering database values.
 
+### 3.AA Mobile Header Logo Sizing (REQ-246)
+
+- **What (Business Purpose):** Improves the visibility and legibility of the store's brand logo on mobile devices. Increasing the max-height ensures the brand is clearly represented without overlapping or distorting the mobile header components.
+
+- **How it Works (Technical Flow):**
+    1. **Logo Scaling:** Modified the mobile layout logo container inside `header.blade.php`. Changed the inline image constraints from `max-height: 40px;` to `max-height: 55px;`, keeping proportional width (`width: auto;`) and aspect ratio intact (`object-fit: contain;`).
+
+- **Data & Storage (DB Connectivity):**
+    - Refer to `general_settings` table where the image path is configured via $gs->light_logo.
+
+
 
