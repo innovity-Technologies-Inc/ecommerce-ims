@@ -211,11 +211,30 @@
         }
 
         .main-nav .logo-box a {
-            display: flex !important;
             align-items: center !important;
             justify-content: center !important;
             width: 100% !important;
             height: 100% !important;
+        }
+
+        /* Default (Light Mode) display rules */
+        .main-nav .logo-box a.logo-dark {
+            display: flex !important;
+        }
+        .main-nav .logo-box a.logo-light {
+            display: none !important;
+        }
+
+        /* Dark Mode / Brand color display overrides */
+        html[data-bs-theme=dark] .main-nav .logo-box a.logo-light,
+        html[data-menu-color=dark] .main-nav .logo-box a.logo-light,
+        html[data-menu-color=brand] .main-nav .logo-box a.logo-light {
+            display: flex !important;
+        }
+        html[data-bs-theme=dark] .main-nav .logo-box a.logo-dark,
+        html[data-menu-color=dark] .main-nav .logo-box a.logo-dark,
+        html[data-menu-color=brand] .main-nav .logo-box a.logo-dark {
+            display: none !important;
         }
 
         .main-nav .logo-box .logo-lg {
