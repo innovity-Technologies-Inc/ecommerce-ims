@@ -21,6 +21,19 @@
             top: -5px !important;
             right: -5px !important;
         }
+        .mobile-navigation .logo {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        .mobile-navigation .logo img {
+            max-height: 50px !important;
+            height: 50px !important;
+            width: auto !important;
+            display: block !important;
+            object-fit: contain !important;
+        }
     }
     @media (min-width: 992px) {
         .header-navigation .row {
@@ -295,12 +308,12 @@
     <div class="header-bottom d-lg-none sticky-nav py-3 mobile-navigation">
         <div class="container-fluid">
             <div class="row justify-content-between align-items-center">
-                <div class="col-8 col-sm-8">
+                <div class="col-6 col-sm-6">
                     <div class="logo m-0 p-0 text-start">
-                        <a href="{{ route('home') }}" class="d-inline-block"><img src="{{ $gs->light_logo ? \App\HelperClass::file_url($gs->light_logo) : asset('client/assets/images/logo/logo.jpg') }}" alt="{{ $gs->business_name ?? '' }}" style="max-width: 100%; height: 60px !important; width: auto !important; display: block; object-fit: contain;"></a>
+                        <a href="{{ route('home') }}" class="d-inline-block"><img src="{{ $gs->light_logo ? \App\HelperClass::file_url($gs->light_logo) : asset('client/assets/images/logo/logo.jpg') }}" alt="{{ $gs->business_name ?? '' }}" style="max-width: 100%; height: 50px !important; width: auto !important; display: block; object-fit: contain;"></a>
                     </div>
                 </div>
-                <div class="col-4 col-sm-4">
+                <div class="col-6 col-sm-6">
                     <!--Cart info Start -->
                     <div class="cart-info d-flex m-0 justify-content-end align-items-center">
                         <div class="header-bottom-set dropdown me-3">
