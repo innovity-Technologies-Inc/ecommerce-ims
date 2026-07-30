@@ -751,3 +751,15 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
 - **Data & Storage (DB Connectivity):**
     - The logo sources are stored in the `general_settings` table under `favicon`, `dark_logo`, and `light_logo` fields, referencing stored file paths.
 
+### 3.Z Mobile Menu Offcanvas Layout and Content Adjustments (REQ-245)
+
+- **What (Business Purpose):** Improves the user experience of the mobile sliding navigation drawer. It resolves layout shifting and viewport alignment issues where opening the mobile menu forced the document to shift left and expose a raw white background underneath. It also prunes the social media integrations by removing the WhatsApp icon from the canvas side menu social panel.
+
+- **How it Works (Technical Flow):**
+    1. **Layout Shift Fix:** Added style overrides to `body.offcanvas-open` inside `header.blade.php`. When the canvas drawer opens, the template library toggles the `offcanvas-open` class on the body tag which has `padding-right: 17px;` by default. Overriding this to `padding-right: 0 !important;` locks the viewport width securely, eliminating document shifting.
+    2. **WhatsApp Icon Removal:** Found the list element containing the WhatsApp anchor loop (`@if($cs && $cs->whatsapp_status && $cs->whatsapp_url) ... @endif`) in `#offcanvas-mobile-menu` and removed it from the social links list.
+
+- **Data & Storage (DB Connectivity):**
+    - The dynamic social settings are retrieved from the `contact_settings` model, which maps database records representing external URLs. The removal strictly limits menu rendering without altering database values.
+
+

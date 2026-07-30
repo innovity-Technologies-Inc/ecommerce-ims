@@ -6,6 +6,9 @@
     $nav_brands = \App\HelperClass::getBrands();
 @endphp
 <style>
+    body.offcanvas-open {
+        padding-right: 0 !important;
+    }
     @media (max-width: 991px) {
         .mobile-navigation .count-cart i {
             font-size: 20px !important;
@@ -484,11 +487,7 @@
                         <a href="{{ $cs->youtube_url }}" target="_blank"><i class="ion-social-youtube"></i></a>
                     </li>
                 @endif
-                @if($cs && $cs->whatsapp_status && $cs->whatsapp_url)
-                    <li>
-                        <a href="{{ $cs->whatsapp_url }}" target="_blank"><i class="ion-social-whatsapp"></i></a>
-                    </li>
-                @endif
+
                 @if($cs && $cs->tiktok_status && $cs->tiktok_url)
                     <li>
                         <a href="{{ $cs->tiktok_url }}" target="_blank"><iconify-icon icon="ri:tiktok-fill"></iconify-icon></a>
