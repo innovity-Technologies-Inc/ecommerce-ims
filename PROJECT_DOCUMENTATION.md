@@ -772,5 +772,17 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
 - **Data & Storage (DB Connectivity):**
     - Refer to `general_settings` table where the image path is configured via $gs->light_logo.
 
+### 3.AB Mobile Menu Drawer Logo (REQ-247)
+
+- **What (Business Purpose):** Adds a prominent, full-width brand logo to the top of the mobile navigation offcanvas drawer. This aligns with the client branding strategy (mirroring the admin sidebar layout) and improves visual hierarchy and identity inside the drawer.
+
+- **How it Works (Technical Flow):**
+    1. **Logo Placement:** Inserted a `.mobile-menu-logo` container at the top of `#offcanvas-mobile-menu` in `header.blade.php`.
+    2. **Layout Overlap Prevention:** Styled the container with a top padding of `50px` to clear the absolute-positioned mobile menu close button (`.offcanvas-close`), and set image constraints to `width: 100%; max-height: 80px; height: auto; object-fit: contain;` for dynamic full-width scaling.
+
+- **Data & Storage (DB Connectivity):**
+    - Maps to `favicon`, `dark_logo`, and `light_logo` fields in the `general_settings` database table.
+
+
 
 

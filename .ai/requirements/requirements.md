@@ -273,6 +273,8 @@ This document lists the high-level requirements for the modules implemented in t
 - [ ] **REQ-244:** Unified Logo Layout and Vertical Centering: Update both the admin sidebar logo and client-side navbar logo to maintain aspect ratio and stay fitted within their wrappers, ensuring the client-side logo and menu are vertically centered in the navbar. (NEW)
 - [ ] **REQ-245:** Mobile Menu Styling and Content Fixes: Resolve page shifting/white background overlap when the mobile canvas menu toggles by disabling scrollbar padding-right compensation, and remove the WhatsApp icon from the mobile canvas menu social icons list. (NEW)
 - [ ] **REQ-246:** Mobile Header Logo Sizing: Increase the max-height limit of the mobile header logo to 55px to ensure it remains legible and fits correctly on smaller viewports. (NEW)
+- [ ] **REQ-247:** Mobile Menu Drawer Logo: Add a full-width brand logo to the top of the mobile navigation offcanvas drawer, ensuring it maintains its aspect ratio and remains clear. (NEW)
+
 
 
 

@@ -372,9 +372,14 @@
     @include('client.structure.mini-cart')
 </div>
 <!-- OffCanvas Cart End -->
-<!-- OffCanvas Menu Start -->
 <div id="offcanvas-mobile-menu" class="offcanvas offcanvas-mobile-menu hover-style-default">
     <button class="offcanvas-close"></button>
+    <!-- Mobile Menu Logo -->
+    <div class="mobile-menu-logo text-center border-bottom pb-3 mb-3" style="padding-top: 50px;">
+        <a href="{{ route('home') }}" class="d-block px-4">
+            <img src="{{ $gs->light_logo ? \App\HelperClass::file_url($gs->light_logo) : asset('client/assets/images/logo/logo.jpg') }}" alt="{{ $gs->business_name ?? '' }}" style="width: 100%; max-height: 80px; height: auto; object-fit: contain;">
+        </a>
+    </div>
     <!-- contact Info -->
     @if(Auth::guard('web')->check())
         <div class="user-info-offcanvas d-flex align-items-center p-3 border-bottom mb-3">
