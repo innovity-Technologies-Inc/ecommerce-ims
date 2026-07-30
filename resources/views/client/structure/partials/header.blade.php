@@ -180,7 +180,7 @@
                 <!-- Logo Start -->
                 <div class="col-md-2 col-sm-2">
                     <div class="logo m-0">
-                        <a href="{{ route('home') }}"><img src="{{ $gs->light_logo ? \App\HelperClass::file_url($gs->light_logo) : asset('client/assets/images/logo/logo.jpg') }}" alt="{{ $gs->business_name ?? '' }}" style="max-width: 100%; max-height: 50px; width: auto; height: auto; object-fit: contain;"></a>
+                        <a href="{{ route('home') }}"><img src="{{ $gs->light_logo ? \App\HelperClass::file_url($gs->light_logo) : asset('client/assets/images/logo/logo.jpg') }}" alt="{{ $gs->business_name ?? '' }}" style="max-width: 100%; height: 50px !important; width: auto !important; object-fit: contain;"></a>
                     </div>
                 </div>
                 <!-- Logo End -->
@@ -297,7 +297,7 @@
             <div class="row justify-content-between align-items-center">
                 <div class="col-6 col-sm-6">
                     <div class="logo m-0 p-0 text-start">
-                        <a href="{{ route('home') }}" class="d-inline-block"><img src="{{ $gs->light_logo ? \App\HelperClass::file_url($gs->light_logo) : asset('client/assets/images/logo/logo.jpg') }}" alt="{{ $gs->business_name ?? '' }}" style="max-width: 100%; max-height: 55px; width: auto; height: auto; display: block; object-fit: contain;"></a>
+                        <a href="{{ route('home') }}" class="d-inline-block"><img src="{{ $gs->light_logo ? \App\HelperClass::file_url($gs->light_logo) : asset('client/assets/images/logo/logo.jpg') }}" alt="{{ $gs->business_name ?? '' }}" style="max-width: 100%; height: 60px !important; width: auto !important; display: block; object-fit: contain;"></a>
                     </div>
                 </div>
                 <div class="col-6 col-sm-6">
