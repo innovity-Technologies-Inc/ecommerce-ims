@@ -270,5 +270,5 @@ This document lists the high-level requirements for the modules implemented in t
   - Run view:cache on first boot.
   - Fix null property bug in header.blade.php causing 500 internal errors.
 
-- [ ] **REQ-244:** Unified Logo Layout and Aspect Ratio: Update both the admin sidebar logo and client-side navbar logo to maintain their aspect ratios and stay correctly fitted within their containing wrappers without overflowing or squishing. (NEW)
+- [ ] **REQ-244:** Unified Logo Layout and Vertical Centering: Update both the admin sidebar logo and client-side navbar logo to maintain aspect ratio and stay fitted within their wrappers, ensuring the client-side logo and menu are vertically centered in the navbar. (NEW)
 

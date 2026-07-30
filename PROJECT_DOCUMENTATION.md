@@ -736,16 +736,17 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
 
 ---
 
-### 3.Y Unified Logo Layout and Aspect Ratio (REQ-244)
+### 3.Y Unified Logo Layout and Vertical Centering (REQ-244)
 
-- **What (Business Purpose):** Standardizes the visual presentation of both the admin panel sidebar logo and the client-side navbar logo. It ensures that logo images span the full width of the sidebar or fit cleanly within the client navbar boundaries while maintaining their correct aspect ratio, providing a premium brand presence without overflow or squishing.
+- **What (Business Purpose):** Standardizes the visual presentation of both the admin panel sidebar logo and the client-side navbar logo. It ensures that logo images span the full width of the sidebar or fit cleanly within the client navbar boundaries while maintaining their correct aspect ratio. It also enforces perfect vertical centering between the logo and navigation menu inside the client navbar, providing a premium and consistent brand interface.
 
 - **How it Works (Technical Flow):**
     1. **Data Load:** The general settings model retrieves the uploaded brand logo or defaults via `HelperClass::generalSettings()`.
     2. **View Render:** The layouts load the admin sidebar or client navbar views.
     3. **Admin Layout Styles:** Under the expanded sidebar layout, the `.main-nav .logo-box` is configured with `padding: 0 !important;` (removing horizontal margins) and styled as a flex container. The `.logo-lg` image is styled with `width: 100% !important;`, `height: auto !important;`, and `object-fit: contain !important;` with a safe `max-height` restriction.
     4. **Client Layout Styles:** In the client-side header (desktop and mobile), inline styles (`max-width: 100%; max-height: 50px/40px; width: auto; height: auto; object-fit: contain;`) are applied to the images. This ensures they scale proportionally inside their containing column (`col-md-2` on desktop or `col-6` on mobile) and do not overflow or overlap surrounding navigation items.
-    5. **Responsive Transition:** When the admin sidebar is collapsed/condensed, the system falls back to `logo-sm` centered within the 75px container.
+    5. **Client Vertical Alignment:** In the desktop navbar, the `.row` is updated with the `align-items-center` class. The `.col-md-10` container is converted to a flexbox layout using `d-flex align-items-center justify-content-between`, and top margins on `.logo`, `.main-navigation`, and `.header_account_area` are cleared (`m-0`). This centers both the logo and the menu links vertically and anchors them elegantly across the navbar.
+    6. **Responsive Transition:** When the admin sidebar is collapsed/condensed, the system falls back to `logo-sm` centered within the 75px container.
 
 - **Data & Storage (DB Connectivity):**
     - The logo sources are stored in the `general_settings` table under `favicon`, `dark_logo`, and `light_logo` fields, referencing stored file paths.

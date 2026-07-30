@@ -110,18 +110,18 @@
     <!-- Header Buttom Start -->
     <div class="header-navigation sticky-nav d-none d-lg-block">
         <div class="container-fluid">
-            <div class="row">
+            <div class="row align-items-center">
                 <!-- Logo Start -->
                 <div class="col-md-2 col-sm-2">
-                    <div class="logo">
+                    <div class="logo m-0">
                         <a href="{{ route('home') }}"><img src="{{ $gs->light_logo ? \App\HelperClass::file_url($gs->light_logo) : asset('client/assets/images/logo/logo.jpg') }}" alt="{{ $gs->business_name ?? '' }}" style="max-width: 100%; max-height: 50px; width: auto; height: auto; object-fit: contain;"></a>
                     </div>
                 </div>
                 <!-- Logo End -->
                 <!-- Navigation Start -->
-                <div class="col-md-10 col-sm-10">
+                <div class="col-md-10 col-sm-10 d-flex align-items-center justify-content-between">
                     <!--Main Navigation Start -->
-                    <div class="main-navigation">
+                    <div class="main-navigation m-0 float-none">
                         <ul>
                             <li class="menu-dropdown">
                                 <a href="{{route('home')}}">Home</a>
@@ -187,7 +187,7 @@
                     </div>
                     <!--Main Navigation End -->
                     <!--Header Bottom Account Start -->
-                    <div class="header_account_area">
+                    <div class="header_account_area m-0 align-items-center">
                         <!--Seach Area Start -->
                         <div class="header_account_list search_list">
                             <a href="javascript:void(0)"><i class="ion-ios-search-strong"></i></a>
