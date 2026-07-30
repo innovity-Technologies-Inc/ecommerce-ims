@@ -295,12 +295,12 @@
     <div class="header-bottom d-lg-none sticky-nav py-3 mobile-navigation">
         <div class="container-fluid">
             <div class="row justify-content-between align-items-center">
-                <div class="col-6 col-sm-6">
+                <div class="col-8 col-sm-8">
                     <div class="logo m-0 p-0 text-start">
                         <a href="{{ route('home') }}" class="d-inline-block"><img src="{{ $gs->light_logo ? \App\HelperClass::file_url($gs->light_logo) : asset('client/assets/images/logo/logo.jpg') }}" alt="{{ $gs->business_name ?? '' }}" style="max-width: 100%; height: 60px !important; width: auto !important; display: block; object-fit: contain;"></a>
                     </div>
                 </div>
-                <div class="col-6 col-sm-6">
+                <div class="col-4 col-sm-4">
                     <!--Cart info Start -->
                     <div class="cart-info d-flex m-0 justify-content-end align-items-center">
                         <div class="header-bottom-set dropdown me-3">
