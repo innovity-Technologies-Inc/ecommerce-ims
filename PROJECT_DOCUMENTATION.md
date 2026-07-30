@@ -736,16 +736,17 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
 
 ---
 
-### 3.Y Admin Sidebar Logo Layout (REQ-244)
+### 3.Y Unified Logo Layout and Aspect Ratio (REQ-244)
 
-- **What (Business Purpose):** Standardizes the visual presentation of the admin panel sidebar logo. It ensures that the logo image spans the full width of the sidebar (rather than being restricted by horizontal padding or small heights) while maintaining its correct aspect ratio, providing a premium and customized brand presence.
+- **What (Business Purpose):** Standardizes the visual presentation of both the admin panel sidebar logo and the client-side navbar logo. It ensures that logo images span the full width of the sidebar or fit cleanly within the client navbar boundaries while maintaining their correct aspect ratio, providing a premium brand presence without overflow or squishing.
 
 - **How it Works (Technical Flow):**
     1. **Data Load:** The general settings model retrieves the uploaded brand logo or defaults via `HelperClass::generalSettings()`.
-    2. **View Render:** The layout loads the admin sidebar and header views.
-    3. **Layout Styles:** Under the expanded sidebar layout, the `.main-nav .logo-box` is configured with `padding: 0 !important;` (removing horizontal margins) and styled as a flex container. The `.logo-lg` image is styled with `width: 100% !important;`, `height: auto !important;`, and `object-fit: contain !important;` with a safe `max-height` restriction.
-    4. **Responsive Transition:** When the sidebar is collapsed/condensed, the system falls back to `logo-sm` centered within the 75px container.
+    2. **View Render:** The layouts load the admin sidebar or client navbar views.
+    3. **Admin Layout Styles:** Under the expanded sidebar layout, the `.main-nav .logo-box` is configured with `padding: 0 !important;` (removing horizontal margins) and styled as a flex container. The `.logo-lg` image is styled with `width: 100% !important;`, `height: auto !important;`, and `object-fit: contain !important;` with a safe `max-height` restriction.
+    4. **Client Layout Styles:** In the client-side header (desktop and mobile), inline styles (`max-width: 100%; max-height: 50px/40px; width: auto; height: auto; object-fit: contain;`) are applied to the images. This ensures they scale proportionally inside their containing column (`col-md-2` on desktop or `col-6` on mobile) and do not overflow or overlap surrounding navigation items.
+    5. **Responsive Transition:** When the admin sidebar is collapsed/condensed, the system falls back to `logo-sm` centered within the 75px container.
 
 - **Data & Storage (DB Connectivity):**
-    - The logo source is stored in the `general_settings` table under `favicon` and `dark_logo` fields, referencing stored file paths.
+    - The logo sources are stored in the `general_settings` table under `favicon`, `dark_logo`, and `light_logo` fields, referencing stored file paths.
 
