@@ -58,6 +58,9 @@
             line-height: 1 !important;
             margin: 0 !important;
             padding: 0 !important;
+            position: relative !important;
+            top: auto !important;
+            right: auto !important;
         }
         .header-navigation .header_account_list > a i {
             display: inline-block !important;
