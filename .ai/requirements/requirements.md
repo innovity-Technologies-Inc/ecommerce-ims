@@ -261,6 +261,7 @@ This document lists the high-level requirements for the modules implemented in t
 ## Other
 - [x] **REQ-99:** Remove manual pagination info blocks from admin table partials to avoid duplication with Laravel's links() method.
 
+
 ### REQ-242: Resolve WSL2 Docker 504 Gateway Timeout
 - **Description:** Fix Nginx 504 Gateway Timeout and 502 Bad Gateway errors caused by slow Laravel view compilation over WSL2 bind mounts.
 - **Tasks:**
@@ -268,3 +269,6 @@ This document lists the high-level requirements for the modules implemented in t
   - Remove optimize:clear from entrypoint to preserve view cache.
   - Run view:cache on first boot.
   - Fix null property bug in header.blade.php causing 500 internal errors.
+
+- [ ] **REQ-244:** Admin Sidebar Logo Layout: Update the admin sidebar logo (both light and dark versions) to span the full width of the sidebar while maintaining its aspect ratio. (NEW)
+

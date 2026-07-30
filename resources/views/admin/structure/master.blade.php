@@ -203,6 +203,26 @@
             -webkit-backdrop-filter: blur(10px) !important;
             backdrop-filter: blur(10px) !important;
             background-color: var(--bs-main-nav-bg) !important;
+            padding: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            height: var(--bs-topbar-height) !important;
+        }
+
+        .main-nav .logo-box a {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .main-nav .logo-box .logo-lg {
+            width: 100% !important;
+            height: auto !important;
+            max-height: calc(var(--bs-topbar-height) - 10px) !important;
+            object-fit: contain !important;
         }
 
         .content-page .content .container-fluid {

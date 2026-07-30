@@ -733,3 +733,19 @@ To maintain 100% operational accuracy, the **Stock Ledger** (`stock_ledgers` tab
 | `FILESYSTEM_DISK` | `minio` | Laravel default disk |
 
 - **Web Console:** MinIO admin dashboard available at `http://localhost:9001` (credentials: `MINIO_ACCESS_KEY` / `MINIO_SECRET_KEY`).
+
+---
+
+### 3.Y Admin Sidebar Logo Layout (REQ-244)
+
+- **What (Business Purpose):** Standardizes the visual presentation of the admin panel sidebar logo. It ensures that the logo image spans the full width of the sidebar (rather than being restricted by horizontal padding or small heights) while maintaining its correct aspect ratio, providing a premium and customized brand presence.
+
+- **How it Works (Technical Flow):**
+    1. **Data Load:** The general settings model retrieves the uploaded brand logo or defaults via `HelperClass::generalSettings()`.
+    2. **View Render:** The layout loads the admin sidebar and header views.
+    3. **Layout Styles:** Under the expanded sidebar layout, the `.main-nav .logo-box` is configured with `padding: 0 !important;` (removing horizontal margins) and styled as a flex container. The `.logo-lg` image is styled with `width: 100% !important;`, `height: auto !important;`, and `object-fit: contain !important;` with a safe `max-height` restriction.
+    4. **Responsive Transition:** When the sidebar is collapsed/condensed, the system falls back to `logo-sm` centered within the 75px container.
+
+- **Data & Storage (DB Connectivity):**
+    - The logo source is stored in the `general_settings` table under `favicon` and `dark_logo` fields, referencing stored file paths.
+
